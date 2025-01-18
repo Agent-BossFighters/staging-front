@@ -1,7 +1,7 @@
 export default function HomePage() {
   return (
     <>
-      <p>Index</p>
+      <p>Home Page</p>
     </>
   );
 };
