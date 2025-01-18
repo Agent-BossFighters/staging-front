@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from '@pages/layout/main.layout';
-import HomePage from '@pages/index/home.page';
+import Layout from '@features/layout/main.layout';
+import HomePage from '@pages/home/home.page';
+import { IndexRoutes } from '@pages/index.routes';
 
 export default function App () {
 
@@ -9,6 +10,9 @@ export default function App () {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
+          {IndexRoutes.map((route, index) => (
+            <Route key={index} {...route} />
+          ))}
         </Route>
       </Routes>
     </Router>

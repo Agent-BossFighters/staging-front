@@ -20,7 +20,8 @@ export default defineConfig({
       '@core': path.resolve(_dirname, './src/core'),
       '@features': path.resolve(_dirname, './src/features/'),
       '@ui': path.resolve(_dirname, './src/features/ui'),
-      '@css': path.resolve(_dirname, './src/assets/css')
+      '@css': path.resolve(_dirname, './src/assets/css'),
+      '@img': path.resolve(_dirname, './public/img')
     }
   }
 })
