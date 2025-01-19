@@ -1,11 +1,11 @@
+import DesktopNav from './desktop-nav';
+import MobileNav from './mobile-nav';
+
 export default function Header() {
   return (
-    <header className="bg-white shadow">
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold leading-tight text-gray-900">
-          Agent
-        </h1>
-      </div>
+    <header className="bg-[#1a1b1e] text-white shadow-lg fixed w-full top-0 z-50">
+      <DesktopNav />
+      <MobileNav />
     </header>
   );
 }
