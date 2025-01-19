@@ -18,7 +18,7 @@ export default defineConfig({
     alias: {
       '@api': path.resolve(_dirname, './src/utils/api'),
       '@features': path.resolve(_dirname, './src/features/'),
-      '@img': path.resolve(_dirname, './public/img'),
+      '@img': path.resolve(_dirname, './src/assets/img'),
       '@layout': path.resolve(_dirname, './src/shared/layout'),
       '@pages': path.resolve(_dirname, './src/pages'),
       '@ui': path.resolve(_dirname, './src/shared/ui'),
