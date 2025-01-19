@@ -21,8 +21,9 @@ export default defineConfig({
       '@css': path.resolve(_dirname, './src/assets/css'),
       '@features': path.resolve(_dirname, './src/features/'),
       '@img': path.resolve(_dirname, './public/img'),
+      '@layout': path.resolve(_dirname, './src/shared/layout'),
       '@pages': path.resolve(_dirname, './src/pages'),
-      '@ui': path.resolve(_dirname, './src/features/ui'),
+      '@ui': path.resolve(_dirname, './src/shared/ui'),
     }
   }
 })
