@@ -9,7 +9,7 @@ export default function App () {
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
-    <Route index element={<HomePage />} />
+          <Route index element={<HomePage />} />
           {IndexRoutes.map((route, index) => (
             <Route key={index} {...route} />
           ))}
