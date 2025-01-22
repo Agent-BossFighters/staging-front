@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import MobileMenu from './mobile-menu';
+import HeaderPart from '@features/users/auth/header-part';
 import { A } from '@img/index';
 
 export default function MobileNav() {
@@ -37,7 +38,7 @@ export default function MobileNav() {
 
   return (
     <>
-      <div className="h-20 flex justify-between items-center p-4">
+      <div className="h-20 flex justify-between items-center p-4 md:hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className=""
@@ -46,7 +47,7 @@ export default function MobileNav() {
         </button>
         <img src={A} alt="logo" className="h-full" />
         {/* Create connextion / Avatar component */}
-        <div>Connection</div>
+        <HeaderPart />
       </div>
 
       <MobileMenu menuItems={menuItems} isOpen={isOpen} onClose={() => setIsOpen(false)} />

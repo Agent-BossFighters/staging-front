@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 export default function Footer () {
   return (
-    <footer className="w-full flex justify-around items-center py-4">
+    <footer className="w-full flex justify-around items-center py-4 text-xs">
       <p>© 2025 Agent</p>
       <div className="flex flex-col md:flex-row items-center gap-4">
         <Link to="/policy/privacy">

@@ -3,7 +3,7 @@ import MobileNav from './mobile-nav';
 
 export default function Header() {
   return (
-    <header className="shadow-lg w-full z-50">
+    <header className="w-full z-50 border-b border-border">
       <DesktopNav />
       <MobileNav />
     </header>

@@ -1,22 +1,23 @@
 import { Link } from 'react-router-dom';
+import { AgentLogo } from '@img/index';
+import HeaderPart from '@features/users/auth/header-part';
 
 export default function DesktopNav() {
   return (
-    <div className="hidden">
-      <div className="flex items-center">
-        <Link to="/" className="flex items-center">
-          <img src="/assets/logo.svg" alt="Agent" className="h-8 w-auto" />
-        </Link>
+    <div className="hidden md:flex h-20 items-center justify-between px-10 py-4">
+      <div className="flex items-center gap-4 h-full">
+      <Link to="/" className="flex items-center h-full">
+        <img src={AgentLogo} alt="Agent logo" className="h-full" />
+      </Link>
+        {/* Navbar */}
       </div>
-
-      {/* Currency */}
       <div className="flex items-center gap-4">
+        {/* Currency */}
         <div className="bg-amber-500 text-black px-2 py-1 rounded text-sm font-medium">
           PREMIUM
         </div>
-        <button className="w-8 h-8 rounded-full bg-gray-700">
           {/* User */}
-        </button>
+          <HeaderPart />
       </div>
     </div>
   );
