@@ -4,7 +4,7 @@ import HeaderPart from '@features/users/auth/header-part';
 
 export default function DesktopNav() {
   return (
-    <div className="hidden md:flex h-20 items-center justify-between px-10 pt-4">
+    <div className="hidden md:flex h-24 items-center justify-between py-4 px-10 lg:px-0 lg:w-5/6 mx-auto">
       <div className="flex items-center gap-4 h-full">
       <Link to="/" className="flex items-center h-full">
         <img src={AgentLogo} alt="Agent logo" className="h-full" />
