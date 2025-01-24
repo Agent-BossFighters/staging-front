@@ -1,6 +1,6 @@
-import { Routes, Route } from 'react-router-dom';
-import PrivacyPage from './privacy.page';
-import TermsPage from './terms.page';
+import { Routes, Route } from "react-router-dom";
+import PrivacyPage from "./privacy.page";
+import TermsPage from "./terms.page";
 
 export default function PolicyRoutes() {
   return (
@@ -11,4 +11,4 @@ export default function PolicyRoutes() {
       </Routes>
     </>
   );
-};
+}

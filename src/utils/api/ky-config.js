@@ -1,7 +1,7 @@
 import ky from "ky";
 import Cookies from "js-cookie";
 
-export const BASE_URL = http://localhost:5173
+export const BASE_URL = "http://127.0.0.1:3000";
 
 export const kyInstance = ky.create({
   hooks: {

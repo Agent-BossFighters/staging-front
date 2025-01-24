@@ -1,9 +1,9 @@
-import { Routes, Route } from 'react-router-dom';
-import DashboardPage from './dashboard.page';
-import VestiaryPage from './vestiary.page';
-import DatalabPage from './datalab.page';
-import FarmingRoutes from './farming/farming.routes';
-import PlayingRoutes from './playing/playing.routes';
+import { Routes, Route } from "react-router-dom";
+import DashboardPage from "./dashboard.page";
+import VestiaryPage from "./vestiary.page";
+import DatalabPage from "./datalab.page";
+import FarmingRoutes from "./farming/farming.routes";
+import PlayingRoutes from "./playing/playing.routes";
 
 export default function DashboardRoutes() {
   return (
@@ -17,5 +17,4 @@ export default function DashboardRoutes() {
       </Routes>
     </>
   );
-};
-
+}

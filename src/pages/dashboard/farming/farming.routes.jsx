@@ -1,7 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
-import FarmingPage from './farming.page';
-import DailyPage from './daily.page';
-import MonthlyPage from './monthlypage.page';
+import { Routes, Route } from "react-router-dom";
+import FarmingPage from "./farming.page";
+import DailyPage from "./daily.page";
+import MonthlyPage from "./monthlypage.page";
 
 export default function PolicyRoutes() {
   return (
@@ -13,4 +13,4 @@ export default function PolicyRoutes() {
       </Routes>
     </>
   );
-};
+}
