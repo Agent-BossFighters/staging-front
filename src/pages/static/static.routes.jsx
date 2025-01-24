@@ -1,6 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
-import EconomyPage from './economy.page';
-import HomePage from './home.page';
+import { Routes, Route } from "react-router-dom";
+import EconomyPage from "./economy.page";
 
 export default function StaticRoutes() {
   return (
@@ -10,4 +9,4 @@ export default function StaticRoutes() {
       </Routes>
     </>
   );
-};
+}
