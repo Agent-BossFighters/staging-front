@@ -6,17 +6,17 @@ export async function authSignInUp(object, data) {
     let response = await kyInstance.post(BASE_URL + object, {
       json: data,
     });
-    Cookies.set("agent-auth", response.headers.get("Authorization"), {
-      secure: true,
-      sameSite: "strict",
-    });
+    // Cookies.set("agent-auth", response.headers.get("Authorization"), {
+    //   secure: true,
+    //   sameSite: "strict",
+    // });
     const userData = await response.json();
-    const refreshToken = userData.refreshToken;
-    Cookies.set("agent-refresh", refreshToken, {
-      secure: true,
-      sameSite: "strict",
-    });
-    return await userData;
+    // const refreshToken = userData.refreshToken;
+    // Cookies.set("agent-refresh", refreshToken, {
+    //   secure: true,
+    //   sameSite: "strict",
+    // });
+     return await userData;
   } catch (error) {
     let errorData = await error.responseData;
     throw new Error(JSON.stringify(errorData));
