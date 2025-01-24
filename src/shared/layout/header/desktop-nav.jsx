@@ -13,15 +13,13 @@ export default function DesktopNav() {
         {/* Navbar */}
         <DesktopLink />
       </div>
-
-      {/* Currency */}
       <div className="flex items-center gap-4">
+        {/* Currency */}
         <div className="bg-amber-500 text-black px-2 py-1 rounded text-sm font-medium">
           PREMIUM
         </div>
-        <button className="w-8 h-8 rounded-full bg-gray-700">
           {/* User */}
-        </button>
+          <HeaderPart />
       </div>
     </div>
   );
