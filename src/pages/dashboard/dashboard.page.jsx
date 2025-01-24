@@ -13,8 +13,8 @@ export default function DashboardPage() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Barre XP mobile */}
-        <div className="md:hidden mb-12">
+        {/* Barre XP mobile et tablette */}
+        <div className="lg:hidden mb-12">
           <div className="h-[2.5rem]">
             <XPProgressCard
               currentLevel={9}
