@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import MobileMenu from "./mobile-menu";
 import HeaderPart from "@features/users/auth/header-part";
@@ -9,10 +10,7 @@ export default function MobileNav() {
 
   const menuItems = [
     { path: "/dashboard", label: "Dashboard" },
-    { path: "/dashboard/vestiary", label: "Vestiary" },
-    { path: "/dashboard/datalab", label: "Datalab" },
-    { path: "/dashboard/farming", label: "Farming" },
-    { path: "/dashboard/playing", label: "Playing" },
+    { path: "/economy", label: "Economy" },
   ];
   useEffect(() => {
     const handleEscape = (e) => {
@@ -38,10 +36,12 @@ export default function MobileNav() {
   return (
     <>
       <div className="h-20 flex justify-between items-center p-4 md:hidden">
-        <button onClick={() => setIsOpen(!isOpen)} className="">
+        <button onClick={() => setIsOpen(!isOpen)} className="z-50">
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-        <img src={A} alt="logo" className="h-full" />
+        <Link to="/" className="h-full">
+          <img src={A} alt="logo" className="h-full" />
+        </Link>
         {/* Create connextion / Avatar component */}
         <HeaderPart />
       </div>
