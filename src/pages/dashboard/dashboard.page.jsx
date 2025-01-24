@@ -2,9 +2,9 @@ import { DashboardCard } from '@ui/DashboardCard';
 import { XPProgressCard } from '@ui/XPProgressCard';
 
 // Images de fond pour les cards
-const itemsIcon = new URL('/src/assets/img/items.png', import.meta.url).href;
-const datalabBg = new URL('/src/assets/img/background-preseason.png', import.meta.url).href;
-const farmingBg = new URL('/src/assets/img/bg-token.png', import.meta.url).href;
+const itemsIcon = new URL('../../assets/img/items.png', import.meta.url).href;
+const datalabBg = new URL('../../assets/img/background-preseason.png', import.meta.url).href;
+const farmingBg = new URL('../../assets/img/bg-token.png', import.meta.url).href;
 
 // Pour déboguer
 console.log('Image URL:', itemsIcon);
@@ -30,7 +30,7 @@ export default function DashboardPage() {
           <div className="flex flex-col h-auto md:h-[37.5rem]">
             <div className="h-[18.75rem] md:h-[25.75rem] mb-4 md:mb-0">
               <DashboardCard
-                title="VESTIARY"
+                title="LOCKER"
                 description="MANAGE YOUR TACTIC / ASSETS / BUILDS & DISCOUNTS"
                 path="/dashboard/vestiary"
                 backgroundImage={itemsIcon}
@@ -59,7 +59,7 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-4 md:mt-4">
               <div className="h-[9.375rem] md:h-[11.5rem]">
                 <DashboardCard
-                  title="FARMING"
+                  title="SCHEDULE"
                   description="OPTIMIZE YOUR TIME ACCORDING TO YOUR PROFILE"
                   path="/dashboard/farming"
                   backgroundImage={farmingBg}

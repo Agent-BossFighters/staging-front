@@ -2,8 +2,12 @@ import { Link } from 'react-router-dom';
 import { FaCalendarCheck, FaRegCalendarAlt, FaMap, FaTv, FaFistRaised } from 'react-icons/fa';
 import { GiToken } from 'react-icons/gi';
 
-// Importation dynamique du pattern
+// Importation dynamique des patterns avec URL uniquement
 const rewardsPattern = new URL('../../assets/img/rewards_pattern2.png', import.meta.url).href;
+const vectorPattern = new URL('../../assets/img/Vector.png', import.meta.url).href;
+
+console.log('Rewards Pattern:', rewardsPattern);
+console.log('Vector Pattern:', vectorPattern);
 
 const iconMap = {
   'daily': FaCalendarCheck,
@@ -18,6 +22,8 @@ export function DashboardCard({ title, description, path, icon, backgroundImage 
   const pathEnd = path.split('/').pop();
   const IconComponent = iconMap[pathEnd];
   const isVestiary = pathEnd === 'vestiary';
+  const isDaily = pathEnd === 'daily';
+  const isMonthly = pathEnd === 'monthly';
 
   return (
     <Link
@@ -41,15 +47,23 @@ export function DashboardCard({ title, description, path, icon, backgroundImage 
         />
       )}
 
-      {/* Pattern Background */}
-      <div 
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `url(${rewardsPattern})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
+      {/* Vector image pour Daily */}
+      {isDaily && (
+        <img 
+          src={vectorPattern}
+          alt=""
+          className="absolute bottom-4 right-12 w-20 object-contain opacity-60"
+        />
+      )}
+
+      {/* Rewards Pattern pour Monthly */}
+      {isMonthly && (
+        <img 
+          src={rewardsPattern}
+          alt=""
+          className="absolute bottom-4 right-12 w-20 object-contain opacity-60"
+        />
+      )}
       
       {/* Content */}
       <div className="relative flex h-full z-10">
