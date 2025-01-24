@@ -16,7 +16,7 @@ export async function authSignInUp(object, data) {
     //   secure: true,
     //   sameSite: "strict",
     // });
-     return await userData;
+    return await userData;
   } catch (error) {
     let errorData = await error.responseData;
     throw new Error(JSON.stringify(errorData));

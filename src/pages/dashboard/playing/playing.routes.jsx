@@ -1,7 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
-import FightingPage from './fighting.page';
-import PlayerMapPage from './player-map.page';
-import TvToolsPage from './tv-tools.page';
+import { Routes, Route } from "react-router-dom";
+import FightingPage from "./fighting.page";
+import PlayerMapPage from "./player-map.page";
+import TvToolsPage from "./tv-tools.page";
 
 export default function PolicyRoutes() {
   return (
@@ -13,4 +13,4 @@ export default function PolicyRoutes() {
       </Routes>
     </>
   );
-};
+}

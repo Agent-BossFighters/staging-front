@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import Login from '@features/users/auth/login';
-import { Bot } from 'lucide-react';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import Login from "@features/users/auth/login";
+import { Bot } from "lucide-react";
 
 export default function HeaderPart() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +22,9 @@ export default function HeaderPart() {
         to="users/login"
       >
         <Bot size={32} className="text-primary" />
-        <span className="hidden md:block text-white translate-y-0.5">Sign in</span>
+        <span className="hidden md:block text-white translate-y-0.5">
+          Sign in
+        </span>
       </Link>
 
       {isOpen && (
@@ -33,7 +35,10 @@ export default function HeaderPart() {
         >
           <Login />
           <div className="mt-5 text-end text-xs flex justify-end">
-            <p>Don't have an account?&nbsp;</p><Link to="/users/register" className="text-primary">Sign up</Link>
+            <p>Don&#39;t have an account?&nbsp;</p>
+            <Link to="/users/register" className="text-primary">
+              Sign up
+            </Link>
           </div>
         </div>
       )}
