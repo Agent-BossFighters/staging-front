@@ -28,7 +28,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {/* Première colonne - 2 cards */}
           <div className="flex flex-col h-auto md:h-[37.5rem]">
-            <div className="h-[18.75rem] md:h-[26.75rem] mb-4 md:mb-0">
+            <div className="h-[18.75rem] md:h-[25.75rem] mb-4 md:mb-0">
               <DashboardCard
                 title="VESTIARY"
                 description="MANAGE YOUR TACTIC / ASSETS / BUILDS & DISCOUNTS"
@@ -36,7 +36,7 @@ export default function DashboardPage() {
                 backgroundImage={itemsIcon}
               />
             </div>
-            <div className="h-[9.375rem] md:h-[10rem] mb-4 md:mt-4">
+            <div className="h-[9.375rem] md:h-[10rem] mt-auto">
               <DashboardCard
                 title="TV TOOLS"
                 description="BE OVERLAY & COMMANDS"

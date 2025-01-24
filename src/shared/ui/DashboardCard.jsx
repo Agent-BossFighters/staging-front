@@ -1,9 +1,24 @@
 import { Link } from 'react-router-dom';
+import { FaCalendarCheck, FaRegCalendarAlt, FaMap, FaTv, FaFistRaised } from 'react-icons/fa';
+import { GiToken } from 'react-icons/gi';
 
 // Importation dynamique du pattern
 const rewardsPattern = new URL('../../assets/img/rewards_pattern2.png', import.meta.url).href;
 
-export function DashboardCard({ title, description, path, icon, backgroundImage, children }) {
+const iconMap = {
+  'daily': FaCalendarCheck,
+  'monthly': FaRegCalendarAlt,
+  'player-map': FaMap,
+  'tv-tools': FaTv,
+  'farming': GiToken,
+  'fighting': FaFistRaised,
+};
+
+export function DashboardCard({ title, description, path, icon, backgroundImage }) {
+  const pathEnd = path.split('/').pop();
+  const IconComponent = iconMap[pathEnd];
+  const isVestiary = pathEnd === 'vestiary';
+
   return (
     <Link
       to={path}
@@ -18,12 +33,10 @@ export function DashboardCard({ title, description, path, icon, backgroundImage,
         overflow-hidden
       `}
     >
-      {children}
-
-      {/* Background Image */}
+      {/* Background Image avec opacité ajustée */}
       {backgroundImage && (
         <div 
-          className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat"
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat ${isVestiary ? 'opacity-30' : 'opacity-20'}`}
           style={{ backgroundImage: `url(${backgroundImage})` }}
         />
       )}
@@ -39,20 +52,25 @@ export function DashboardCard({ title, description, path, icon, backgroundImage,
       />
       
       {/* Content */}
-      <div className="relative flex flex-col h-full justify-between z-10">
-        <div className="flex items-center gap-3 mb-6">
-          {icon && (
-            <div className="w-10 h-10 flex items-center justify-center">
-              <img src={icon} alt="" className="w-8 h-8 object-contain" />
+      <div className="relative flex h-full z-10">
+        <div className="flex flex-col justify-end">
+          {/* Titre et Description */}
+          <div className="flex items-end gap-4">
+            {IconComponent && !isVestiary && (
+              <div className="flex items-center">
+                <IconComponent className="text-4xl text-zinc-500" />
+              </div>
+            )}
+            <div>
+              <h2 className="text-[#FFD32A] font-extrabold text-3xl tracking-wide mb-1">
+                {title}
+              </h2>
+              <p className="text-gray-300 text-sm font-light">
+                {description}
+              </p>
             </div>
-          )}
-          <h2 className="text-[#FFD32A] font-bold text-2xl tracking-wide">
-            {title}
-          </h2>
+          </div>
         </div>
-        <p className="text-[#FFD32A]/70 text-sm font-medium tracking-wide uppercase">
-          {description}
-        </p>
       </div>
     </Link>
   );
