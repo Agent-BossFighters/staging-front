@@ -1,10 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from '@layout/main.layout';
-import HomePage from '@pages/static/home.page';
-import { IndexRoutes } from '@pages/index.routes';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "@layout/main.layout";
+import HomePage from "@pages/static/home.page";
+import { IndexRoutes } from "@pages/index.routes";
 
-export default function App () {
-
+export default function App() {
   return (
     <Router>
       <Routes>
@@ -17,5 +16,4 @@ export default function App () {
       </Routes>
     </Router>
   );
-};
-
+}

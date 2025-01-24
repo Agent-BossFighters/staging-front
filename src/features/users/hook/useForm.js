@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function useForm(initialValues = {}) {
   const [values, setValues] = useState(initialValues);
@@ -12,14 +12,14 @@ export default function useForm(initialValues = {}) {
       [name]: value,
     });
   };
-  
+
   const validate = () => {
     let validationErrors = {};
     if (!values.username) {
-      validationErrors.username = 'Le nom d\'utilisateur est requis';
+      validationErrors.username = "Le nom d'utilisateur est requis";
     }
     if (!values.password) {
-      validationErrors.password = 'Le mot de passe est requis';
+      validationErrors.password = "Le mot de passe est requis";
     }
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
@@ -31,7 +31,7 @@ export default function useForm(initialValues = {}) {
       try {
         await callback(values);
       } catch (err) {
-        console.error('Erreur lors de la soumission', err);
+        console.error("Erreur lors de la soumission", err);
       } finally {
         setLoading(false);
       }
