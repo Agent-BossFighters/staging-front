@@ -1,4 +1,4 @@
-export default function FarmingPage() {
+export default function SchedulePage() {
   return (
     <div className="flex flex-col items-center justify-center h-full py-2">
       <div className="text-center">
