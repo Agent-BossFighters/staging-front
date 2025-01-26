@@ -1,4 +1,4 @@
-export default function VestiaryPage() {
+export default function LockerPage() {
   return (
     <div className="flex flex-col h-full items-center justify-center ">
       <div className="text-center">

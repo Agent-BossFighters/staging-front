@@ -1,5 +1,5 @@
-import DesktopNav from "./desktop-nav";
-import MobileNav from "./mobile-nav";
+import DesktopNav from "./desktop/desktop-nav";
+import MobileNav from "./mobile/mobile-nav";
 
 export default function Header() {
   return (
