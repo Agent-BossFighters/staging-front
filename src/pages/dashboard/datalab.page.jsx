@@ -1,11 +1,9 @@
+import DatalabTabs from "@features/dashboard/datalab/datalab-tabs";
 export default function DatalabPage() {
   return (
-    <div className="flex flex-col items-center justify-center h-full py-2">
-      <div className="text-center">
-        <p className="text-sm font-semibold text-gray-900">
-          Welcome to your Datalab Page
-        </p>
-      </div>
+    <div className="flex flex-col">
+      <h1 className="text-6xl font-extrabold py-4 text-primary">DATA LAB</h1>
+      <DatalabTabs />
     </div>
   );
 }
