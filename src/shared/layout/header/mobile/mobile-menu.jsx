@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
 export default function MobileMenu({ menuItems, isOpen, onClose }) {
   const location = useLocation();
@@ -23,9 +23,7 @@ export default function MobileMenu({ menuItems, isOpen, onClose }) {
                   to={item.path}
                   onClick={onClose}
                   className={`block py-2 px-4 rounded-lg ${
-                    location.pathname === item.path
-                      ? 'bg-stone-700 text-white'
-                      : 'text-gray-300 hover:bg-stone-800 hover:text-white'
+                    location.pathname === item.path ? "text-primary" : ""
                   }`}
                 >
                   {item.label}

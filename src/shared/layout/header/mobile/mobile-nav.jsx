@@ -34,8 +34,8 @@ export default function MobileNav() {
 
   return (
     <>
-      <div className="h-20 flex justify-between items-center p-4">
-        <button onClick={() => setIsOpen(!isOpen)} className="">
+      <div className="md:hidden h-20 flex justify-between items-center p-4">
+        <button onClick={() => setIsOpen(!isOpen)} className="z-50">
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         <img src={A} alt="logo" className="h-full" />

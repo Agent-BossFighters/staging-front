@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-import tailwind from 'tailwindcss'
-import { fileURLToPath } from 'url'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import tailwind from "tailwindcss";
+import { fileURLToPath } from "url";
 
 const _filename = fileURLToPath(import.meta.url);
-const _dirname = path.dirname(_filename)
+const _dirname = path.dirname(_filename);
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -16,13 +16,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@api': path.resolve(_dirname, './src/utils/api'),
-      '@features': path.resolve(_dirname, './src/features/'),
-      '@img': path.resolve(_dirname, './src/assets/img'),
-      '@layout': path.resolve(_dirname, './src/shared/layout'),
-      '@pages': path.resolve(_dirname, './src/pages'),
-      '@ui': path.resolve(_dirname, './src/shared/ui'),
-      '@utils': path.resolve(_dirname, './src/utils'),
-    }
-  }
-})
+      "@": path.resolve(_dirname, "./src"),
+      "@api": path.resolve(_dirname, "./src/utils/api"),
+      "@features": path.resolve(_dirname, "./src/features/"),
+      "@img": path.resolve(_dirname, "./src/assets/img"),
+      "@layout": path.resolve(_dirname, "./src/shared/layout"),
+      "@pages": path.resolve(_dirname, "./src/pages"),
+      "@ui": path.resolve(_dirname, "./src/shared/ui"),
+      "@utils": path.resolve(_dirname, "./src/utils"),
+    },
+  },
+});
