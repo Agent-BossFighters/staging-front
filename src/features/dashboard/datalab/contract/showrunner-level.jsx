@@ -16,7 +16,7 @@ export default function Showrunner() {
       <h2 className="text-3xl font-extrabold py-2">
         {/* Icon */}SHOWRUNNER CONTRACTS
       </h2>
-      <Table className="">
+      <Table className="overflow-y-scroll">
         <TableCaption>Desc ?</TableCaption>
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">

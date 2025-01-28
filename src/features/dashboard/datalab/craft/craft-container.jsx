@@ -1,3 +1,4 @@
+import Craft from "./craft.jsx";
 export default function CraftContainer() {
-  return <p>craft</p>;
+  return <Craft />;
 }
