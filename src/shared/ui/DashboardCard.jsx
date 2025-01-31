@@ -12,7 +12,8 @@ import {
   Schedule,
   CustomLeague,
   Fighting,
-  TvTools
+  TvTools,
+  BackgroundLocker
 } from "@img/index";
 
 const Card = React.forwardRef(({ className, children, ...props }, ref) => (
@@ -112,12 +113,19 @@ const DashboardCard = React.forwardRef(({ className, title, description, path, b
   return (
     <Link to={path} className="block h-full">
       <Card ref={ref} className={cn("hover:bg-gradient-to-br hover:from-yellow-500/10 hover:to-yellow-900/10 hover:scale-[1.02] hover:border-gray-700/50", className)} {...props}>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
-        {isLocker && backgroundimage && (
-          <CardBackground 
-            image={backgroundimage} 
-            className="w-[90%] h-[90%] m-auto top-[80%] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-contain"
-          />
+        {isLocker && (
+          <>
+            <CardBackground 
+              image={BackgroundLocker}
+              className="absolute inset-0 opacity-20" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent" />
+            <CardBackground 
+              image={backgroundimage} 
+              className="w-[90%] h-[90%] m-auto top-[85%] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-contain"
+            />
+          </>
         )}
         {isDataLab && backgroundimage && (
           <CardBackground 

@@ -8,6 +8,7 @@ export { default as Tokens } from "./Tokens.png";
 export { default as Vector } from "./Vector.png";
 export { default as Vector2 } from "./Vector2.png";
 export { default as BackgroundPreseason } from "./background-preseason.png";
+export { default as BackgroundLocker } from "./background-locker.png";
 export { default as BackgroundUser } from "./background_user.png";
 export { default as BgToken } from "./bg-token.png";
 export { default as Contract } from "./contract.png";
