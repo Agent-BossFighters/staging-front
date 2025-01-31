@@ -116,7 +116,7 @@ const DashboardCard = React.forwardRef(({ className, title, description, path, b
         {isLocker && backgroundimage && (
           <CardBackground 
             image={backgroundimage} 
-            className="w-[90%] h-[90%] m-auto top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-contain"
+            className="w-[90%] h-[90%] m-auto top-[80%] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-contain"
           />
         )}
         {isDataLab && backgroundimage && (
