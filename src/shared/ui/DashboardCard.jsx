@@ -1,91 +1,143 @@
+import * as React from "react";
 import { Link } from 'react-router-dom';
-import { FaCalendarCheck, FaRegCalendarAlt, FaMap, FaTv, FaFistRaised } from 'react-icons/fa';
-import { GiToken } from 'react-icons/gi';
+import { cn } from "@/utils/lib/utils";
 
-// Importation dynamique des patterns avec URL uniquement
-const rewardsPattern = new URL('../../assets/img/rewards_pattern2.png', import.meta.url).href;
-const vectorPattern = new URL('../../assets/img/Vector.png', import.meta.url).href;
+import {
+  RewardsPattern2,
+  Vector,
+  Monthly,
+  Playermap,
+  Locker
+} from "@img/index";
 
-console.log('Rewards Pattern:', rewardsPattern);
-console.log('Vector Pattern:', vectorPattern);
+const Card = React.forwardRef(({ className, children, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "relative block rounded-2xl bg-[#1A1B1E] border border-gray-800/50 transition-all duration-300 overflow-hidden group h-full",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </div>
+));
+Card.displayName = "Card";
 
-const iconMap = {
-  'daily': FaCalendarCheck,
-  'monthly': FaRegCalendarAlt,
-  'player-map': FaMap,
-  'tv-tools': FaTv,
-  'farming': GiToken,
-  'fighting': FaFistRaised,
-};
+const CardBackground = React.forwardRef(({ className, image, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "absolute inset-0 bg-cover bg-center bg-no-repeat",
+      className
+    )}
+    style={image ? { backgroundImage: `url(${image})` } : {}}
+    {...props}
+  />
+));
+CardBackground.displayName = "CardBackground";
 
-export function DashboardCard({ title, description, path, icon, backgroundImage }) {
+const CardPattern = React.forwardRef(({ className, pattern, ...props }, ref) => (
+  <img
+    ref={ref}
+    src={pattern}
+    alt=""
+    className={cn(
+      "absolute inset-0 w-full h-full object-cover",
+      className
+    )}
+    {...props}
+  />
+));
+CardPattern.displayName = "CardPattern";
+
+const CardContent = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("relative flex h-full z-10 p-6", className)}
+    {...props}
+  />
+));
+CardContent.displayName = "CardContent";
+
+const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
+  <h2
+    ref={ref}
+    className={cn(
+      "text-[#FFD32A] font-bold text-[22px] leading-[26px] tracking-wide mb-1",
+      className
+    )}
+    {...props}
+  />
+));
+CardTitle.displayName = "CardTitle";
+
+const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-gray-300 text-xs leading-4 font-normal", className)}
+    {...props}
+  />
+));
+CardDescription.displayName = "CardDescription";
+
+const DashboardCard = React.forwardRef(({ className, title, description, path, backgroundimage, ...props }, ref) => {
   const pathEnd = path.split('/').pop();
-  const IconComponent = iconMap[pathEnd];
   const isVestiary = pathEnd === 'vestiary';
   const isDaily = pathEnd === 'daily';
   const isMonthly = pathEnd === 'monthly';
+  const isPlayerMap = pathEnd === 'player-map';
+
+  const getPatternForCard = () => {
+    if (isDaily) return Vector;
+    if (isMonthly) return Monthly;
+    if (isPlayerMap) return Playermap;
+    return null;
+  };
+
+  const pattern = getPatternForCard();
 
   return (
-    <Link
-      to={path}
-      className={`
-        relative block p-6 rounded-2xl
-        bg-[#1A1B1E] hover:bg-gradient-to-br
-        hover:from-yellow-500/10 hover:to-yellow-900/10
-        border border-gray-800/50
-        transition-all duration-300
-        hover:scale-[1.02] hover:border-gray-700/50
-        group h-full
-        overflow-hidden
-      `}
-    >
-      {/* Background Image avec opacité ajustée */}
-      {backgroundImage && (
-        <div 
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat ${isVestiary ? 'opacity-30' : 'opacity-20'}`}
-          style={{ backgroundImage: `url(${backgroundImage})` }}
-        />
-      )}
-
-      {/* Vector image pour Daily */}
-      {isDaily && (
-        <img 
-          src={vectorPattern}
-          alt=""
-          className="absolute bottom-4 right-12 w-20 object-contain opacity-60"
-        />
-      )}
-
-      {/* Rewards Pattern pour Monthly */}
-      {isMonthly && (
-        <img 
-          src={rewardsPattern}
-          alt=""
-          className="absolute bottom-4 right-12 w-20 object-contain opacity-60"
-        />
-      )}
-      
-      {/* Content */}
-      <div className="relative flex h-full z-10">
-        <div className="flex flex-col justify-end">
-          {/* Titre et Description */}
-          <div className="flex items-end gap-4">
-            {IconComponent && !isVestiary && (
-              <div className="flex items-center">
-                <IconComponent className="text-4xl text-zinc-500" />
-              </div>
-            )}
+    <Link to={path} className="block h-full">
+      <Card ref={ref} className={cn("hover:bg-gradient-to-br hover:from-yellow-500/10 hover:to-yellow-900/10 hover:scale-[1.02] hover:border-gray-700/50", className)} {...props}>
+        {isVestiary && backgroundimage && (
+          <CardBackground image={backgroundimage} />
+        )}
+        {(isDaily || isMonthly || isPlayerMap) && (
+          <CardPattern
+            pattern={RewardsPattern2}
+            className="opacity-40"
+          />
+        )}
+        {pattern && (
+          <div className="absolute right-8 top-1/2 -translate-y-1/2">
+            <img
+              src={pattern}
+              alt=""
+              className="w-32 h-32 object-contain"
+            />
+          </div>
+        )}
+        <CardContent>
+          <div className="flex flex-col justify-end h-full">
             <div>
-              <h2 className="text-[#FFD32A] font-extrabold text-3xl tracking-wide mb-1">
-                {title}
-              </h2>
-              <p className="text-gray-300 text-sm font-light">
-                {description}
-              </p>
+              <CardTitle>{title}</CardTitle>
+              <CardDescription>{description}</CardDescription>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </Link>
   );
-} 
+});
+DashboardCard.displayName = "DashboardCard";
+
+export {
+  Card,
+  CardBackground,
+  CardPattern,
+  CardContent,
+  CardTitle,
+  CardDescription,
+  DashboardCard
+}; 
