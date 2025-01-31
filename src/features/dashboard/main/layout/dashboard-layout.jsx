@@ -1,8 +1,7 @@
-import { DashboardCards } from '../cards/dashboard-cards';
-import { ScheduleCards } from '../cards/schedule-cards';
+import { DashboardCards, ScheduleCards } from '../cards/dashboard-cards';
 import { XPProgressBar } from '../xp/xp-progress';
 
-export function DashboardGrid() {
+export function DashboardLayout() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
