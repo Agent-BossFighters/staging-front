@@ -3,11 +3,16 @@ import { Link } from 'react-router-dom';
 import { cn } from "@/utils/lib/utils";
 
 import {
+  RewardsPattern1,
   RewardsPattern2,
   Vector,
   Monthly,
   Playermap,
-  Locker
+  Locker,
+  Schedule,
+  CustomLeague,
+  Fighting,
+  TvTools
 } from "@img/index";
 
 const Card = React.forwardRef(({ className, children, ...props }, ref) => (
@@ -64,7 +69,7 @@ const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
   <h2
     ref={ref}
     className={cn(
-      "text-[#FFD32A] font-bold text-[22px] leading-[26px] tracking-wide mb-1",
+      "text-[#FFD32A] font-bold text-[20px] leading-[24px] tracking-wide mb-1",
       className
     )}
     {...props}
@@ -75,7 +80,7 @@ CardTitle.displayName = "CardTitle";
 const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-gray-300 text-xs leading-4 font-normal", className)}
+    className={cn("text-gray-300 text-[10px] leading-[14px] font-normal", className)}
     {...props}
   />
 ));
@@ -83,15 +88,22 @@ CardDescription.displayName = "CardDescription";
 
 const DashboardCard = React.forwardRef(({ className, title, description, path, backgroundimage, ...props }, ref) => {
   const pathEnd = path.split('/').pop();
-  const isVestiary = pathEnd === 'vestiary';
+  const isLocker = pathEnd === 'locker';
+  const isDataLab = pathEnd === 'datalab';
   const isDaily = pathEnd === 'daily';
   const isMonthly = pathEnd === 'monthly';
   const isPlayerMap = pathEnd === 'player-map';
+  const isSchedule = pathEnd === 'farming';
+  const isFighting = pathEnd === 'fighting';
+  const isTvTools = pathEnd === 'tv-tools';
 
   const getPatternForCard = () => {
     if (isDaily) return Vector;
     if (isMonthly) return Monthly;
     if (isPlayerMap) return Playermap;
+    if (isSchedule) return Schedule;
+    if (isFighting) return Fighting;
+    if (isTvTools) return TvTools;
     return null;
   };
 
@@ -100,12 +112,34 @@ const DashboardCard = React.forwardRef(({ className, title, description, path, b
   return (
     <Link to={path} className="block h-full">
       <Card ref={ref} className={cn("hover:bg-gradient-to-br hover:from-yellow-500/10 hover:to-yellow-900/10 hover:scale-[1.02] hover:border-gray-700/50", className)} {...props}>
-        {isVestiary && backgroundimage && (
-          <CardBackground image={backgroundimage} />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
+        {isLocker && backgroundimage && (
+          <CardBackground 
+            image={backgroundimage} 
+            className="w-[90%] h-[90%] m-auto top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-contain"
+          />
         )}
-        {(isDaily || isMonthly || isPlayerMap) && (
+        {isDataLab && backgroundimage && (
+          <CardBackground 
+            image={backgroundimage}
+            className="absolute inset-0 bg-center opacity-30" 
+          />
+        )}
+        {isSchedule && (
+          <CardBackground 
+            image={CustomLeague}
+            className="absolute inset-0 bg-center opacity-30" 
+          />
+        )}
+        {(isDaily || isMonthly || isPlayerMap || isFighting) && (
           <CardPattern
             pattern={RewardsPattern2}
+            className="opacity-40"
+          />
+        )}
+        {isTvTools && (
+          <CardPattern
+            pattern={RewardsPattern1}
             className="opacity-40"
           />
         )}
@@ -114,7 +148,7 @@ const DashboardCard = React.forwardRef(({ className, title, description, path, b
             <img
               src={pattern}
               alt=""
-              className="w-32 h-32 object-contain"
+              className="w-24 h-24 object-contain"
             />
           </div>
         )}

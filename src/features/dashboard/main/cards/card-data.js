@@ -4,7 +4,7 @@ export const DASHBOARD_CARDS = [
   {
     title: "LOCKER",
     description: "MANAGE YOUR TACTIC / ASSETS / BUILDS & DISCOUNTS",
-    path: "/dashboard/vestiary",
+    path: "/dashboard/locker",
     backgroundimage: Locker,
     size: "h-[18.75rem] md:h-[25.75rem]"
   },
