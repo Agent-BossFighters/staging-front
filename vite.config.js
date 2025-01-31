@@ -24,6 +24,7 @@ export default defineConfig({
       "@pages": path.resolve(_dirname, "./src/pages"),
       "@ui": path.resolve(_dirname, "./src/shared/ui"),
       "@utils": path.resolve(_dirname, "./src/utils"),
+      "@shared": path.resolve(_dirname, "./src/shared/"),
     },
   },
 });

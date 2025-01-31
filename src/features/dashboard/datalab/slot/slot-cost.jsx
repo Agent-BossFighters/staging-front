@@ -7,10 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
+import data from "@shared/data/slot.json";
 
 export default function SlotCost() {
   return (
-    <Table className="lg:w-2/3">
+    <Table className="">
       <TableCaption>Desc ?</TableCaption>
       <TableHeader>
         <TableRow className="bg-muted-foreground/30">
@@ -24,42 +25,19 @@ export default function SlotCost() {
         </TableRow>
       </TableHeader>
       <TableBody className="">
-        <TableRow>
-          <TableCell>1</TableCell>
-          <TableCell className="text-destructive">Paid</TableCell>
-          <TableCell className="text-destructive">Credit Card</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>2</TableCell>
-          <TableCell className="text-destructive">Paid</TableCell>
-          <TableCell className="text-destructive">Credit Card</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>3</TableCell>
-          <TableCell className="text-destructive">Paid</TableCell>
-          <TableCell className="text-destructive">Credit Card</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>4</TableCell>
-          <TableCell className="text-destructive">Paid</TableCell>
-          <TableCell className="text-destructive">Credit Card</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-          <TableCell>$250.00</TableCell>
-        </TableRow>
+        {data.slots.map((item) => (
+          <TableRow key={item.slot}>
+            <TableCell>{item.slot}</TableCell>
+            <TableCell className="text-destructive">{item.totalFlex}</TableCell>
+            <TableCell className="text-destructive">
+              ${item.totalCost}
+            </TableCell>
+            <TableCell>{item.nbTokensRoi}</TableCell>
+            <TableCell>{item.nbChargesRoi1}</TableCell>
+            <TableCell>{item.nbChargesRoi2}</TableCell>
+            <TableCell>{item.nbChargesRoi3}</TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   );

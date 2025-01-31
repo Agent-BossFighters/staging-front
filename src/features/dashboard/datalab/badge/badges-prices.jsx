@@ -7,19 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-
-const rarity = [
-  "common",
-  "uncommon",
-  "rare",
-  "epic",
-  "legendary",
-  "mythic",
-  "exalted",
-  "exotic",
-  "transcendent",
-  "unique",
-];
+import data from "@shared/data/rarities.json";
 
 export default function BadgesPrices() {
   return (
@@ -29,8 +17,15 @@ export default function BadgesPrices() {
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">
             <TableHead>RARITY</TableHead>
-            {rarity.map((rarityItem) => (
-              <TableHead key={rarityItem}>{rarityItem}</TableHead>
+            {data.rarities.map((rarityItem) => (
+              <TableHead key={rarityItem} className="p-2 text-center">
+                <p
+                  className="border-2 rounded-2xl p-1"
+                  style={{ borderColor: rarityItem.color }}
+                >
+                  {rarityItem.rarity}
+                </p>
+              </TableHead>
             ))}
           </TableRow>
         </TableHeader>

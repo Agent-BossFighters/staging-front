@@ -8,16 +8,16 @@ import {
 } from "./index";
 
 const tabs = [
-  { name: "Slot", value: "Slot" },
-  { name: "Contract", value: "Contract" },
-  { name: "Badge", value: "Badge" },
-  { name: "Craft", value: "Craft" },
-  { name: "Player Cycle", value: "Player Cycle" },
+  { name: "SLOT", value: "Slot" },
+  { name: "CONTRACT", value: "Contract" },
+  { name: "BADGE", value: "Badge" },
+  { name: "CRAFT", value: "Craft" },
+  { name: "PLAYER CYCLE", value: "Player Cycle" },
 ];
 
 export default function DatalabTabs() {
   return (
-    <Tabs defaultValue="Slot" className="w-full mt-5 flex flex-col">
+    <Tabs defaultValue="Slot" className="w-full flex flex-col pt-4">
       <TabsList className="bg-transparent text-2xl pb-4 justify-start">
         {tabs.map((tab) => (
           <TabsTrigger key={tab.value} value={tab.value}>
@@ -25,7 +25,7 @@ export default function DatalabTabs() {
           </TabsTrigger>
         ))}
       </TabsList>
-      <div className="border-primary border-b-4 md:w-3/4 lg:w-1/2"></div>
+      <div className="border-primary border-b-4 md:w-3/4 lg:w-1/2 pt-2"></div>
       <TabsContent value="Slot">
         <SlotContainer />
       </TabsContent>

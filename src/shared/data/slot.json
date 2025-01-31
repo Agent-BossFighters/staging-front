@@ -1,0 +1,82 @@
+{
+  "cost": [
+    {
+      "slot": 1,
+      "nbFlex": 0,
+      "flexCost": 0,
+      "bonus": "0%",
+      "normalPart": "14",
+      "bonusPart": "0"
+    },
+    {
+      "slot": 2,
+      "nbFlex": "7,000",
+      "flexCost": "51,98",
+      "bonus": "5%",
+      "normalPart": "14",
+      "bonusPart": "1"
+    },
+    {
+      "slot": 3,
+      "nbFlex": "13,000",
+      "flexCost": "96,54",
+      "bonus": "10%",
+      "normalPart": "14",
+      "bonusPart": "2"
+    },
+    {
+      "slot": 4,
+      "nbFlex": "20,000",
+      "flexCost": "148,52",
+      "bonus": "15%",
+      "normalPart": "14",
+      "bonusPart": "4"
+    },
+    {
+      "slot": 5,
+      "nbFlex": "26,000",
+      "flexCost": "193,07",
+      "bonus": "20%",
+      "normalPart": "14",
+      "bonusPart": "6"
+    }
+  ],
+  "slots": [
+    {
+      "slot": 1,
+      "totalFlex": 7000,
+      "totalCost": "51,98",
+      "nbTokensRoi": "5,198",
+      "nbChargesRoi1": "5",
+      "nbChargesRoi2": "3",
+      "nbChargesRoi3": "2"
+    },
+    {
+      "slot": 2,
+      "totalFlex": 20000,
+      "totalCost": "148,52",
+      "nbTokensRoi": "14,852",
+      "nbChargesRoi1": "10",
+      "nbChargesRoi2": "5",
+      "nbChargesRoi3": "4"
+    },
+    {
+      "slot": 3,
+      "totalFlex": 40000,
+      "totalCost": "297,04",
+      "nbTokensRoi": "29,704",
+      "nbChargesRoi1": "19",
+      "nbChargesRoi2": "10",
+      "nbChargesRoi3": "7"
+    },
+    {
+      "slot": 4,
+      "totalFlex": 66000,
+      "totalCost": "490,11",
+      "nbTokensRoi": "49,011",
+      "nbChargesRoi1": "29",
+      "nbChargesRoi2": "15",
+      "nbChargesRoi3": "10"
+    }
+  ]
+}

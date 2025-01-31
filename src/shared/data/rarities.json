@@ -1,0 +1,44 @@
+{
+  "rarities": [
+    {
+      "rarity": "Common",
+      "color": "#858F9B"
+    },
+    {
+      "rarity": "Uncommon",
+      "color": "#1CBF6A"
+    },
+    {
+      "rarity": "Rare",
+      "color": "#159CFD"
+    },
+    {
+      "rarity": "Epic",
+      "color": "#A369FF"
+    },
+    {
+      "rarity": "Legendary",
+      "color": "#E67E22"
+    },
+    {
+      "rarity": "Mythic",
+      "color": "#FFD32A"
+    },
+    {
+      "rarity": "Exalted",
+      "color": "#EF5777"
+    },
+    {
+      "rarity": "Exotic",
+      "color": "#BE2EDD"
+    },
+    {
+      "rarity": "Transcendent",
+      "color": "#FF3838"
+    },
+    {
+      "rarity": "Unique",
+      "color": "#F368E0"
+    }
+  ]
+}
