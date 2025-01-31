@@ -1,5 +1,5 @@
-import Button from "@ui/buttons/button";
-import Input from "@ui/input/input";
+import { Button } from "@ui/button";
+import { Input } from "@ui/input";
 import { authSignInUp } from "@api/auth.api";
 import useForm from "@features/users/hook/useForm";
 
@@ -61,7 +61,11 @@ export default function Register() {
         <p className="text-red-500">{errors.confirmPassword}</p>
       )}
 
-      <Button type="submit" variant="" disabled={loading}>
+      <Button
+        type="submit"
+        className="w-full text-background"
+        disabled={loading}
+      >
         {loading ? "Chargement..." : "Sign up"}
       </Button>
     </form>

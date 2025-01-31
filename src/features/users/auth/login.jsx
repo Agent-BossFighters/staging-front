@@ -1,5 +1,5 @@
-import Button from "@ui/buttons/button";
-import Input from "@ui/input/input";
+import { Button } from "@ui/button";
+import { Input } from "@ui/input";
 import { authSignInUp } from "@api/auth.api";
 import useForm from "@features/users/hook/useForm";
 
@@ -44,7 +44,11 @@ export default function Login() {
       />
       {errors.password && <p className="text-red-500">{errors.password}</p>}
 
-      <Button type="submit" disabled={loading}>
+      <Button
+        type="submit"
+        disabled={loading}
+        className="w-full text-background"
+      >
         {loading ? "Loading..." : "Login"}
       </Button>
     </form>

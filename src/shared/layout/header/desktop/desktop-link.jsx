@@ -6,9 +6,9 @@ const menuItems = [
     path: "/dashboard",
     label: "Dashboard",
     children: [
-      { path: "/dashboard/vestiary", label: "Vestiary" },
+      { path: "/dashboard/locker", label: "Locker" },
       { path: "/dashboard/datalab", label: "Datalab" },
-      { path: "/dashboard/farming", label: "Farming" },
+      { path: "/dashboard/schedule", label: "Schedule" },
       { path: "/dashboard/playing", label: "Playing" },
     ],
   },
