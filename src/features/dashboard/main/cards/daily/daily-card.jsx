@@ -1,6 +1,6 @@
 import * as React from "react";
 import BaseCard from "../base-card";
-import { CardPattern } from "@ui/Card";
+import { CardPattern } from "@ui/card";
 import { RewardsPattern2, Vector } from "@img/index";
 
 const DailyCard = React.forwardRef((props, ref) => {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DashboardCard, CardPattern } from "@ui/Card";
+import { DashboardCard, CardPattern } from "@ui/card";
 import { RewardsPattern1, TvTools } from "@img/index";
 
 const TvToolsCard = React.forwardRef((props, ref) => {

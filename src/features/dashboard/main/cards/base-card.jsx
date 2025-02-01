@@ -6,7 +6,7 @@ import {
   CardContent,
   CardTitle,
   CardDescription,
-} from "@ui/Card";
+} from "@ui/card";
 
 const BaseCard = React.forwardRef(({ 
   className, 

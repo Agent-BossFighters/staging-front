@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DashboardCard, CardBackground } from "@ui/Card";
+import { DashboardCard, CardBackground } from "@ui/card";
 import { BackgroundLocker } from "@img/index";
 
 const LockerCard = React.forwardRef(({ backgroundimage, ...props }, ref) => {

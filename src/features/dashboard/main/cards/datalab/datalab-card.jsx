@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DashboardCard, CardBackground } from "@ui/Card";
+import { DashboardCard, CardBackground } from "@ui/card";
 
 const DataLabCard = React.forwardRef(({ backgroundimage, ...props }, ref) => {
   return (

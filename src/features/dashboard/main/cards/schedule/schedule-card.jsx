@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DashboardCard, CardBackground } from "@ui/Card";
+import { DashboardCard, CardBackground } from "@ui/card";
 import { CustomLeague, Schedule } from "@img/index";
 
 const ScheduleCard = React.forwardRef((props, ref) => {
