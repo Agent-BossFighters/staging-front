@@ -1,4 +1,4 @@
-import { CardsGrid } from '@features/dashboard/main/cards-grid/cards-grid';
+import { CardsGrid } from '@features/dashboard/main/cards/cards-grid';
 
 export default function DashboardPage() {
   return (

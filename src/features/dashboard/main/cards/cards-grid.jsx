@@ -1,4 +1,4 @@
-import { DashboardCards, ScheduleCards } from '../cards/dashboard-cards';
+import { DashboardCards, ScheduleCards } from './dashboard-cards';
 import { XPProgressBar } from '../xp/xp-progress';
 
 export function CardsGrid() {
