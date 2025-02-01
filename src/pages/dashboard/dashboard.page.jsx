@@ -1,5 +1,9 @@
-import { DashboardLayout } from '@features/dashboard/main/layout/dashboard-layout';
+import { CardsGrid } from '@features/dashboard/main/cards-grid/cards-grid';
 
 export default function DashboardPage() {
-  return <DashboardLayout />;
+  return (
+    <div>
+      <CardsGrid />
+    </div>
+  );
 }
