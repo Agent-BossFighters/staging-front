@@ -1,4 +1,4 @@
-import { BackgroundPreseason, Locker } from '@img/index';
+import { BackgroundPreseason, Locker, CustomLeague } from '@img/index';
 
 export const Dashboard_Cards = [
   {
@@ -25,7 +25,9 @@ export const Dashboard_Cards = [
     title: "SCHEDULE",
     description: "OPTIMIZE YOUR TIME ACCORDING TO YOUR PROFILE",
     path: "/dashboard/schedule",
-    size: "h-[9.375rem] md:h-[11.5rem]"
+    size: "h-[11.25rem]",
+    backgroundImage: CustomLeague,
+    backgroundClassName: "opacity-10"
   },
   {
     title: "FIGHTING",

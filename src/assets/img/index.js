@@ -20,7 +20,6 @@ export { default as TimeToken } from "./time-token.png";
 export { default as Token2 } from "./token2.png";
 export { default as Token3 } from "./token3.png";
 export { default as Token4 } from "./token4.png";
-// Nouvelles images
 export { default as Monthly } from "./Monthly.png";
 export { default as Playermap } from "./Playermap.png";
 export { default as Locker } from "./locker.png";
