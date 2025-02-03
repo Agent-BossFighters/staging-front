@@ -1,16 +1,15 @@
 import * as React from "react";
-import { DashboardCard, CardBackground } from "@ui/card";
+import { Card } from "@ui/card";
+import { BackgroundPreseason } from "@img/index";
 
 const DataLabCard = React.forwardRef(({ backgroundimage, ...props }, ref) => {
   return (
-    <DashboardCard ref={ref} {...props}>
-      {backgroundimage && (
-        <CardBackground 
-          image={backgroundimage}
-          className="absolute inset-0 bg-center opacity-30" 
-        />
-      )}
-    </DashboardCard>
+    <Card 
+      ref={ref} 
+      backgroundImage={backgroundimage || BackgroundPreseason}
+      backgroundClassName="absolute inset-0 bg-center opacity-30"
+      {...props}
+    />
   );
 });
 

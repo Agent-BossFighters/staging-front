@@ -1,22 +1,16 @@
 import * as React from "react";
-import { DashboardCard, CardBackground } from "@ui/card";
+import { Card } from "@ui/card";
 import { CustomLeague, Schedule } from "@img/index";
 
 const ScheduleCard = React.forwardRef((props, ref) => {
   return (
-    <DashboardCard ref={ref} {...props}>
-      <CardBackground 
-        image={CustomLeague}
-        className="absolute inset-0 bg-center opacity-30" 
-      />
-      <div className="absolute right-8 top-1/2 -translate-y-1/2">
-        <img
-          src={Schedule}
-          alt=""
-          className="w-24 h-24 object-contain"
-        />
-      </div>
-    </DashboardCard>
+    <Card 
+      ref={ref} 
+      backgroundImage={CustomLeague}
+      backgroundClassName="absolute inset-0 bg-center opacity-30"
+      rightIcon={Schedule}
+      {...props}
+    />
   );
 });
 

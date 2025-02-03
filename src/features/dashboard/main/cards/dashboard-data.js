@@ -33,10 +33,7 @@ export const DASHBOARD_CARDS = [
     description: "TOURNAMENTS & CUPS WITH CUSTOM RULES",
     path: "/dashboard/fighting",
     size: "h-[9.375rem] md:h-[10rem]"
-  }
-];
-
-export const SCHEDULE_CARDS = [
+  },
   {
     title: "DAILY",
     description: "COMPLETE YOUR DAILY DATA",
