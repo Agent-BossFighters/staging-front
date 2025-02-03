@@ -1,6 +1,6 @@
-import { BackgroundPreseason, BgToken, Locker } from '@img/index';
+import { BackgroundPreseason, Locker } from '@img/index';
 
-export const DASHBOARD_CARDS = [
+export const Dashboard_Cards = [
   {
     title: "LOCKER",
     description: "MANAGE YOUR TACTIC / ASSETS / BUILDS & DISCOUNTS",
@@ -24,8 +24,7 @@ export const DASHBOARD_CARDS = [
   {
     title: "SCHEDULE",
     description: "OPTIMIZE YOUR TIME ACCORDING TO YOUR PROFILE",
-    path: "/dashboard/farming",
-    backgroundimage: BgToken,
+    path: "/dashboard/schedule",
     size: "h-[9.375rem] md:h-[11.5rem]"
   },
   {
@@ -37,13 +36,13 @@ export const DASHBOARD_CARDS = [
   {
     title: "DAILY",
     description: "COMPLETE YOUR DAILY DATA",
-    path: "/dashboard/farming/daily",
+    path: "/dashboard/daily",
     size: "h-[9.375rem] lg:h-[9.30rem]"
   },
   {
     title: "MONTHLY",
     description: "ACCOUNTING",
-    path: "/dashboard/farming/monthly",
+    path: "/dashboard/monthly",
     size: "h-[9.375rem] lg:h-[9.30rem]"
   },
   {

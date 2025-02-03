@@ -3,11 +3,12 @@ import { XPProgressBar } from '../xp/xp-progress';
 import LockerCard from "./locker/locker-card";
 import DataLabCard from "./datalab/datalab-card";
 import TvToolsCard from "./tv-tools/tv-tools-card";
+import ScheduleCard from "./schedule/schedule-card";
 import DailyCard from "./daily/daily-card";
 import MonthlyCard from "./monthly/monthly-card";
 import PlayerMapCard from "./player-map/player-map-card";
 import FightingCard from "./fighting/fighting-card";
-import { DASHBOARD_CARDS } from './dashboard-data';
+import { Dashboard_Cards } from './dashboard-data';
 
 // Composant pour les cartes du dashboard
 function DashboardCards() {
@@ -15,25 +16,25 @@ function DashboardCards() {
     <>
       {/* Première colonne */}
       <div className="flex flex-col h-auto md:h-[37.5rem] space-y-6 md:space-y-8">
-        <div className={DASHBOARD_CARDS[0].size}>
-          <LockerCard {...DASHBOARD_CARDS[0]} />
+        <div className={Dashboard_Cards[0].size}>
+          <LockerCard {...Dashboard_Cards[0]} />
         </div>
-        <div className={DASHBOARD_CARDS[1].size}>
-          <TvToolsCard {...DASHBOARD_CARDS[1]} />
+        <div className={Dashboard_Cards[1].size}>
+          <TvToolsCard {...Dashboard_Cards[1]} />
         </div>
       </div>
 
       {/* Deuxième colonne */}
       <div className="flex flex-col h-auto md:h-[37.5rem] space-y-6 md:space-y-8">
-        <div className={DASHBOARD_CARDS[2].size}>
-          <DataLabCard {...DASHBOARD_CARDS[2]} />
+        <div className={Dashboard_Cards[2].size}>
+          <DataLabCard {...Dashboard_Cards[2]} />
         </div>
         <div className="flex flex-col space-y-6 md:space-y-8">
-          <div className={DASHBOARD_CARDS[3].size}>
-            <DailyCard {...DASHBOARD_CARDS[3]} />
+          <div className={Dashboard_Cards[3].size}>
+            <ScheduleCard {...Dashboard_Cards[3]} />
           </div>
-          <div className={DASHBOARD_CARDS[4].size}>
-            <FightingCard {...DASHBOARD_CARDS[4]} />
+          <div className={Dashboard_Cards[4].size}>
+            <FightingCard {...Dashboard_Cards[4]} />
           </div>
         </div>
       </div>
@@ -44,14 +45,14 @@ function DashboardCards() {
           <XPProgressBar />
         </div>
         <div className="flex flex-col space-y-6 md:space-y-8">
-          <div className={DASHBOARD_CARDS[5].size}>
-            <DailyCard {...DASHBOARD_CARDS[5]} />
+          <div className={Dashboard_Cards[5].size}>
+            <DailyCard {...Dashboard_Cards[5]} />
           </div>
-          <div className={DASHBOARD_CARDS[6].size}>
-            <MonthlyCard {...DASHBOARD_CARDS[6]} />
+          <div className={Dashboard_Cards[6].size}>
+            <MonthlyCard {...Dashboard_Cards[6]} />
           </div>
-          <div className={DASHBOARD_CARDS[7].size}>
-            <PlayerMapCard {...DASHBOARD_CARDS[7]} />
+          <div className={Dashboard_Cards[7].size}>
+            <PlayerMapCard {...Dashboard_Cards[7]} />
           </div>
         </div>
       </div>
