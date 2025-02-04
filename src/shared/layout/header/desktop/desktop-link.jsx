@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@context/auth.context";
 
 const menuItems = [
   {
     path: "/dashboard",
     label: "Dashboard",
+    requiresAuth: true,
     children: [
       { path: "/dashboard/locker", label: "Locker" },
       { path: "/dashboard/datalab", label: "Datalab" },
@@ -16,6 +18,7 @@ const menuItems = [
 ];
 
 export default function DesktopLink() {
+  const { user } = useAuth();
   const [openMenu, setOpenMenu] = useState(null);
   const [delayClose, setDelayClose] = useState(null);
 
@@ -35,9 +38,10 @@ export default function DesktopLink() {
     return () => clearTimeout(delayClose);
   }, [delayClose]);
 
+  const fileteredMenu = menuItems.filter((item) => !item.requiresAuth || user);
   return (
     <div className="flex gap-4">
-      {menuItems.map((item) => (
+      {fileteredMenu.map((item) => (
         <div
           key={item.path}
           className="relative"
