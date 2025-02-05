@@ -1,19 +1,15 @@
-import * as React from "react";
+// src/features/dashboard/cards/DailyCard.jsx
+import React from "react";
 import { Card } from "@ui/card";
 import { RewardsPattern2, Vector } from "@img/index";
 
-const DailyCard = React.forwardRef((props, ref) => {
+export default function DailyCard(props) {
   return (
     <Card 
-      ref={ref} 
       pattern={RewardsPattern2}
       patternClassName="opacity-40"
       rightIcon={Vector}
       {...props}
     />
   );
-});
-
-DailyCard.displayName = "DailyCard";
-
-export default DailyCard; 
+}

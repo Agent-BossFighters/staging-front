@@ -1,19 +1,15 @@
-import * as React from "react";
+// src/features/dashboard/cards/MonthlyCard.jsx
+import React from "react";
 import { Card } from "@ui/card";
 import { RewardsPattern2, Monthly } from "@img/index";
 
-const MonthlyCard = React.forwardRef((props, ref) => {
+export default function MonthlyCard(props) {
   return (
     <Card 
-      ref={ref} 
       pattern={RewardsPattern2}
       patternClassName="opacity-40"
       rightIcon={Monthly}
       {...props}
     />
   );
-});
-
-MonthlyCard.displayName = "MonthlyCard";
-
-export default MonthlyCard; 
+}

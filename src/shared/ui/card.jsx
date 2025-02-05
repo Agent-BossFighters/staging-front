@@ -35,7 +35,7 @@ const Card = React.forwardRef(({
             src={pattern}
             alt=""
             className={cn(
-              "absolute inset-0 w-full h-full object-cover opacity-40",
+              "absolute inset-0 w-full h-full",
               patternClassName
             )}
           />
@@ -43,7 +43,7 @@ const Card = React.forwardRef(({
         {backgroundImage && (
           <div
             className={cn(
-              "absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30",
+              "absolute inset-0 bg-cover bg-center bg-no-repeat",
               backgroundClassName
             )}
             style={{ backgroundImage: `url(${backgroundImage})` }}

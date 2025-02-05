@@ -1,19 +1,15 @@
-import * as React from "react";
+// src/features/dashboard/cards/TvToolsCard.jsx
+import React from "react";
 import { Card } from "@ui/card";
 import { RewardsPattern1, TvTools } from "@img/index";
 
-const TvToolsCard = React.forwardRef((props, ref) => {
+export default function TvToolsCard(props) {
   return (
     <Card 
-      ref={ref} 
       pattern={RewardsPattern1}
       patternClassName="opacity-40"
       rightIcon={TvTools}
       {...props}
     />
   );
-});
-
-TvToolsCard.displayName = "TvToolsCard";
-
-export default TvToolsCard;
+}
