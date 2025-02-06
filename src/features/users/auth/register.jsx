@@ -28,7 +28,7 @@ export default function Register() {
     };
 
     try {
-      const userData = await authSignInUp("/api/v1/signup", payload);
+      const userData = await authSignInUp("/v1/signup", payload);
       console.log("Utilisateur enregistré:", userData);
     } catch (err) {
       console.error("Erreur d'enregistrement:", err);
@@ -41,7 +41,7 @@ export default function Register() {
         e.preventDefault();
         handleSubmit(handleRegister);
       }}
-      className="flex flex-col items-center justify-center gap-4 w-full"
+      className="flex flex-col items-center justify-center gap-10 w-full"
     >
       <Input
         type="text"

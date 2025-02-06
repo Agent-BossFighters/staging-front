@@ -24,7 +24,7 @@ export default function Login() {
           password: data.password,
         },
       };
-      const response = await authSignInUp("/api/v1/login", payload);
+      const response = await authSignInUp("/v1/login", payload);
       console.log("message", response.message);
       if (response.token && response.user) {
         login(response.user, response.token);
@@ -40,7 +40,7 @@ export default function Login() {
         e.preventDefault();
         handleSubmit(handleLogin);
       }}
-      className="flex flex-col items-center justify-center gap-4 w-full"
+      className="flex flex-col items-center justify-center gap-10 w-full"
     >
       <Input
         type="text"
