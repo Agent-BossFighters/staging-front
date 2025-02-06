@@ -1,4 +1,4 @@
-import { BASE_URL, kyInstance } from "./config-fetch";
+import { BASE_URL, kyInstance } from "./ky-config";
 
 // Fonction pour récupérer les données
 export async function getData(object) {
@@ -32,7 +32,7 @@ export async function postData(object, data) {
 export async function putData(object, data) {
   try {
     const options = {
-      headers: {}, // Initialiser headers pour éviter des erreurs
+      headers: {},
       body: data instanceof FormData ? data : JSON.stringify(data),
     };
 

@@ -10,25 +10,47 @@ import {
 } from "@ui/select";
 import data from "@shared/data/rarities.json";
 
-export default function SelectSlot() {
+export default function SelectSlot({
+  onSelectRarity,
+  limitRarity,
+  rounded,
+  selectedRarity,
+}) {
   const [selectedColor, setSelectedColor] = useState("#FFFFFF");
+
+  const filteredRarities = data.rarities.filter((item) => {
+    if (!limitRarity) return true;
+    return (
+      item.rarity !== limitRarity &&
+      data.rarities.indexOf(item) <=
+        data.rarities.indexOf(
+          data.rarities.find((r) => r.rarity === limitRarity),
+        )
+    );
+  });
+
+  const handleValueChange = (value) => {
+    const rarity = data.rarities.find((item) => item.rarity === value);
+    setSelectedColor(rarity ? rarity.color : "#FFFFFF");
+
+    // Si la fonction onSelectRarity est passée en prop, alors on l'appelle
+    if (onSelectRarity) {
+      onSelectRarity(value);
+    }
+  };
+
   return (
-    <Select
-      onValueChange={(value) => {
-        const rarity = data.rarities.find((item) => item.rarity === value);
-        setSelectedColor(rarity ? rarity.color : "#FFFFFF");
-      }}
-    >
+    <Select onValueChange={handleValueChange} defaultValue={selectedRarity}>
       <SelectTrigger
-        className="inline-flex items-center gap-1 w-auto min-w-max px-4 py-2"
+        className={`inline-flex items-center gap-1 w-auto min-w-max px-4 py-2 ${rounded ? "rounded-full" : ""}`}
         style={{ color: selectedColor }}
       >
-        <SelectValue placeholder="Select a badge rarity" />
+        <SelectValue placeholder="Select" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Badge Rarity</SelectLabel>
-          {data.rarities.map((item) => (
+          {filteredRarities.map((item) => (
             <SelectItem
               key={item.rarity}
               value={item.rarity}
