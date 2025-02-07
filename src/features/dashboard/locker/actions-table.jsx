@@ -12,38 +12,40 @@ export default function ActionsTable({
   return (
     <>
       {!isEditing ? (
-        <Button
-          variant="transparent"
-          className="p-0 hover:text-primary hover:scale-150"
-          onClick={() => onEdit(contract)}
-        >
-          <Pencil />
-        </Button>
-      ) : (
         <>
           <Button
             variant="transparent"
             className="p-0 hover:text-primary hover:scale-150"
+            onClick={() => onEdit(contract)}
+          >
+            <Pencil />
+          </Button>
+          <Button
+            variant="transparent"
+            className="p-0 hover:text-destructive hover:scale-150"
+            onClick={onDelete}
+          >
+            <Trash2 />
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button
+            variant="transparent"
+            className="p-0 hover:text-accent hover:scale-150"
             onClick={onSave}
           >
             <Check />
           </Button>
           <Button
             variant="transparent"
-            className="p-0 hover:text-primary hover:scale-150"
+            className="p-0 hover:text-destructive hover:scale-150"
             onClick={onCancel}
           >
             <X />
           </Button>
         </>
       )}
-      <Button
-        variant="transparent"
-        className="p-0 hover:text-primary hover:scale-150"
-        onClick={onDelete}
-      >
-        <Trash2 />
-      </Button>
     </>
   );
 }

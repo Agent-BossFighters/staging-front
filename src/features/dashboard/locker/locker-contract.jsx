@@ -14,29 +14,37 @@ import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
 import ActionsTable from "./actions-table";
 import { Button } from "@ui/button";
 import { Plus } from "lucide-react";
-import { getData, postData, putData, deleteData } from "@utils/api/data";
+import { postData, deleteData } from "@utils/api/data";
 import { Contract } from "@img/index";
-import { handleSelectRarity } from "@/shared/hook/rarity";
+import {
+  handleSelectRarity,
+  handleSelectRarityForEdit,
+} from "@shared/hook/rarity";
+import { useContracts } from "./hook/useContracts";
+import { useEditContract } from "./hook/useEditContract";
 
 export default function LockerContract() {
-  const [contracts, setContracts] = useState([]);
+  const { contracts, setContracts, loading, fetchMyContracts } = useContracts();
+  const {
+    editingContractId,
+    editedRarity,
+    editedName,
+    editedIssueId,
+    editedPurchasePrice,
+    setEditedName,
+    setEditedRarity,
+    setEditedIssueId,
+    setEditedPurchasePrice,
+    handleEdit,
+    handleSave,
+    handleCancel,
+  } = useEditContract(setContracts);
   const [selectedContract, setSelectedContract] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [issueId, setIssueId] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
 
-  const [editingContractId, setEditingContractId] = useState(null);
-  const [editedRarity, setEditedRarity] = useState("");
-  const [editedIssueId, setEditedIssueId] = useState("");
-  const [editedPurchasePrice, setEditedPurchasePrice] = useState("");
-
   useEffect(() => {
-    async function fetchMyContracts() {
-      const data = await getData("/v1/showrunner_contracts/owned");
-      setLoading(true);
-      setContracts(data ? data : []);
-      setLoading(false);
-    }
     fetchMyContracts();
   }, []);
 
@@ -55,10 +63,7 @@ export default function LockerContract() {
     setLoading(true);
     const response = await postData("/v1/nfts/create", payload);
     if (response && response.nft) {
-      setContracts((prevContracts) => [
-        ...prevContracts,
-        { nft_contract: response.nft },
-      ]);
+      setContracts((prevContracts) => [...prevContracts, response.nft]);
       setIssueId("");
       setPurchasePrice("");
       setSelectedContract(null);
@@ -70,53 +75,13 @@ export default function LockerContract() {
     const response = await deleteData(`/v1/nfts/${contractId}`);
     if (response) {
       setContracts((prevContracts) =>
-        prevContracts.filter(
-          (contractData) => contractData.nft_contract.id !== contractId,
-        ),
+        prevContracts.filter((contractData) => contractData.id !== contractId),
       );
     }
-  };
-
-  const handleEdit = (contract) => {
-    setEditingContractId(contract.id);
-    setEditedRarity(contract.rarity.name);
-    setEditedIssueId(contract.issueId);
-    setEditedPurchasePrice(contract.purchasePrice);
-  };
-
-  const handleSave = async () => {
-    const updatedContract = {
-      issueId: editedIssueId,
-      purchasePrice: editedPurchasePrice,
-    };
-
-    const response = await putData(
-      `/v1/nfts/${editingContractId}`,
-      updatedContract,
-    );
-
-    if (response.success) {
-      setContracts((prevContracts) =>
-        prevContracts.map((contractData) =>
-          contractData.nft_contract.id === editingContractId
-            ? { ...contractData, nft_contract: updatedContract }
-            : contractData,
-        ),
-      );
-      setEditingContractId(null); // Sortir du mode édition
-    } else {
-      console.error("Failed to update contract");
-    }
-  };
-  const handleCancel = () => {
-    setEditingContractId(null);
-    setEditedRarity("");
-    setEditedIssueId("");
-    setEditedPurchasePrice("");
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="text-center">Loading...</div>;
   }
 
   return (
@@ -138,10 +103,7 @@ export default function LockerContract() {
         </TableHeader>
         <TableBody className="overflow-y-auto">
           {contracts.length > 0 ? (
-            contracts.map((contractData, index) => {
-              console.log(contractData);
-              console.log("editedRarity", editedRarity);
-              const contract = contractData.nft_contract;
+            contracts.map((contract, index) => {
               const isEditing = contract.id === editingContractId;
 
               return (
@@ -149,7 +111,10 @@ export default function LockerContract() {
                   <TableCell style={{ color: contract.rarity.color }}>
                     {isEditing ? (
                       <SelectSlot
-                        onSelectRarity={(rarity) => setEditedRarity(rarity)}
+                        onSelectRarity={(rarity) => {
+                          setEditedRarity(rarity);
+                          handleSelectRarityForEdit(setEditedName, rarity);
+                        }}
                         selectedRarity={editedRarity}
                         limitRarity="Mythic"
                         rounded={true}
@@ -159,13 +124,20 @@ export default function LockerContract() {
                     )}
                   </TableCell>
                   <TableCell>
-                    {isEditing ? <p>{contract.name}</p> : contract.name}
+                    {isEditing ? <p>{editedName.name}</p> : contract.name}
                   </TableCell>
                   <TableCell>
                     {isEditing ? (
                       <Input
                         type="number"
                         value={editedIssueId}
+                        onInput={(e) => {
+                          e.target.value = e.target.value.replace(
+                            /[^0-9]/g,
+                            "",
+                          );
+                        }}
+                        className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         onChange={(e) => setEditedIssueId(e.target.value)}
                       />
                     ) : (
@@ -177,6 +149,13 @@ export default function LockerContract() {
                       <Input
                         type="number"
                         value={editedPurchasePrice}
+                        onInput={(e) => {
+                          e.target.value = e.target.value.replace(
+                            /[^0-9]/g,
+                            "",
+                          );
+                        }}
+                        className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         onChange={(e) => setEditedPurchasePrice(e.target.value)}
                       />
                     ) : (
@@ -198,7 +177,9 @@ export default function LockerContract() {
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={4}>No contract found</TableCell>
+              <TableCell colSpan={5} className="text-center">
+                No contract found
+              </TableCell>
             </TableRow>
           )}
         </TableBody>

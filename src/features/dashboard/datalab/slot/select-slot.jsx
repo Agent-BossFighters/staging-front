@@ -33,7 +33,6 @@ export default function SelectSlot({
     const rarity = data.rarities.find((item) => item.rarity === value);
     setSelectedColor(rarity ? rarity.color : "#FFFFFF");
 
-    // Si la fonction onSelectRarity est passée en prop, alors on l'appelle
     if (onSelectRarity) {
       onSelectRarity(value);
     }
