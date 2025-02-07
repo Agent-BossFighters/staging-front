@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from 'react-router-dom';
 import { cn } from "@/utils/lib/utils";
+import { Playermap } from "@img/index";
 
 const Card = React.forwardRef(({ 
   className,
@@ -12,7 +13,7 @@ const Card = React.forwardRef(({
   backgroundImage,
   backgroundClassName,
   icon,
-  iconClassName = "w-[110px] h-[110px] object-contain",
+  iconClassName = "w-28 h-28 object-contain",
   children,
   ...props 
 }, ref) => {
@@ -54,21 +55,24 @@ const Card = React.forwardRef(({
             <img
               src={icon}
               alt=""
-              className={iconClassName}
+              className={cn(
+                iconClassName,
+                icon === Playermap ? 'scale-125' : ''
+              )}
             />
           </div>
         )}
         {children}
-        <div className="relative flex h-full z-10 p-[20px_30px] gap-2">
+        <div className="relative flex h-full z-10 p-8 gap-2">
           <div className="flex flex-col justify-end h-full">
             <div>
               {title && (
-                <h2 className="text-[#FFD32A] font-bold text-[25px] leading-[38px] tracking-wide mb-2">
+                <h2 className="text-[#FFD32A] font-bold text-4xl leading-10 tracking-wide mb-2">
                   {title}
                 </h2>
               )}
               {description && (
-                <p className="text-gray-300 text-[12px] leading-[19px] font-normal">
+                <p className="text-gray-300 text-sm leading-5 font-normal">
                   {description}
                 </p>
               )}

@@ -12,11 +12,8 @@ import PlayerMapCard from "./player-map-card";
 
 export function CardsGrid() {
   return (
-    <div className="p-4">
+    <div className="hidden lg:block p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-[20px] lg:hidden">
-          <XPProgress />
-        </div>
         <div className="grid grid-cols-3 grid-rows-8 gap-[20px]">
           <div className="row-span-6">
             <LockerCard />
