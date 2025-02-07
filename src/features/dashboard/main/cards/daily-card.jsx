@@ -12,7 +12,7 @@ export default function DailyCard() {
       pattern={RewardsPattern2}
       patternClassName="opacity-40"
       icon={Vector}
-      iconClassName="w-[200px] h-[200px] object-contain"
+      iconClassName="w-[220px] h-[220px] object-contain"
     />
   );
 }

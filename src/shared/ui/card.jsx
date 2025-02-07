@@ -68,7 +68,7 @@ const Card = React.forwardRef(({
                 </h2>
               )}
               {description && (
-                <p className="text-gray-300 text-[15px] leading-[19px] font-normal">
+                <p className="text-gray-300 text-[12px] leading-[19px] font-normal">
                   {description}
                 </p>
               )}
