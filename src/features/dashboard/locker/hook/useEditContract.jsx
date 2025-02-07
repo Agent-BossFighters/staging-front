@@ -9,8 +9,6 @@ export const useEditContract = (setContracts) => {
   const [editedPurchasePrice, setEditedPurchasePrice] = useState("");
 
   const handleEdit = (contract) => {
-    console.log("editing contract", contract);
-    console.log("editing contract name", contract.name);
     setEditingContractId(contract.id);
     setEditedRarity(contract.rarity.name);
     setEditedName(contract);
@@ -19,7 +17,6 @@ export const useEditContract = (setContracts) => {
   };
 
   const handleSave = async () => {
-    console.log("edited name", editedName);
     const updatedContract = {
       issueId: editedIssueId,
       itemId: editedName.itemId,
