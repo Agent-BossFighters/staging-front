@@ -3,13 +3,15 @@ import React from "react";
 import { Card } from "@ui/card";
 import { RewardsPattern1, TvTools } from "@img/index";
 
-export default function TvToolsCard(props) {
+export default function TvToolsCard() {
   return (
     <Card 
+      title="TV TOOLS"
+      description="BE OVERLAY & COMMANDS"
+      path="/dashboard/tv-tools"
       pattern={RewardsPattern1}
       patternClassName="opacity-40"
-      rightIcon={TvTools}
-      {...props}
+      icon={TvTools}
     />
   );
 }

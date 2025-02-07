@@ -11,8 +11,8 @@ const Card = React.forwardRef(({
   patternClassName,
   backgroundImage,
   backgroundClassName,
-  rightIcon,
-  rightIconClassName = "w-24 h-24 object-contain",
+  icon,
+  iconClassName = "w-[110px] h-[110px] object-contain",
   children,
   ...props 
 }, ref) => {
@@ -49,26 +49,26 @@ const Card = React.forwardRef(({
             style={{ backgroundImage: `url(${backgroundImage})` }}
           />
         )}
-        {rightIcon && (
-          <div className="absolute right-8 top-1/2 -translate-y-1/2">
+        {icon && (
+          <div className="absolute right-5 top-5">
             <img
-              src={rightIcon}
+              src={icon}
               alt=""
-              className={rightIconClassName}
+              className={iconClassName}
             />
           </div>
         )}
         {children}
-        <div className="relative flex h-full z-10 p-6">
+        <div className="relative flex h-full z-10 p-[20px_30px] gap-2">
           <div className="flex flex-col justify-end h-full">
             <div>
               {title && (
-                <h2 className="text-[#FFD32A] font-bold text-[20px] leading-[24px] tracking-wide mb-1">
+                <h2 className="text-[#FFD32A] font-bold text-[25px] leading-[38px] tracking-wide mb-2">
                   {title}
                 </h2>
               )}
               {description && (
-                <p className="text-gray-300 text-[10px] leading-[14px] font-normal">
+                <p className="text-gray-300 text-[15px] leading-[19px] font-normal">
                   {description}
                 </p>
               )}
