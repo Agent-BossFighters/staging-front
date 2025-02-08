@@ -100,10 +100,9 @@ export default function LockerBadges() {
           {badges.length > 0 ? (
             badges.map((badge, index) => {
               const isEditing = badge.id === editingBadgeId;
-              console.log(badge);
 
               return (
-                <TableRow key={index}>
+                <TableRow key={index} className="">
                   <TableCell style={{ color: badge.rarity.color }}>
                     {isEditing ? (
                       <SelectSlot
