@@ -2,7 +2,7 @@ import { Button } from "@ui/button";
 import { Pencil, Trash2, Check, X } from "lucide-react";
 
 export default function ActionsTable({
-  contract,
+  data,
   onEdit,
   onDelete,
   isEditing,
@@ -16,7 +16,7 @@ export default function ActionsTable({
           <Button
             variant="transparent"
             className="p-0 hover:text-primary hover:scale-150"
-            onClick={() => onEdit(contract)}
+            onClick={() => onEdit(data)}
           >
             <Pencil />
           </Button>
