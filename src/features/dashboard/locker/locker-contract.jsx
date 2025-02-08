@@ -24,7 +24,8 @@ import { useContracts } from "./hook/useContracts";
 import { useEditContract } from "./hook/useEditContract";
 
 export default function LockerContract() {
-  const { contracts, setContracts, loading, fetchMyContracts } = useContracts();
+  const { contracts, setContracts, loading, setLoading, fetchMyContracts } =
+    useContracts();
   const {
     editingContractId,
     editedRarity,
@@ -40,7 +41,6 @@ export default function LockerContract() {
     handleCancel,
   } = useEditContract(setContracts);
   const [selectedContract, setSelectedContract] = useState(null);
-  const [, setLoading] = useState(false);
   const [issueId, setIssueId] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
 
@@ -167,7 +167,7 @@ export default function LockerContract() {
                   </TableCell>
                   <TableCell className="flex gap-2 items-center">
                     <ActionsTable
-                      contract={contract}
+                      data={contract}
                       onEdit={handleEdit}
                       onDelete={() => handleDelete(contract.id)}
                       onSave={handleSave}

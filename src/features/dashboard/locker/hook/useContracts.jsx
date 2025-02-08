@@ -15,5 +15,5 @@ export const useContracts = () => {
     }
     setLoading(false);
   };
-  return { contracts, setContracts, loading, fetchMyContracts };
+  return { contracts, setContracts, loading, setLoading, fetchMyContracts };
 };
