@@ -1,6 +1,9 @@
 import { getData } from "@utils/api/data";
 
-export const handleSelectRarity = async (setSelectedContract, rarity) => {
+export const handleSelectRarityContract = async (
+  setSelectedContract,
+  rarity,
+) => {
   const payload = await getData("/v1/showrunner_contracts");
   const contracts = payload.contracts;
   if (!contracts || contracts.length === 0) {
@@ -18,7 +21,10 @@ export const handleSelectRarity = async (setSelectedContract, rarity) => {
   setSelectedContract(contract ? contract : null);
 };
 
-export const handleSelectRarityForEdit = async (setEditedName, rarity) => {
+export const handleSelectRarityContractForEdit = async (
+  setEditedName,
+  rarity,
+) => {
   const payload = await getData("/v1/showrunner_contracts");
   const contracts = payload.contracts;
 

@@ -17,8 +17,8 @@ import { Plus } from "lucide-react";
 import { postData, deleteData } from "@utils/api/data";
 import { Contract } from "@img/index";
 import {
-  handleSelectRarity,
-  handleSelectRarityForEdit,
+  handleSelectRarityContract,
+  handleSelectRarityContractForEdit,
 } from "@shared/hook/rarity";
 import { useContracts } from "./hook/useContracts";
 import { useEditContract } from "./hook/useEditContract";
@@ -113,7 +113,10 @@ export default function LockerContract() {
                       <SelectSlot
                         onSelectRarity={(rarity) => {
                           setEditedRarity(rarity);
-                          handleSelectRarityForEdit(setEditedName, rarity);
+                          handleSelectRarityContractForEdit(
+                            setEditedName,
+                            rarity,
+                          );
                         }}
                         selectedRarity={editedRarity}
                         limitRarity="Mythic"
@@ -188,7 +191,7 @@ export default function LockerContract() {
             <TableCell>
               <SelectSlot
                 onSelectRarity={(rarity) =>
-                  handleSelectRarity(setSelectedContract, rarity)
+                  handleSelectRarityContract(setSelectedContract, rarity)
                 }
                 limitRarity="Mythic"
                 rounded={true}
