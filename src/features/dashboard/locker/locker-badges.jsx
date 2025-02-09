@@ -18,10 +18,12 @@ import { postData, deleteData } from "@utils/api/data";
 import {
   handleSelectRarityBadges,
   handleSelectRarityBadgeForEdit,
+  getRarityOrder,
 } from "@shared/hook/rarity";
 import { useBadges } from "./hook/useBadges";
 import { useEditBadge } from "./hook/useEditBadge";
 import { BadgeCommon } from "@img/index";
+import { useUserPreference } from "@context/userPreference.context";
 
 export default function LockerBadges() {
   const { badges, setBadges, loading, setLoading, fetchMyBadges } = useBadges();
@@ -42,10 +44,15 @@ export default function LockerBadges() {
   const [issueId, setIssueId] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
   const [selectedBadge, setSelectedBadge] = useState(null);
+  const { maxRarity } = useUserPreference();
 
   useEffect(() => {
     fetchMyBadges();
   }, []);
+
+  const filteredBadges = badges.filter(
+    (badge) => getRarityOrder(badge.rarity.name) <= getRarityOrder(maxRarity),
+  );
 
   const handleSubmit = async () => {
     if (!selectedBadge || !issueId || !purchasePrice) {
@@ -101,8 +108,8 @@ export default function LockerBadges() {
           </TableRow>
         </TableHeader>
         <TableBody className="overflow-y-auto">
-          {badges.length > 0 ? (
-            badges.map((badge, index) => {
+          {filteredBadges.length > 0 ? (
+            filteredBadges.map((badge, index) => {
               const isEditing = badge.id === editingBadgeId;
 
               return (
@@ -115,7 +122,7 @@ export default function LockerBadges() {
                           handleSelectRarityBadgeForEdit(setEditedName, rarity);
                         }}
                         selectedRarity={editedRarity}
-                        limitRarity="Mythic"
+                        limitRarity="Exalted"
                         rounded={true}
                       />
                     ) : (
@@ -189,7 +196,7 @@ export default function LockerBadges() {
                 onSelectRarity={(rarity) =>
                   handleSelectRarityBadges(setSelectedBadge, rarity)
                 }
-                limitRarity="Mythic"
+                limitRarity="Exalted"
                 rounded={true}
               />
             </TableCell>

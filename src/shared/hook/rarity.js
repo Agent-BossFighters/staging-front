@@ -1,4 +1,5 @@
 import { getData } from "@utils/api/data";
+import data from "@shared/data/rarities.json";
 
 export const handleSelectRarityContract = async (
   setSelectedContract,
@@ -86,4 +87,9 @@ export const handleSelectRarityBadgeForEdit = async (setEditedName, rarity) => {
   badge.itemId = badge.id;
 
   setEditedName(badge ? badge : "");
+};
+
+export const getRarityOrder = (rarity) => {
+  const raritiesData = data.rarities.find((item) => item.rarity === rarity);
+  return raritiesData ? raritiesData.order : Infinity;
 };
