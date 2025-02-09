@@ -21,6 +21,7 @@ import {
 } from "@shared/hook/rarity";
 import { useBadges } from "./hook/useBadges";
 import { useEditBadge } from "./hook/useEditBadge";
+import { BadgeCommon } from "@img/index";
 
 export default function LockerBadges() {
   const { badges, setBadges, loading, setLoading, fetchMyBadges } = useBadges();
@@ -84,7 +85,10 @@ export default function LockerBadges() {
 
   return (
     <div>
-      <h2 className="text-3xl font-extrabold py-2">{/* Icon */}BADGE(S)</h2>
+      <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
+        <img src={BadgeCommon} alt="Badge" className="w-10 h-10" />
+        BADGE(S)
+      </h2>
       <Table className="">
         <TableCaption>Desc ?</TableCaption>
         <TableHeader>

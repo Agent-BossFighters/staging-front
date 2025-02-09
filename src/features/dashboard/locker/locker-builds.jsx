@@ -16,6 +16,7 @@ import ActionsTable from "./actions-table";
 import { postData, deleteData } from "@utils/api/data";
 import { useBuilds } from "./hook/useBuilds";
 import { useEditBuild } from "./hook/useEditBuild";
+import { GreenFighter } from "@img/index";
 
 export default function Lockerbuilds() {
   const { builds, setBuilds, loading, setLoading, fetchMyBuilds } = useBuilds();
@@ -77,7 +78,10 @@ export default function Lockerbuilds() {
 
   return (
     <div className="lg:h-1/2">
-      <h2 className="text-3xl font-extrabold py-2">{/* Icon */}BUILD(S)</h2>
+      <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
+        <img src={GreenFighter} alt="Build" className="w-10 h-10" />
+        BUILD(S)
+      </h2>
       <Table className="">
         <TableCaption>Desc ?</TableCaption>
         <TableHeader>
