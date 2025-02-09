@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@ui/select";
 import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
+import { Contract } from "@img/index";
 
 const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
 
@@ -18,7 +19,10 @@ export default function Tatics() {
 
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="text-3xl font-extrabold py-2">{/* Icon */}MY TACTICS</h2>
+      <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
+        <img src={Contract} alt="contract" className="w-10 h-10" />
+        MY TACTICS
+      </h2>
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-9">
         <div className="flex flex-col">
           <h3 className="text-xl font-bold whitespace-nowrap">

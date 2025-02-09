@@ -19,3 +19,6 @@ export { default as TimeToken } from "./time-token.png";
 export { default as Token2 } from "./token2.png";
 export { default as Token3 } from "./token3.png";
 export { default as Token4 } from "./token4.png";
+export { default as GreenFighter } from "./green_fighter.png";
+export { default as Pin } from "./pin.png";
+export { default as BadgeCommon } from "./Badge_Common.png";
