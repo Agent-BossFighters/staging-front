@@ -17,16 +17,13 @@ export default function SelectSlot({
   selectedRarity,
 }) {
   const [selectedColor, setSelectedColor] = useState("#FFFFFF");
+  const rarityOrderMap = Object.fromEntries(
+    data.rarities.map(({ rarity, order }) => [rarity, order]),
+  );
 
   const filteredRarities = data.rarities.filter((item) => {
     if (!limitRarity) return true;
-    return (
-      item.rarity !== limitRarity &&
-      data.rarities.indexOf(item) <=
-        data.rarities.indexOf(
-          data.rarities.find((r) => r.rarity === limitRarity),
-        )
-    );
+    return rarityOrderMap[item.rarity] <= rarityOrderMap[limitRarity];
   });
 
   const handleValueChange = (value) => {

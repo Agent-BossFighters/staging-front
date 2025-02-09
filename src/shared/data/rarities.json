@@ -2,43 +2,53 @@
   "rarities": [
     {
       "rarity": "Common",
-      "color": "#858F9B"
+      "color": "#858F9B",
+      "order": 1
     },
     {
       "rarity": "Uncommon",
-      "color": "#1CBF6A"
+      "color": "#1CBF6A",
+      "order": 2
     },
     {
       "rarity": "Rare",
-      "color": "#159CFD"
+      "color": "#159CFD",
+      "order": 3
     },
     {
       "rarity": "Epic",
-      "color": "#A369FF"
+      "color": "#A369FF",
+      "order": 4
     },
     {
       "rarity": "Legendary",
-      "color": "#E67E22"
+      "color": "#E67E22",
+      "order": 5
     },
     {
       "rarity": "Mythic",
-      "color": "#FFD32A"
+      "color": "#FFD32A",
+      "order": 6
     },
     {
       "rarity": "Exalted",
-      "color": "#EF5777"
+      "color": "#EF5777",
+      "order": 7
     },
     {
       "rarity": "Exotic",
-      "color": "#BE2EDD"
+      "color": "#BE2EDD",
+      "order": 8
     },
     {
       "rarity": "Transcendent",
-      "color": "#FF3838"
+      "color": "#FF3838",
+      "order": 9
     },
     {
       "rarity": "Unique",
-      "color": "#F368E0"
+      "color": "#F368E0",
+      "order": 10
     }
   ]
 }

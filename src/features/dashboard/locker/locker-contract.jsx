@@ -19,9 +19,11 @@ import { Contract } from "@img/index";
 import {
   handleSelectRarityContract,
   handleSelectRarityContractForEdit,
+  getRarityOrder,
 } from "@shared/hook/rarity";
 import { useContracts } from "./hook/useContracts";
 import { useEditContract } from "./hook/useEditContract";
+import { useUserPreference } from "@context/userPreference.context";
 
 export default function LockerContract() {
   const { contracts, setContracts, loading, setLoading, fetchMyContracts } =
@@ -43,10 +45,16 @@ export default function LockerContract() {
   const [selectedContract, setSelectedContract] = useState(null);
   const [issueId, setIssueId] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
+  const { maxRarity } = useUserPreference();
 
   useEffect(() => {
     fetchMyContracts();
   }, []);
+
+  const filteredContracts = contracts.filter(
+    (contract) =>
+      getRarityOrder(contract.rarity.name) <= getRarityOrder(maxRarity),
+  );
 
   const handleSubmit = async () => {
     if (!selectedContract || !issueId || !purchasePrice) {
@@ -102,8 +110,8 @@ export default function LockerContract() {
           </TableRow>
         </TableHeader>
         <TableBody className="overflow-y-auto">
-          {contracts.length > 0 ? (
-            contracts.map((contract, index) => {
+          {filteredContracts.length > 0 ? (
+            filteredContracts.map((contract, index) => {
               const isEditing = contract.id === editingContractId;
 
               return (
@@ -119,7 +127,7 @@ export default function LockerContract() {
                           );
                         }}
                         selectedRarity={editedRarity}
-                        limitRarity="Mythic"
+                        limitRarity="Exalted"
                         rounded={true}
                       />
                     ) : (
@@ -193,7 +201,7 @@ export default function LockerContract() {
                 onSelectRarity={(rarity) =>
                   handleSelectRarityContract(setSelectedContract, rarity)
                 }
-                limitRarity="Mythic"
+                limitRarity="Exalted"
                 rounded={true}
               />
             </TableCell>

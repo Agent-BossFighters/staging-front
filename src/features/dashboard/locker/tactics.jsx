@@ -10,10 +10,12 @@ import {
 } from "@ui/select";
 import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
 import { Contract } from "@img/index";
+import { useUserPreference } from "@context/userPreference.context";
 
 const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
 
 export default function Tatics() {
+  const { maxRarity, setMaxRarity } = useUserPreference();
   const [selectedValue, setSelectedValue] = useState(numbers[0].toString());
   const [selectedValue1, setSelectedValue1] = useState(numbers[0].toString());
 
@@ -28,7 +30,7 @@ export default function Tatics() {
           <h3 className="text-xl font-bold whitespace-nowrap">
             MAX ITEM RARITY TO SHOW
           </h3>
-          <SelectSlot />
+          <SelectSlot onSelectRarity={(value) => setMaxRarity(value)} />
         </div>
         <div className="flex flex-col">
           <h3 className="text-xl font-bold whitespace-nowrap">
