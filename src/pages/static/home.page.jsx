@@ -1,4 +1,4 @@
-import { AgentLogo } from "@img/index";
+import { AgentLogo, Thp, Intuition, Alchemists } from "@img/index";
 export default function HomePage() {
   return (
     <div className="">
@@ -25,28 +25,37 @@ export default function HomePage() {
           Studio) to help improve and develop the game and the community.
         </p>
       </div>
-      {/* THP LOGO */}
-      <p className="my-5 border-b border-border/50 py-2">
-        In partnership with the decentralized training center{" "}
-        <span className="font-bold">&#34;The Hacking Project&#34;</span> alias
-        THP, students will be asked to develop functionalities for their
-        internship to validate their training.
-      </p>
-      {/* Intuition LOGO */}
-      <p className="my-5 border-b border-border/50 py-2">
-        New unprecedented features in gaming via{" "}
-        <span className="font-bold">&#34;Intuition&#34;</span>
-        &nbsp;partnership, a decentralized technology that enables users to
-        create attestations on any subject, stored in a navigable, searchable
-        and verifiable way.
-      </p>
-      {/* Alchemist LOGO */}
-      <p className="my-5 border-b border-border/50 py-2">
-        <span className="font-bold">&#34;The Alchemist&#34;</span> as Agent
-        ambassador guild, it will help collect in-game information, test and use
-        features on stream to guarantee the platform quality and give feedback
-        to improve the product.
-      </p>
+      <div className="my-5 flex flex-col gap-5 items-center border-b border-border/50 py-2 text-start">
+        <img src={Thp} alt="THP" className="" />
+        <p className="">
+          In partnership with the decentralized training center{" "}
+          <span className="font-bold">&#34;The Hacking Project&#34;</span> alias
+          THP, students will be asked to develop functionalities for their
+          internship to validate their training.
+        </p>
+      </div>
+      <div className="my-5 flex flex-col gap-5 items-center border-b border-border/50 py-2 text-start">
+        <div className="flex items-center gap-2">
+          <img src={Intuition} alt="Intuition" className="" />
+          <h3 className="font-extrabold text-center text-3xl">Intuition</h3>
+        </div>
+        <p className="">
+          New unprecedented features in gaming via{" "}
+          <span className="font-bold">&#34;Intuition&#34;</span>
+          &nbsp;partnership, a decentralized technology that enables users to
+          create attestations on any subject, stored in a navigable, searchable
+          and verifiable way.
+        </p>
+      </div>
+      <div className="my-5 flex flex-col gap-5 items-center border-b border-border/50 py-2 text-start">
+        <img src={Alchemists} alt="Alchemists" className="" />
+        <p className="">
+          <span className="font-bold">&#34;The Alchemist&#34;</span> as Agent
+          ambassador guild, it will help collect in-game information, test and
+          use features on stream to guarantee the platform quality and give
+          feedback to improve the product.
+        </p>
+      </div>
       <h3 className="font-extrabold text-center">
         Let&#39;s build tomorrow&#39;s success together !
       </h3>

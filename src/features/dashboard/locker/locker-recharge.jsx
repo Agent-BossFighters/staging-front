@@ -10,6 +10,8 @@ import {
 import { Button } from "@ui/button";
 import { Pencil } from "lucide-react";
 
+const discountPercent = ["5", "9", "10", "13", "16", "20", "25"];
+
 export default function LockerBadges() {
   return (
     <div className="flex lg:gap-5 lg:h-1/2">
@@ -27,54 +29,20 @@ export default function LockerBadges() {
             </TableRow>
           </TableHeader>
           <TableBody className="overflow-y-auto">
-            <TableRow>
-              <TableCell>$250.00</TableCell>
-              <TableCell>$250.00</TableCell>
-              <TableCell className="flex items-center justify-center gap-2">
-                <Button
-                  variant="transparent"
-                  className="hover:text-primary hover:scale-150"
-                >
-                  <Pencil />
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>$250.00</TableCell>
-              <TableCell>$250.00</TableCell>
-              <TableCell className="flex items-center justify-center gap-2">
-                <Button
-                  variant="transparent"
-                  className="p-0 hover:text-primary hover:scale-150"
-                >
-                  <Pencil />
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>$250.00</TableCell>
-              <TableCell>$250.00</TableCell>
-              <TableCell className="flex items-center justify-center gap-2">
-                <Button
-                  variant="transparent"
-                  className="hover:text-primary hover:scale-150"
-                >
-                  <Pencil />
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>$250.00</TableCell>
-              <TableCell>$250.00</TableCell>
-              <TableCell className="flex items-center justify-center gap-2">
-                <Button
-                  variant="transparent"
-                  className="hover:text-primary hover:scale-150"
-                >
-                  <Pencil />
-                </Button>
-              </TableCell>
-            </TableRow>
+            {discountPercent.map((discount, index) => (
+              <TableRow key={index}>
+                <TableCell>{discount} %</TableCell>
+                <TableCell>1</TableCell>
+                <TableCell className="">
+                  <Button
+                    variant="transparent"
+                    className="hover:text-primary hover:scale-150"
+                  >
+                    <Pencil />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

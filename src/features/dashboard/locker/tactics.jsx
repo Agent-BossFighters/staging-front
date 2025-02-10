@@ -15,7 +15,7 @@ import { useUserPreference } from "@context/userPreference.context";
 const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
 
 export default function Tatics() {
-  const { maxRarity, setMaxRarity } = useUserPreference();
+  const { setMaxRarity } = useUserPreference();
   const [selectedValue, setSelectedValue] = useState(numbers[0].toString());
   const [selectedValue1, setSelectedValue1] = useState(numbers[0].toString());
 
