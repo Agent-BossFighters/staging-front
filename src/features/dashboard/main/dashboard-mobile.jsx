@@ -7,11 +7,11 @@ const MobileCard = ({ title, description, icon, pattern }) => (
     <img 
       src={pattern} 
       alt="" 
-      className="absolute inset-0 w-full h-full opacity-40"
+      className="absolute inset-0 w-full h-full"
     />
     <div className="flex items-center gap-4 relative z-10">
       <img 
-        src={icon} 
+        src={icon}
         alt="" 
         className={`w-16 h-16 object-contain ${icon === Playermap ? 'scale-125' : ''}`}
       />
