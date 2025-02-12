@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,10 +9,21 @@ import {
   TableRow,
 } from "@ui/table";
 import data from "@shared/data/rarities.json";
+import { useCrafts } from "./hook/useCrafts";
+import { getValue } from "../hook/value";
 
 const rarity = data.rarities;
 
 export default function Badges() {
+  const { crafts, loading, fetchCrafts } = useCrafts();
+  console.log("crafts", crafts);
+
+  useEffect(() => {
+    fetchCrafts();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
   return (
     <>
       <h2 className="text-3xl font-extrabold py-2">
@@ -31,24 +43,36 @@ export default function Badges() {
           </TableRow>
         </TableHeader>
         <TableBody className="">
-          {rarity.map((item) => (
-            <TableRow key={item.rarity}>
-              <TableCell className="p-2 text-center">
-                <p
-                  className="border-2 rounded-2xl p-1"
-                  style={{ borderColor: item.color }}
-                >
-                  {item.rarity}
-                </p>
-              </TableCell>
-              <TableCell>$250.00</TableCell>
-              <TableCell>$250.00</TableCell>
-              <TableCell>$250.00</TableCell>
-              <TableCell>$250.00</TableCell>
-              <TableCell className="text-accent">$250.00</TableCell>
-              <TableCell className="text-accent">$250.00</TableCell>
-            </TableRow>
-          ))}
+          {rarity.map((rarityItem) => {
+            const craft = crafts.find(
+              (c) => c["1. rarity"] === rarityItem.rarity,
+            );
+
+            return (
+              <TableRow key={rarityItem.rarity}>
+                <TableCell className="p-2 text-center">
+                  <p
+                    className="border-2 rounded-2xl p-1"
+                    style={{ borderColor: rarityItem.color }}
+                  >
+                    {rarityItem.rarity}
+                  </p>
+                </TableCell>
+                <TableCell>{getValue(craft, "2. supply")}</TableCell>
+                <TableCell>
+                  {getValue(craft, "3. nb_previous_rarity_item")}
+                </TableCell>
+                <TableCell>{getValue(craft, "4. flex_craft")}</TableCell>
+                <TableCell>{getValue(craft, "5. flex_craft_cost")}</TableCell>
+                <TableCell className="text-accent">
+                  {getValue(craft, "6. sp_marks_craft")}
+                </TableCell>
+                <TableCell className="text-accent">
+                  {getValue(craft, "7. sp_marks_value")}
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </>
