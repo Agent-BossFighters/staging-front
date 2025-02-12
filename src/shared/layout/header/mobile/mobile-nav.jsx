@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import MobileMenu from "./mobile-menu";
 import { A } from "@img/index";
+import { useAuth } from "@context/auth.context";
+import { Button } from "@shared/ui/button";
+import { Bot } from "lucide-react";
 
 export default function MobileNav() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
-    { path: "/dashboard", label: "Dashboard" },
+    { path: "/dashboard", label: "Dashboard", requiresAuth: true },
     { path: "/economy", label: "Economy" },
   ];
 
@@ -38,9 +43,22 @@ export default function MobileNav() {
         <button onClick={() => setIsOpen(!isOpen)} className="z-50">
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-        <img src={A} alt="logo" className="h-full" />
-        {/* Create connextion / Avatar component */}
-        <div>Connection</div>
+        <Link to="/" className="h-full">
+          <img src={A} alt="logo" className="h-full" />
+        </Link>
+        {user ? (
+          <Link to="/users/profile" className="pr-4 text-md hover:text-primary">
+            {user.asset ? (
+              <img src={user.asset} alt={user.username} />
+            ) : (
+              <Bot size={24} className="text-primary" />
+            )}
+          </Link>
+        ) : (
+          <Link className="pr-4" to="users/login">
+            <Bot size={24} className="text-primary" />
+          </Link>
+        )}
       </div>
 
       <MobileMenu
