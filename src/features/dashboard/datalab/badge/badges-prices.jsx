@@ -19,6 +19,7 @@ export default function BadgesPrices({ badges, loading }) {
     return acc;
   }, {});
 
+  if (loading) return <div>Loading...</div>;
   const rows = [
     { label: "BADGE PRICE", key: "2. badge_price" },
     { label: "FULL RECHARGE PRICE", key: "3. full_recharge_price" },
