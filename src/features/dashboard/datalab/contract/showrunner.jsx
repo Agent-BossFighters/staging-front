@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,9 +9,20 @@ import {
   TableRow,
 } from "@ui/table";
 import data from "@shared/data/rarities.json";
-import contractData from "@shared/data/contract.json";
+import { useContracts } from "./hook/useContracts";
+import { getValue } from "../hook/value";
 
 export default function Showrunner() {
+  const { contracts, loading, fetchMyContracts } = useContracts();
+  const rarities = data.rarities;
+
+  useEffect(() => {
+    fetchMyContracts();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <>
       <h2 className="text-3xl font-extrabold py-2">
@@ -40,8 +52,12 @@ export default function Showrunner() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.rarities.map((rarityItem, index) => {
-            const contract = contractData.contracts[index]; // Récupération par index
+          {rarities.map((rarityItem) => {
+            console.log("contractData", contracts);
+            const contract = contracts.contracts.find(
+              (c) => c["1. rarity"] === rarityItem.rarity,
+            );
+            console.log("contract", contract);
 
             return (
               <TableRow key={rarityItem.rarity}>
@@ -53,33 +69,31 @@ export default function Showrunner() {
                     {rarityItem.rarity}
                   </p>
                 </TableCell>
-                <TableCell>{contract?.item || "N/A"}</TableCell>
+                <TableCell>{getValue(contract, "2. item")}</TableCell>
                 <TableCell className="text-destructive">
-                  {contract?.supply || "N/A"}
+                  {getValue(contract, "3. supply")}
+                </TableCell>
+                <TableCell>{getValue(contract, "4. floor_price")}</TableCell>
+                <TableCell>{getValue(contract, "5. lvl_max")}</TableCell>
+                <TableCell>{getValue(contract, "6. max_energy")}</TableCell>
+                <TableCell>{getValue(contract, "7. time_to_craft")}</TableCell>
+                <TableCell className="text-destructive">
+                  {getValue(contract, "8. nb_badges_required")}
+                </TableCell>
+                <TableCell className="text-destructive">
+                  {getValue(contract, "9. flex_craft")}
+                </TableCell>
+                <TableCell className="text-destructive">
+                  {getValue(contract, "10. sp_marks_craft")}
                 </TableCell>
                 <TableCell>
-                  {contract?.price ? `$${contract.price}` : "N/A"}
-                </TableCell>
-                <TableCell>{contract?.lvl || "N/A"}</TableCell>
-                <TableCell>{contract?.maxEnergy || "N/A"}</TableCell>
-                <TableCell>
-                  {contract?.timeToCraft ? `${contract.timeToCraft}h` : "N/A"}
+                  {getValue(contract, "11. time_to_charge")}
                 </TableCell>
                 <TableCell className="text-destructive">
-                  {contract?.nbBadges || "N/A"}
+                  {getValue(contract, "12. flex_charge")}
                 </TableCell>
                 <TableCell className="text-destructive">
-                  {contract?.flex || "N/A"}
-                </TableCell>
-                <TableCell className="text-destructive">
-                  {contract?.spMarks || "N/A"}
-                </TableCell>
-                <TableCell>{contract?.timeToCharge || "N/A"}</TableCell>
-                <TableCell className="text-destructive">
-                  {contract?.flexCharge || "N/A"}
-                </TableCell>
-                <TableCell className="text-destructive">
-                  {contract?.spMarksCharge || "N/A"}
+                  {getValue(contract, "13. sp_marks_charge")}
                 </TableCell>
               </TableRow>
             );
