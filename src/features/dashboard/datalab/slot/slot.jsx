@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -7,9 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-import data from "@shared/data/slot.json";
+import { getValue } from "../hook/value";
 
-export default function Slot() {
+export default function Slot({ slots, loading }) {
+  if (loading) return <div>Loading...</div>;
+
   return (
     <div className="pt-5">
       <h2 className="text-3xl font-extrabold py-2">{/* Icon */}SLOTS COST</h2>
@@ -26,14 +29,16 @@ export default function Slot() {
           </TableRow>
         </TableHeader>
         <TableBody className="">
-          {data.cost.map((item) => (
+          {slots.slots_cost.map((item) => (
             <TableRow key={item.slot}>
-              <TableCell>{item.slot}</TableCell>
-              <TableCell className="text-destructive">{item.nbFlex}</TableCell>
+              <TableCell>{getValue(item, "1. slot")}</TableCell>
               <TableCell className="text-destructive">
-                ${item.flexCost}
+                {getValue(item, "2. nb_flex")}
               </TableCell>
-              <TableCell>{item.bonus}</TableCell>
+              <TableCell className="text-destructive">
+                {getValue(item, "3. flex_cost")}
+              </TableCell>
+              <TableCell>{getValue(item, "4. bonus_bft")}&nbsp;%</TableCell>
               <TableCell>{item.normalPart}</TableCell>
               <TableCell>{item.bonusPart}</TableCell>
             </TableRow>

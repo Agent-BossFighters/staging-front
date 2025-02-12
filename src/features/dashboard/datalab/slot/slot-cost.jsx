@@ -9,7 +9,9 @@ import {
 } from "@ui/table";
 import data from "@shared/data/slot.json";
 
-export default function SlotCost() {
+export default function SlotCost({ slots, loading }) {
+  if (loading) return <div>Loading...</div>;
+
   return (
     <Table className="">
       <TableCaption>Desc ?</TableCaption>
