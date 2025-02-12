@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@ui/table";
 
-const levels = Array.from({ length: 15 }, (_, i) => i + 1);
+const levels = Array.from({ length: 30 }, (_, i) => i + 1);
 
 export default function Showrunner() {
   return (
@@ -24,11 +24,7 @@ export default function Showrunner() {
             {levels.map((level) => (
               <TableHead
                 key={level}
-                className={
-                  level === 1 || level === 5 || level === 10 || level === 15
-                    ? "text-primary"
-                    : ""
-                }
+                className={level === 1 || level % 5 === 0 ? "text-primary" : ""}
               >
                 {level}
               </TableHead>
