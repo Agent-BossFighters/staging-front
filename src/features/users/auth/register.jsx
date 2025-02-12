@@ -4,20 +4,31 @@ import { authSignInUp } from "@api/auth.api";
 import useForm from "@features/users/hook/useForm";
 
 export default function Register() {
-  const { values, errors, loading, handleChange, handleSubmit } = useForm({
-    username: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const { values, errors, loading, handleChange, handleSubmit } = useForm(
+    {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    "register",
+  );
 
   const handleRegister = async (data) => {
     if (data.password !== data.confirmPassword) {
       console.error("Les mots de passe ne correspondent pas");
       return;
     }
+    const payload = {
+      user: {
+        email: data.email,
+        username: data.username,
+        password: data.password,
+      },
+    };
 
     try {
-      const userData = await authSignInUp("/api/v1/signup", data);
+      const userData = await authSignInUp("/v1/signup", payload);
       console.log("Utilisateur enregistré:", userData);
     } catch (err) {
       console.error("Erreur d'enregistrement:", err);
@@ -30,7 +41,7 @@ export default function Register() {
         e.preventDefault();
         handleSubmit(handleRegister);
       }}
-      className="flex flex-col items-center justify-center gap-4 w-full"
+      className="flex flex-col items-center justify-center gap-10 w-full"
     >
       <Input
         type="text"
@@ -40,6 +51,14 @@ export default function Register() {
         onChange={handleChange}
       />
       {errors.username && <p className="text-red-500">{errors.username}</p>}
+      <Input
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={values.email}
+        onChange={handleChange}
+      />
+      {errors.email && <p className="text-red-500">{errors.email}</p>}
 
       <Input
         type="password"

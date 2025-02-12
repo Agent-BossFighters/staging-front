@@ -1,47 +1,86 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import Login from "@features/users/auth/login";
+import { useAuth } from "@context/auth.context";
+import { Avatar, AvatarFallback, AvatarImage } from "@shared/ui/avatar";
+import { Button } from "@shared/ui/button";
 import { Bot } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+} from "@ui/navigation-menu";
 
 export default function HeaderPart() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { user, isLoading, logout } = useAuth();
 
-  const handleMouseEnter = () => {
-    setIsOpen(true); // Ouvre le pop-up
-  };
-
-  const handleMouseLeave = () => {
-    setIsOpen(false); // Ferme le pop-up
-  };
+  if (isLoading) return null;
 
   return (
-    <div className="relative">
-      <Link
-        className="flex items-center gap-2 opacity-70 hover:opacity-100"
-        onMouseEnter={handleMouseEnter}
-        to="users/login"
-      >
-        <Bot size={32} className="text-primary" />
-        <span className="hidden md:block text-white translate-y-0.5">
-          Sign in
-        </span>
-      </Link>
-
-      {isOpen && (
-        <div
-          className="absolute top-10 right-0 w-96 p-5 bg-background border border-border rounded-lg"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <Login />
-          <div className="mt-5 text-end text-xs flex justify-end">
-            <p>Don&#39;t have an account?&nbsp;</p>
-            <Link to="/users/register" className="text-primary">
-              Sign up
-            </Link>
-          </div>
-        </div>
-      )}
-    </div>
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          {user ? (
+            <>
+              <NavigationMenuTrigger className="h-full flex items-center gap-4 p-2 ps-6 rounded-full border border-border/20 hover:bg-primary hover:text-background">
+                <p className="text-bold">{user.username.toUpperCase()}</p>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src={user.asset} alt={user.username} />
+                  <AvatarFallback className="bg-background">
+                    <Bot size={32} className="text-primary bg-transparent" />
+                  </AvatarFallback>
+                </Avatar>
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="w-full p-5 bg-background border border-border rounded-lg text-foreground">
+                <div className="w-96 flex flex-col items-center justify-between gap-2">
+                  <p>{user.username}</p>
+                  <NavigationMenuLink asChild>
+                    <Link to="/users/profile" className="hover:text-primary">
+                      My profile | Edit
+                    </Link>
+                  </NavigationMenuLink>
+                  <Button
+                    variant="ghost"
+                    className="text-xs text-muted-foreground hover:bg-destructive/70"
+                    onClick={logout}
+                  >
+                    Sign out
+                  </Button>
+                </div>
+              </NavigationMenuContent>
+            </>
+          ) : (
+            <NavigationMenuLink asChild>
+              <Link
+                className="flex items-center gap-2 opacity-70 hover:opacity-100"
+                to="users/login"
+              >
+                <span className="hidden md:block text-white translate-y-0.5">
+                  Sign in
+                </span>
+                <Bot size={32} className="text-primary" />
+              </Link>
+            </NavigationMenuLink>
+          )}
+        </NavigationMenuItem>
+        {!user && (
+          <NavigationMenuItem>
+            <NavigationMenuContent className="w-96 p-5 bg-background border border-border rounded-lg">
+              <Login />
+              <div className="mt-5 text-end text-xs flex justify-end">
+                <p>Don&#39;t have an account?&nbsp;</p>
+                <NavigationMenuLink asChild>
+                  <Link to="/users/register" className="text-primary">
+                    Sign up
+                  </Link>
+                </NavigationMenuLink>
+              </div>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        )}
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 }

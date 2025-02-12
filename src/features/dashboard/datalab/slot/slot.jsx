@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -7,12 +8,15 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
+import { getValue } from "../hook/value";
 
-export default function Slot() {
+export default function Slot({ slots, loading }) {
+  if (loading) return <div>Loading...</div>;
+
   return (
-    <>
+    <div className="pt-5">
       <h2 className="text-3xl font-extrabold py-2">{/* Icon */}SLOTS COST</h2>
-      <Table className="lg:w-1/2">
+      <Table className="w-1/2">
         <TableCaption>Desc ?</TableCaption>
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">
@@ -25,48 +29,22 @@ export default function Slot() {
           </TableRow>
         </TableHeader>
         <TableBody className="">
-          <TableRow>
-            <TableCell>1</TableCell>
-            <TableCell className="text-destructive">Paid</TableCell>
-            <TableCell className="text-destructive">Credit Card</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>2</TableCell>
-            <TableCell className="text-destructive">Paid</TableCell>
-            <TableCell className="text-destructive">Credit Card</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>3</TableCell>
-            <TableCell className="text-destructive">Paid</TableCell>
-            <TableCell className="text-destructive">Credit Card</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>4</TableCell>
-            <TableCell className="text-destructive">Paid</TableCell>
-            <TableCell className="text-destructive">Credit Card</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>5</TableCell>
-            <TableCell className="text-destructive">Paid</TableCell>
-            <TableCell className="text-destructive">Credit Card</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>$250.00</TableCell>
-          </TableRow>
+          {slots.slots_cost.map((item) => (
+            <TableRow key={item.slot}>
+              <TableCell>{getValue(item, "1. slot")}</TableCell>
+              <TableCell className="text-destructive">
+                {getValue(item, "2. nb_flex")}
+              </TableCell>
+              <TableCell className="text-destructive">
+                {getValue(item, "3. flex_cost")}
+              </TableCell>
+              <TableCell>{getValue(item, "4. bonus_bft")}&nbsp;%</TableCell>
+              <TableCell>{item.normalPart}</TableCell>
+              <TableCell>{item.bonusPart}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 }

@@ -18,12 +18,14 @@ export default defineConfig({
     alias: {
       "@": path.resolve(_dirname, "./src"),
       "@api": path.resolve(_dirname, "./src/utils/api"),
+      "@context": path.resolve(_dirname, "./src/context"),
       "@features": path.resolve(_dirname, "./src/features/"),
       "@img": path.resolve(_dirname, "./src/assets/img"),
       "@layout": path.resolve(_dirname, "./src/shared/layout"),
       "@pages": path.resolve(_dirname, "./src/pages"),
       "@ui": path.resolve(_dirname, "./src/shared/ui"),
       "@utils": path.resolve(_dirname, "./src/utils"),
+      "@shared": path.resolve(_dirname, "./src/shared/"),
     },
   },
 });

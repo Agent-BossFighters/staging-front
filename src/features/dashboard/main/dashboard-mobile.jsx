@@ -1,27 +1,29 @@
 import React from "react";
 import { XPProgress } from "@/features/dashboard/main/xp/xp-progress";
-import { RewardsPattern1, RewardsPattern2, Vector, Monthly, Contract, Schedule, Fighting, TvTools, Playermap } from "@img/index";
+import {
+  RewardsPattern1,
+  RewardsPattern2,
+  Spark,
+  Monthly,
+  Contract,
+  Schedule,
+  Fighting,
+  TvTools,
+  Playermap,
+} from "@img/index";
 
 const MobileCard = ({ title, description, icon, pattern }) => (
   <div className="bg-[#1A1B1E] rounded-2xl p-6 relative overflow-hidden">
-    <img 
-      src={pattern} 
-      alt="" 
-      className="absolute inset-0 w-full h-full"
-    />
+    <img src={pattern} alt="" className="absolute inset-0 w-full h-full" />
     <div className="flex items-center gap-4 relative z-10">
-      <img 
+      <img
         src={icon}
-        alt="" 
-        className={`w-16 h-16 object-contain ${icon === Playermap ? 'scale-125' : ''}`}
+        alt=""
+        className={`w-16 h-16 object-contain ${icon === Playermap ? "scale-125" : ""}`}
       />
       <div className="flex-1">
-        <h2 className="font-bold text-2xl mb-1 text-[#FFD32A]">
-          {title}
-        </h2>
-        <p className="text-gray-300 text-sm">
-          {description}
-        </p>
+        <h2 className="font-bold text-2xl mb-1 text-[#FFD32A]">{title}</h2>
+        <p className="text-gray-300 text-sm">{description}</p>
       </div>
     </div>
   </div>
@@ -32,59 +34,59 @@ export function DashboardMobile() {
     {
       title: "DAILY",
       description: "COMPLETE YOUR DAILY DATA",
-      icon: Vector,
+      icon: Spark,
       pattern: RewardsPattern2,
-      path: "/dashboard/daily"
+      path: "/dashboard/daily",
     },
     {
       title: "MONTHLY",
       description: "ACCOUNTING",
       icon: Monthly,
       pattern: RewardsPattern1,
-      path: "/dashboard/monthly"
+      path: "/dashboard/monthly",
     },
     {
       title: "LOCKER",
       description: "MANAGE YOUR TACTIC / ASSETS / BUILDS & DISCOUNTS",
       icon: Contract,
       pattern: RewardsPattern2,
-      path: "/dashboard/locker"
+      path: "/dashboard/locker",
     },
     {
       title: "DATA LAB",
       description: "SIMULATE & IMPROVE",
-      icon: Vector,
+      icon: Spark,
       pattern: RewardsPattern1,
-      path: "/dashboard/datalab"
+      path: "/dashboard/datalab",
     },
     {
       title: "SCHEDULE",
       description: "OPTIMIZE YOUR TIME ACCORDING TO YOUR PROFILE",
       icon: Schedule,
       pattern: RewardsPattern2,
-      path: "/dashboard/schedule"
+      path: "/dashboard/schedule",
     },
     {
       title: "TV TOOLS",
       description: "BE OVERLAY & COMMANDS",
       icon: TvTools,
       pattern: RewardsPattern1,
-      path: "/dashboard/tv-tools"
+      path: "/dashboard/tv-tools",
     },
     {
       title: "FIGHTING",
       description: "TOURNAMENTS & CUPS WITH CUSTOM RULES",
       icon: Fighting,
       pattern: RewardsPattern2,
-      path: "/dashboard/fighting"
+      path: "/dashboard/fighting",
     },
     {
       title: "PLAYER MAP",
       description: "INTUITION RP COMMUNITY MAP EXPLORER",
       icon: Playermap,
       pattern: RewardsPattern1,
-      path: "/dashboard/player-map"
-    }
+      path: "/dashboard/player-map",
+    },
   ];
 
   return (
@@ -101,4 +103,5 @@ export function DashboardMobile() {
       </div>
     </div>
   );
-} 
+}
+
