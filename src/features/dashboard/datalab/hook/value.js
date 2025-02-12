@@ -1,1 +1,2 @@
-export const getValue = (data, key) => (data && data[key] ? data[key] : "N/A");
+export const getValue = (data, key) =>
+  data && data[key] !== undefined && data[key] !== null ? data[key] : "N/A";
