@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import Login from "@features/users/auth/login";
 import { useAuth } from "@context/auth.context";
@@ -35,7 +34,7 @@ export default function HeaderPart() {
                 </Avatar>
               </NavigationMenuTrigger>
               <NavigationMenuContent className="w-full p-5 bg-background border border-border rounded-lg text-foreground">
-                <div className="flex flex-col items-center justify-between gap-2">
+                <div className="flex flex-col w-96 items-center justify-between gap-2">
                   <p>{user.username}</p>
                   <NavigationMenuLink asChild>
                     <Link to="/users/profile" className="hover:text-primary">
