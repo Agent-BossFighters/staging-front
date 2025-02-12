@@ -53,11 +53,9 @@ export default function Showrunner() {
         </TableHeader>
         <TableBody>
           {rarities.map((rarityItem) => {
-            console.log("contractData", contracts);
             const contract = contracts.contracts.find(
               (c) => c["1. rarity"] === rarityItem.rarity,
             );
-            console.log("contract", contract);
 
             return (
               <TableRow key={rarityItem.rarity}>
