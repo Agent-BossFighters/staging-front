@@ -8,8 +8,8 @@ export default function DesktopNav() {
   const { user } = useAuth();
 
   return (
-    <div className="hidden md:flex h-24 items-center justify-between py-4 px-10 lg:px-0 lg:w-5/6 mx-auto">
-      <div className="flex items-center gap-4 h-full pr-20">
+    <div className="hidden md:flex h-full items-center justify-between py-4 px-10 lg:px-0 lg:w-5/6 mx-auto">
+      <div className="flex items-center gap-20 h-full">
         {user ? (
           <Link to="/dashboard" className="flex items-center h-full">
             <img src={AgentLogo} alt="Agent logo" className="h-full" />
@@ -23,9 +23,6 @@ export default function DesktopNav() {
       </div>
       <div className="flex items-center gap-4">
         {/* Currency */}
-        <div className="bg-primary text-black px-2 py-1 rounded text-sm font-medium">
-          PREMIUM
-        </div>
         {/* User */}
         <HeaderPart />
       </div>
