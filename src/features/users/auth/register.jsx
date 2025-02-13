@@ -41,7 +41,7 @@ export default function Register() {
         e.preventDefault();
         handleSubmit(handleRegister);
       }}
-      className="flex flex-col items-center justify-center gap-10 w-full"
+      className="flex flex-col items-center justify-center gap-5 w-full"
     >
       <Input
         type="text"
@@ -82,7 +82,7 @@ export default function Register() {
 
       <Button
         type="submit"
-        className="w-full text-background"
+        className="w-full h-10 text-background"
         disabled={loading}
       >
         {loading ? "Chargement..." : "Sign up"}

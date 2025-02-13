@@ -24,7 +24,7 @@ export default function HeaderPart() {
         <NavigationMenuItem>
           {user ? (
             <>
-              <NavigationMenuTrigger className="h-full flex items-center gap-4 p-2 ps-6 rounded-full border border-border/20 hover:bg-primary hover:text-background">
+              <NavigationMenuTrigger className="h-full flex p-2 ps-6 rounded-full border border-border/20 hover:bg-primary hover:text-background">
                 <p className="text-bold">{user.username.toUpperCase()}</p>
                 <Avatar className="cursor-pointer">
                   <AvatarImage src={user.asset} alt={user.username} />
@@ -33,17 +33,22 @@ export default function HeaderPart() {
                   </AvatarFallback>
                 </Avatar>
               </NavigationMenuTrigger>
-              <NavigationMenuContent className="w-full p-5 bg-background border border-border rounded-lg text-foreground">
-                <div className="w-96 flex flex-col items-center justify-between gap-2">
-                  <p>{user.username}</p>
+              <NavigationMenuContent className="w-full p-3 bg-background border border-border rounded-lg text-foreground">
+                <div className="w-64 flex flex-col items-end justify-between gap-2">
+                  <p className="border-b border-border/20 w-full text-center py-2">
+                    {user.username.toUpperCase()}
+                  </p>
                   <NavigationMenuLink asChild>
-                    <Link to="/users/profile" className="hover:text-primary">
+                    <Link
+                      to="/users/profile"
+                      className="px-4 hover:text-primary"
+                    >
                       My profile | Edit
                     </Link>
                   </NavigationMenuLink>
                   <Button
                     variant="ghost"
-                    className="text-xs text-muted-foreground hover:bg-destructive/70"
+                    className="text-xs text-muted-foreground hover:bg-transparent hover:text-destructive/70"
                     onClick={logout}
                   >
                     Sign out
