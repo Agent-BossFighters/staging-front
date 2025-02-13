@@ -32,7 +32,7 @@ export default function LockerBadges() {
             {discountPercent.map((discount, index) => (
               <TableRow key={index}>
                 <TableCell>{discount} %</TableCell>
-                <TableCell>1</TableCell>
+                <TableCell>0</TableCell>
                 <TableCell className="">
                   <Button
                     variant="transparent"

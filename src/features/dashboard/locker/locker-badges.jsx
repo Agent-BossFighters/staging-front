@@ -122,7 +122,6 @@ export default function LockerBadges() {
                           handleSelectRarityBadgeForEdit(setEditedName, rarity);
                         }}
                         selectedRarity={editedRarity}
-                        limitRarity="Exalted"
                         rounded={true}
                       />
                     ) : (
@@ -196,7 +195,6 @@ export default function LockerBadges() {
                 onSelectRarity={(rarity) =>
                   handleSelectRarityBadges(setSelectedBadge, rarity)
                 }
-                limitRarity="Exalted"
                 rounded={true}
               />
             </TableCell>

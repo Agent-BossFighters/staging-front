@@ -6,7 +6,7 @@ export default function RegisterPage() {
     <div className="flex flex-col items-center justify-center h-full gap-4">
       <div className="border-2 border-border flex flex-col items-center justify-center gap-4 p-5 rounded-lg md:w-2/3 lg:w-1/4">
         <h1 className="text-3xl font-bold pb-5">
-          <span className="text-primary text-4xl">R</span>egistration
+          <span className="text-primary text-4xl">R</span>EGISTRATION
         </h1>
         <Register />
         <div className="mt-4 w-full text-xs flex justify-end">

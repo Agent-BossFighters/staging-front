@@ -62,15 +62,17 @@ export default function Badges({ badges, loading }) {
                 <TableCell>{getValue(badge, "5. max_energy")}</TableCell>
                 <TableCell>{getValue(badge, "6. time_to_charge")}</TableCell>
                 <TableCell>{getValue(badge, "7. in_game_time")}</TableCell>
-                <TableCell>{getValue(badge, "8. recharge_cost")}</TableCell>
                 <TableCell className="text-destructive">
-                  {getValue(badge, "")}
+                  {getValue(badge, "8. recharge_cost")}
                 </TableCell>
                 <TableCell className="text-destructive">
                   {getValue(badge, "")}
                 </TableCell>
                 <TableCell className="text-accent">
                   {getValue(badge, "9. bft_per_minute")}
+                </TableCell>
+                <TableCell className="text-accent">
+                  {getValue(badge, "10. bft_per_max_charge")}
                 </TableCell>
                 <TableCell className="text-accent">
                   {getValue(badge, "11. bft_value_per_max_charge")}

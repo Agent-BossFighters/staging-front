@@ -32,16 +32,22 @@ export default function DesktopLink() {
     <NavigationMenu>
       <NavigationMenuList>
         {filteredMenu.map((item) => (
-          <NavigationMenuItem key={item.path}>
+          <NavigationMenuItem key={item.path} className="">
             {item.children ? (
               <>
-                <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
-                <NavigationMenuContent className="p-2 bg-background text-foreground border border-border rounded-md shadow-md">
+                <NavigationMenuTrigger className="gap-10">
+                  <Link to={item.path}>{item.label}</Link>
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="p-4 bg-background text-foreground border border-border rounded-md shadow-md">
                   {item.children.map((child) => (
-                    <NavigationMenuLink asChild key={child.path}>
+                    <NavigationMenuLink
+                      asChild
+                      key={child.path}
+                      className="w-36 text-center py-1"
+                    >
                       <Link
                         to={child.path}
-                        className="block px-4 py-2 hover:bg-primary hover:text-background rounded"
+                        className="block hover:bg-primary hover:text-background rounded"
                       >
                         {child.label}
                       </Link>
@@ -50,7 +56,7 @@ export default function DesktopLink() {
                 </NavigationMenuContent>
               </>
             ) : (
-              <NavigationMenuLink asChild>
+              <NavigationMenuLink asChild className="">
                 <Link to={item.path} className="px-4 py-2 hover:text-primary">
                   {item.label}
                 </Link>

@@ -40,7 +40,7 @@ export default function Login() {
         e.preventDefault();
         handleSubmit(handleLogin);
       }}
-      className="flex flex-col items-center justify-center gap-10 w-full"
+      className="flex flex-col items-center justify-center gap-6 w-full"
     >
       <Input
         type="text"
@@ -63,7 +63,7 @@ export default function Login() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full text-background"
+        className="w-full h-12 text-background"
       >
         {loading ? "Loading..." : "Login"}
       </Button>

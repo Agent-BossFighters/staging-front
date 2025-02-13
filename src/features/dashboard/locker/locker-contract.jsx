@@ -127,7 +127,6 @@ export default function LockerContract() {
                           );
                         }}
                         selectedRarity={editedRarity}
-                        limitRarity="Exalted"
                         rounded={true}
                       />
                     ) : (
@@ -201,7 +200,6 @@ export default function LockerContract() {
                 onSelectRarity={(rarity) =>
                   handleSelectRarityContract(setSelectedContract, rarity)
                 }
-                limitRarity="Exalted"
                 rounded={true}
               />
             </TableCell>
