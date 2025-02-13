@@ -1,11 +1,22 @@
-import { Link } from "react-router-dom";
 import Profile from "@features/users/profile";
 import { Avatar, AvatarFallback, AvatarImage } from "@shared/ui/avatar";
 import { useAuth } from "@context/auth.context";
 import { Bot } from "lucide-react";
+import { Button } from "@ui/button";
+import { deleteData } from "@/utils/api/data";
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete your account?"))
+      return;
+    const response = await deleteData(`/v1/users/${user.id}`);
+    if (response.ok) {
+      alert("Account deleted successfully");
+      logout();
+    }
+  };
 
   return (
     <div className="flex items-center justify-center h-full gap-4">
@@ -21,9 +32,14 @@ export default function ProfilePage() {
         </Avatar>
         <Profile />
         <div className="w-full text-xs flex justify-end">
-          <Link to="/users/register" className="text-destructive">
+          <Button
+            type="submit"
+            variant="ghost"
+            onClick={handleDelete}
+            className="text-destructive/50 hover:bg-transparent hover:text-destructive"
+          >
             Delete account?&nbsp;
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

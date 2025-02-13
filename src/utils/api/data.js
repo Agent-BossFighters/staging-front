@@ -52,8 +52,9 @@ export async function putData(object, data) {
 export async function deleteData(object) {
   try {
     const response = await kyInstance.delete(BASE_URL + object);
-    const responseData = await response.json();
-    return responseData;
+    // const responseData = await response.json();
+    // console.log(responseData);
+    return response;
   } catch (error) {
     let errorData = await error.responseData;
     throw new Error(JSON.stringify(errorData));
