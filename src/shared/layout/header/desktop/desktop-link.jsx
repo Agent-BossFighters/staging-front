@@ -17,8 +17,8 @@ const menuItems = [
     children: [
       { path: "/dashboard/locker", label: "Locker" },
       { path: "/dashboard/datalab", label: "Datalab" },
-      { path: "/dashboard/schedule", label: "Schedule" },
-      { path: "/dashboard/playing", label: "Playing" },
+      //   { path: "/dashboard/schedule", label: "Schedule" },
+      //   { path: "/dashboard/playing", label: "Playing" },
     ],
   },
   { path: "/economy", label: "Economy" },

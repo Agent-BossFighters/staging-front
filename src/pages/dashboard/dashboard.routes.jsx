@@ -16,8 +16,8 @@ export default function DashboardRoutes() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/locker" element={<LockerPage />} />
             <Route path="/datalab" element={<DatalabPage />} />
-            <Route path="/schedule/*" element={<ScheduleRoutes />} />
-            <Route path="/playing/*" element={<PlayingRoutes />} />
+            {/* <Route path="/schedule/*" element={<ScheduleRoutes />} /> */}
+            {/* <Route path="/playing/*" element={<PlayingRoutes />} /> */}
           </Routes>
         </UserPreferenceProvider>
       </ProtectedRoute>
