@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 export const AuthUtils = {
   setAuthToken: (token) => {
     Cookies.set("agent-auth", token, {
-      secure: true,
+      secure: false,
       sameSite: "strict",
     });
   },
@@ -17,7 +17,7 @@ export const AuthUtils = {
       "user",
       JSON.stringify({
         ...userData,
-      }),
+      })
     );
   },
 
