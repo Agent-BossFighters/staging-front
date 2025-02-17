@@ -1,20 +1,37 @@
-const levels = Array.from({ length: 30 }, (_, i) => i + 1);
-
-const calculateSpMarks = (level) => {
-  return Number((1.8433 * Math.pow(level, 2) + 192.9014 * level + 0.5702).toFixed(2));
-};
+import { useState, useEffect } from "react";
+import { getData } from "@utils/api/data";
 
 export const useLevelCalculator = () => {
-  const levelData = {
-    spMarksNb: levels.map(level => calculateSpMarks(level)),
-    spMarksCost: levels.map(level => `$${calculateSpMarks(level).toFixed(2)}`),
-    totalCost: levels.reduce((acc, level) => {
-      const cost = calculateSpMarks(level);
-      const previousTotal = acc.length > 0 ? parseFloat(acc[acc.length - 1].slice(1)) : 0;
-      acc.push(`$${(previousTotal + cost).toFixed(2)}`);
-      return acc;
-    }, [])
+  const [levels] = useState(Array.from({ length: 30 }, (_, i) => i + 1));
+  const [levelData, setLevelData] = useState({
+    spMarksNb: [],
+    spMarksCost: [],
+    totalCost: []
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchLevelUpData = async () => {
+    try {
+      setLoading(true);
+      const response = await getData("/v1/data_lab/contracts");
+      if (response && response.level_up) {
+        setLevelData({
+          spMarksNb: response.level_up.sp_marks_nb,
+          spMarksCost: response.level_up.sp_marks_cost,
+          totalCost: response.level_up.total_cost
+        });
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return { levels, levelData };
+  useEffect(() => {
+    fetchLevelUpData();
+  }, []);
+
+  return { levels, levelData, loading, error };
 };

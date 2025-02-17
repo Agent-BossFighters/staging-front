@@ -10,7 +10,10 @@ import {
 import { useLevelCalculator } from "./hook/useLevelCalculator";
 
 export default function Showrunner() {
-  const { levels, levelData } = useLevelCalculator();
+  const { levels, levelData, loading, error } = useLevelCalculator();
+
+  if (loading) return <div className="text-center">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">Error: {error}</div>;
 
   return (
     <>
@@ -18,7 +21,7 @@ export default function Showrunner() {
         SHOWRUNNER CONTRACTS
       </h2>
       <Table className="overflow-y-scroll">
-        <TableCaption>Desc ?</TableCaption>
+        <TableCaption>Level up costs for Showrunner contracts</TableCaption>
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">
             <TableHead>LEVEL</TableHead>
@@ -38,7 +41,7 @@ export default function Showrunner() {
               SP. MARKS NB
             </TableCell>
             {levels.map((_, index) => (
-              <TableCell key={index}>{levelData.spMarksNb[index].toFixed(2)}</TableCell>
+              <TableCell key={index}>{levelData.spMarksNb[index]}</TableCell>
             ))}
           </TableRow>
           <TableRow>
