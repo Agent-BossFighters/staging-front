@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 export const BASE_URL = "http://127.00.1:3000/api";
 
 export const kyInstance = ky.create({
+  credentials: "include",
   hooks: {
     beforeRequest: [
       (request) => {
