@@ -1,7 +1,7 @@
 import ky from "ky";
 import Cookies from "js-cookie";
 
-export const BASE_URL = "http://217.154.6.60:80/api";
+export const BASE_URL = "https://217.154.6.60:80/api";
 
 export const kyInstance = ky.create({
   credentials: "include",
