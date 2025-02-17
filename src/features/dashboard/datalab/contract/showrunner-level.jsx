@@ -7,14 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-
-const levels = Array.from({ length: 30 }, (_, i) => i + 1);
+import { useLevelCalculator } from "./hook/useLevelCalculator";
 
 export default function Showrunner() {
+  const { levels, levelData } = useLevelCalculator();
+
   return (
     <>
       <h2 className="text-3xl font-extrabold py-2">
-        {/* Icon */}SHOWRUNNER CONTRACTS
+        SHOWRUNNER CONTRACTS
       </h2>
       <Table className="overflow-y-scroll">
         <TableCaption>Desc ?</TableCaption>
@@ -36,22 +37,22 @@ export default function Showrunner() {
             <TableCell className="bg-muted-foreground/30">
               SP. MARKS NB
             </TableCell>
-            {levels.map((level) => (
-              <TableCell key={level}>{level}</TableCell>
+            {levels.map((_, index) => (
+              <TableCell key={index}>{levelData.spMarksNb[index].toFixed(2)}</TableCell>
             ))}
           </TableRow>
           <TableRow>
             <TableCell className="bg-muted-foreground/30">
               SP. MARKS COST
             </TableCell>
-            {levels.map((level) => (
-              <TableCell key={level}>{level}</TableCell>
+            {levels.map((_, index) => (
+              <TableCell key={index}>{levelData.spMarksCost[index]}</TableCell>
             ))}
           </TableRow>
           <TableRow className="text-destructive">
             <TableCell className="bg-muted-foreground/30">TOTAL COST</TableCell>
-            {levels.map((level) => (
-              <TableCell key={level}>{level}</TableCell>
+            {levels.map((_, index) => (
+              <TableCell key={index}>{levelData.totalCost[index]}</TableCell>
             ))}
           </TableRow>
         </TableBody>
