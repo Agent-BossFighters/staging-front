@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getData } from "@utils/api/data";
 
 export const useSlots = () => {
-  const [slots, setSlots] = useState([]);
+  const [slots, setSlots] = useState({ slots_cost: [] });
   const [loading, setLoading] = useState(true);
 
   const fetchSlots = async () => {
@@ -11,7 +11,7 @@ export const useSlots = () => {
     if (payload) {
       setSlots(payload);
     } else {
-      setSlots([]);
+      setSlots({ slots_cost: [] });
     }
     setLoading(false);
   };

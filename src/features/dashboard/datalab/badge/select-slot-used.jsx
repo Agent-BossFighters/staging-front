@@ -9,15 +9,13 @@ import {
   SelectValue,
 } from "@ui/select";
 
-const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
+const numbers = Array.from({ length: 5 }, (_, i) => i + 1);
 
-export default function SelectSlotUsed() {
-  const [selectedValue, setSelectedValue] = useState(numbers[0].toString());
-
+export default function SelectSlotUsed({ value, onChange }) {
   return (
-    <Select value={selectedValue} onValueChange={setSelectedValue}>
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="inline-flex items-center gap-1 w-auto min-w-max px-4 py-2">
-        <SelectValue placeholder="Select a number of slot" />
+        <SelectValue placeholder="Select" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
