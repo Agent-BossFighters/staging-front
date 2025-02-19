@@ -7,21 +7,17 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-import { useLevelCalculator } from "./hook/useLevelCalculator";
+
+const levels = Array.from({ length: 30 }, (_, i) => i + 1);
 
 export default function Showrunner() {
-  const { levels, levelData, loading, error } = useLevelCalculator();
-
-  if (loading) return <div className="text-center">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">Error: {error}</div>;
-
   return (
     <>
       <h2 className="text-3xl font-extrabold py-2">
-        SHOWRUNNER CONTRACTS
+        {/* Icon */}SHOWRUNNER CONTRACTS
       </h2>
       <Table className="overflow-y-scroll">
-        <TableCaption>Level up costs for Showrunner contracts</TableCaption>
+        <TableCaption>Desc ?</TableCaption>
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">
             <TableHead>LEVEL</TableHead>
@@ -40,22 +36,22 @@ export default function Showrunner() {
             <TableCell className="bg-muted-foreground/30">
               SP. MARKS NB
             </TableCell>
-            {levels.map((_, index) => (
-              <TableCell key={index}>{levelData.spMarksNb[index]}</TableCell>
+            {levels.map((level) => (
+              <TableCell key={level}>{level}</TableCell>
             ))}
           </TableRow>
           <TableRow>
             <TableCell className="bg-muted-foreground/30">
               SP. MARKS COST
             </TableCell>
-            {levels.map((_, index) => (
-              <TableCell key={index}>{levelData.spMarksCost[index]}</TableCell>
+            {levels.map((level) => (
+              <TableCell key={level}>{level}</TableCell>
             ))}
           </TableRow>
           <TableRow className="text-destructive">
             <TableCell className="bg-muted-foreground/30">TOTAL COST</TableCell>
-            {levels.map((_, index) => (
-              <TableCell key={index}>{levelData.totalCost[index]}</TableCell>
+            {levels.map((level) => (
+              <TableCell key={level}>{level}</TableCell>
             ))}
           </TableRow>
         </TableBody>

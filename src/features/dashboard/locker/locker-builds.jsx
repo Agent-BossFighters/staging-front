@@ -78,7 +78,7 @@ export default function Lockerbuilds() {
 
   return (
     <div className="lg:h-1/2">
-      <h2 className="text-2xl font-extrabold py-2 flex gap-3 items-center">
+      <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
         <img src={GreenFighter} alt="Build" className="w-10 h-10" />
         BUILD(S)
       </h2>

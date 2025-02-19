@@ -92,7 +92,7 @@ export default function LockerBadges() {
 
   return (
     <div>
-      <h2 className="text-2xl font-extrabold py-2 flex gap-3 items-center">
+      <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
         <img src={BadgeCommon} alt="Badge" className="w-10 h-10" />
         BADGE(S)
       </h2>
