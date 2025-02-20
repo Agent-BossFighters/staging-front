@@ -32,6 +32,16 @@ export default function DailyContainer() {
     );
   }
 
+  const handleDelete = async (id) => {
+    try {
+      await deleteMatch(id);
+      // Rafraîchir les données après la suppression
+      fetchDailyMetrics(selectedDate);
+    } catch (error) {
+      console.error("Error deleting match:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col px-5 gap-5">
       <h1 className="text-6xl font-extrabold py-4 text-primary">DAILY</h1>
@@ -47,7 +57,7 @@ export default function DailyContainer() {
         loading={loading}
         onAdd={addMatch}
         onUpdate={updateMatch}
-        onDelete={deleteMatch}
+        onDelete={handleDelete}
       />
     </div>
   );

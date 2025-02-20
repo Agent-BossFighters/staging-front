@@ -26,14 +26,6 @@ export default function DailySummary({ date, summary }) {
           <p className="text-white text-xl font-semibold">{summary.matchesCount}</p>
         </div>
 
-        {/* Total fees */}
-        <div className="flex flex-col items-center">
-          <img src={Flex} alt="token" className="w-10 h-10 mr-2" />
-          <p>TOTAL FEE</p>
-          <p className="text-red-500 text-xl">{summary.totalFees.amount}</p>
-          <p className="text-red-500 text-sm">{summary.totalFees.cost}</p>
-        </div>
-
         {/* Energy used */}
         <div className="flex flex-col items-center">
           <Zap className="w-6 h-10 mr-2" />

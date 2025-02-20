@@ -50,7 +50,7 @@ export const useDaily = () => {
   const addMatch = async (matchData) => {
     try {
       const response = await postData('/v1/matches', { match: matchData });
-      if (response?.daily_metrics) {
+      if (response?.daily_metrics?.matches) {
         setMatches(response.daily_metrics.matches);
       }
       return response;
@@ -63,7 +63,7 @@ export const useDaily = () => {
   const updateMatch = async (id, matchData) => {
     try {
       const response = await putData(`/v1/matches/${id}`, { match: matchData });
-      if (response?.daily_metrics) {
+      if (response?.daily_metrics?.matches) {
         setMatches(response.daily_metrics.matches);
       }
       return response;
@@ -76,7 +76,7 @@ export const useDaily = () => {
   const deleteMatch = async (id) => {
     try {
       const response = await deleteData(`/v1/matches/${id}`);
-      if (response?.daily_metrics) {
+      if (response?.daily_metrics?.matches) {
         setMatches(response.daily_metrics.matches);
       }
       return response;
@@ -89,7 +89,6 @@ export const useDaily = () => {
   const calculateDailySummary = () => {
     if (!matches.length) return {
       matchesCount: 0,
-      totalFees: { amount: 0, cost: "$0.00" },
       energyUsed: { amount: 0, cost: "$0.00" },
       totalBft: { amount: 0, value: "$0.00" },
       totalFlex: { amount: 0, value: "$0.00" },
@@ -98,8 +97,6 @@ export const useDaily = () => {
 
     const summary = matches.reduce((acc, match) => {
       // Convertir explicitement en nombres
-      const feesAmount = Number(match.fees?.amount) || 0;
-      const feesCost = Number(match.fees?.cost) || 0;
       const energyAmount = Number(match.energy?.used) || 0;
       const energyCost = Number(match.energy?.cost) || 0;
       const bftAmount = Number(match.rewards?.bft?.amount) || 0;
@@ -110,10 +107,6 @@ export const useDaily = () => {
 
       return {
         matchesCount: matches.length,
-        totalFees: {
-          amount: acc.totalFees.amount + feesAmount,
-          cost: acc.totalFees.cost + feesCost
-        },
         energyUsed: {
           amount: acc.energyUsed.amount + energyAmount,
           cost: acc.energyUsed.cost + energyCost
@@ -130,7 +123,6 @@ export const useDaily = () => {
       };
     }, {
       matchesCount: 0,
-      totalFees: { amount: 0, cost: 0 },
       energyUsed: { amount: 0, cost: 0 },
       totalBft: { amount: 0, value: 0 },
       totalFlex: { amount: 0, value: 0 },
@@ -140,10 +132,6 @@ export const useDaily = () => {
     // Format les valeurs monétaires en s'assurant qu'elles sont des nombres
     return {
       ...summary,
-      totalFees: {
-        amount: summary.totalFees.amount,
-        cost: `$${Number(summary.totalFees.cost).toFixed(2)}`
-      },
       energyUsed: {
         amount: summary.energyUsed.amount,
         cost: `$${Number(summary.energyUsed.cost).toFixed(2)}`

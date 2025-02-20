@@ -1,45 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { putData } from "@utils/api/data";
 
-export const useEditMatch = (setMatches) => {
+export const useEditMatch = (setMatches, builds) => {
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [editedBuildId, setEditedBuildId] = useState("");
   const [editedSlots, setEditedSlots] = useState("");
   const [editedMap, setEditedMap] = useState("");
-  const [editedFees, setEditedFees] = useState("");
   const [editedEnergy, setEditedEnergy] = useState("");
   const [editedResult, setEditedResult] = useState("");
   const [editedBft, setEditedBft] = useState("");
   const [editedFlex, setEditedFlex] = useState("");
-  const [editedBftMultiplier, setEditedBftMultiplier] = useState("");
-  const [editedPerksMultiplier, setEditedPerksMultiplier] = useState("");
+  const [editedBadges, setEditedBadges] = useState(Array(5).fill({ rarity: "rare" }));
+  const [selectedBuild, setSelectedBuild] = useState(null);
+
+  // Met à jour le build sélectionné quand l'ID change
+  useEffect(() => {
+    if (editedBuildId && builds) {
+      const build = builds.find(b => b.id === editedBuildId);
+      setSelectedBuild(build || null);
+    } else {
+      setSelectedBuild(null);
+    }
+  }, [editedBuildId, builds]);
 
   const handleEdit = (match) => {
     setEditingMatchId(match.id);
     setEditedBuildId(match.build.id);
-    setEditedSlots(match.build.slots);
+    setEditedSlots(match.slots.count);
     setEditedMap(match.build.map);
-    setEditedFees(match.fees.amount);
     setEditedEnergy(match.energy.used);
     setEditedResult(match.result);
     setEditedBft(match.rewards.bft.amount);
     setEditedFlex(match.rewards.flex.amount);
-    setEditedBftMultiplier(match.multipliers.bonus);
-    setEditedPerksMultiplier(match.multipliers.perks);
+    
+    // Initialize badges with existing data or defaults
+    const initialBadges = Array(5).fill(null).map((_, index) => {
+      if (match.badges && match.badges[index]) {
+        return match.badges[index];
+      }
+      return { rarity: "rare" };
+    });
+    setEditedBadges(initialBadges);
+
+    // Set selected build
+    const build = builds.find(b => b.id === match.build.id);
+    setSelectedBuild(build || null);
   };
 
   const handleSave = async () => {
+    if (!selectedBuild) {
+      console.error("No build selected");
+      return;
+    }
+
     const updatedMatch = {
       build_id: editedBuildId,
       slots: editedSlots,
       map: editedMap,
-      fees: editedFees,
-      energy: editedEnergy,
+      energyUsed: editedEnergy,
+      energyCost: 0.1,
       result: editedResult,
-      bft: editedBft,
-      flex: editedFlex,
-      bft_multiplier: editedBftMultiplier,
-      perks_multiplier: editedPerksMultiplier
+      totalToken: editedBft,
+      tokenValue: 0.2,
+      totalPremiumCurrency: editedFlex,
+      premiumCurrencyValue: 0.1,
+      badges: editedBadges
     };
 
     try {
@@ -58,13 +83,12 @@ export const useEditMatch = (setMatches) => {
     setEditedBuildId("");
     setEditedSlots("");
     setEditedMap("");
-    setEditedFees("");
     setEditedEnergy("");
     setEditedResult("");
     setEditedBft("");
     setEditedFlex("");
-    setEditedBftMultiplier("");
-    setEditedPerksMultiplier("");
+    setEditedBadges(Array(5).fill({ rarity: "rare" }));
+    setSelectedBuild(null);
   };
 
   return {
@@ -72,23 +96,20 @@ export const useEditMatch = (setMatches) => {
     editedBuildId,
     editedSlots,
     editedMap,
-    editedFees,
     editedEnergy,
     editedResult,
     editedBft,
     editedFlex,
-    editedBftMultiplier,
-    editedPerksMultiplier,
+    editedBadges,
+    selectedBuild,
     setEditedBuildId,
     setEditedSlots,
     setEditedMap,
-    setEditedFees,
     setEditedEnergy,
     setEditedResult,
     setEditedBft,
     setEditedFlex,
-    setEditedBftMultiplier,
-    setEditedPerksMultiplier,
+    setEditedBadges,
     handleEdit,
     handleSave,
     handleCancel
