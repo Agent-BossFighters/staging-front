@@ -7,9 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-import data from "@shared/data/slot.json";
+import { getValue } from "../hook/value";
 
-export default function SlotCost({ slots, loading }) {
+export default function SlotCost({ slots, loading, selectedRarity }) {
   if (loading) return <div>Loading...</div>;
 
   const selectedRarityMetrics =
@@ -42,9 +42,6 @@ export default function SlotCost({ slots, loading }) {
               <TableCell className="text-destructive">
                 {getValue(slot, "3. flex_cost")}
               </TableCell>
-              <TableCell>{getValue(slot, "4. bonus_bft")}%</TableCell>
-              <TableCell>{slot.normalPart}</TableCell>
-              <TableCell>{slot.bonusPart}</TableCell>
               <TableCell>
                 {getValue(rarityMetrics, "4. nb_tokens_roi")}
               </TableCell>

@@ -7,6 +7,7 @@ export const useSlots = () => {
     unlocked_slots_by_rarity: {},
   });
   const [loading, setLoading] = useState(true);
+  const [selectedRarity, setSelectedRarity] = useState("Common");
 
   const fetchSlots = async () => {
     setLoading(true);
