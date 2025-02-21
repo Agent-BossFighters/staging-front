@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getData, postData, putData, deleteData } from "@utils/api/data";
 import { useMatchCalculations } from "./useMatchCalculations";
+import { toast } from "react-hot-toast";
 
 const DAILY_RARITIES_KEY = 'daily_rarities_';
 
@@ -9,7 +10,6 @@ const DailyRaritiesCache = {
     const key = `${DAILY_RARITIES_KEY}${date}`;
     const cached = localStorage.getItem(key);
     const data = cached ? JSON.parse(cached) : {};
-    
     data[matchId] = rarities;
     localStorage.setItem(key, JSON.stringify(data));
   },
@@ -18,7 +18,6 @@ const DailyRaritiesCache = {
     const key = `${DAILY_RARITIES_KEY}${date}`;
     const cached = localStorage.getItem(key);
     if (!cached) return Array(5).fill('rare');
-    
     const data = JSON.parse(cached);
     return data[matchId] || Array(5).fill('rare');
   },
@@ -35,67 +34,72 @@ export const useDaily = () => {
   const [matches, setMatches] = useState([]);
   const [builds, setBuilds] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const { calculateMatchMetrics } = useMatchCalculations();
 
-  // Nettoyer le cache des jours précédents au montage
   useEffect(() => {
     DailyRaritiesCache.clear();
   }, []);
 
-  const fetchDailyMetrics = async (date) => {
+  const fetchDailyMetrics = useCallback(async (date) => {
     try {
-      setLoading(true);
       const response = await getData(`v1/daily_metrics/${date}`);
-      // Garder les raretés telles quelles si elles existent
       const enrichedMatches = response.matches.map(match => ({
         ...match,
         selectedRarities: match.selectedRarities || []
       }));
       setMatches(enrichedMatches);
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      toast.error("Erreur lors du chargement des métriques journalières");
+      console.error(error);
+    }
+  }, []);
+
+  const fetchMyBuilds = useCallback(async () => {
+    try {
+      const response = await getData("v1/user_builds");
+      setBuilds(response?.builds || []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement des builds");
+      console.error(error);
+      setBuilds([]);
+    }
+  }, []);
+
+  const initializeData = useCallback(async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        fetchMyBuilds(),
+        fetchDailyMetrics(selectedDate)
+      ]);
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedDate, fetchMyBuilds, fetchDailyMetrics]);
 
-  const fetchMyBuilds = async () => {
-    try {
-      const response = await getData("v1/user_builds");
-      if (response?.builds) {
-        setBuilds(response.builds);
-        setError(null);
-      } else {
-        setBuilds([]);
-      }
-    } catch (error) {
-      setBuilds([]);
-      setError("Impossible de charger les builds");
-    }
-  };
-
-  const addMatch = async (matchData) => {
+  const handleAddMatch = useCallback(async (matchData) => {
     try {
       const response = await postData('v1/matches', matchData);
-      // Utiliser les raretés fournies sans fallback
       const newMatch = {
         ...response.match,
         selectedRarities: matchData.selectedRarities
       };
       setMatches(prev => [...prev, newMatch]);
+      await fetchDailyMetrics(selectedDate);
+      toast.success("Match ajouté avec succès");
       return newMatch;
-    } catch (err) {
-      setError(err.message);
-      throw err;
+    } catch (error) {
+      toast.error("Erreur lors de l'ajout du match");
+      console.error(error);
     }
-  };
+  }, [selectedDate, fetchDailyMetrics]);
 
-  const updateMatch = async (id, matchData) => {
+  const handleUpdateMatch = useCallback(async (id, matchData) => {
     try {
       const response = await putData(`v1/matches/${id}`, matchData);
-      // Utiliser les raretés fournies sans fallback
       const updatedMatch = {
         ...response.match,
         selectedRarities: matchData.selectedRarities
@@ -103,19 +107,18 @@ export const useDaily = () => {
       setMatches(prev => prev.map(match => 
         match.id === id ? updatedMatch : match
       ));
+      toast.success("Match mis à jour avec succès");
       return updatedMatch;
-    } catch (err) {
-      setError(err.message);
-      throw err;
+    } catch (error) {
+      toast.error("Erreur lors de la mise à jour du match");
+      console.error(error);
     }
-  };
+  }, []);
 
-  const deleteMatch = async (id) => {
+  const handleDeleteMatch = useCallback(async (id) => {
     try {
-      const matchToDelete = matches.find(m => m.id === id);
       await deleteData(`v1/matches/${id}`);
-      
-      // Supprimer les raretés du cache
+      const matchToDelete = matches.find(m => m.id === id);
       if (matchToDelete) {
         const key = `${DAILY_RARITIES_KEY}${matchToDelete.date.split('T')[0]}`;
         const cached = localStorage.getItem(key);
@@ -125,16 +128,16 @@ export const useDaily = () => {
           localStorage.setItem(key, JSON.stringify(data));
         }
       }
-
-      setMatches(currentMatches => 
-        currentMatches.filter(match => match.id !== id)
-      );
+      setMatches(prev => prev.filter(match => match.id !== id));
+      await fetchDailyMetrics(selectedDate);
+      toast.success("Match supprimé avec succès");
     } catch (error) {
-      // Les erreurs sont déjà gérées par data.js
+      toast.error("Erreur lors de la suppression du match");
+      console.error(error);
     }
-  };
+  }, [matches, selectedDate, fetchDailyMetrics]);
 
-  const calculateDailySummary = () => {
+  const calculateDailySummary = useCallback(() => {
     if (!matches.length) return {
       matchesCount: 0,
       energyUsed: { amount: 0, cost: "$0.00" },
@@ -144,7 +147,6 @@ export const useDaily = () => {
     };
 
     const { calculateEnergyUsed } = useMatchCalculations();
-
     return matches.reduce((acc, match) => {
       const energyUsed = calculateEnergyUsed(match.time);
       const bftValue = match.totalToken * 0.01;
@@ -175,20 +177,18 @@ export const useDaily = () => {
       totalFlex: { amount: 0, value: "$0.00" },
       profit: "$0.00"
     });
-  };
+  }, [matches]);
 
   return {
     matches,
     builds,
     loading,
-    error,
     selectedDate,
     setSelectedDate,
-    fetchDailyMetrics,
-    fetchMyBuilds,
-    addMatch,
-    updateMatch,
-    deleteMatch,
+    initializeData,
+    handleAddMatch,
+    handleUpdateMatch,
+    handleDeleteMatch,
     dailySummary: calculateDailySummary()
   };
 }; 
