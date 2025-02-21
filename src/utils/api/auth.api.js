@@ -7,7 +7,6 @@ export async function authSignInUp(object, data) {
       json: data,
     });
     const userData = await response.json();
-    console.log("authSignInUp", userData);
     if (userData) {
       return {
         userData,
