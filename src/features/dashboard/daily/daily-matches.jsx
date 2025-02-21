@@ -95,9 +95,6 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
       return;
     }
 
-    // Calculer l'énergie utilisée basée sur le temps
-    const energyUsed = calculateEnergyUsed(editedTime);
-
     const matchData = {
       build_id: editedBuildId,
       build: {
@@ -139,7 +136,7 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
 
   return (
     <div>
-      <h2 className="text-3xl font-extrabold py-2">{/* Icon */}MATCHES</h2>
+      <h2 className="text-3xl font-extrabold py-2">MATCHES</h2>
       <Table>
         <TableCaption>List of today's matches</TableCaption>
         <TableHeader>
@@ -151,7 +148,7 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
             <TableHead>SLOT 4</TableHead>
             <TableHead>SLOT 5</TableHead>
             <TableHead>LUCK RATE</TableHead>
-            <TableHead>TIME</TableHead>
+            <TableHead>TIME (min)</TableHead>
             <TableHead>ENERGY USED</TableHead>
             <TableHead>ENERGY COST</TableHead>
             <TableHead>MAP</TableHead>
@@ -283,8 +280,9 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
           {/* Lignes des matches existants */}
           {matches.map((match) => {
             const isEditing = match.id === editingMatchId;
-            const currentBuild = isEditing ? selectedBuild : match.build;
+            const currentBuild = builds.find(b => b.id === match.build.id) || match.build;
             const calculated = match.calculated || {};
+            const matchEnergyUsed = calculateEnergyUsed(match.time);
 
             return (
               <TableRow key={match.id}>
@@ -303,7 +301,7 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                       </SelectContent>
                     </Select>
                   ) : (
-                    currentBuild.buildName || match.build.name
+                    currentBuild.buildName || currentBuild.name
                   )}
                 </TableCell>
                 {/* 5 slots de badges */}
@@ -330,17 +328,23 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                   </TableCell>
                 ))}
                 <TableCell>{calculated.luckRate || "-"}</TableCell>
-                <TableCell>{match.energyUsed || 0}</TableCell>
-                <TableCell>${calculated.energyCost || "0.00"}</TableCell>
-                <TableCell>{currentBuild.map}</TableCell>
+                <TableCell>{match.time || 0}</TableCell>
+                <TableCell>{matchEnergyUsed}</TableCell>
+                <TableCell>${(matchEnergyUsed * 1.49).toFixed(2)}</TableCell>
+                <TableCell>{match.map}</TableCell>
                 <TableCell>{match.result}</TableCell>
                 <TableCell>{match.totalToken || 0}</TableCell>
-                <TableCell>${calculated.tokenValue || "0.00"}</TableCell>
+                <TableCell>${((match.totalToken || 0) * 0.01).toFixed(2)}</TableCell>
                 <TableCell>{match.totalPremiumCurrency || 0}</TableCell>
-                <TableCell>${calculated.premiumValue || "0.00"}</TableCell>
-                <TableCell className="text-green-500">${calculated.profit || "0.00"}</TableCell>
-                <TableCell>{match.build.bonusMultiplier || "1.0"}</TableCell>
-                <TableCell>{match.build.perksMultiplier || "1.0"}</TableCell>
+                <TableCell>${((match.totalPremiumCurrency || 0) * 0.00744).toFixed(2)}</TableCell>
+                <TableCell className="text-green-500">
+                  ${(
+                    ((match.totalToken || 0) * 0.01 + (match.totalPremiumCurrency || 0) * 0.00744) -
+                    (matchEnergyUsed * 1.49)
+                  ).toFixed(2)}
+                </TableCell>
+                <TableCell>{currentBuild.bonusMultiplier || "1.0"}</TableCell>
+                <TableCell>{currentBuild.perksMultiplier || "1.0"}</TableCell>
                 <TableCell className="flex gap-2 items-center">
                   <ActionsTable
                     data={match}

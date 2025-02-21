@@ -4,6 +4,11 @@ import { getData } from "@utils/api/data";
 export const useBadges = () => {
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mainBadges, setMainBadges] = useState([]);
+  const [priceBadges, setPriceBadges] = useState([]);
+  const [mainSlotsUsed, setMainSlotsUsed] = useState(1);
+  const [priceSlotsUsed, setPriceSlotsUsed] = useState(1);
+  const [bftMultiplier, setBftMultiplier] = useState(1.0);
 
   const fetchBadges = async () => {
     setLoading(true);
@@ -75,6 +80,6 @@ export const useBadges = () => {
     priceSlotsUsed,
     bftMultiplier,
     updateMainTableMetrics,
-    updatePriceTableMetrics,
+    updatePriceTableMetrics
   };
 };

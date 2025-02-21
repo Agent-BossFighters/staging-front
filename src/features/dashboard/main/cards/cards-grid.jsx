@@ -11,7 +11,7 @@ import PlayerMapCard from "./player-map-card";
 const disabledCards = {
   locker: false,
   datalab: false,
-  daily: true,
+  daily: false,
   schedule: true,
   monthly: true,
   tvtools: true,

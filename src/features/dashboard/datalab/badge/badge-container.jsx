@@ -6,11 +6,25 @@ import { Input } from "@ui/input";
 import { useBadges } from "./hook/useBadge";
 
 export default function BadgeContainer() {
-  const { badges, loading, fetchBadges } = useBadges();
+  const { 
+    badges, 
+    loading, 
+    fetchBadges, 
+    mainSlotsUsed,
+    priceSlotsUsed,
+    bftMultiplier,
+    updateMainTableMetrics,
+    updatePriceTableMetrics 
+  } = useBadges();
 
   useEffect(() => {
     fetchBadges();
   }, []);
+
+  const handleBftMultiplierChange = (e) => {
+    const value = parseFloat(e.target.value) || 1.0;
+    updatePriceTableMetrics(priceSlotsUsed, value);
+  };
 
   return (
     <div className="flex flex-col px-5 gap-5">
@@ -18,7 +32,10 @@ export default function BadgeContainer() {
         <Badge badges={badges} loading={loading} />
         <div className="pt-12">
           <h3 className="text-2xl font-bold whitespace-nowrap">SLOT(S) USED</h3>
-          <SelectSlotUsed />
+          <SelectSlotUsed 
+            defaultValue={mainSlotsUsed.toString()}
+            onValueChange={updateMainTableMetrics}
+          />
         </div>
       </div>
       <div className="flex-grow flex justify-start items-start gap-5">
@@ -32,6 +49,8 @@ export default function BadgeContainer() {
               type="text"
               name="bonus"
               placeholder="1.0"
+              defaultValue={bftMultiplier}
+              onChange={handleBftMultiplierChange}
               className="w-1/4 font-bold"
             />
           </div>
@@ -39,7 +58,10 @@ export default function BadgeContainer() {
             <h3 className="text-2xl font-bold whitespace-nowrap">
               SLOT(S) USED
             </h3>
-            <SelectSlotUsed />
+            <SelectSlotUsed 
+              defaultValue={priceSlotsUsed.toString()}
+              onValueChange={(value) => updatePriceTableMetrics(value, bftMultiplier)}
+            />
           </div>
         </div>
       </div>

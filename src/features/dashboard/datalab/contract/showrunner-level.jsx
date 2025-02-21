@@ -7,17 +7,27 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
+import { useContracts } from "./hook/useContracts";
+import { useEffect } from "react";
 
-const levels = Array.from({ length: 30 }, (_, i) => i + 1);
+export default function ShowrunnerLevel() {
+  const { levelData, loading, error, fetchMyContracts } = useContracts();
+  const levels = Array.from({ length: 30 }, (_, i) => i + 1);
 
-export default function Showrunner() {
+  useEffect(() => {
+    fetchMyContracts();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <>
       <h2 className="text-3xl font-extrabold py-2">
-        {/* Icon */}SHOWRUNNER CONTRACTS
+        {/* Icon */}SHOWRUNNER LEVEL UP
       </h2>
       <Table className="overflow-y-scroll">
-        <TableCaption>Desc ?</TableCaption>
+        <TableCaption>Level up costs and requirements for showrunner contracts</TableCaption>
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">
             <TableHead>LEVEL</TableHead>
@@ -36,22 +46,28 @@ export default function Showrunner() {
             <TableCell className="bg-muted-foreground/30">
               SP. MARKS NB
             </TableCell>
-            {levels.map((level) => (
-              <TableCell key={level}>{level}</TableCell>
+            {levels.map((level, index) => (
+              <TableCell key={level}>
+                {levelData.spMarksNb[index]?.toFixed(2) || "-"}
+              </TableCell>
             ))}
           </TableRow>
           <TableRow>
             <TableCell className="bg-muted-foreground/30">
               SP. MARKS COST
             </TableCell>
-            {levels.map((level) => (
-              <TableCell key={level}>{level}</TableCell>
+            {levels.map((level, index) => (
+              <TableCell key={level}>
+                {levelData.spMarksCost[index] || "-"}
+              </TableCell>
             ))}
           </TableRow>
           <TableRow className="text-destructive">
             <TableCell className="bg-muted-foreground/30">TOTAL COST</TableCell>
-            {levels.map((level) => (
-              <TableCell key={level}>{level}</TableCell>
+            {levels.map((level, index) => (
+              <TableCell key={level}>
+                {levelData.totalCost[index] || "-"}
+              </TableCell>
             ))}
           </TableRow>
         </TableBody>

@@ -2,19 +2,21 @@ import { CURRENCY_RATES, LUCK_RATES, ENERGY_CONSUMPTION } from '@constants/gameC
 
 export const useMatchCalculations = () => {
   const calculateEnergyUsed = (timeInMinutes) => {
+    if (!timeInMinutes) return 0;
+    // ~0.083 énergie par minute (0.83 pour 10 minutes)
     return (timeInMinutes * ENERGY_CONSUMPTION.RATE_PER_MINUTE).toFixed(2);
   };
 
-  const calculateEnergyCost = (energyUsed, energyCost = CURRENCY_RATES.ENERGY) => {
-    return (energyUsed * energyCost).toFixed(2);
+  const calculateEnergyCost = (energyUsed) => {
+    return (energyUsed * CURRENCY_RATES.ENERGY).toFixed(2);
   };
 
-  const calculateTokenValue = (totalToken, tokenValue = CURRENCY_RATES.BFT) => {
-    return (totalToken * tokenValue).toFixed(2);
+  const calculateTokenValue = (totalToken) => {
+    return (totalToken * CURRENCY_RATES.BFT).toFixed(2);
   };
 
-  const calculatePremiumValue = (totalPremium, premiumValue = CURRENCY_RATES.FLEX) => {
-    return (totalPremium * premiumValue).toFixed(2);
+  const calculatePremiumValue = (totalPremium) => {
+    return (totalPremium * CURRENCY_RATES.FLEX).toFixed(2);
   };
 
   const calculateFeeCost = (totalFee, feeCost) => {
@@ -32,20 +34,21 @@ export const useMatchCalculations = () => {
   };
 
   const calculateProfit = (match) => {
-    // Calcul des gains totaux
-    const tokenEarnings = parseFloat(calculateTokenValue(match.totalToken, match.tokenValue));
-    const flexEarnings = parseFloat(calculatePremiumValue(match.totalPremiumCurrency, match.premiumCurrencyValue));
-    const totalEarnings = tokenEarnings + flexEarnings;
+    if (!match) return "0.00";
 
-    // Calcul des coûts totaux
-    const energyCost = parseFloat(calculateEnergyCost(match.energyUsed, match.energyCost));
-    const feeCost = parseFloat(calculateFeeCost(match.totalFee, match.feeCost));
-    const totalCosts = energyCost + feeCost;
+    // Calcul des gains
+    const bftValue = parseFloat(calculateTokenValue(match.totalToken));
+    const flexValue = parseFloat(calculatePremiumValue(match.totalPremiumCurrency));
+    const totalEarnings = bftValue + flexValue;
 
-    // Calcul du profit de base
-    const baseProfit = totalEarnings - totalCosts;
+    // Calcul des coûts
+    const energyUsed = calculateEnergyUsed(match.time);
+    const energyCost = parseFloat(calculateEnergyCost(energyUsed));
 
-    // Application des multiplicateurs du build
+    // Profit de base
+    const baseProfit = totalEarnings - energyCost;
+
+    // Application des multiplicateurs
     const bonusMultiplier = match.build?.bonusMultiplier || 1.0;
     const perksMultiplier = match.build?.perksMultiplier || 1.0;
     const totalMultiplier = bonusMultiplier * perksMultiplier;
@@ -54,26 +57,24 @@ export const useMatchCalculations = () => {
   };
 
   const calculateMatchMetrics = (matchData) => {
-    // Calcul de l'énergie utilisée si on a le temps mais pas l'énergie
-    const energyUsed = matchData.energyUsed || 
-      (matchData.time ? calculateEnergyUsed(matchData.time) : 0);
+    if (!matchData) return matchData;
 
-    const calculated = {
-      luckRate: calculateLuckRate(matchData.badges),
-      energyUsed: energyUsed,
-      energyCost: calculateEnergyCost(energyUsed, matchData.energyCost),
-      tokenValue: calculateTokenValue(matchData.totalToken, matchData.tokenValue),
-      premiumValue: calculatePremiumValue(matchData.totalPremiumCurrency, matchData.premiumCurrencyValue),
-      feeCost: calculateFeeCost(matchData.totalFee, matchData.feeCost),
-      profit: calculateProfit({
-        ...matchData,
-        energyUsed: energyUsed
-      })
-    };
-
+    const energyUsed = calculateEnergyUsed(matchData.time);
+    
     return {
       ...matchData,
-      calculated
+      energyUsed,
+      calculated: {
+        luckRate: calculateLuckRate(matchData.badges),
+        energyCost: calculateEnergyCost(energyUsed),
+        tokenValue: calculateTokenValue(matchData.totalToken),
+        premiumValue: calculatePremiumValue(matchData.totalPremiumCurrency),
+        feeCost: calculateFeeCost(matchData.totalFee, matchData.feeCost),
+        profit: calculateProfit({
+          ...matchData,
+          energyUsed
+        })
+      }
     };
   };
 
