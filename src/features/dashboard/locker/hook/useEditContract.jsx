@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { putData } from "@utils/api/data";
 
 export const useEditContract = (setContracts) => {
@@ -23,23 +24,23 @@ export const useEditContract = (setContracts) => {
       purchasePrice: editedPurchasePrice,
     };
 
-    try {
-      const response = await putData(
-        `/v1/nfts/${editingContractId}`,
-        updatedContract,
-      );
-
-      if (response.nft) {
-        setContracts((prevContracts) =>
-          prevContracts.map((contractData) =>
-            contractData.id === response.nft.id ? response.nft : contractData,
-          ),
-        );
-        setEditingContractId(null);
-      }
-    } catch (error) {
-      console.error("Failed to update contract:", error);
-    }
+    toast.promise(putData(`v1/nfts/${editingContractId}`, updatedContract), {
+      loading: "Updating NFT...",
+      success: (response) => {
+        if (response.nft) {
+          setContracts((prevContracts) =>
+            prevContracts.map((contractData) =>
+              contractData.id === response.nft.id ? response.nft : contractData,
+            ),
+          );
+          setEditingContractId(null);
+          return "NFT updated successfully";
+        }
+      },
+      error: (err) => {
+        return `Error: ${err.message}`;
+      },
+    });
   };
 
   const handleCancel = () => {

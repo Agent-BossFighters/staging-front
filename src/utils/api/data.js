@@ -1,13 +1,14 @@
-import { BASE_URL, kyInstance } from "./ky-config";
+import { kyInstance } from "./ky-config";
+import toast from "react-hot-toast";
 
 // Fonction pour récupérer les données
 export async function getData(object) {
   try {
-    const response = await kyInstance.get(BASE_URL + object).json();
+    const response = await kyInstance.get(object).json();
     return response;
   } catch (error) {
-    let errorData = await error.responseData;
-    throw new Error(JSON.stringify(errorData));
+    let errorData = await error.responseData.error;
+    toast.error(errorData);
   }
 }
 
@@ -21,11 +22,14 @@ export async function postData(object, data) {
       options.headers["Content-Type"] = "application/json";
       options.body = JSON.stringify(data);
     }
-    const response = await kyInstance.post(BASE_URL + object, options);
+    const response = await kyInstance.post(object, options);
+    if (response.message) {
+      toast.success(response.message);
+    }
     return response.json();
   } catch (error) {
-    let errorData = await error.responseData;
-    throw new Error(JSON.stringify(errorData));
+    let errorData = await error.responseData.error;
+    toast.error(errorData);
   }
 }
 
@@ -40,23 +44,21 @@ export async function putData(object, data) {
       options.headers["Content-Type"] = "application/json";
     }
 
-    const response = await kyInstance.put(BASE_URL + object, options);
+    const response = await kyInstance.put(object, options);
     return response.json();
   } catch (error) {
-    let errorData = await error.responseData;
-    throw new Error(JSON.stringify(errorData));
+    let errorData = await error.responseData.error;
+    toast.error(errorData);
   }
 }
 
 // Fonction pour supprimer les données
 export async function deleteData(object) {
   try {
-    const response = await kyInstance.delete(BASE_URL + object);
-    // const responseData = await response.json();
-    // console.log(responseData);
+    const response = await kyInstance.delete(object);
     return response;
   } catch (error) {
-    let errorData = await error.responseData;
-    throw new Error(JSON.stringify(errorData));
+    let errorData = await error.responseData.error;
+    toast.error(errorData);
   }
 }

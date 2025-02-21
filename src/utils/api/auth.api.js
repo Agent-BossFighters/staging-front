@@ -1,19 +1,21 @@
 import Cookies from "js-cookie";
-import { BASE_URL, kyInstance } from "@api/ky-config";
-import { cleanUserData } from "@utils/api/auth.utils";
+import { kyInstance } from "@api/ky-config";
 
 export async function authSignInUp(object, data) {
   try {
-    let response = await kyInstance.post(BASE_URL + object, {
+    const response = await kyInstance.post(object, {
       json: data,
     });
     const userData = await response.json();
-    if (userData.token) {
-      return { user: cleanUserData(userData.user), token: userData.token };
+    if (userData) {
+      return {
+        userData,
+      };
     }
   } catch (error) {
-    let errorData = await error.responseData;
-    throw new Error(JSON.stringify(errorData));
+    let errorData =
+      (await error?.responseData?.status?.message) || error?.responseData.error;
+    throw new Error(errorData);
   }
 }
 
@@ -21,13 +23,13 @@ export async function authSignOut() {
   try {
     const accessToken = Cookies.get("agent-auth");
     if (!accessToken) {
-      throw new Error("Aucun token d'authentification trouvé.");
+      throw new Error("No access token found");
     }
-    let response = await kyInstance.post(`${BASE_URL}signout`, {});
+    let response = await kyInstance.post(`signout`, {});
     Cookies.remove("agent-auth");
     return response;
   } catch (error) {
-    const errorData = await error.responseData.errors;
+    const errorData = await error.responseData.error;
     throw new Error(errorData);
   }
 }

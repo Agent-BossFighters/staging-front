@@ -7,7 +7,7 @@ export const useContracts = () => {
 
   const fetchMyContracts = async () => {
     setLoading(true);
-    const payload = await getData("/v1/showrunner_contracts/owned");
+    const payload = await getData("v1/showrunner_contracts/owned");
     if (payload && payload.contracts) {
       setContracts(payload.contracts);
     } else {

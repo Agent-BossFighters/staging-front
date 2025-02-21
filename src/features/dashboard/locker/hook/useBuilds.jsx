@@ -7,7 +7,7 @@ export const useBuilds = () => {
 
   const fetchMyBuilds = async () => {
     setLoading(true);
-    const payload = await getData("/v1/user_builds");
+    const payload = await getData("v1/user_builds");
     if (payload && payload.builds) {
       setBuilds(payload.builds);
     } else {

@@ -3,25 +3,24 @@ import { getData } from "@utils/api/data";
 
 export const useBadges = () => {
   const [badges, setBadges] = useState([]);
-  const [mainBadges, setMainBadges] = useState([]);
-  const [priceBadges, setPriceBadges] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mainSlotsUsed, setMainSlotsUsed] = useState("1");
-  const [priceSlotsUsed, setPriceSlotsUsed] = useState("1");
-  const [bftMultiplier, setBftMultiplier] = useState("1.0");
 
   const fetchBadges = async () => {
     setLoading(true);
     try {
       // Fetch data for main table (without multiplier)
-      const mainPayload = await getData(`/v1/data_lab/badges?slots_used=${mainSlotsUsed}`);
+      const mainPayload = await getData(
+        `v1/data_lab/badges?slots_used=${mainSlotsUsed}`,
+      );
       if (mainPayload) {
         setMainBadges(mainPayload);
         setBadges(mainPayload);
       }
 
       // Fetch data for price table (with multiplier)
-      const pricePayload = await getData(`/v1/data_lab/badges?slots_used=${priceSlotsUsed}&bft_multiplier=${bftMultiplier}`);
+      const pricePayload = await getData(
+        `v1/data_lab/badges?slots_used=${priceSlotsUsed}&bft_multiplier=${bftMultiplier}`,
+      );
       if (pricePayload) {
         setPriceBadges(pricePayload);
       }
@@ -30,14 +29,15 @@ export const useBadges = () => {
       setMainBadges([]);
       setPriceBadges([]);
       setBadges([]);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const updateMainTableMetrics = async (newSlotsUsed) => {
     try {
-      const payload = await getData(`/v1/data_lab/badges?slots_used=${newSlotsUsed}`);
+      const payload = await getData(
+        `v1/data_lab/badges?slots_used=${newSlotsUsed}`,
+      );
       if (payload) {
         setMainBadges(payload);
         setBadges(payload);
@@ -50,7 +50,9 @@ export const useBadges = () => {
 
   const updatePriceTableMetrics = async (newSlotsUsed, newBftMultiplier) => {
     try {
-      const payload = await getData(`/v1/data_lab/badges?slots_used=${newSlotsUsed}&bft_multiplier=${newBftMultiplier}`);
+      const payload = await getData(
+        `v1/data_lab/badges?slots_used=${newSlotsUsed}&bft_multiplier=${newBftMultiplier}`,
+      );
       if (payload) {
         setPriceBadges(payload);
         setPriceSlotsUsed(newSlotsUsed);
@@ -61,18 +63,18 @@ export const useBadges = () => {
     }
   };
 
-  return { 
+  return {
     badges,
     setBadges,
     mainBadges,
     priceBadges,
-    loading, 
-    setLoading, 
+    loading,
+    setLoading,
     fetchBadges,
     mainSlotsUsed,
     priceSlotsUsed,
     bftMultiplier,
     updateMainTableMetrics,
-    updatePriceTableMetrics
+    updatePriceTableMetrics,
   };
 };

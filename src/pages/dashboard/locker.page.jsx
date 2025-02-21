@@ -9,7 +9,7 @@ import {
 export default function LockerPage() {
   return (
     <>
-      <h1 className="text-5xl font-extrabold py-4 text-primary">LOCKER</h1>
+      <h1 className="text-6xl font-extrabold py-4 text-primary">LOCKER</h1>
       <div className="flex flex-col lg:flex-row gap-20 flex-grow">
         <div className="flex flex-col lg:w-1/2 gap-5 h-full">
           <LockerContainer />

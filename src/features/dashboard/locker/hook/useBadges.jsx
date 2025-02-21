@@ -7,7 +7,7 @@ export const useBadges = () => {
 
   const fetchMyBadges = async () => {
     setLoading(true);
-    const payload = await getData("/v1/badges/owned");
+    const payload = await getData("v1/badges/owned");
     if (payload && payload.badges) {
       setBadges(payload.badges);
     } else {

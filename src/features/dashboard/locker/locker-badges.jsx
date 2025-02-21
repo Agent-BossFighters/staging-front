@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import {
   Table,
   TableBody,
@@ -10,7 +11,7 @@ import {
   TableFooter,
 } from "@ui/table";
 import { Button } from "@ui/button";
-import { Input } from "@ui/input";
+import { NumericInput } from "@ui/numeric-input";
 import { Plus } from "lucide-react";
 import ActionsTable from "./actions-table";
 import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
@@ -55,9 +56,14 @@ export default function LockerBadges() {
   );
 
   const handleSubmit = async () => {
-    if (!selectedBadge || !issueId || !purchasePrice) {
-      console.error("fill all fields");
-      return;
+    const missingFields = [];
+    if (!selectedBadge) missingFields.push("Rarity");
+    if (!issueId) missingFields.push("ID");
+    if (!purchasePrice) missingFields.push("Purchase Price");
+    if (missingFields.length > 0) {
+      toast.error(
+        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`,
+      );
     }
     const payload = {
       nft: {
@@ -67,23 +73,43 @@ export default function LockerBadges() {
       },
     };
     setLoading(true);
-    const response = await postData("/v1/nfts/create", payload);
-    if (response && response.nft) {
-      setBadges((prevBadges) => [...prevBadges, response.nft]);
-      setIssueId("");
-      setPurchasePrice("");
-      setSelectedBadge(null);
-    }
-    setLoading(false);
+
+    toast
+      .promise(postData("v1/nfts/create", payload), {
+        loading: "Creating NFT...",
+        success: (res) => {
+          setBadges((prevBadges) => [...prevBadges, res.nft]);
+          setIssueId("");
+          setPurchasePrice("");
+          setSelectedBadge(null);
+          return "NFT created successfully";
+        },
+        error: (err) => {
+          return `Error: ${err.message}`;
+        },
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleDelete = async (badgeId) => {
-    const response = await deleteData(`/v1/nfts/${badgeId}`);
-    if (response) {
-      setBadges((prevBadges) =>
-        prevBadges.filter((badgeData) => badgeData.id !== badgeId),
-      );
-    }
+    const confirm = window.confirm(
+      "Are you sure you want to delete this badge?",
+    );
+    if (!confirm) return;
+    toast.promise(deleteData(`v1/nfts/${badgeId}`), {
+      loading: "Deleting NFT...",
+      success: () => {
+        setBadges((prevBadges) =>
+          prevBadges.filter((badgeData) => badgeData.id !== badgeId),
+        );
+        return "Showrunner contract deleted successfully";
+      },
+      error: (err) => {
+        return `Error: ${err.message}`;
+      },
+    });
   };
 
   if (loading) {
@@ -92,7 +118,7 @@ export default function LockerBadges() {
 
   return (
     <div>
-      <h2 className="text-2xl font-extrabold py-2 flex gap-3 items-center">
+      <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
         <img src={BadgeCommon} alt="Badge" className="w-10 h-10" />
         BADGE(S)
       </h2>
@@ -114,7 +140,7 @@ export default function LockerBadges() {
 
               return (
                 <TableRow key={index} className="">
-                  <TableCell style={{ color: badge.rarity.color }}>
+                  <TableCell>
                     {isEditing ? (
                       <SelectSlot
                         onSelectRarity={(rarity) => {
@@ -125,7 +151,12 @@ export default function LockerBadges() {
                         rounded={true}
                       />
                     ) : (
-                      badge.rarity.name
+                      <p
+                        className="border-2 rounded-full text-center"
+                        style={{ borderColor: badge.rarity.color }}
+                      >
+                        {badge.rarity.name}
+                      </p>
                     )}
                   </TableCell>
                   <TableCell>
@@ -133,17 +164,11 @@ export default function LockerBadges() {
                   </TableCell>
                   <TableCell>
                     {isEditing ? (
-                      <Input
-                        type="number"
+                      <NumericInput
+                        placeholder="ID"
                         value={editedIssueId}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(
-                            /[^0-9]/g,
-                            "",
-                          );
-                        }}
-                        className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        onChange={(e) => setEditedIssueId(e.target.value)}
+                        onChange={setEditedIssueId}
+                        className="w-1/2"
                       />
                     ) : (
                       badge.issueId
@@ -151,17 +176,11 @@ export default function LockerBadges() {
                   </TableCell>
                   <TableCell>
                     {isEditing ? (
-                      <Input
-                        type="number"
+                      <NumericInput
+                        placeholder="Purchase Price"
                         value={editedPurchasePrice}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(
-                            /[^0-9]/g,
-                            "",
-                          );
-                        }}
-                        className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        onChange={(e) => setEditedPurchasePrice(e.target.value)}
+                        onChange={setEditedPurchasePrice}
+                        className="w-1/2"
                       />
                     ) : (
                       badge.purchasePrice
@@ -200,29 +219,19 @@ export default function LockerBadges() {
             </TableCell>
             <TableCell>{selectedBadge ? selectedBadge.name : ""}</TableCell>
             <TableCell>
-              <Input
-                type="number"
+              <NumericInput
                 placeholder="ID"
-                inputMode="numeric"
                 value={issueId}
-                onChange={(e) => setIssueId(e.target.value)}
-                onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                }}
-                className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onChange={setIssueId}
+                className="w-1/2"
               />
             </TableCell>
             <TableCell>
-              <Input
-                type="number"
-                placeholder="Price"
-                inputMode="numeric"
+              <NumericInput
+                placeholder="Purchase Price"
                 value={purchasePrice}
-                onChange={(e) => setPurchasePrice(e.target.value)}
-                onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                }}
-                className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onChange={setPurchasePrice}
+                className="w-1/2"
               />
             </TableCell>
             <TableCell className="flex items-center">

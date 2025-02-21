@@ -7,7 +7,7 @@ export const useContracts = () => {
 
   const fetchMyContracts = async () => {
     setLoading(true);
-    const payload = await getData("/v1/data_lab/contracts");
+    const payload = await getData("v1/data_lab/contracts");
     if (payload) {
       setContracts(payload);
     } else {
