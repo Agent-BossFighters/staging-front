@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { putData } from "@utils/api/data";
 
 export const useEditBadge = (setBadges) => {
@@ -23,23 +24,21 @@ export const useEditBadge = (setBadges) => {
       purchasePrice: editedPurchasePrice,
     };
 
-    try {
-      const response = await putData(
-        `/v1/nfts/${editingBadgeId}`,
-        updatedBadge,
-      );
-
-      if (response.nft) {
+    toast.promise(putData(`v1/nfts/${editingBadgeId}`, updatedBadge), {
+      loading: "Updating NFT...",
+      success: (res) => {
         setBadges((prevBadges) =>
           prevBadges.map((badgeData) =>
-            badgeData.id === response.nft.id ? response.nft : badgeData,
+            badgeData.id === editingBadgeId ? res.nft : badgeData,
           ),
         );
         setEditingBadgeId(null);
-      }
-    } catch (error) {
-      console.error("Failed to update badge:", error);
-    }
+        return "NFT updated successfully";
+      },
+      error: (err) => {
+        return `Error: ${err.message}`;
+      },
+    });
   };
 
   const handleCancel = () => {

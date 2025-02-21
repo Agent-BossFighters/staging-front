@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { putData } from "@utils/api/data";
 
 export const useEditBuild = (setBuilds) => {
@@ -21,23 +22,21 @@ export const useEditBuild = (setBuilds) => {
       perksMultiplier: editedPerks,
     };
 
-    try {
-      const response = await putData(
-        `/v1/user_builds/${editingBuildId}`,
-        updatedBuild,
-      );
-
-      if (response.build) {
+    toast.promise(putData(`v1/user_builds/${editingBuildId}`, updatedBuild), {
+      loading: "Updating build...",
+      success: (prevBuild) => {
         setBuilds((prevBuilds) =>
           prevBuilds.map((buildData) =>
-            buildData.id === response.build.id ? response.build : buildData,
+            buildData.id === prevBuild.id ? prevBuild : buildData,
           ),
         );
         setEditingBuildId(null);
-      }
-    } catch (error) {
-      console.error("Failed to update build:", error);
-    }
+        return "Build updated successfully";
+      },
+      error: (err) => {
+        return `Error: ${err.message}`;
+      },
+    });
   };
 
   const handleCancel = () => {

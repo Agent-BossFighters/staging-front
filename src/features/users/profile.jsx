@@ -25,8 +25,7 @@ export default function Login() {
     //       },
     //     };
     //     const response = await authSignInUp("/api/v1/login", payload);
-    //     console.log("message", response.message);
-    //     if (response.token && response.user) {
+    //     console.log("message", response.message); if (response.token && response.user) {
     //       login(response.user, response.token);
     //       navigate("/dashboard");
     //     }

@@ -17,7 +17,7 @@ export const AuthUtils = {
       "user",
       JSON.stringify({
         ...userData,
-      })
+      }),
     );
   },
 

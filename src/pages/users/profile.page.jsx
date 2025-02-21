@@ -11,7 +11,7 @@ export default function ProfilePage() {
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete your account?"))
       return;
-    const response = await deleteData(`/v1/users/${user.id}`);
+    const response = await deleteData(`v1/users/${user.id}`);
     if (response.ok) {
       alert("Account deleted successfully");
       logout();

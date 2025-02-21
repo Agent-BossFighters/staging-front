@@ -5,7 +5,7 @@ export const handleSelectRarityContract = async (
   setSelectedContract,
   rarity,
 ) => {
-  const payload = await getData("/v1/showrunner_contracts");
+  const payload = await getData("v1/showrunner_contracts");
   const contracts = payload.contracts;
   if (!contracts || contracts.length === 0) {
     console.warn("No contract available.");
@@ -26,7 +26,7 @@ export const handleSelectRarityContractForEdit = async (
   setEditedName,
   rarity,
 ) => {
-  const payload = await getData("/v1/showrunner_contracts");
+  const payload = await getData("v1/showrunner_contracts");
   const contracts = payload.contracts;
 
   if (!contracts || contracts.length === 0) {
@@ -49,7 +49,7 @@ export const handleSelectRarityContractForEdit = async (
 
 // Rarity for Badges
 export const handleSelectRarityBadges = async (setSelectedBadge, rarity) => {
-  const payload = await getData("/v1/badges");
+  const payload = await getData("v1/badges");
   const badges = payload.badges;
   if (!badges || badges.length === 0) {
     console.warn("No badge available.");
@@ -67,7 +67,7 @@ export const handleSelectRarityBadges = async (setSelectedBadge, rarity) => {
 };
 
 export const handleSelectRarityBadgeForEdit = async (setEditedName, rarity) => {
-  const payload = await getData("/v1/badges");
+  const payload = await getData("v1/badges");
   const badges = payload.badges;
 
   if (!badges || badges.length === 0) {

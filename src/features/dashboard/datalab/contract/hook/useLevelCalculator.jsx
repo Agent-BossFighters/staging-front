@@ -6,7 +6,7 @@ export const useLevelCalculator = () => {
   const [levelData, setLevelData] = useState({
     spMarksNb: [],
     spMarksCost: [],
-    totalCost: []
+    totalCost: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,12 +14,12 @@ export const useLevelCalculator = () => {
   const fetchLevelUpData = async () => {
     try {
       setLoading(true);
-      const response = await getData("/v1/data_lab/contracts");
+      const response = await getData("v1/data_lab/contracts");
       if (response && response.level_up) {
         setLevelData({
           spMarksNb: response.level_up.sp_marks_nb,
           spMarksCost: response.level_up.sp_marks_cost,
-          totalCost: response.level_up.total_cost
+          totalCost: response.level_up.total_cost,
         });
       }
     } catch (err) {
@@ -35,3 +35,4 @@ export const useLevelCalculator = () => {
 
   return { levels, levelData, loading, error };
 };
+

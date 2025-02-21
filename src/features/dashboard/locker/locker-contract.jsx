@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
   Table,
   TableBody,
@@ -9,7 +10,7 @@ import {
   TableRow,
   TableFooter,
 } from "@ui/table";
-import { Input } from "@ui/input";
+import { NumericInput } from "@ui/numeric-input";
 import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
 import ActionsTable from "./actions-table";
 import { Button } from "@ui/button";
@@ -57,9 +58,14 @@ export default function LockerContract() {
   );
 
   const handleSubmit = async () => {
-    if (!selectedContract || !issueId || !purchasePrice) {
-      console.error("fill all fields");
-      return;
+    const missingFields = [];
+    if (!selectedContract) missingFields.push("Rarity");
+    if (!issueId) missingFields.push("ID");
+    if (!purchasePrice) missingFields.push("Purchase Price");
+    if (missingFields.length > 0) {
+      toast.error(
+        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`,
+      );
     }
     const payload = {
       nft: {
@@ -69,23 +75,44 @@ export default function LockerContract() {
       },
     };
     setLoading(true);
-    const response = await postData("/v1/nfts/create", payload);
-    if (response && response.nft) {
-      setContracts((prevContracts) => [...prevContracts, response.nft]);
-      setIssueId("");
-      setPurchasePrice("");
-      setSelectedContract(null);
-    }
-    setLoading(false);
+    toast
+      .promise(postData("v1/nfts/create", payload), {
+        loading: "Creating NFT...",
+        success: (res) => {
+          setContracts((prevContracts) => [...prevContracts, res.nft]);
+          setIssueId("");
+          setPurchasePrice("");
+          setSelectedContract(null);
+          return "NFT create successfully";
+        },
+        error: (err) => {
+          return `Error: ${err.message}`;
+        },
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleDelete = async (contractId) => {
-    const response = await deleteData(`/v1/nfts/${contractId}`);
-    if (response) {
-      setContracts((prevContracts) =>
-        prevContracts.filter((contractData) => contractData.id !== contractId),
-      );
-    }
+    const confirm = window.confirm(
+      "Are you sure you want to delete this contract?",
+    );
+    if (!confirm) return;
+    toast.promise(deleteData(`v1/nfts/${contractId}`), {
+      loading: "Deleting NFT...",
+      success: () => {
+        setContracts((prevContracts) =>
+          prevContracts.filter(
+            (contractData) => contractData.id !== contractId,
+          ),
+        );
+        return "Showrunner contract deleted successfully";
+      },
+      error: (err) => {
+        return `Error: ${err.message}`;
+      },
+    });
   };
 
   if (loading) {
@@ -116,7 +143,7 @@ export default function LockerContract() {
 
               return (
                 <TableRow key={index}>
-                  <TableCell style={{ color: contract.rarity.color }}>
+                  <TableCell>
                     {isEditing ? (
                       <SelectSlot
                         onSelectRarity={(rarity) => {
@@ -130,7 +157,12 @@ export default function LockerContract() {
                         rounded={true}
                       />
                     ) : (
-                      contract.rarity.name
+                      <p
+                        className="border-2 rounded-full text-center"
+                        style={{ borderColor: contract.rarity.color }}
+                      >
+                        {contract.rarity.name}
+                      </p>
                     )}
                   </TableCell>
                   <TableCell>
@@ -138,17 +170,11 @@ export default function LockerContract() {
                   </TableCell>
                   <TableCell>
                     {isEditing ? (
-                      <Input
-                        type="number"
+                      <NumericInput
+                        placeholder="Issue ID"
                         value={editedIssueId}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(
-                            /[^0-9]/g,
-                            "",
-                          );
-                        }}
-                        className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        onChange={(e) => setEditedIssueId(e.target.value)}
+                        onChange={setEditedIssueId}
+                        className="w-1/2"
                       />
                     ) : (
                       contract.issueId
@@ -156,17 +182,11 @@ export default function LockerContract() {
                   </TableCell>
                   <TableCell>
                     {isEditing ? (
-                      <Input
-                        type="number"
+                      <NumericInput
+                        placeholder="Purchase Price"
                         value={editedPurchasePrice}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(
-                            /[^0-9]/g,
-                            "",
-                          );
-                        }}
-                        className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        onChange={(e) => setEditedPurchasePrice(e.target.value)}
+                        onChange={setEditedPurchasePrice}
+                        className="w-1/2"
                       />
                     ) : (
                       contract.purchasePrice
@@ -207,29 +227,19 @@ export default function LockerContract() {
               {selectedContract ? selectedContract.name : ""}
             </TableCell>
             <TableCell>
-              <Input
-                type="number"
-                placeholder="ID"
-                inputMode="numeric"
+              <NumericInput
+                placeholder="Issue ID"
                 value={issueId}
-                onChange={(e) => setIssueId(e.target.value)}
-                onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                }}
-                className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onChange={setIssueId}
+                className="w-1/2"
               />
             </TableCell>
             <TableCell>
-              <Input
-                type="number"
-                placeholder="Price"
-                inputMode="numeric"
+              <NumericInput
+                placeholder="Purchase Price"
                 value={purchasePrice}
-                onChange={(e) => setPurchasePrice(e.target.value)}
-                onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                }}
-                className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onChange={setPurchasePrice}
+                className="w-1/2"
               />
             </TableCell>
             <TableCell className="flex items-center">

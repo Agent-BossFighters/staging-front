@@ -7,7 +7,7 @@ export const useCrafts = () => {
 
   const fetchCrafts = async () => {
     setLoading(true);
-    const payload = await getData("/v1/data_lab/craft");
+    const payload = await getData("v1/data_lab/craft");
     if (payload) {
       setCrafts(payload);
     } else {

@@ -1,10 +1,13 @@
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Button } from "@ui/button";
 import { Input } from "@ui/input";
 import { authSignInUp } from "@api/auth.api";
 import useForm from "@features/users/hook/useForm";
 
 export default function Register() {
-  const { values, errors, loading, handleChange, handleSubmit } = useForm(
+  const navigate = useNavigate();
+  const { values, loading, handleChange, handleSubmit } = useForm(
     {
       username: "",
       email: "",
@@ -16,7 +19,7 @@ export default function Register() {
 
   const handleRegister = async (data) => {
     if (data.password !== data.confirmPassword) {
-      console.error("Les mots de passe ne correspondent pas");
+      toast.error("Passwords do not match!");
       return;
     }
     const payload = {
@@ -26,13 +29,16 @@ export default function Register() {
         password: data.password,
       },
     };
-
-    try {
-      const userData = await authSignInUp("/v1/signup", payload);
-      console.log("Utilisateur enregistré:", userData);
-    } catch (err) {
-      console.error("Erreur d'enregistrement:", err);
-    }
+    toast.promise(authSignInUp("v1/signup", payload), {
+      loading: "Signing up...",
+      success: (res) => {
+        navigate("/users/login");
+        return res.userData.status.message;
+      },
+      error: (err) => {
+        return err.message;
+      },
+    });
   };
 
   return (
@@ -50,7 +56,6 @@ export default function Register() {
         value={values.username}
         onChange={handleChange}
       />
-      {errors.username && <p className="text-red-500">{errors.username}</p>}
       <Input
         type="email"
         name="email"
@@ -58,7 +63,6 @@ export default function Register() {
         value={values.email}
         onChange={handleChange}
       />
-      {errors.email && <p className="text-red-500">{errors.email}</p>}
 
       <Input
         type="password"
@@ -67,7 +71,6 @@ export default function Register() {
         value={values.password}
         onChange={handleChange}
       />
-      {errors.password && <p className="text-red-500">{errors.password}</p>}
 
       <Input
         type="password"
@@ -76,9 +79,6 @@ export default function Register() {
         value={values.confirmPassword}
         onChange={handleChange}
       />
-      {errors.confirmPassword && (
-        <p className="text-red-500">{errors.confirmPassword}</p>
-      )}
 
       <Button
         type="submit"

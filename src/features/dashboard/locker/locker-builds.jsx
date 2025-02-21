@@ -11,7 +11,9 @@ import {
 } from "@ui/table";
 import { Button } from "@ui/button";
 import { Input } from "@ui/input";
+import { NumericInput } from "@ui/numeric-input";
 import { Plus } from "lucide-react";
+import toast from "react-hot-toast";
 import ActionsTable from "./actions-table";
 import { postData, deleteData } from "@utils/api/data";
 import { useBuilds } from "./hook/useBuilds";
@@ -41,9 +43,14 @@ export default function Lockerbuilds() {
   }, []);
 
   const handleSubmit = async () => {
-    if (!buildName || !bonus || !perks) {
-      console.error("fill all fields");
-      return;
+    const missingFields = [];
+    if (!buildName) missingFields.push("Build Name");
+    if (!bonus) missingFields.push("Bonus Multiplier");
+    if (!perks) missingFields.push("Perks Multiplier");
+    if (missingFields.length > 0) {
+      toast.error(
+        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`,
+      );
     }
     const payload = {
       user_build: {
@@ -53,23 +60,38 @@ export default function Lockerbuilds() {
       },
     };
     setLoading(true);
-    const response = await postData("/v1/user_builds/create", payload);
-    if (response && response.build) {
-      setBuilds((prevBuilds) => [...prevBuilds, response.build]);
-      setBuildName("");
-      setBonus("");
-      setPerks("");
-    }
-    setLoading(false);
+    toast.promise(postData("v1/user_builds/create", payload), {
+      loading: "Creating Build...",
+      success: (res) => {
+        setBuilds((prevBuilds) => [...prevBuilds, res.build]);
+        setBuildName("");
+        setBonus("");
+        setPerks("");
+        return "Build created successfully";
+      },
+      error: (err) => {
+        return `Error: ${err.message}`;
+      },
+    });
   };
 
   const handleDelete = async (buildId) => {
-    const response = await deleteData(`/v1/user_builds/${buildId}`);
-    if (response) {
-      setBuilds((prevBuild) =>
-        prevBuild.filter((buildData) => buildData.id !== buildId),
-      );
-    }
+    const confirm = window.confirm(
+      "Are you sure you want to delete this badge?",
+    );
+    if (!confirm) return;
+    toast.promise(deleteData(`v1/user_builds/${buildId}`), {
+      loading: "Deleting NFT...",
+      success: () => {
+        setBuilds((prevBuilds) =>
+          prevBuilds.filter((buildData) => buildData.id !== buildId),
+        );
+        return "Showrunner contract deleted successfully";
+      },
+      error: (err) => {
+        return `Error: ${err.message}`;
+      },
+    });
   };
 
   if (loading) {
@@ -112,17 +134,11 @@ export default function Lockerbuilds() {
                   </TableCell>
                   <TableCell>
                     {isEditing ? (
-                      <Input
-                        type="number"
+                      <NumericInput
+                        placeholder="Bonus Multiplier"
                         value={editedBonus}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(
-                            /[^0-9]/g,
-                            "",
-                          );
-                        }}
-                        className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        onChange={(e) => setEditedBonus(e.target.value)}
+                        onChange={setEditedBonus}
+                        className="w-1/2"
                       />
                     ) : (
                       build.bonusMultiplier
@@ -130,17 +146,11 @@ export default function Lockerbuilds() {
                   </TableCell>
                   <TableCell>
                     {isEditing ? (
-                      <Input
-                        type="number"
+                      <NumericInput
+                        placeholder="Perks Multiplier"
                         value={editedPerks}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(
-                            /[^0-9]/g,
-                            "",
-                          );
-                        }}
-                        className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        onChange={(e) => setEditedPerks(e.target.value)}
+                        onChange={setEditedPerks}
+                        className="w-1/2"
                       />
                     ) : (
                       build.perksMultiplier
@@ -179,29 +189,19 @@ export default function Lockerbuilds() {
               />
             </TableCell>
             <TableCell>
-              <Input
-                type="number"
+              <NumericInput
                 placeholder="Bonus Multiplier"
-                inputMode="numeric"
                 value={bonus}
-                onChange={(e) => setBonus(e.target.value)}
-                onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                }}
-                className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onChange={setBonus}
+                className="w-1/2"
               />
             </TableCell>
             <TableCell>
-              <Input
-                type="number"
+              <NumericInput
                 placeholder="Perks Multiplier"
-                inputMode="numeric"
                 value={perks}
-                onChange={(e) => setPerks(e.target.value)}
-                onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                }}
-                className="w-1/2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onChange={setPerks}
+                className="w-1/2"
               />
             </TableCell>
             <TableCell className="flex items-center">

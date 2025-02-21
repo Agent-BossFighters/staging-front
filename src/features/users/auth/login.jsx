@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Button } from "@ui/button";
 import { Input } from "@ui/input";
 import { authSignInUp } from "@api/auth.api";
 import useForm from "@features/users/hook/useForm";
 import { useAuth } from "@context/auth.context";
+import { cleanUserData } from "@utils/api/auth.utils";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,22 +19,23 @@ export default function Login() {
   );
 
   const handleLogin = async (data) => {
-    try {
-      const payload = {
-        user: {
-          email: data.email,
-          password: data.password,
-        },
-      };
-      const response = await authSignInUp("/v1/login", payload);
-      console.log("message", response.message);
-      if (response.token && response.user) {
-        login(response.user, response.token);
+    const payload = {
+      user: {
+        email: data.email,
+        password: data.password,
+      },
+    };
+    toast.promise(authSignInUp("v1/login", payload), {
+      loading: "Signing in...",
+      success: (res) => {
+        login(cleanUserData(res.userData.user), res.userData.token);
         navigate("/dashboard");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+        return res.userData.message;
+      },
+      error: (err) => {
+        return err.message;
+      },
+    });
   };
   return (
     <form
