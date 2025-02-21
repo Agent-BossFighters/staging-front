@@ -6,7 +6,7 @@ export const useEditMatch = (setMatches, builds) => {
   const [editedBuildId, setEditedBuildId] = useState("");
   const [editedSlots, setEditedSlots] = useState("");
   const [editedMap, setEditedMap] = useState("");
-  const [editedEnergy, setEditedEnergy] = useState("");
+  const [editedTime, setEditedTime] = useState("");
   const [editedResult, setEditedResult] = useState("");
   const [editedBft, setEditedBft] = useState("");
   const [editedFlex, setEditedFlex] = useState("");
@@ -26,12 +26,12 @@ export const useEditMatch = (setMatches, builds) => {
   const handleEdit = (match) => {
     setEditingMatchId(match.id);
     setEditedBuildId(match.build.id);
-    setEditedSlots(match.slots.count);
-    setEditedMap(match.build.map);
-    setEditedEnergy(match.energy.used);
+    setEditedSlots(match.slots);
+    setEditedMap(match.map);
+    setEditedTime(match.time);
     setEditedResult(match.result);
-    setEditedBft(match.rewards.bft.amount);
-    setEditedFlex(match.rewards.flex.amount);
+    setEditedBft(match.totalToken);
+    setEditedFlex(match.totalPremiumCurrency);
     
     // Initialize badges with existing data or defaults
     const initialBadges = Array(5).fill(null).map((_, index) => {
@@ -55,21 +55,27 @@ export const useEditMatch = (setMatches, builds) => {
 
     const updatedMatch = {
       build_id: editedBuildId,
+      build: {
+        id: editedBuildId,
+        buildName: selectedBuild.buildName,
+        map: editedMap,
+        bonusMultiplier: selectedBuild.bonusMultiplier || 1.0,
+        perksMultiplier: selectedBuild.perksMultiplier || 1.0
+      },
       slots: editedSlots,
       map: editedMap,
-      energyUsed: editedEnergy,
-      energyCost: 0.1,
+      time: editedTime,
       result: editedResult,
       totalToken: editedBft,
-      tokenValue: 0.2,
+      tokenValue: 0.01,
       totalPremiumCurrency: editedFlex,
-      premiumCurrencyValue: 0.1,
+      premiumCurrencyValue: 0.00744,
       badges: editedBadges
     };
 
     try {
       const response = await putData(`/v1/matches/${editingMatchId}`, { match: updatedMatch });
-      if (response?.daily_metrics) {
+      if (response?.daily_metrics?.matches) {
         setMatches(response.daily_metrics.matches);
         setEditingMatchId(null);
       }
@@ -83,7 +89,7 @@ export const useEditMatch = (setMatches, builds) => {
     setEditedBuildId("");
     setEditedSlots("");
     setEditedMap("");
-    setEditedEnergy("");
+    setEditedTime("");
     setEditedResult("");
     setEditedBft("");
     setEditedFlex("");
@@ -96,7 +102,7 @@ export const useEditMatch = (setMatches, builds) => {
     editedBuildId,
     editedSlots,
     editedMap,
-    editedEnergy,
+    editedTime,
     editedResult,
     editedBft,
     editedFlex,
@@ -105,7 +111,7 @@ export const useEditMatch = (setMatches, builds) => {
     setEditedBuildId,
     setEditedSlots,
     setEditedMap,
-    setEditedEnergy,
+    setEditedTime,
     setEditedResult,
     setEditedBft,
     setEditedFlex,

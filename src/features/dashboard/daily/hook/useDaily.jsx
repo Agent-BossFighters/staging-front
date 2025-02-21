@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getData, postData, putData, deleteData } from "@utils/api/data";
+import { useMatchCalculations } from "./useMatchCalculations";
 
 export const useDaily = () => {
   const [matches, setMatches] = useState([]);
@@ -7,14 +8,17 @@ export const useDaily = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const { calculateMatchMetrics } = useMatchCalculations();
 
   const fetchDailyMetrics = async (date) => {
     setLoading(true);
     setError(null);
     try {
       const response = await getData(`/v1/daily_metrics/${date}`);
-      if (response?.metrics) {
-        setMatches(response.metrics.matches || []);
+      if (response?.metrics?.matches) {
+        // Enrichir les matches avec les calculs
+        const calculatedMatches = response.metrics.matches.map(match => calculateMatchMetrics(match));
+        setMatches(calculatedMatches);
       }
     } catch (error) {
       console.error("Error fetching daily metrics:", error);
@@ -49,9 +53,17 @@ export const useDaily = () => {
 
   const addMatch = async (matchData) => {
     try {
+      // Calcul immédiat pour l'UI
+      const calculatedMatch = calculateMatchMetrics(matchData);
+      
+      // Mise à jour optimiste de l'UI
+      setMatches(prev => [...prev, calculatedMatch]);
+
       const response = await postData('/v1/matches', { match: matchData });
+      
       if (response?.daily_metrics?.matches) {
-        setMatches(response.daily_metrics.matches);
+        const calculatedMatches = response.daily_metrics.matches.map(match => calculateMatchMetrics(match));
+        setMatches(calculatedMatches);
       }
       return response;
     } catch (error) {
@@ -62,9 +74,19 @@ export const useDaily = () => {
 
   const updateMatch = async (id, matchData) => {
     try {
+      // Calcul immédiat pour l'UI
+      const calculatedMatch = calculateMatchMetrics(matchData);
+      
+      // Mise à jour optimiste de l'UI
+      setMatches(prev => prev.map(match => 
+        match.id === id ? calculatedMatch : match
+      ));
+
       const response = await putData(`/v1/matches/${id}`, { match: matchData });
+      
       if (response?.daily_metrics?.matches) {
-        setMatches(response.daily_metrics.matches);
+        const calculatedMatches = response.daily_metrics.matches.map(match => calculateMatchMetrics(match));
+        setMatches(calculatedMatches);
       }
       return response;
     } catch (error) {
@@ -77,7 +99,8 @@ export const useDaily = () => {
     try {
       const response = await deleteData(`/v1/matches/${id}`);
       if (response?.daily_metrics?.matches) {
-        setMatches(response.daily_metrics.matches);
+        const calculatedMatches = response.daily_metrics.matches.map(match => calculateMatchMetrics(match));
+        setMatches(calculatedMatches);
       }
       return response;
     } catch (error) {
@@ -95,57 +118,32 @@ export const useDaily = () => {
       profit: "$0.00"
     };
 
-    const summary = matches.reduce((acc, match) => {
-      // Convertir explicitement en nombres
-      const energyAmount = Number(match.energy?.used) || 0;
-      const energyCost = Number(match.energy?.cost) || 0;
-      const bftAmount = Number(match.rewards?.bft?.amount) || 0;
-      const bftValue = Number(match.rewards?.bft?.value) || 0;
-      const flexAmount = Number(match.rewards?.flex?.amount) || 0;
-      const flexValue = Number(match.rewards?.flex?.value) || 0;
-      const matchProfit = Number(match.rewards?.profit) || 0;
-
+    return matches.reduce((acc, match) => {
+      const calculated = match.calculated || {};
+      
       return {
         matchesCount: matches.length,
         energyUsed: {
-          amount: acc.energyUsed.amount + energyAmount,
-          cost: acc.energyUsed.cost + energyCost
+          amount: acc.energyUsed.amount + Number(match.energyUsed || 0),
+          cost: `$${(acc.energyUsed.cost.replace('$', '') * 1 + Number(calculated.energyCost || 0)).toFixed(2)}`
         },
         totalBft: {
-          amount: acc.totalBft.amount + bftAmount,
-          value: acc.totalBft.value + bftValue
+          amount: acc.totalBft.amount + Number(match.totalToken || 0),
+          value: `$${(acc.totalBft.value.replace('$', '') * 1 + Number(calculated.tokenValue || 0)).toFixed(2)}`
         },
         totalFlex: {
-          amount: acc.totalFlex.amount + flexAmount,
-          value: acc.totalFlex.value + flexValue
+          amount: acc.totalFlex.amount + Number(match.totalPremiumCurrency || 0),
+          value: `$${(acc.totalFlex.value.replace('$', '') * 1 + Number(calculated.premiumValue || 0)).toFixed(2)}`
         },
-        profit: acc.profit + matchProfit
+        profit: `$${(acc.profit.replace('$', '') * 1 + Number(calculated.profit || 0)).toFixed(2)}`
       };
     }, {
       matchesCount: 0,
-      energyUsed: { amount: 0, cost: 0 },
-      totalBft: { amount: 0, value: 0 },
-      totalFlex: { amount: 0, value: 0 },
-      profit: 0
+      energyUsed: { amount: 0, cost: "$0.00" },
+      totalBft: { amount: 0, value: "$0.00" },
+      totalFlex: { amount: 0, value: "$0.00" },
+      profit: "$0.00"
     });
-
-    // Format les valeurs monétaires en s'assurant qu'elles sont des nombres
-    return {
-      ...summary,
-      energyUsed: {
-        amount: summary.energyUsed.amount,
-        cost: `$${Number(summary.energyUsed.cost).toFixed(2)}`
-      },
-      totalBft: {
-        amount: summary.totalBft.amount,
-        value: `$${Number(summary.totalBft.value).toFixed(2)}`
-      },
-      totalFlex: {
-        amount: summary.totalFlex.amount,
-        value: `$${Number(summary.totalFlex.value).toFixed(2)}`
-      },
-      profit: `$${Number(summary.profit).toFixed(2)}`
-    };
   };
 
   return {
