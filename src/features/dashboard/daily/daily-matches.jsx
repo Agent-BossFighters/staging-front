@@ -15,11 +15,13 @@ import ActionsTable from "@features/dashboard/locker/actions-table";
 import { useEditMatch } from "./hook/useEditMatch";
 import { rarities } from "@shared/data/rarities.json";
 import { useMatchCalculations } from "./hook/useMatchCalculations";
+import { LUCK_RATES } from "@constants/gameConstants";
+import { useState } from "react";
 
 const maps = ["Toxic river", "Award", "Radiation rift"];
 
 const RaritySelect = ({ value, onChange, disabled }) => (
-  <Select value={value} onValueChange={onChange} disabled={disabled}>
+  <Select value={value || "rare"} onValueChange={onChange} disabled={disabled}>
     <SelectTrigger className="w-12 h-8 px-2">
       <SelectValue>
         {value ? (
@@ -27,7 +29,9 @@ const RaritySelect = ({ value, onChange, disabled }) => (
             {value.charAt(0).toUpperCase()}
           </span>
         ) : (
-          "..."
+          <span style={{ color: rarities.find(r => r.rarity.toLowerCase() === "rare")?.color }}>
+            R
+          </span>
         )}
       </SelectValue>
     </SelectTrigger>
@@ -44,48 +48,27 @@ const RaritySelect = ({ value, onChange, disabled }) => (
 );
 
 export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate, onDelete }) {
-  const { calculateLuckRate, calculateEnergyUsed, calculateMatchMetrics } = useMatchCalculations();
-  const {
-    editingMatchId,
-    editedBuildId,
-    editedSlots,
-    editedMap,
-    editedTime,
-    editedResult,
-    editedBft,
-    editedFlex,
-    editedBadges,
-    selectedBuild,
-    setEditedBuildId,
-    setEditedSlots,
-    setEditedMap,
-    setEditedTime,
-    setEditedResult,
-    setEditedBft,
-    setEditedFlex,
-    setEditedBadges,
-    handleEdit,
-    handleSave,
-    handleCancel
-  } = useEditMatch(onUpdate, builds);
+  const { calculateLuckrate, calculateEnergyUsed } = useMatchCalculations();
+  const [editedBuildId, setEditedBuildId] = useState("");
+  const [editedMap, setEditedMap] = useState("");
+  const [editedTime, setEditedTime] = useState("");
+  const [editedResult, setEditedResult] = useState("");
+  const [editedBft, setEditedBft] = useState("");
+  const [editedFlex, setEditedFlex] = useState("");
+  const [editedRarities, setEditedRarities] = useState(Array(5).fill("rare"));
+  const [editingMatchId, setEditingMatchId] = useState(null);
 
   if (loading) return <div>Loading...</div>;
 
-  // Calculer le luck rate pour la ligne d'ajout
-  const currentLuckRate = calculateLuckRate(editedBadges);
   // Calculer l'énergie utilisée basée sur le temps
   const energyUsed = calculateEnergyUsed(editedTime);
+  // Calculer le luck rate basé sur les raretés
+  const currentLuckrate = calculateLuckrate(editedRarities);
 
   const handleAddMatch = () => {
     // Vérifier que tous les champs obligatoires sont remplis
     if (!editedBuildId || !editedMap || !editedResult || !editedTime || !editedBft) {
       alert("Veuillez remplir tous les champs obligatoires (Build, Map, Résultat, Temps, BFT)");
-      return;
-    }
-
-    // Vérifier que tous les badges ont une rareté
-    if (!editedBadges || editedBadges.length !== 5 || editedBadges.some(badge => !badge?.rarity)) {
-      alert("Veuillez sélectionner une rareté pour les 5 slots de badges");
       return;
     }
 
@@ -95,44 +78,102 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
       return;
     }
 
+    // Créer les badge_used pour chaque slot
+    const badges = editedRarities.map((rarity, index) => ({
+      slot: index + 1,
+      rarity: rarity,
+      _destroy: false
+    }));
+
+    console.log('--- Nouveau match ---');
+    console.log('Raretés:', editedRarities.join(', '));
+
     const matchData = {
-      build_id: editedBuildId,
-      build: {
-        id: editedBuildId,
-        buildName: selectedBuild.buildName,
+      match: {
+        date: new Date().toISOString(),
+        build: selectedBuild.buildName,
         map: editedMap,
-        bonusMultiplier: selectedBuild.bonusMultiplier || 1.0,
-        perksMultiplier: selectedBuild.perksMultiplier || 1.0
-      },
-      map: editedMap,
-      time: editedTime,
-      energyUsed: energyUsed,
-      energyCost: 1.49,
-      result: editedResult,
-      totalToken: editedBft || 0,
-      tokenValue: 0.01,
-      totalPremiumCurrency: editedFlex || 0,
-      premiumCurrencyValue: 0.00744,
-      badges: editedBadges.map(badge => ({
-        rarity: badge.rarity,
-        nftId: badge.nftId || null
-      })),
-      luckRate: currentLuckRate
+        time: editedTime,
+        result: editedResult,
+        totalToken: editedBft || 0,
+        totalPremiumCurrency: editedFlex || 0,
+        badge_used_attributes: badges
+      }
     };
 
-    // Calculer les métriques avant l'envoi
-    const enrichedMatch = calculateMatchMetrics(matchData);
-    onAdd(enrichedMatch);
-
-    // Réinitialiser les champs après l'ajout
+    onAdd(matchData);
+    
+    // Réinitialiser les champs
     setEditedBuildId("");
     setEditedMap("");
     setEditedTime("");
     setEditedResult("");
     setEditedBft("");
     setEditedFlex("");
-    setEditedBadges(Array(5).fill({ rarity: "rare" }));
+    setEditedRarities(Array(5).fill("rare"));
   };
+
+  const handleEdit = (match) => {
+    setEditingMatchId(match.id);
+    setEditedBuildId(builds.find(b => b.buildName === match.build)?.id || "");
+    setEditedMap(match.map);
+    setEditedTime(match.time);
+    setEditedResult(match.result);
+    setEditedBft(match.totalToken);
+    setEditedFlex(match.totalPremiumCurrency);
+    setEditedRarities(match.selectedRarities || Array(5).fill("rare"));
+  };
+
+  const handleSave = () => {
+    const selectedBuild = builds.find(b => b.id === editedBuildId);
+    if (!selectedBuild) return;
+
+    // Créer les badge_used pour chaque slot
+    const badges = editedRarities.map((rarity, index) => ({
+      slot: index + 1,
+      rarity: rarity,
+      _destroy: false
+    }));
+
+    const updatedMatch = {
+      match: {
+        date: new Date().toISOString(),
+        build: selectedBuild.buildName,
+        map: editedMap,
+        time: editedTime,
+        result: editedResult,
+        totalToken: editedBft || 0,
+        totalPremiumCurrency: editedFlex || 0,
+        badge_used_attributes: badges
+      }
+    };
+
+    onUpdate(editingMatchId, updatedMatch);
+    setEditingMatchId(null);
+  };
+
+  const handleCancel = () => {
+    setEditingMatchId(null);
+    setEditedBuildId("");
+    setEditedMap("");
+    setEditedTime("");
+    setEditedResult("");
+    setEditedBft("");
+    setEditedFlex("");
+    setEditedRarities(Array(5).fill("rare"));
+  };
+
+  const enrichedMatches = matches.map(match => {
+    const currentBuild = builds.find(b => b.buildName === match.build) || { buildName: match.build };
+    return {
+      ...match,
+      build: {
+        ...currentBuild,
+        bonusMultiplier: currentBuild.bonusMultiplier || 1.0,
+        perksMultiplier: currentBuild.perksMultiplier || 1.0
+      }
+    };
+  });
 
   return (
     <div>
@@ -183,19 +224,20 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                 </SelectContent>
               </Select>
             </TableCell>
+            {/* 5 slots de badges */}
             {[...Array(5)].map((_, index) => (
               <TableCell key={index}>
                 <RaritySelect
-                  value={editedBadges[index]?.rarity || "rare"}
+                  value={editedRarities[index] || "rare"}
                   onChange={(value) => {
-                    const newBadges = [...editedBadges];
-                    newBadges[index] = { rarity: value };
-                    setEditedBadges(newBadges);
+                    const newRarities = [...editedRarities];
+                    newRarities[index] = value;
+                    setEditedRarities(newRarities);
                   }}
                 />
               </TableCell>
             ))}
-            <TableCell>{currentLuckRate || "-"}</TableCell>
+            <TableCell>{calculateLuckrate(editedRarities)}</TableCell>
             <TableCell>
               <Input 
                 type="number" 
@@ -234,7 +276,7 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="win">Win</SelectItem>
-                  <SelectItem value="lose">Lose</SelectItem>
+                  <SelectItem value="loss">Loss</SelectItem>
                   <SelectItem value="draw">Draw</SelectItem>
                 </SelectContent>
               </Select>
@@ -278,11 +320,23 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
           </TableRow>
 
           {/* Lignes des matches existants */}
-          {matches.map((match) => {
+          {enrichedMatches.map((match) => {
             const isEditing = match.id === editingMatchId;
-            const currentBuild = builds.find(b => b.id === match.build.id) || match.build;
-            const calculated = match.calculated || {};
+            const currentBuild = builds.find(b => b.buildName === match.build);
+            // Récupérer les raretés depuis badge_used ou selectedRarities
+            const matchRarities = match.badge_used?.map(badge => badge.rarity) || 
+                                 match.badges?.map(badge => badge.rarity) ||
+                                 match.selectedRarities ||
+                                 Array(5).fill("rare");
+
+            if (match.badge_used || match.badges || match.selectedRarities) {
+              console.log(`Match #${match.id} - Raretés:`, matchRarities.join(', '));
+            }
+
+            const matchLuckrate = calculateLuckrate(matchRarities);
             const matchEnergyUsed = calculateEnergyUsed(match.time);
+            
+            console.log('Match data:', match);
 
             return (
               <TableRow key={match.id}>
@@ -301,33 +355,34 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                       </SelectContent>
                     </Select>
                   ) : (
-                    currentBuild.buildName || currentBuild.name
+                    match.build.buildName
                   )}
                 </TableCell>
                 {/* 5 slots de badges */}
-                {[...Array(5)].map((_, index) => (
-                  <TableCell key={index}>
-                    {isEditing ? (
-                      <RaritySelect
-                        value={editedBadges[index]?.rarity || "rare"}
-                        onChange={(value) => {
-                          const newBadges = [...editedBadges];
-                          newBadges[index] = { rarity: value };
-                          setEditedBadges(newBadges);
-                        }}
-                      />
-                    ) : (
-                      <span style={{ 
-                        color: rarities.find(r => 
-                          r.rarity.toLowerCase() === (match.badges && match.badges[index]?.rarity || "rare").toLowerCase()
-                        )?.color 
-                      }}>
-                        {(match.badges && match.badges[index]?.rarity || "Rare").charAt(0).toUpperCase()}
-                      </span>
-                    )}
-                  </TableCell>
-                ))}
-                <TableCell>{calculated.luckRate || "-"}</TableCell>
+                {[...Array(5)].map((_, index) => {
+                  const rarity = isEditing ? editedRarities[index] : matchRarities[index];
+                  const rarityInfo = rarities.find(r => r.rarity.toLowerCase() === (rarity || 'rare').toLowerCase());
+                  
+                  return (
+                    <TableCell key={index}>
+                      {isEditing ? (
+                        <RaritySelect
+                          value={rarity || "rare"}
+                          onChange={(value) => {
+                            const newRarities = [...editedRarities];
+                            newRarities[index] = value;
+                            setEditedRarities(newRarities);
+                          }}
+                        />
+                      ) : (
+                        <span style={{ color: rarityInfo?.color }}>
+                          {(rarity || "rare").charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </TableCell>
+                  );
+                })}
+                <TableCell>{matchLuckrate}</TableCell>
                 <TableCell>{match.time || 0}</TableCell>
                 <TableCell>{matchEnergyUsed}</TableCell>
                 <TableCell>${(matchEnergyUsed * 1.49).toFixed(2)}</TableCell>
@@ -343,8 +398,8 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                     (matchEnergyUsed * 1.49)
                   ).toFixed(2)}
                 </TableCell>
-                <TableCell>{currentBuild.bonusMultiplier || "1.0"}</TableCell>
-                <TableCell>{currentBuild.perksMultiplier || "1.0"}</TableCell>
+                <TableCell>{currentBuild?.bonusMultiplier || "1.0"}</TableCell>
+                <TableCell>{currentBuild?.perksMultiplier || "1.0"}</TableCell>
                 <TableCell className="flex gap-2 items-center">
                   <ActionsTable
                     data={match}

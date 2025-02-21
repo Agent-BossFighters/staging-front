@@ -8,7 +8,6 @@ export default function DailyContainer() {
     matches,
     builds,
     loading,
-    error,
     selectedDate,
     setSelectedDate,
     fetchDailyMetrics,
@@ -20,14 +19,21 @@ export default function DailyContainer() {
   } = useDaily();
 
   useEffect(() => {
-    fetchDailyMetrics(selectedDate);
-    fetchMyBuilds();
+    const loadData = async () => {
+      try {
+        await fetchMyBuilds();
+        await fetchDailyMetrics(selectedDate);
+      } catch (error) {
+        // Les erreurs sont déjà gérées par data.js
+      }
+    };
+    loadData();
   }, [selectedDate]);
 
-  if (error) {
+  if (loading) {
     return (
-      <div className="flex flex-col px-5">
-        <div className="text-red-500">Error: {error}</div>
+      <div className="flex flex-col items-center justify-center min-h-[200px]">
+        <div className="text-xl">Chargement des données...</div>
       </div>
     );
   }
@@ -35,10 +41,18 @@ export default function DailyContainer() {
   const handleDelete = async (id) => {
     try {
       await deleteMatch(id);
-      // Rafraîchir les données après la suppression
-      fetchDailyMetrics(selectedDate);
+      await fetchDailyMetrics(selectedDate);
     } catch (error) {
-      console.error("Error deleting match:", error);
+      // Les erreurs sont déjà gérées par data.js
+    }
+  };
+
+  const handleAddMatch = async (matchData) => {
+    try {
+      await addMatch(matchData);
+      await fetchDailyMetrics(selectedDate);
+    } catch (error) {
+      // Les erreurs sont déjà gérées par data.js
     }
   };
 
@@ -51,14 +65,20 @@ export default function DailyContainer() {
         summary={dailySummary}
       />
 
-      <DailyMatches 
-        matches={matches}
-        builds={builds}
-        loading={loading}
-        onAdd={addMatch}
-        onUpdate={updateMatch}
-        onDelete={handleDelete}
-      />
+      {builds.length === 0 ? (
+        <div className="text-yellow-400 text-xl text-center py-4">
+          Aucun build disponible. Veuillez d'abord créer des builds dans la section Locker.
+        </div>
+      ) : (
+        <DailyMatches 
+          matches={matches}
+          builds={builds}
+          loading={loading}
+          onAdd={handleAddMatch}
+          onUpdate={updateMatch}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 } 

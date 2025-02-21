@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { putData } from "@utils/api/data";
+import { rarities } from "@shared/data/rarities.json";
+import { LUCK_RATES } from "@constants/gameConstants";
+import { useMatchCalculations } from "./useMatchCalculations";
 
 export const useEditMatch = (setMatches, builds) => {
+  const { calculateLuckrate, calculateEnergyUsed } = useMatchCalculations();
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [editedBuildId, setEditedBuildId] = useState("");
   const [editedSlots, setEditedSlots] = useState("");
@@ -54,27 +58,46 @@ export const useEditMatch = (setMatches, builds) => {
     }
 
     const updatedMatch = {
-      build_id: editedBuildId,
+      date: new Date().toISOString(),
       build: {
-        id: editedBuildId,
+        id: selectedBuild.id,
         buildName: selectedBuild.buildName,
-        map: editedMap,
         bonusMultiplier: selectedBuild.bonusMultiplier || 1.0,
         perksMultiplier: selectedBuild.perksMultiplier || 1.0
       },
-      slots: editedSlots,
       map: editedMap,
+      totalFee: 0,
+      feeCost: 0,
+      slots: editedSlots,
+      luckrate: calculateLuckrate(editedBadges),
       time: editedTime,
-      result: editedResult,
+      energyUsed: calculateEnergyUsed(editedTime),
+      energyCost: 1.49,
       totalToken: editedBft,
       tokenValue: 0.01,
       totalPremiumCurrency: editedFlex,
       premiumCurrencyValue: 0.00744,
-      badges: editedBadges
+      result: editedResult,
+      badges: editedBadges.map((badge, index) => ({
+        nftId: badge.nftId || null,
+        rarity: badge.rarity,
+        slot: index + 1
+      })),
+      calculated: {
+        luckrate: calculateLuckrate(editedBadges),
+        energyCost: (calculateEnergyUsed(editedTime) * 1.49).toFixed(2),
+        tokenValue: (editedBft * 0.01).toFixed(2),
+        premiumValue: (editedFlex * 0.00744).toFixed(2),
+        feeCost: 0,
+        profit: (
+          (editedBft * 0.01 + editedFlex * 0.00744) - 
+          (calculateEnergyUsed(editedTime) * 1.49)
+        ).toFixed(2)
+      }
     };
 
     try {
-      const response = await putData(`/v1/matches/${editingMatchId}`, { match: updatedMatch });
+      const response = await putData(`v1/matches/${editingMatchId}`, { match: updatedMatch });
       if (response?.daily_metrics?.matches) {
         setMatches(response.daily_metrics.matches);
         setEditingMatchId(null);

@@ -24,12 +24,16 @@ export const useMatchCalculations = () => {
     return (totalFee * feeCost).toFixed(2);
   };
 
-  const calculateLuckRate = (badges) => {
-    if (!badges || !badges.length) return 0;
+  const calculateLuckrate = (badges) => {
+    if (!badges || !Array.isArray(badges)) return 0;
     
     return badges.reduce((total, badge) => {
-      const rarity = badge.rarity?.toLowerCase();
-      return total + (LUCK_RATES[rarity] || 0);
+      // Si badge est un objet avec une propriété rarity, utiliser celle-ci
+      // Sinon, utiliser directement la chaîne de caractères
+      const rarity = typeof badge === 'object' ? badge.rarity : badge;
+      
+      // Utiliser les valeurs de LUCK_RATES pour le calcul
+      return total + (LUCK_RATES[rarity?.toLowerCase()] || 0);
     }, 0);
   };
 
@@ -60,12 +64,14 @@ export const useMatchCalculations = () => {
     if (!matchData) return matchData;
 
     const energyUsed = calculateEnergyUsed(matchData.time);
+    const luckrate = calculateLuckrate(matchData.badges);
     
     return {
       ...matchData,
       energyUsed,
+      luckrate,
       calculated: {
-        luckRate: calculateLuckRate(matchData.badges),
+        luckrate,
         energyCost: calculateEnergyCost(energyUsed),
         tokenValue: calculateTokenValue(matchData.totalToken),
         premiumValue: calculatePremiumValue(matchData.totalPremiumCurrency),
@@ -84,7 +90,7 @@ export const useMatchCalculations = () => {
     calculateTokenValue,
     calculatePremiumValue,
     calculateFeeCost,
-    calculateLuckRate,
+    calculateLuckrate,
     calculateProfit,
     calculateMatchMetrics
   };
