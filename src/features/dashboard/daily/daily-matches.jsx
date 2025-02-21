@@ -14,6 +14,7 @@ import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
 import ActionsTable from "@features/dashboard/locker/actions-table";
 import { useEditMatch } from "./hook/useEditMatch";
 import { rarities } from "@shared/data/rarities.json";
+import { useMatchCalculations } from "./hook/useMatchCalculations";
 
 const maps = ["Toxic river", "Award", "Radiation rift"];
 
@@ -43,12 +44,13 @@ const RaritySelect = ({ value, onChange, disabled }) => (
 );
 
 export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate, onDelete }) {
+  const { calculateLuckRate, calculateEnergyUsed, calculateMatchMetrics } = useMatchCalculations();
   const {
     editingMatchId,
     editedBuildId,
     editedSlots,
     editedMap,
-    editedEnergy,
+    editedTime,
     editedResult,
     editedBft,
     editedFlex,
@@ -57,7 +59,7 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
     setEditedBuildId,
     setEditedSlots,
     setEditedMap,
-    setEditedEnergy,
+    setEditedTime,
     setEditedResult,
     setEditedBft,
     setEditedFlex,
@@ -68,6 +70,72 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
   } = useEditMatch(onUpdate, builds);
 
   if (loading) return <div>Loading...</div>;
+
+  // Calculer le luck rate pour la ligne d'ajout
+  const currentLuckRate = calculateLuckRate(editedBadges);
+  // Calculer l'énergie utilisée basée sur le temps
+  const energyUsed = calculateEnergyUsed(editedTime);
+
+  const handleAddMatch = () => {
+    // Vérifier que tous les champs obligatoires sont remplis
+    if (!editedBuildId || !editedMap || !editedResult || !editedTime || !editedBft) {
+      alert("Veuillez remplir tous les champs obligatoires (Build, Map, Résultat, Temps, BFT)");
+      return;
+    }
+
+    // Vérifier que tous les badges ont une rareté
+    if (!editedBadges || editedBadges.length !== 5 || editedBadges.some(badge => !badge?.rarity)) {
+      alert("Veuillez sélectionner une rareté pour les 5 slots de badges");
+      return;
+    }
+
+    const selectedBuild = builds.find(b => b.id === editedBuildId);
+    if (!selectedBuild) {
+      alert("Build non trouvé");
+      return;
+    }
+
+    // Calculer l'énergie utilisée basée sur le temps
+    const energyUsed = calculateEnergyUsed(editedTime);
+
+    const matchData = {
+      build_id: editedBuildId,
+      build: {
+        id: editedBuildId,
+        buildName: selectedBuild.buildName,
+        map: editedMap,
+        bonusMultiplier: selectedBuild.bonusMultiplier || 1.0,
+        perksMultiplier: selectedBuild.perksMultiplier || 1.0
+      },
+      map: editedMap,
+      time: editedTime,
+      energyUsed: energyUsed,
+      energyCost: 1.49,
+      result: editedResult,
+      totalToken: editedBft || 0,
+      tokenValue: 0.01,
+      totalPremiumCurrency: editedFlex || 0,
+      premiumCurrencyValue: 0.00744,
+      badges: editedBadges.map(badge => ({
+        rarity: badge.rarity,
+        nftId: badge.nftId || null
+      })),
+      luckRate: currentLuckRate
+    };
+
+    // Calculer les métriques avant l'envoi
+    const enrichedMatch = calculateMatchMetrics(matchData);
+    onAdd(enrichedMatch);
+
+    // Réinitialiser les champs après l'ajout
+    setEditedBuildId("");
+    setEditedMap("");
+    setEditedTime("");
+    setEditedResult("");
+    setEditedBft("");
+    setEditedFlex("");
+    setEditedBadges(Array(5).fill({ rarity: "rare" }));
+  };
 
   return (
     <div>
@@ -83,6 +151,7 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
             <TableHead>SLOT 4</TableHead>
             <TableHead>SLOT 5</TableHead>
             <TableHead>LUCK RATE</TableHead>
+            <TableHead>TIME</TableHead>
             <TableHead>ENERGY USED</TableHead>
             <TableHead>ENERGY COST</TableHead>
             <TableHead>MAP</TableHead>
@@ -103,9 +172,7 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
             <TableCell>
               <Select 
                 value={editedBuildId} 
-                onValueChange={(value) => {
-                  setEditedBuildId(value);
-                }}
+                onValueChange={setEditedBuildId}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select build" />
@@ -131,20 +198,25 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                 />
               </TableCell>
             ))}
-            <TableCell>{selectedBuild?.luck_rate || "-"}</TableCell>
+            <TableCell>{currentLuckRate || "-"}</TableCell>
             <TableCell>
               <Input 
                 type="number" 
                 className="w-20" 
                 placeholder="0" 
-                onChange={(e) => setEditedEnergy(e.target.value)}
+                value={editedTime || ""}
+                onChange={(e) => setEditedTime(e.target.value)}
               />
             </TableCell>
-            <TableCell>$1.75</TableCell>
+            <TableCell>{energyUsed || "0.00"}</TableCell>
+            <TableCell>${(energyUsed * 1.49).toFixed(2)}</TableCell>
             <TableCell>
-              <Select onValueChange={setEditedMap}>
+              <Select 
+                value={editedMap} 
+                onValueChange={setEditedMap}
+              >
                 <SelectTrigger className="w-24">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="Select map" />
                 </SelectTrigger>
                 <SelectContent>
                   {maps.map((map) => (
@@ -156,9 +228,12 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
               </Select>
             </TableCell>
             <TableCell>
-              <Select onValueChange={setEditedResult}>
+              <Select 
+                value={editedResult} 
+                onValueChange={setEditedResult}
+              >
                 <SelectTrigger className="w-20">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="Result" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="win">Win</SelectItem>
@@ -172,42 +247,32 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                 type="number" 
                 className="w-20" 
                 placeholder="0" 
+                value={editedBft || ""}
                 onChange={(e) => setEditedBft(e.target.value)}
               />
             </TableCell>
-            <TableCell>$0.00</TableCell>
+            <TableCell>${((editedBft || 0) * 0.01).toFixed(2)}</TableCell>
             <TableCell>
               <Input 
                 type="number" 
                 className="w-20" 
                 placeholder="0" 
+                value={editedFlex || ""}
                 onChange={(e) => setEditedFlex(e.target.value)}
               />
             </TableCell>
-            <TableCell>$0.00</TableCell>
-            <TableCell>$0.00</TableCell>
+            <TableCell>${((editedFlex || 0) * 0.00744).toFixed(2)}</TableCell>
+            <TableCell className="text-green-500">
+              ${(
+                ((editedBft || 0) * 0.01 + (editedFlex || 0) * 0.00744) - 
+                (energyUsed * 1.49)
+              ).toFixed(2)}
+            </TableCell>
             <TableCell>{builds.find(b => b.id === editedBuildId)?.bonusMultiplier || "1.0"}</TableCell>
             <TableCell>{builds.find(b => b.id === editedBuildId)?.perksMultiplier || "1.0"}</TableCell>
             <TableCell>
               <button
-                onClick={() => onAdd({
-                  build_id: editedBuildId,
-                  build: {
-                    id: editedBuildId,
-                    buildName: builds.find(b => b.id === editedBuildId)?.buildName || '',
-                    map: editedMap
-                  },
-                  slots: editedSlots,
-                  map: editedMap,
-                  energyUsed: editedEnergy,
-                  energyCost: 0.1,
-                  result: editedResult,
-                  totalToken: editedBft || 0,
-                  tokenValue: 0.2,
-                  totalPremiumCurrency: editedFlex || 0,
-                  premiumCurrencyValue: 0.1,
-                  badges: editedBadges
-                })}
+                onClick={handleAddMatch}
                 className="p-2 hover:bg-yellow-400 rounded-lg"
               >
                 <Plus className="h-4 w-4" />
@@ -219,6 +284,7 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
           {matches.map((match) => {
             const isEditing = match.id === editingMatchId;
             const currentBuild = isEditing ? selectedBuild : match.build;
+            const calculated = match.calculated || {};
 
             return (
               <TableRow key={match.id}>
@@ -263,16 +329,16 @@ export default function DailyMatches({ matches, builds, loading, onAdd, onUpdate
                     )}
                   </TableCell>
                 ))}
-                <TableCell>{currentBuild.luck_rate}</TableCell>
-                <TableCell>{match.energy.used}</TableCell>
-                <TableCell>${match.energy.cost}</TableCell>
+                <TableCell>{calculated.luckRate || "-"}</TableCell>
+                <TableCell>{match.energyUsed || 0}</TableCell>
+                <TableCell>${calculated.energyCost || "0.00"}</TableCell>
                 <TableCell>{currentBuild.map}</TableCell>
                 <TableCell>{match.result}</TableCell>
-                <TableCell>{match.rewards.bft.amount}</TableCell>
-                <TableCell>${match.rewards.bft.value}</TableCell>
-                <TableCell>{match.rewards.flex.amount}</TableCell>
-                <TableCell>${match.rewards.flex.value}</TableCell>
-                <TableCell className="text-green-500">${match.rewards.profit}</TableCell>
+                <TableCell>{match.totalToken || 0}</TableCell>
+                <TableCell>${calculated.tokenValue || "0.00"}</TableCell>
+                <TableCell>{match.totalPremiumCurrency || 0}</TableCell>
+                <TableCell>${calculated.premiumValue || "0.00"}</TableCell>
+                <TableCell className="text-green-500">${calculated.profit || "0.00"}</TableCell>
                 <TableCell>{match.build.bonusMultiplier || "1.0"}</TableCell>
                 <TableCell>{match.build.perksMultiplier || "1.0"}</TableCell>
                 <TableCell className="flex gap-2 items-center">
