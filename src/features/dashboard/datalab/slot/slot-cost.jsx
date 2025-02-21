@@ -7,9 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-import { getValue } from "../hook/value";
+import data from "@shared/data/slot.json";
 
-export default function SlotCost({ slots, loading, selectedRarity }) {
+export default function SlotCost({ slots, loading }) {
   if (loading) return <div>Loading...</div>;
 
   const selectedRarityMetrics =
@@ -20,16 +20,13 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
       <TableCaption>Desc ?</TableCaption>
       <TableHeader>
         <TableRow className="bg-muted-foreground/30">
-          <TableHead>SLOT</TableHead>
-          <TableHead className="text-destructive">NB FLEX</TableHead>
-          <TableHead className="text-destructive">FLEX COST</TableHead>
-          <TableHead>BONUS $BFT / SLOT</TableHead>
-          <TableHead>NORMAL PART $BFT / BADGE</TableHead>
-          <TableHead>BONUS PART $BFT / BADGE</TableHead>
+          <TableHead>NB SLOT(S) UNLOCKED</TableHead>
+          <TableHead className="text-destructive">TOTAL FLEX</TableHead>
+          <TableHead className="text-destructive">TOTAL COST</TableHead>
           <TableHead>NB TOKENS ROI</TableHead>
-          <TableHead>NB CHARGES ROI (1.0)</TableHead>
-          <TableHead>NB CHARGES ROI (2.0)</TableHead>
-          <TableHead>NB CHARGES ROI (3.0)</TableHead>
+          <TableHead>NB CHARGES ROI (1.0 MULTIPLIER)</TableHead>
+          <TableHead>NB CHARGES ROI (2.0 MULTIPLIER)</TableHead>
+          <TableHead>NB CHARGES ROI (3.0 MULTIPLIER)</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="">

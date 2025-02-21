@@ -30,7 +30,7 @@ export default function Slot({ slots, loading }) {
         </TableHeader>
         <TableBody className="">
           {slots.slots_cost.map((item) => (
-            <TableRow key={getValue(item, "1. slot")}>
+            <TableRow key={item.slot}>
               <TableCell>{getValue(item, "1. slot")}</TableCell>
               <TableCell className="text-destructive">
                 {getValue(item, "2. nb_flex")}

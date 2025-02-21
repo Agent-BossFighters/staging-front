@@ -3,12 +3,7 @@ import { getData } from "@utils/api/data";
 
 export const useBadges = () => {
   const [badges, setBadges] = useState([]);
-  const [mainBadges, setMainBadges] = useState([]);
-  const [priceBadges, setPriceBadges] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mainSlotsUsed, setMainSlotsUsed] = useState("1");
-  const [priceSlotsUsed, setPriceSlotsUsed] = useState("1");
-  const [bftMultiplier, setBftMultiplier] = useState("1.0");
 
   const fetchBadges = async () => {
     setLoading(true);
@@ -34,9 +29,8 @@ export const useBadges = () => {
       setMainBadges([]);
       setPriceBadges([]);
       setBadges([]);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const updateMainTableMetrics = async (newSlotsUsed) => {

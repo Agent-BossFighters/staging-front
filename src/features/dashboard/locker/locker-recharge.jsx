@@ -16,7 +16,7 @@ export default function LockerBadges() {
   return (
     <div className="flex lg:gap-5 lg:h-1/2">
       <div className="lg:w-1/2">
-        <h2 className="text-2xl font-extrabold py-2">
+        <h2 className="text-3xl font-extrabold py-2">
           {/* Icon */}RECHARGE DISCOUNT(S)
         </h2>
         <Table className="">
