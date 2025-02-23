@@ -35,26 +35,58 @@ export default function Showrunner() {
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
             <TableHead className="text-destructive">SUPPLY</TableHead>
-            <TableHead>FLOOR PRICE</TableHead>
-            <TableHead>LVL MAX</TableHead>
-            <TableHead>MAX ENERGY RECHARGE</TableHead>
-            <TableHead>TIME TO CRAFT (H)</TableHead>
-            <TableHead className="text-destructive">
-              NB BADGES RARITY - 1
+            <TableHead>
+              FLOOR
+              <br />
+              PRICE
             </TableHead>
-            <TableHead className="text-destructive">FLEX / CRAFT</TableHead>
-            <TableHead className="text-destructive">SP.MARKS / CRAFT</TableHead>
-            <TableHead>TIME TO CHARGE</TableHead>
-            <TableHead className="text-destructive">FLEX / CHARGE</TableHead>
+            <TableHead>
+              LVL
+              <br />
+              MAX
+            </TableHead>
+            <TableHead>
+              MAX ENERGY
+              <br />
+              RECHARGE
+            </TableHead>
+            <TableHead>
+              TIME TO
+              <br />
+              CRAFT (H)
+            </TableHead>
             <TableHead className="text-destructive">
-              SP.MARKS / CHARGE
+              NB BADGES
+              <br />
+              RARITY - 1
+            </TableHead>
+            <TableHead className="text-destructive">
+              FLEX /<br />
+              CRAFT
+            </TableHead>
+            <TableHead className="text-destructive">
+              SP.MARKS /<br />
+              CRAFT
+            </TableHead>
+            <TableHead>
+              TIME TO
+              <br />
+              CHARGE
+            </TableHead>
+            <TableHead className="text-destructive">
+              FLEX /<br />
+              CHARGE
+            </TableHead>
+            <TableHead className="text-destructive">
+              SP.MARKS /<br />
+              CHARGE
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rarities.map((rarityItem) => {
             const contract = contracts.contracts.find(
-              (c) => c["1. rarity"] === rarityItem.rarity,
+              (c) => c["1. rarity"] === rarityItem.rarity
             );
 
             return (

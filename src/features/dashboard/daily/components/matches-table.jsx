@@ -38,7 +38,7 @@ export default function MatchesTable({
       <Table>
         <TableCaption>Liste des matchs du jour</TableCaption>
         <TableHeader>
-          <TableRow className="bg-muted-foreground/30">
+          <TableRow>
             <TableHead>BUILD</TableHead>
             <TableHead>SLOT 1</TableHead>
             <TableHead>SLOT 2</TableHead>

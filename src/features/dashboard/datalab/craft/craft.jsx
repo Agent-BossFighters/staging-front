@@ -35,17 +35,33 @@ export default function Badges() {
           <TableRow className="bg-muted-foreground/30">
             <TableHead>RARITY</TableHead>
             <TableHead>SUPPLY</TableHead>
-            <TableHead>NB PREVIOUS RARITY ITEM</TableHead>
+            <TableHead>
+              NB PREVIOUS
+              <br />
+              RARITY ITEM
+            </TableHead>
             <TableHead>$BFT</TableHead>
-            <TableHead>$BFT COST</TableHead>
-            <TableHead className="text-accent">SP.MARKS REWARD</TableHead>
-            <TableHead className="text-accent">SP.MARKS VALUE</TableHead>
+            <TableHead>
+              $BFT
+              <br />
+              COST
+            </TableHead>
+            <TableHead className="text-accent">
+              SP.MARKS
+              <br />
+              REWARD
+            </TableHead>
+            <TableHead className="text-accent">
+              SP.MARKS
+              <br />
+              VALUE
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="">
           {rarity.map((rarityItem) => {
             const craft = crafts.find(
-              (c) => c["1. rarity"] === rarityItem.rarity,
+              (c) => c["1. rarity"] === rarityItem.rarity
             );
 
             return (

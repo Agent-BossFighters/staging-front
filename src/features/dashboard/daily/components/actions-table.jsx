@@ -13,36 +13,20 @@ export default function ActionsTable({
     <>
       {!isEditing ? (
         <>
-          <Button
-            variant="transparent"
-            className="p-0 hover:text-primary hover:scale-150"
-            onClick={() => onEdit(data)}
-          >
-            <Pencil />
+          <Button variant="ghost" size="icon" onClick={() => onEdit(data)}>
+            <Pencil className="text-primary" />
           </Button>
-          <Button
-            variant="transparent"
-            className="p-0 hover:text-destructive hover:scale-150"
-            onClick={onDelete}
-          >
-            <Trash2 />
+          <Button variant="ghost" size="icon" onClick={onDelete}>
+            <Trash2 className="text-destructive" />
           </Button>
         </>
       ) : (
         <>
-          <Button
-            variant="transparent"
-            className="p-0 hover:text-accent hover:scale-150"
-            onClick={onSave}
-          >
-            <Check />
+          <Button variant="ghost" size="icon" onClick={onSave}>
+            <Check className="text-accent" />
           </Button>
-          <Button
-            variant="transparent"
-            className="p-0 hover:text-destructive hover:scale-150"
-            onClick={onCancel}
-          >
-            <X />
+          <Button variant="ghost" size="icon" onClick={onCancel}>
+            <X className="text-destructive" />
           </Button>
         </>
       )}
