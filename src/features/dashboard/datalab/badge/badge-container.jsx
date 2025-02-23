@@ -6,15 +6,15 @@ import { Input } from "@ui/input";
 import { useBadges } from "./hook/useBadge";
 
 export default function BadgeContainer() {
-  const { 
-    badges, 
-    loading, 
-    fetchBadges, 
+  const {
+    badges,
+    loading,
+    fetchBadges,
     mainSlotsUsed,
     priceSlotsUsed,
     bftMultiplier,
     updateMainTableMetrics,
-    updatePriceTableMetrics 
+    updatePriceTableMetrics,
   } = useBadges();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function BadgeContainer() {
         <Badge badges={badges} loading={loading} />
         <div className="pt-12">
           <h3 className="text-2xl font-bold whitespace-nowrap">SLOT(S) USED</h3>
-          <SelectSlotUsed 
+          <SelectSlotUsed
             defaultValue={mainSlotsUsed.toString()}
             onValueChange={updateMainTableMetrics}
           />
@@ -58,9 +58,11 @@ export default function BadgeContainer() {
             <h3 className="text-2xl font-bold whitespace-nowrap">
               SLOT(S) USED
             </h3>
-            <SelectSlotUsed 
+            <SelectSlotUsed
               defaultValue={priceSlotsUsed.toString()}
-              onValueChange={(value) => updatePriceTableMetrics(value, bftMultiplier)}
+              onValueChange={(value) =>
+                updatePriceTableMetrics(value, bftMultiplier)
+              }
             />
           </div>
         </div>

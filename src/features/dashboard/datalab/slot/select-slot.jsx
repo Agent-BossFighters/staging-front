@@ -18,7 +18,7 @@ export default function SelectSlot({
 }) {
   const [selectedColor, setSelectedColor] = useState("#FFFFFF");
   const rarityOrderMap = Object.fromEntries(
-    data.rarities.map(({ rarity, order }) => [rarity, order]),
+    data.rarities.map(({ rarity, order }) => [rarity, order])
   );
 
   const filteredRarities = data.rarities.filter((item) => {

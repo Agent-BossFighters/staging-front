@@ -27,7 +27,9 @@ export default function ShowrunnerLevel() {
         {/* Icon */}SHOWRUNNER LEVEL UP
       </h2>
       <Table className="overflow-y-scroll">
-        <TableCaption>Level up costs and requirements for showrunner contracts</TableCaption>
+        <TableCaption>
+          Level up costs and requirements for showrunner contracts
+        </TableCaption>
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">
             <TableHead>LEVEL</TableHead>

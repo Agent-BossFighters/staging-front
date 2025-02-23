@@ -11,7 +11,7 @@ export default function Login() {
       email: "",
       password: "",
     },
-    "login",
+    "login"
   );
 
   const handleEdit = async (data) => {

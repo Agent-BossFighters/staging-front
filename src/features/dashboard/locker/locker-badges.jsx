@@ -52,7 +52,7 @@ export default function LockerBadges() {
   }, []);
 
   const filteredBadges = badges.filter(
-    (badge) => getRarityOrder(badge.rarity.name) <= getRarityOrder(maxRarity),
+    (badge) => getRarityOrder(badge.rarity.name) <= getRarityOrder(maxRarity)
   );
 
   const handleSubmit = async () => {
@@ -62,7 +62,7 @@ export default function LockerBadges() {
     if (!purchasePrice) missingFields.push("Purchase Price");
     if (missingFields.length > 0) {
       toast.error(
-        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`,
+        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`
       );
     }
     const payload = {
@@ -95,14 +95,14 @@ export default function LockerBadges() {
 
   const handleDelete = async (badgeId) => {
     const confirm = window.confirm(
-      "Are you sure you want to delete this badge?",
+      "Are you sure you want to delete this badge?"
     );
     if (!confirm) return;
     toast.promise(deleteData(`v1/nfts/${badgeId}`), {
       loading: "Deleting NFT...",
       success: () => {
         setBadges((prevBadges) =>
-          prevBadges.filter((badgeData) => badgeData.id !== badgeId),
+          prevBadges.filter((badgeData) => badgeData.id !== badgeId)
         );
         return "Showrunner contract deleted successfully";
       },

@@ -4,10 +4,10 @@ import { Zap, TrendingUp } from "lucide-react";
 export default function DailySummary({ date, summary }) {
   const formatDate = (dateString) => {
     const d = new Date(dateString);
-    return d.toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    return d.toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   };
 
@@ -23,7 +23,9 @@ export default function DailySummary({ date, summary }) {
         {/* Matches count */}
         <div className="flex flex-col items-center">
           <p className="text-xl font-semibold">MATCHES PLAYED</p>
-          <p className="text-white text-xl font-semibold">{summary.matchesCount}</p>
+          <p className="text-white text-xl font-semibold">
+            {summary.matchesCount}
+          </p>
         </div>
 
         {/* Energy used */}
@@ -59,4 +61,4 @@ export default function DailySummary({ date, summary }) {
       </div>
     </div>
   );
-} 
+}

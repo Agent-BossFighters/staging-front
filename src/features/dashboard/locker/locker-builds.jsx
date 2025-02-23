@@ -49,7 +49,7 @@ export default function Lockerbuilds() {
     if (!perks) missingFields.push("Perks Multiplier");
     if (missingFields.length > 0) {
       toast.error(
-        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`,
+        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`
       );
     }
     const payload = {
@@ -77,14 +77,14 @@ export default function Lockerbuilds() {
 
   const handleDelete = async (buildId) => {
     const confirm = window.confirm(
-      "Are you sure you want to delete this badge?",
+      "Are you sure you want to delete this badge?"
     );
     if (!confirm) return;
     toast.promise(deleteData(`v1/user_builds/${buildId}`), {
       loading: "Deleting NFT...",
       success: () => {
         setBuilds((prevBuilds) =>
-          prevBuilds.filter((buildData) => buildData.id !== buildId),
+          prevBuilds.filter((buildData) => buildData.id !== buildId)
         );
         return "Showrunner contract deleted successfully";
       },

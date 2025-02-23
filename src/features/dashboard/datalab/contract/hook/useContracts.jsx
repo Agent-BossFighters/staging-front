@@ -18,7 +18,7 @@ export const useContracts = () => {
       if (payload) {
         // Set contracts data
         setContracts(payload);
-        
+
         // Set level up data if available
         if (payload.level_up) {
           setLevelData({
@@ -43,11 +43,11 @@ export const useContracts = () => {
     }
   };
 
-  return { 
-    contracts, 
+  return {
+    contracts,
     levelData,
-    loading, 
+    loading,
     error,
-    fetchMyContracts 
+    fetchMyContracts,
   };
 };

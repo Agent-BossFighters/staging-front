@@ -15,7 +15,7 @@ export const useBadges = () => {
     try {
       // Fetch data for main table (without multiplier)
       const mainPayload = await getData(
-        `v1/data_lab/badges?slots_used=${mainSlotsUsed}`,
+        `v1/data_lab/badges?slots_used=${mainSlotsUsed}`
       );
       if (mainPayload) {
         setMainBadges(mainPayload);
@@ -24,7 +24,7 @@ export const useBadges = () => {
 
       // Fetch data for price table (with multiplier)
       const pricePayload = await getData(
-        `v1/data_lab/badges?slots_used=${priceSlotsUsed}&bft_multiplier=${bftMultiplier}`,
+        `v1/data_lab/badges?slots_used=${priceSlotsUsed}&bft_multiplier=${bftMultiplier}`
       );
       if (pricePayload) {
         setPriceBadges(pricePayload);
@@ -41,7 +41,7 @@ export const useBadges = () => {
   const updateMainTableMetrics = async (newSlotsUsed) => {
     try {
       const payload = await getData(
-        `v1/data_lab/badges?slots_used=${newSlotsUsed}`,
+        `v1/data_lab/badges?slots_used=${newSlotsUsed}`
       );
       if (payload) {
         setMainBadges(payload);
@@ -56,7 +56,7 @@ export const useBadges = () => {
   const updatePriceTableMetrics = async (newSlotsUsed, newBftMultiplier) => {
     try {
       const payload = await getData(
-        `v1/data_lab/badges?slots_used=${newSlotsUsed}&bft_multiplier=${newBftMultiplier}`,
+        `v1/data_lab/badges?slots_used=${newSlotsUsed}&bft_multiplier=${newBftMultiplier}`
       );
       if (payload) {
         setPriceBadges(payload);
@@ -80,6 +80,6 @@ export const useBadges = () => {
     priceSlotsUsed,
     bftMultiplier,
     updateMainTableMetrics,
-    updatePriceTableMetrics
+    updatePriceTableMetrics,
   };
 };

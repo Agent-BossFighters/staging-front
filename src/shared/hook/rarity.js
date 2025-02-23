@@ -3,7 +3,7 @@ import data from "@shared/data/rarities.json";
 
 export const handleSelectRarityContract = async (
   setSelectedContract,
-  rarity,
+  rarity
 ) => {
   const payload = await getData("v1/showrunner_contracts");
   const contracts = payload.contracts;
@@ -24,7 +24,7 @@ export const handleSelectRarityContract = async (
 
 export const handleSelectRarityContractForEdit = async (
   setEditedName,
-  rarity,
+  rarity
 ) => {
   const payload = await getData("v1/showrunner_contracts");
   const contracts = payload.contracts;

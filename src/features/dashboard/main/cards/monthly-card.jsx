@@ -5,7 +5,7 @@ import { RewardsPattern2, Monthly } from "@img/index";
 
 export default function MonthlyCard() {
   return (
-    <Card 
+    <Card
       title="MONTHLY"
       description="ACCOUNTING"
       path="/dashboard/monthly"

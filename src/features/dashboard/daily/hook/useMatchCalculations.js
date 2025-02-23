@@ -1,4 +1,8 @@
-import { CURRENCY_RATES, LUCK_RATES, ENERGY_CONSUMPTION } from '@constants/gameConstants';
+import {
+  CURRENCY_RATES,
+  LUCK_RATES,
+  ENERGY_CONSUMPTION,
+} from "@constants/gameConstants";
 
 export const useMatchCalculations = () => {
   const calculateEnergyUsed = (timeInMinutes) => {
@@ -26,12 +30,12 @@ export const useMatchCalculations = () => {
 
   const calculateLuckrate = (badges) => {
     if (!badges || !Array.isArray(badges)) return 0;
-    
+
     return badges.reduce((total, badge) => {
       // Si badge est un objet avec une propriété rarity, utiliser celle-ci
       // Sinon, utiliser directement la chaîne de caractères
-      const rarity = typeof badge === 'object' ? badge.rarity : badge;
-      
+      const rarity = typeof badge === "object" ? badge.rarity : badge;
+
       // Utiliser les valeurs de LUCK_RATES pour le calcul
       return total + (LUCK_RATES[rarity?.toLowerCase()] || 0);
     }, 0);
@@ -42,7 +46,9 @@ export const useMatchCalculations = () => {
 
     // Calcul des gains
     const bftValue = parseFloat(calculateTokenValue(match.totalToken));
-    const flexValue = parseFloat(calculatePremiumValue(match.totalPremiumCurrency));
+    const flexValue = parseFloat(
+      calculatePremiumValue(match.totalPremiumCurrency)
+    );
     const totalEarnings = bftValue + flexValue;
 
     // Calcul des coûts
@@ -65,7 +71,7 @@ export const useMatchCalculations = () => {
 
     const energyUsed = calculateEnergyUsed(matchData.time);
     const luckrate = calculateLuckrate(matchData.badges);
-    
+
     return {
       ...matchData,
       energyUsed,
@@ -78,9 +84,9 @@ export const useMatchCalculations = () => {
         feeCost: calculateFeeCost(matchData.totalFee, matchData.feeCost),
         profit: calculateProfit({
           ...matchData,
-          energyUsed
-        })
-      }
+          energyUsed,
+        }),
+      },
     };
   };
 
@@ -92,6 +98,6 @@ export const useMatchCalculations = () => {
     calculateFeeCost,
     calculateLuckrate,
     calculateProfit,
-    calculateMatchMetrics
+    calculateMatchMetrics,
   };
-}; 
+};

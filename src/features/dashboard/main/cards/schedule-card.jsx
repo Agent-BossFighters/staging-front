@@ -5,7 +5,7 @@ import { Schedule, CustomLeague } from "@img/index";
 
 export default function ScheduleCard() {
   return (
-    <Card 
+    <Card
       title="SCHEDULE"
       description="OPTIMIZE YOUR TIME ACCORDING TO YOUR PROFILE"
       path="/dashboard/schedule"

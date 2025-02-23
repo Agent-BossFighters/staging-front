@@ -5,7 +5,7 @@ import { RewardsPattern2, Fighting } from "@img/index";
 
 export default function FightingCard() {
   return (
-    <Card 
+    <Card
       title="FIGHTING"
       description="TOURNAMENTS & CUPS WITH CUSTOM RULES"
       path="/dashboard/fighting"

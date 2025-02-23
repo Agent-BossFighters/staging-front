@@ -5,7 +5,7 @@ import { RewardsPattern1, TvTools } from "@img/index";
 
 export default function TvToolsCard() {
   return (
-    <Card 
+    <Card
       title="TV TOOLS"
       description="BE OVERLAY & COMMANDS"
       path="/dashboard/tv-tools"

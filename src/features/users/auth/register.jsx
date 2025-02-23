@@ -14,7 +14,7 @@ export default function Register() {
       password: "",
       confirmPassword: "",
     },
-    "register",
+    "register"
   );
 
   const handleRegister = async (data) => {

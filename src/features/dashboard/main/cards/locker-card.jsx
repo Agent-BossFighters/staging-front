@@ -5,7 +5,7 @@ import { Locker } from "@img/index";
 
 export default function LockerCard() {
   return (
-    <Card 
+    <Card
       title="LOCKER"
       description="MANAGE YOUR TACTIC / ASSETS / BUILDS & DISCOUNTS"
       path="/dashboard/locker"

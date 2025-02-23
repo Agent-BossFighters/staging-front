@@ -14,13 +14,15 @@ export const useEditMatch = (setMatches, builds) => {
   const [editedResult, setEditedResult] = useState("");
   const [editedBft, setEditedBft] = useState("");
   const [editedFlex, setEditedFlex] = useState("");
-  const [editedBadges, setEditedBadges] = useState(Array(5).fill({ rarity: "rare" }));
+  const [editedBadges, setEditedBadges] = useState(
+    Array(5).fill({ rarity: "rare" })
+  );
   const [selectedBuild, setSelectedBuild] = useState(null);
 
   // Met à jour le build sélectionné quand l'ID change
   useEffect(() => {
     if (editedBuildId && builds) {
-      const build = builds.find(b => b.id === editedBuildId);
+      const build = builds.find((b) => b.id === editedBuildId);
       setSelectedBuild(build || null);
     } else {
       setSelectedBuild(null);
@@ -36,18 +38,20 @@ export const useEditMatch = (setMatches, builds) => {
     setEditedResult(match.result);
     setEditedBft(match.totalToken);
     setEditedFlex(match.totalPremiumCurrency);
-    
+
     // Initialize badges with existing data or defaults
-    const initialBadges = Array(5).fill(null).map((_, index) => {
-      if (match.badges && match.badges[index]) {
-        return match.badges[index];
-      }
-      return { rarity: "rare" };
-    });
+    const initialBadges = Array(5)
+      .fill(null)
+      .map((_, index) => {
+        if (match.badges && match.badges[index]) {
+          return match.badges[index];
+        }
+        return { rarity: "rare" };
+      });
     setEditedBadges(initialBadges);
 
     // Set selected build
-    const build = builds.find(b => b.id === match.build.id);
+    const build = builds.find((b) => b.id === match.build.id);
     setSelectedBuild(build || null);
   };
 
@@ -63,7 +67,7 @@ export const useEditMatch = (setMatches, builds) => {
         id: selectedBuild.id,
         buildName: selectedBuild.buildName,
         bonusMultiplier: selectedBuild.bonusMultiplier || 1.0,
-        perksMultiplier: selectedBuild.perksMultiplier || 1.0
+        perksMultiplier: selectedBuild.perksMultiplier || 1.0,
       },
       map: editedMap,
       totalFee: 0,
@@ -81,7 +85,7 @@ export const useEditMatch = (setMatches, builds) => {
       badges: editedBadges.map((badge, index) => ({
         nftId: badge.nftId || null,
         rarity: badge.rarity,
-        slot: index + 1
+        slot: index + 1,
       })),
       calculated: {
         luckrate: calculateLuckrate(editedBadges),
@@ -90,14 +94,17 @@ export const useEditMatch = (setMatches, builds) => {
         premiumValue: (editedFlex * 0.00744).toFixed(2),
         feeCost: 0,
         profit: (
-          (editedBft * 0.01 + editedFlex * 0.00744) - 
-          (calculateEnergyUsed(editedTime) * 1.49)
-        ).toFixed(2)
-      }
+          editedBft * 0.01 +
+          editedFlex * 0.00744 -
+          calculateEnergyUsed(editedTime) * 1.49
+        ).toFixed(2),
+      },
     };
 
     try {
-      const response = await putData(`v1/matches/${editingMatchId}`, { match: updatedMatch });
+      const response = await putData(`v1/matches/${editingMatchId}`, {
+        match: updatedMatch,
+      });
       if (response?.daily_metrics?.matches) {
         setMatches(response.daily_metrics.matches);
         setEditingMatchId(null);
@@ -141,6 +148,6 @@ export const useEditMatch = (setMatches, builds) => {
     setEditedBadges,
     handleEdit,
     handleSave,
-    handleCancel
+    handleCancel,
   };
-}; 
+};

@@ -29,8 +29,8 @@ export const useEditBadge = (setBadges) => {
       success: (res) => {
         setBadges((prevBadges) =>
           prevBadges.map((badgeData) =>
-            badgeData.id === editingBadgeId ? res.nft : badgeData,
-          ),
+            badgeData.id === editingBadgeId ? res.nft : badgeData
+          )
         );
         setEditingBadgeId(null);
         return "NFT updated successfully";

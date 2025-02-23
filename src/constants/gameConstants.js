@@ -1,7 +1,7 @@
 export const CURRENCY_RATES = {
-  BFT: 0.01,      // Prix du BFT en USD ($0.01)
-  FLEX: 0.00744,  // Prix du FLEX en USD ($0.00744)
-  ENERGY: 1.49    // Prix de l'énergie en USD ($1.49)
+  BFT: 0.01, // Prix du BFT en USD ($0.01)
+  FLEX: 0.00744, // Prix du FLEX en USD ($0.00744)
+  ENERGY: 1.49, // Prix de l'énergie en USD ($1.49)
 };
 
 export const RARITY_MULTIPLIERS = {
@@ -10,21 +10,21 @@ export const RARITY_MULTIPLIERS = {
   rare: 2,
   epic: 2.5,
   legendary: 3,
-  mythic: 3.5
+  mythic: 3.5,
 };
 
 // Consommation d'énergie par minute
 export const ENERGY_CONSUMPTION = {
-  RATE_PER_MINUTE: 0.083 // ~0.83 pour 10 minutes
+  RATE_PER_MINUTE: 0.083, // ~0.83 pour 10 minutes
 };
 
 // Multiplicateurs de rareté pour le luck rate (base * multiplier)
 export const LUCK_RATES = {
-  common: 100,      // 100 * 1
-  uncommon: 205,    // 100 * 2.05
-  rare: 420,        // 100 * 4.2
-  epic: 1292,       // 100 * 12.92
-  legendary: 3974,  // 100 * 39.74
-  mythic: 12219,    // 100 * 122.19
-  exalted: 37574    // 100 * 375.74
-}; 
+  common: 100, // 100 * 1
+  uncommon: 205, // 100 * 2.05
+  rare: 420, // 100 * 4.2
+  epic: 1292, // 100 * 12.92
+  legendary: 3974, // 100 * 39.74
+  mythic: 12219, // 100 * 122.19
+  exalted: 37574, // 100 * 375.74
+};

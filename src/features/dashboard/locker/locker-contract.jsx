@@ -54,7 +54,7 @@ export default function LockerContract() {
 
   const filteredContracts = contracts.filter(
     (contract) =>
-      getRarityOrder(contract.rarity.name) <= getRarityOrder(maxRarity),
+      getRarityOrder(contract.rarity.name) <= getRarityOrder(maxRarity)
   );
 
   const handleSubmit = async () => {
@@ -64,7 +64,7 @@ export default function LockerContract() {
     if (!purchasePrice) missingFields.push("Purchase Price");
     if (missingFields.length > 0) {
       toast.error(
-        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`,
+        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`
       );
     }
     const payload = {
@@ -96,16 +96,14 @@ export default function LockerContract() {
 
   const handleDelete = async (contractId) => {
     const confirm = window.confirm(
-      "Are you sure you want to delete this contract?",
+      "Are you sure you want to delete this contract?"
     );
     if (!confirm) return;
     toast.promise(deleteData(`v1/nfts/${contractId}`), {
       loading: "Deleting NFT...",
       success: () => {
         setContracts((prevContracts) =>
-          prevContracts.filter(
-            (contractData) => contractData.id !== contractId,
-          ),
+          prevContracts.filter((contractData) => contractData.id !== contractId)
         );
         return "Showrunner contract deleted successfully";
       },
@@ -150,7 +148,7 @@ export default function LockerContract() {
                           setEditedRarity(rarity);
                           handleSelectRarityContractForEdit(
                             setEditedName,
-                            rarity,
+                            rarity
                           );
                         }}
                         selectedRarity={editedRarity}

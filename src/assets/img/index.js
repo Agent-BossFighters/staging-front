@@ -30,4 +30,4 @@ export { default as Playermap } from "./Playermap.png";
 export { default as Locker } from "./locker.png";
 export { default as Schedule } from "./schedule.png";
 export { default as Fighting } from "./fighting.png";
-export { default as TvTools } from "./tv_tools.png"; 
+export { default as TvTools } from "./tv_tools.png";

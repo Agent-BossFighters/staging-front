@@ -5,7 +5,7 @@ import { BackgroundPreseason } from "@img/index";
 
 export default function DataLabCard() {
   return (
-    <Card 
+    <Card
       title="DATA LAB"
       description="SIMULATE & IMPROVE"
       path="/dashboard/datalab"

@@ -5,7 +5,7 @@ import { RewardsPattern2, Playermap } from "@img/index";
 
 export default function PlayerMapCard() {
   return (
-    <Card 
+    <Card
       title="PLAYER MAP"
       description="INTUITION RP COMMUNITY MAP EXPLORER"
       path="/dashboard/player-map"

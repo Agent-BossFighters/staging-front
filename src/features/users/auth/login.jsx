@@ -15,7 +15,7 @@ export default function Login() {
       email: "",
       password: "",
     },
-    "login",
+    "login"
   );
 
   const handleLogin = async (data) => {

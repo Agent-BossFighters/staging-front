@@ -27,8 +27,8 @@ export const useEditBuild = (setBuilds) => {
       success: (prevBuild) => {
         setBuilds((prevBuilds) =>
           prevBuilds.map((buildData) =>
-            buildData.id === prevBuild.id ? prevBuild : buildData,
-          ),
+            buildData.id === prevBuild.id ? prevBuild : buildData
+          )
         );
         setEditingBuildId(null);
         return "Build updated successfully";

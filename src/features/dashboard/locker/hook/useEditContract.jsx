@@ -30,8 +30,8 @@ export const useEditContract = (setContracts) => {
         if (response.nft) {
           setContracts((prevContracts) =>
             prevContracts.map((contractData) =>
-              contractData.id === response.nft.id ? response.nft : contractData,
-            ),
+              contractData.id === response.nft.id ? response.nft : contractData
+            )
           );
           setEditingContractId(null);
           return "NFT updated successfully";
