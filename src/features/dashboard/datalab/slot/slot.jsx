@@ -14,18 +14,18 @@ export default function Slot({ slots, loading }) {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="pt-5">
+    <div>
       <h2 className="text-3xl font-extrabold py-2">{/* Icon */}SLOTS COST</h2>
       <Table className="w-1/2">
-        <TableCaption>Desc ?</TableCaption>
+        <TableCaption>Normal and bonus part $BFT displayed for a basic common badge</TableCaption>
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">
             <TableHead>SLOT</TableHead>
-            <TableHead className="text-destructive">NB FLEX</TableHead>
-            <TableHead className="text-destructive">FLEX COST</TableHead>
-            <TableHead>BONUS $BFT / SLOT</TableHead>
-            <TableHead>NORMAL PART $BFT / BADGE</TableHead>
-            <TableHead>BONUS PART $BFT / BADGE</TableHead>
+            <TableHead className="text-destructive">NB<br />FLEX</TableHead>
+            <TableHead className="text-destructive">FLEX<br />COST</TableHead>
+            <TableHead>BONUS BFT<br />/SLOT</TableHead>
+            <TableHead>NORMAL BFT<br />/BADGE</TableHead>
+            <TableHead>BONUS BFT<br />/BADGE</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="">

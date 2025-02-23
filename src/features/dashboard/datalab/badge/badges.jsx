@@ -22,56 +22,24 @@ export default function Badges({ badges, loading }) {
   return (
     <div>
       <h2 className="text-3xl font-extrabold py-2">{/* Icon */}BADGES</h2>
-      <Table>
-        <TableCaption>Desc ?</TableCaption>
+      <Table className="w-1/2">
+        <TableCaption>Badge informations according to slot(s) used</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
             <TableHead>SUPPLY</TableHead>
-            <TableHead>
-              FLOOR
-              <br />
-              PRICE
-            </TableHead>
+            <TableHead>FLOOR<br />PRICE</TableHead>
             <TableHead>EFFICIENCY</TableHead>
             <TableHead>RATIO</TableHead>
-            <TableHead>
-              MAX
-              <br />
-              ENERGY
-            </TableHead>
-            <TableHead>
-              TIME TO
-              <br />
-              CHARGE
-            </TableHead>
-            <TableHead>
-              IN-GAME
-              <br />
-              TIME
-            </TableHead>
-            <TableHead className="text-destructive">
-              MAX CHARGE
-              <br />
-              COST
-            </TableHead>
-            <TableHead className="text-destructive">
-              COST /<br />
-              HOUR
-            </TableHead>
-            <TableHead className="text-accent">
-              $BFT /<br />
-              MINUTE
-            </TableHead>
-            <TableHead className="text-accent">
-              $BFT /<br />
-              MAX CHARGE
-            </TableHead>
-            <TableHead className="text-accent">
-              $BFT VALUE /<br />
-              MAX CHARGE
-            </TableHead>
+            <TableHead>MAX<br />ENERGY</TableHead>
+            <TableHead>TIME TO<br />CHARGE</TableHead>
+            <TableHead>IN GAME<br />TIME</TableHead>
+            <TableHead className="text-destructive">MAX CHARGE<br />COST</TableHead>
+            <TableHead className="text-destructive">COST<br />/HOUR</TableHead>
+            <TableHead className="text-accent">BFT<br />/MINUTE</TableHead>
+            <TableHead className="text-accent">BFT<br />/CHARGE</TableHead>
+            <TableHead className="text-accent">BFT<br />VALUE</TableHead>
             <TableHead className="text-accent">ROI</TableHead>
           </TableRow>
         </TableHeader>

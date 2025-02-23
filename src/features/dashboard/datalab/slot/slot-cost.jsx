@@ -17,16 +17,16 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
 
   return (
     <Table className="">
-      <TableCaption>Desc ?</TableCaption>
+      <TableCaption>Nb charges ROI according to the badge rarity</TableCaption>
       <TableHeader>
         <TableRow className="bg-muted-foreground/30">
-          <TableHead>NB SLOT(S) UNLOCKED</TableHead>
-          <TableHead className="text-destructive">TOTAL FLEX</TableHead>
-          <TableHead className="text-destructive">TOTAL COST</TableHead>
-          <TableHead>NB TOKENS ROI</TableHead>
-          <TableHead>NB CHARGES ROI (1.0 MULTIPLIER)</TableHead>
-          <TableHead>NB CHARGES ROI (2.0 MULTIPLIER)</TableHead>
-          <TableHead>NB CHARGES ROI (3.0 MULTIPLIER)</TableHead>
+          <TableHead>NB SLOT(S)<br /> UNLOCKED</TableHead>
+          <TableHead className="text-destructive">TOTAL<br /> FLEX</TableHead>
+          <TableHead className="text-destructive">TOTAL<br /> COST</TableHead>
+          <TableHead>NB TOKENS<br /> ROI</TableHead>
+          <TableHead>NB CHARGES<br /> ROI (1.0 MULTIPLIER)</TableHead>
+          <TableHead>NB CHARGES<br /> ROI (2.0 MULTIPLIER)</TableHead>
+          <TableHead>NB CHARGES<br /> ROI (3.0 MULTIPLIER)</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="">

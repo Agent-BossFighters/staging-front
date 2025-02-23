@@ -46,19 +46,19 @@ export default function MatchesTable({
             <TableHead>SLOT 4</TableHead>
             <TableHead>SLOT 5</TableHead>
             <TableHead>LUCK RATE</TableHead>
-            <TableHead>TIME (min)</TableHead>
-            <TableHead>ENERGY USED</TableHead>
-            <TableHead>ENERGY COST</TableHead>
+            <TableHead>TIME<br />MINUTES</TableHead>
+            <TableHead>ENERGY<br />USED</TableHead>
+            <TableHead>ENERGY<br />COST</TableHead>
             <TableHead>MAP</TableHead>
             <TableHead>RESULT</TableHead>
-            <TableHead>$BFT</TableHead>
-            <TableHead>$BFT ($)</TableHead>
+            <TableHead>BFT</TableHead>
+            <TableHead>BFT<br />VALUE</TableHead>
             <TableHead>FLEX</TableHead>
-            <TableHead>FLEX ($)</TableHead>
+            <TableHead>FLEX<br />VALUE</TableHead>
             <TableHead>PROFIT</TableHead>
-            <TableHead>BFT MULTIPLIER</TableHead>
-            <TableHead>PERKS MULTIPLIER</TableHead>
-            <TableHead>ACTION(S)</TableHead>
+            <TableHead>BFT<br />MULTIPLIER</TableHead>
+            <TableHead>PERKS<br />MULTIPLIER</TableHead>
+            <TableHead>ACTIONS</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

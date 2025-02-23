@@ -12,74 +12,73 @@ import { useMatchCalculations } from "../hook/useMatchCalculations";
 import RaritySelect from "./rarity-select";
 
 const maps = ["Toxic river", "Award", "Radiation rift"];
+const results = ["win", "loss", "draw"];
 
-export default function MatchForm({ builds, onSubmit, initialData = null }) {
+const initialFormState = {
+  buildId: "",
+  map: "",
+  time: "",
+  result: "",
+  bft: "",
+  flex: "",
+  rarities: Array(5).fill("rare"),
+};
+
+export default function MatchForm({ builds, onSubmit }) {
   const { calculateLuckrate, calculateEnergyUsed } = useMatchCalculations();
-  const [buildId, setBuildId] = useState(initialData?.buildId || "");
-  const [map, setMap] = useState(initialData?.map || "");
-  const [time, setTime] = useState(initialData?.time || "");
-  const [result, setResult] = useState(initialData?.result || "");
-  const [bft, setBft] = useState(initialData?.totalToken || "");
-  const [flex, setFlex] = useState(initialData?.totalPremiumCurrency || "");
-  const [rarities, setRarities] = useState(
-    initialData?.selectedRarities || Array(5).fill("rare")
-  );
+  const [formData, setFormData] = useState(initialFormState);
+  const { buildId, map, time, result, bft, flex, rarities } = formData;
 
   const energyUsed = calculateEnergyUsed(time);
   const currentLuckrate = calculateLuckrate(rarities);
 
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleRarityChange = (index, value) => {
+    const newRarities = [...rarities];
+    newRarities[index] = value.toLowerCase();
+    handleChange("rarities", newRarities);
+  };
+
   const handleSubmit = () => {
     if (!buildId || !map || !result || !time || !bft) {
-      alert(
-        "Veuillez remplir tous les champs obligatoires (Build, Map, Résultat, Temps, BFT)"
-      );
+      alert("Veuillez remplir tous les champs obligatoires (Build, Map, Résultat, Temps, BFT)");
       return;
     }
 
-    const selectedBuild = builds.find((b) => b.id === buildId);
+    const selectedBuild = builds.find(b => b.id === buildId);
     if (!selectedBuild) {
       alert("Build non trouvé");
       return;
     }
 
-    // S'assurer que les raretés sont en minuscules pour le serveur
-    const badges = rarities.map((rarity, index) => ({
-      slot: index + 1,
-      rarity: rarity.toLowerCase(),
-      _destroy: false,
-    }));
-
     const matchData = {
       match: {
         date: new Date().toISOString(),
         build: selectedBuild.buildName,
-        map: map,
-        time: time,
-        result: result,
+        map,
+        time,
+        result,
         totalToken: bft || 0,
         totalPremiumCurrency: flex || 0,
-        badge_used_attributes: badges,
+        badge_used_attributes: rarities.map((rarity, index) => ({
+          slot: index + 1,
+          rarity: rarity.toLowerCase(),
+          _destroy: false,
+        })),
       },
     };
 
     onSubmit(matchData);
-
-    if (!initialData) {
-      // Reset form only if it's a new match
-      setBuildId("");
-      setMap("");
-      setTime("");
-      setResult("");
-      setBft("");
-      setFlex("");
-      setRarities(Array(5).fill("rare"));
-    }
+    setFormData(initialFormState);
   };
 
   return (
     <tr>
       <td>
-        <Select value={buildId} onValueChange={setBuildId}>
+        <Select value={buildId} onValueChange={(value) => handleChange("buildId", value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select build" />
           </SelectTrigger>
@@ -96,11 +95,7 @@ export default function MatchForm({ builds, onSubmit, initialData = null }) {
         <td key={index}>
           <RaritySelect
             value={rarities[index]}
-            onChange={(value) => {
-              const newRarities = [...rarities];
-              newRarities[index] = value.toLowerCase();
-              setRarities(newRarities);
-            }}
+            onChange={(value) => handleRarityChange(index, value)}
           />
         </td>
       ))}
@@ -111,13 +106,13 @@ export default function MatchForm({ builds, onSubmit, initialData = null }) {
           className="w-20"
           placeholder="0"
           value={time}
-          onChange={(e) => setTime(e.target.value)}
+          onChange={(e) => handleChange("time", e.target.value)}
         />
       </td>
       <td>{energyUsed || "0.00"}</td>
       <td>${(energyUsed * 1.49).toFixed(2)}</td>
       <td>
-        <Select value={map} onValueChange={setMap}>
+        <Select value={map} onValueChange={(value) => handleChange("map", value)}>
           <SelectTrigger className="w-24">
             <SelectValue placeholder="Select map" />
           </SelectTrigger>
@@ -131,14 +126,16 @@ export default function MatchForm({ builds, onSubmit, initialData = null }) {
         </Select>
       </td>
       <td>
-        <Select value={result} onValueChange={setResult}>
+        <Select value={result} onValueChange={(value) => handleChange("result", value)}>
           <SelectTrigger className="w-20">
             <SelectValue placeholder="Result" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="win">Win</SelectItem>
-            <SelectItem value="loss">Loss</SelectItem>
-            <SelectItem value="draw">Draw</SelectItem>
+            {results.map(r => (
+              <SelectItem key={r} value={r}>
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </td>
@@ -148,7 +145,7 @@ export default function MatchForm({ builds, onSubmit, initialData = null }) {
           className="w-20"
           placeholder="0"
           value={bft}
-          onChange={(e) => setBft(e.target.value)}
+          onChange={(e) => handleChange("bft", e.target.value)}
         />
       </td>
       <td>${((bft || 0) * 0.01).toFixed(2)}</td>
@@ -158,25 +155,17 @@ export default function MatchForm({ builds, onSubmit, initialData = null }) {
           className="w-20"
           placeholder="0"
           value={flex}
-          onChange={(e) => setFlex(e.target.value)}
+          onChange={(e) => handleChange("flex", e.target.value)}
         />
       </td>
       <td>${((flex || 0) * 0.00744).toFixed(2)}</td>
       <td className="text-green-500">
-        $
-        {(
-          (bft || 0) * 0.01 +
-          (flex || 0) * 0.00744 -
-          energyUsed * 1.49
-        ).toFixed(2)}
+        ${((bft || 0) * 0.01 + (flex || 0) * 0.00744 - energyUsed * 1.49).toFixed(2)}
       </td>
-      <td>{builds.find((b) => b.id === buildId)?.bonusMultiplier || "1.0"}</td>
-      <td>{builds.find((b) => b.id === buildId)?.perksMultiplier || "1.0"}</td>
+      <td>{builds.find(b => b.id === buildId)?.bonusMultiplier || "1.0"}</td>
+      <td>{builds.find(b => b.id === buildId)?.perksMultiplier || "1.0"}</td>
       <td>
-        <button
-          onClick={handleSubmit}
-          className="p-2 hover:bg-yellow-400 rounded-lg"
-        >
+        <button onClick={handleSubmit} className="p-2 hover:bg-yellow-400 rounded-lg">
           <Plus className="h-4 w-4" />
         </button>
       </td>

@@ -1,6 +1,15 @@
 import { useState } from "react";
 import MatchesTable from "./components/matches-table";
-import { useMatchCalculations } from "./hook/useMatchCalculations";
+
+const initialEditState = {
+  buildId: "",
+  map: "",
+  time: "",
+  result: "",
+  bft: "",
+  flex: "",
+  rarities: Array(5).fill("rare"),
+};
 
 export default function DailyMatches({
   matches,
@@ -11,15 +20,7 @@ export default function DailyMatches({
   onDelete,
 }) {
   const [editingMatchId, setEditingMatchId] = useState(null);
-  const [editedData, setEditedData] = useState({
-    buildId: "",
-    map: "",
-    time: "",
-    result: "",
-    bft: "",
-    flex: "",
-    rarities: Array(5).fill("rare"),
-  });
+  const [editedData, setEditedData] = useState(initialEditState);
 
   const handleEdit = (match) => {
     setEditingMatchId(match.id);
@@ -43,15 +44,7 @@ export default function DailyMatches({
 
   const handleCancel = () => {
     setEditingMatchId(null);
-    setEditedData({
-      buildId: "",
-      map: "",
-      time: "",
-      result: "",
-      bft: "",
-      flex: "",
-      rarities: Array(5).fill("rare"),
-    });
+    setEditedData(initialEditState);
   };
 
   return (

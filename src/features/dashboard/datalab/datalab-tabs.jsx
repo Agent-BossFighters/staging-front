@@ -17,7 +17,7 @@ const tabs = [
 
 export default function DatalabTabs() {
   return (
-    <Tabs defaultValue="Slot" className="w-full flex flex-col pt-4">
+    <Tabs defaultValue="Slot" className="w-full flex flex-col">
       <TabsList className="bg-transparent text-2xl pb-4 justify-start">
         {tabs.map((tab) => (
           <TabsTrigger key={tab.value} value={tab.value}>
@@ -25,7 +25,7 @@ export default function DatalabTabs() {
           </TabsTrigger>
         ))}
       </TabsList>
-      <div className="border-primary border-b-4 md:w-3/4 lg:w-1/2 pt-2"></div>
+      <div className="border-primary border-b-4 w-[830px] mb-4"></div>
       <TabsContent value="Slot">
         <SlotContainer />
       </TabsContent>

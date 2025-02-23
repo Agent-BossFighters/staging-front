@@ -28,59 +28,23 @@ export default function Showrunner() {
       <h2 className="text-3xl font-extrabold py-2">
         {/* Icon */}SHOWRUNNER CONTRACTS
       </h2>
-      <Table className="">
-        <TableCaption>Desc ?</TableCaption>
+      <Table className="w-1/2">
+        <TableCaption>Showrunner contract information according to the rarity</TableCaption>
         <TableHeader>
           <TableRow className="bg-muted-foreground/30">
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
             <TableHead className="text-destructive">SUPPLY</TableHead>
-            <TableHead>
-              FLOOR
-              <br />
-              PRICE
-            </TableHead>
-            <TableHead>
-              LVL
-              <br />
-              MAX
-            </TableHead>
-            <TableHead>
-              MAX ENERGY
-              <br />
-              RECHARGE
-            </TableHead>
-            <TableHead>
-              TIME TO
-              <br />
-              CRAFT (H)
-            </TableHead>
-            <TableHead className="text-destructive">
-              NB BADGES
-              <br />
-              RARITY - 1
-            </TableHead>
-            <TableHead className="text-destructive">
-              FLEX /<br />
-              CRAFT
-            </TableHead>
-            <TableHead className="text-destructive">
-              SP.MARKS /<br />
-              CRAFT
-            </TableHead>
-            <TableHead>
-              TIME TO
-              <br />
-              CHARGE
-            </TableHead>
-            <TableHead className="text-destructive">
-              FLEX /<br />
-              CHARGE
-            </TableHead>
-            <TableHead className="text-destructive">
-              SP.MARKS /<br />
-              CHARGE
-            </TableHead>
+            <TableHead>FLOOR<br />PRICE</TableHead>
+            <TableHead>MAX<br />LEVEL</TableHead>
+            <TableHead>MAX ENERGY<br />RECHARGE</TableHead>
+            <TableHead>TIME TO<br />CRAFT</TableHead>
+            <TableHead className="text-destructive">NB BADGES<br />RARITY - 1</TableHead>
+            <TableHead className="text-destructive">FLEX<br />/CRAFT</TableHead>
+            <TableHead className="text-destructive">SP.MARKS<br />/CRAFT</TableHead>
+            <TableHead>TIME TO<br />CHARGE</TableHead>
+            <TableHead className="text-destructive">FLEX<br />/CHARGE</TableHead>
+            <TableHead className="text-destructive">SP.MARKS<br />/CHARGE</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

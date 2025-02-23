@@ -15,6 +15,7 @@ export default function BadgeContainer() {
     bftMultiplier,
     updateMainTableMetrics,
     updatePriceTableMetrics,
+    priceBadges,
   } = useBadges();
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function BadgeContainer() {
         </div>
       </div>
       <div className="flex-grow flex justify-start items-start gap-5">
-        <BadgesPrices badges={badges} loading={loading} />
+        <BadgesPrices badges={priceBadges} loading={loading} />
         <div className="flex flex-col gap-5">
           <div className="">
             <h3 className="text-2xl font-bold whitespace-nowrap">
