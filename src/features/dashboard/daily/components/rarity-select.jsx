@@ -5,9 +5,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@ui/select";
-import { rarities } from "@shared/data/rarities.json";
+import { useRarityManagement } from "../hooks/useRarityManagement";
 
 export default function RaritySelect({ value, onChange, disabled = false }) {
+  const {
+    getRarityColor,
+    getRarityDisplay,
+    formatRarityName,
+    sortRarities,
+    rarities,
+  } = useRarityManagement();
+
   return (
     <Select
       value={value || "rare"}
@@ -16,40 +24,19 @@ export default function RaritySelect({ value, onChange, disabled = false }) {
     >
       <SelectTrigger className="w-12 h-8 px-2">
         <SelectValue>
-          {value === "none" ? (
-            <span></span>
-          ) : value ? (
-            <span
-              style={{
-                color: rarities.find(
-                  (r) => r.rarity.toLowerCase() === value.toLowerCase()
-                )?.color,
-              }}
-            >
-              {value.charAt(0).toUpperCase()}
-            </span>
-          ) : (
-            <span
-              style={{
-                color: rarities.find((r) => r.rarity.toLowerCase() === "rare")
-                  ?.color,
-              }}
-            >
-              R
-            </span>
-          )}
+          <span style={{ color: getRarityColor(value) }}>
+            {getRarityDisplay(value)}
+          </span>
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {rarities
-          .sort((a, b) => a.order - b.order)
-          .map((rarity) => (
-            <SelectItem key={rarity.rarity} value={rarity.rarity.toLowerCase()}>
-              <span style={{ color: rarity.color }}>
-                {rarity.rarity.charAt(0).toUpperCase()}
-              </span>
-            </SelectItem>
-          ))}
+        {sortRarities(rarities.map((r) => r.rarity)).map((rarity) => (
+          <SelectItem key={rarity} value={formatRarityName(rarity)}>
+            <span style={{ color: getRarityColor(rarity) }}>
+              {getRarityDisplay(rarity)}
+            </span>
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

@@ -1,5 +1,9 @@
 import { createContext, useContext } from "react";
 
+// Constantes du jeu
+export const GAME_MAPS = ["Toxic river", "Award", "Radiation rift"];
+export const GAME_RESULTS = ["win", "loss", "draw"];
+
 export const CURRENCY_RATES = {
   BFT: 0.01, // Prix du BFT en USD ($0.01)
   FLEX: 0.00744, // Prix du FLEX en USD ($0.00744)
@@ -29,9 +33,14 @@ export const LUCK_RATES = {
   legendary: 3974, // 100 * 39.74
   mythic: 12219, // 100 * 122.19
   exalted: 37574, // 100 * 375.74
+  exotic: 154054,
+  transcendant: 631620,
+  unique: 2589642,
 };
 
 const GameConstantsContext = createContext({
+  GAME_MAPS,
+  GAME_RESULTS,
   CURRENCY_RATES,
   RARITY_MULTIPLIERS,
   ENERGY_CONSUMPTION,
@@ -46,6 +55,8 @@ export function GameConstantsProvider({ children }) {
   return (
     <GameConstantsContext.Provider
       value={{
+        GAME_MAPS,
+        GAME_RESULTS,
         CURRENCY_RATES,
         RARITY_MULTIPLIERS,
         ENERGY_CONSUMPTION,
@@ -55,4 +66,4 @@ export function GameConstantsProvider({ children }) {
       {children}
     </GameConstantsContext.Provider>
   );
-} 
+}

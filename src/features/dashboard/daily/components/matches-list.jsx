@@ -6,13 +6,13 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-import CreateMatchForm from "@features/dashboard/daily/components/create-match-form";
-import MatchEntry from "@features/dashboard/daily/components/match-entry";
+import MatchEntry from "./match-entry";
+import { useGameConstants } from "@context/gameConstants.context";
 
 export default function MatchesList({
   matches,
   builds,
-  loading,
+  unlockedSlots,
   editingMatchId,
   editedData,
   onAdd,
@@ -21,75 +21,91 @@ export default function MatchesList({
   onEdit,
   onEditField,
   onCancel,
-  unlockedSlots,
 }) {
   const renderSlotHeaders = () => {
-    return Array.from({ length: unlockedSlots }, (_, i) => (
+    return Array.from({ length: 5 }, (_, i) => (
       <TableHead key={i}>SLOT {i + 1}</TableHead>
     ));
   };
 
-  const renderContent = () => {
-    if (loading) {
-      return (
-        <div className="flex flex-col items-center justify-center py-10">
-          <div className="animate-pulse flex flex-col items-center gap-4">
-            <div className="h-4 w-48 bg-muted-foreground/30 rounded"></div>
-            <div className="h-4 w-36 bg-muted-foreground/20 rounded"></div>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <Table>
-        <TableCaption>Liste des matchs du jour</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>BUILD</TableHead>
-            {renderSlotHeaders()}
-            <TableHead>LUCK RATE</TableHead>
-            <TableHead>TIME<br />MINUTES</TableHead>
-            <TableHead>ENERGY<br />USED</TableHead>
-            <TableHead>ENERGY<br />COST</TableHead>
-            <TableHead>MAP</TableHead>
-            <TableHead>RESULT</TableHead>
-            <TableHead>BFT</TableHead>
-            <TableHead>BFT<br />VALUE</TableHead>
-            <TableHead>FLEX</TableHead>
-            <TableHead>FLEX<br />VALUE</TableHead>
-            <TableHead>PROFIT</TableHead>
-            <TableHead>BFT<br />MULTIPLIER</TableHead>
-            <TableHead>PERKS<br />MULTIPLIER</TableHead>
-            <TableHead>ACTIONS</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <CreateMatchForm builds={builds} onSubmit={onAdd} unlockedSlots={unlockedSlots} />
-          {matches.map((match) => (
-            <MatchEntry
-              key={match.id}
-              match={match}
-              builds={builds}
-              isEditing={match.id === editingMatchId}
-              editedData={editedData}
-              onEdit={() => onEdit(match)}
-              onDelete={() => onDelete(match.id)}
-              onSave={() => onUpdate(match.id)}
-              onCancel={onCancel}
-              onEditField={onEditField}
-              unlockedSlots={unlockedSlots}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    );
-  };
-
   return (
-    <div>
-      <h2 className="text-3xl font-extrabold py-2">MATCHES</h2>
-      {renderContent()}
-    </div>
+    <Table className="w-full">
+      <TableCaption>Daily matches history and statistics</TableCaption>
+      <TableHeader>
+        <TableRow className="bg-muted-foreground/30">
+          <TableHead className="min-w-[120px]">BUILD</TableHead>
+          {renderSlotHeaders()}
+          <TableHead className="min-w-[80px]">
+            LUCK
+            <br />
+            RATE
+          </TableHead>
+          <TableHead className="min-w-[80px]">
+            TIME
+            <br />
+            MINUTES
+          </TableHead>
+          <TableHead className="min-w-[80px]">
+            ENERGY
+            <br />
+            USED
+          </TableHead>
+          <TableHead className="min-w-[80px] text-destructive">
+            ENERGY
+            <br />
+            COST
+          </TableHead>
+          <TableHead className="min-w-[100px]">MAP</TableHead>
+          <TableHead className="min-w-[80px]">RESULT</TableHead>
+          <TableHead className="min-w-[80px]">BFT</TableHead>
+          <TableHead className="min-w-[80px] text-accent">
+            BFT
+            <br />
+            VALUE
+          </TableHead>
+          <TableHead className="min-w-[80px]">FLEX</TableHead>
+          <TableHead className="min-w-[80px] text-accent">
+            FLEX
+            <br />
+            VALUE
+          </TableHead>
+          <TableHead className="min-w-[80px] text-green-500">PROFIT</TableHead>
+          <TableHead className="min-w-[80px]">
+            BFT
+            <br />
+            MULTIPLIER
+          </TableHead>
+          <TableHead className="min-w-[80px]">
+            PERKS
+            <br />
+            MULTIPLIER
+          </TableHead>
+          <TableHead className="min-w-[100px]">ACTIONS</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody className="overflow-y-auto">
+        <MatchEntry
+          isCreating={true}
+          builds={builds}
+          unlockedSlots={unlockedSlots}
+          onSubmit={onAdd}
+        />
+        {matches.map((match) => (
+          <MatchEntry
+            key={match.id}
+            match={match}
+            builds={builds}
+            isEditing={match.id === editingMatchId}
+            editedData={editedData}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onUpdate={(data) => onUpdate(match.id, data)}
+            onEditField={onEditField}
+            onCancel={onCancel}
+            unlockedSlots={unlockedSlots}
+          />
+        ))}
+      </TableBody>
+    </Table>
   );
 }
