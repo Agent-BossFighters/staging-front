@@ -27,8 +27,10 @@ const DailyRaritiesCache = {
   clear: () => {
     const today = new Date().toISOString().split("T")[0];
     Object.keys(localStorage)
-      .filter(key => key.startsWith(DAILY_RARITIES_KEY) && !key.includes(today))
-      .forEach(key => localStorage.removeItem(key));
+      .filter(
+        (key) => key.startsWith(DAILY_RARITIES_KEY) && !key.includes(today)
+      )
+      .forEach((key) => localStorage.removeItem(key));
   },
 
   remove: (date, matchId) => {
@@ -39,14 +41,16 @@ const DailyRaritiesCache = {
       delete data[matchId];
       localStorage.setItem(key, JSON.stringify(data));
     }
-  }
+  },
 };
 
 export const useDaily = () => {
   const [matches, setMatches] = useState([]);
   const [builds, setBuilds] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const { calculateMatchMetrics, calculateEnergyUsed } = useMatchCalculations();
 
   useEffect(() => {
@@ -61,13 +65,16 @@ export const useDaily = () => {
   const fetchDailyMetrics = useCallback(async (date) => {
     try {
       const response = await getData(`v1/daily_metrics/${date}`);
-      const enrichedMatches = response.matches.map(match => ({
+      const enrichedMatches = response.matches.map((match) => ({
         ...match,
-        selectedRarities: match.selectedRarities || []
+        selectedRarities: match.selectedRarities || [],
       }));
       setMatches(enrichedMatches);
     } catch (error) {
-      handleError("Erreur lors du chargement des métriques journalières", error);
+      handleError(
+        "Erreur lors du chargement des métriques journalières",
+        error
+      );
     }
   }, []);
 
@@ -92,51 +99,79 @@ export const useDaily = () => {
     }
   }, [selectedDate, fetchMyBuilds, fetchDailyMetrics]);
 
-  const handleAddMatch = useCallback(async (matchData) => {
+  const handleAddMatch = useCallback(
+    async (matchData) => {
     try {
       const response = await postData("v1/matches", matchData);
       const newMatch = {
         ...response.match,
-        selectedRarities: matchData.selectedRarities
+          selectedRarities: matchData.selectedRarities,
       };
-      setMatches(prev => [...prev, newMatch]);
+        setMatches((prev) => [...prev, newMatch]);
       await fetchDailyMetrics(selectedDate);
       toast.success("Match ajouté avec succès");
       return newMatch;
     } catch (error) {
       handleError("Erreur lors de l'ajout du match", error);
     }
-  }, [selectedDate, fetchDailyMetrics]);
+    },
+    [selectedDate, fetchDailyMetrics]
+  );
 
-  const handleUpdateMatch = useCallback(async (id, matchData) => {
+  const handleUpdateMatch = useCallback(
+    async (id, matchData) => {
     try {
       const response = await putData(`v1/matches/${id}`, matchData);
-      const updatedMatch = {
-        ...response.match,
-        selectedRarities: matchData.selectedRarities
-      };
-      setMatches(prev => prev.map(match => match.id === id ? updatedMatch : match));
+        if (!response || !response.match) {
+          throw new Error("Réponse invalide du serveur");
+        }
+
+        const updatedMatch = response.match;
+
+        // Mise à jour immédiate du match dans l'état
+        setMatches((prev) =>
+          prev.map((match) =>
+            match.id === id
+              ? {
+                  ...match,
+                  ...updatedMatch,
+                  badge_used: updatedMatch.badge_used.filter(
+                    (b) => !b._destroy
+                  ),
+                }
+              : match
+          )
+        );
+
+        // Rafraîchir les métriques pour s'assurer de la cohérence
+        await fetchDailyMetrics(selectedDate);
+
       toast.success("Match mis à jour avec succès");
       return updatedMatch;
     } catch (error) {
       handleError("Erreur lors de la mise à jour du match", error);
     }
-  }, []);
+    },
+    [selectedDate, fetchDailyMetrics]
+  );
 
-  const handleDeleteMatch = useCallback(async (id) => {
+  const handleDeleteMatch = useCallback(
+    async (id) => {
     try {
       await deleteData(`v1/matches/${id}`);
-      const matchToDelete = matches.find(m => m.id === id);
+        const matchToDelete = matches.find((m) => m.id === id);
       if (matchToDelete) {
         DailyRaritiesCache.remove(matchToDelete.date.split("T")[0], id);
       }
-      setMatches(prev => prev.filter(match => match.id !== id));
+        setMatches((prev) => prev.filter((match) => match.id !== id));
       await fetchDailyMetrics(selectedDate);
       toast.success("Match supprimé avec succès");
     } catch (error) {
       handleError("Erreur lors de la suppression du match", error);
     }
-  }, [matches, selectedDate, fetchDailyMetrics]);
+    },
+    [matches, selectedDate, fetchDailyMetrics]
+  );
 
   const calculateDailySummary = useCallback(() => {
     if (!matches.length) {
@@ -145,11 +180,12 @@ export const useDaily = () => {
         energyUsed: { amount: 0, cost: "$0.00" },
         totalBft: { amount: 0, value: "$0.00" },
         totalFlex: { amount: 0, value: "$0.00" },
-        profit: "$0.00"
+        profit: "$0.00",
       };
     }
 
-    return matches.reduce((acc, match) => {
+    return matches.reduce(
+      (acc, match) => {
       const metrics = calculateMatchMetrics(match);
       const energyUsed = calculateEnergyUsed(match.time);
 
@@ -157,25 +193,27 @@ export const useDaily = () => {
         matchesCount: matches.length,
         energyUsed: {
           amount: acc.energyUsed.amount + energyUsed,
-          cost: `$${((acc.energyUsed.amount + energyUsed) * 1.49).toFixed(2)}`
+            cost: `$${((acc.energyUsed.amount + energyUsed) * 1.49).toFixed(2)}`,
         },
         totalBft: {
           amount: acc.totalBft.amount + match.totalToken,
-          value: `$${((acc.totalBft.amount + match.totalToken) * 0.01).toFixed(2)}`
+            value: `$${((acc.totalBft.amount + match.totalToken) * 0.01).toFixed(2)}`,
         },
         totalFlex: {
           amount: acc.totalFlex.amount + match.totalPremiumCurrency,
-          value: `$${((acc.totalFlex.amount + match.totalPremiumCurrency) * 0.00744).toFixed(2)}`
+            value: `$${((acc.totalFlex.amount + match.totalPremiumCurrency) * 0.00744).toFixed(2)}`,
         },
-        profit: `$${(acc.profit.replace("$", "") * 1 + parseFloat(metrics.calculated.profit)).toFixed(2)}`
+          profit: `$${(acc.profit.replace("$", "") * 1 + parseFloat(metrics.calculated.profit)).toFixed(2)}`,
       };
-    }, {
+      },
+      {
       matchesCount: 0,
       energyUsed: { amount: 0, cost: "$0.00" },
       totalBft: { amount: 0, value: "$0.00" },
       totalFlex: { amount: 0, value: "$0.00" },
-      profit: "$0.00"
-    });
+        profit: "$0.00",
+      }
+    );
   }, [matches, calculateMatchMetrics, calculateEnergyUsed]);
 
   return {
@@ -188,6 +226,6 @@ export const useDaily = () => {
     handleAddMatch,
     handleUpdateMatch,
     handleDeleteMatch,
-    dailySummary: calculateDailySummary()
+    dailySummary: calculateDailySummary(),
   };
 };

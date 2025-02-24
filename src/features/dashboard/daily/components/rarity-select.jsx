@@ -16,7 +16,9 @@ export default function RaritySelect({ value, onChange, disabled = false }) {
     >
       <SelectTrigger className="w-12 h-8 px-2">
         <SelectValue>
-          {value ? (
+          {value === "none" ? (
+            <span></span>
+          ) : value ? (
             <span
               style={{
                 color: rarities.find(

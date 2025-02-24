@@ -18,13 +18,16 @@ export const ENERGY_CONSUMPTION = {
   RATE_PER_MINUTE: 0.083, // ~0.83 pour 10 minutes
 };
 
-// Multiplicateurs de rareté pour le luck rate (base * multiplier)
+// Multiplicateurs de rareté pour le luck rate (pourcentages)
 export const LUCK_RATES = {
-  common: 100, // 100 * 1
-  uncommon: 205, // 100 * 2.05
-  rare: 420, // 100 * 4.2
-  epic: 1292, // 100 * 12.92
-  legendary: 3974, // 100 * 39.74
-  mythic: 12219, // 100 * 122.19
-  exalted: 37574, // 100 * 375.74
+  common: 100, // 100%
+  uncommon: 205, // 205%
+  rare: 420, // 420%
+  epic: 1292, // 1292%
+  legendary: 3974, // 3974%
+  mythic: 12219, // 12219%
+  exalted: 37574, // 37574%
+  exotic: 154054, // 154054%
+  transcendant: 631620, // 631620%
+  unique: 2589642, // 2589642%
 };

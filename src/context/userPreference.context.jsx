@@ -1,5 +1,11 @@
-import { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { postData, deleteData, getData } from "@utils/api/data";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import { postData, putData, deleteData, getData } from "@utils/api/data";
 import { toast } from "react-hot-toast";
 
 const UserPreferenceContext = createContext();
@@ -25,15 +31,18 @@ export function UserPreferenceProvider({ children }) {
 
   // Gestion du cache
   const cacheMatches = useCallback((date, matchesData) => {
-    setCachedMatches(prev => ({
+    setCachedMatches((prev) => ({
       ...prev,
-      [date.toISOString().split('T')[0]]: matchesData
+      [date.toISOString().split("T")[0]]: matchesData,
     }));
   }, []);
 
-  const getCachedMatches = useCallback((date) => {
-    return cachedMatches[date.toISOString().split('T')[0]];
-  }, [cachedMatches]);
+  const getCachedMatches = useCallback(
+    (date) => {
+      return cachedMatches[date.toISOString().split("T")[0]];
+    },
+    [cachedMatches]
+  );
 
   const cacheBuilds = useCallback((buildsData) => {
     setCachedBuilds(buildsData);
@@ -63,9 +72,9 @@ export function UserPreferenceProvider({ children }) {
 
   const fetchMatches = useCallback(async () => {
     try {
-      const dateStr = selectedDate.toISOString().split('T')[0];
+      const dateStr = selectedDate.toISOString().split("T")[0];
       const cachedData = getCachedMatches(selectedDate);
-      
+
       if (cachedData) {
         setMatches(cachedData);
         return;
@@ -94,17 +103,22 @@ export function UserPreferenceProvider({ children }) {
   // Calculs des matchs
   const calculateLuckrate = useCallback((rarities) => {
     if (!rarities || !Array.isArray(rarities)) return 0;
-    
+
     // Filtrer les slots "none" avant de calculer
-    const activeRarities = rarities.filter(rarity => rarity !== "none");
-    
+    const activeRarities = rarities.filter((rarity) => rarity !== "none");
+
     return activeRarities.reduce((acc, rarity) => {
       switch (rarity.toLowerCase()) {
-        case 'common': return acc + 1;
-        case 'rare': return acc + 2;
-        case 'epic': return acc + 3;
-        case 'legendary': return acc + 4;
-        default: return acc;
+        case "common":
+          return acc + 1;
+        case "rare":
+          return acc + 2;
+        case "epic":
+          return acc + 3;
+        case "legendary":
+          return acc + 4;
+        default:
+          return acc;
       }
     }, 0);
   }, []);
@@ -118,8 +132,12 @@ export function UserPreferenceProvider({ children }) {
     setLoading(true);
     try {
       const response = await postData("v1/matches", matchData);
-      setMatches(prev => [...prev, response.match]);
-      toast.success("Match ajouté avec succès");
+      if (response?.match) {
+        setMatches((prev) => [...prev, response.match]);
+        toast.success("Match ajouté avec succès");
+      } else {
+        throw new Error("Réponse invalide du serveur");
+      }
     } catch (error) {
       toast.error(`Erreur: ${error.message}`);
     } finally {
@@ -127,26 +145,65 @@ export function UserPreferenceProvider({ children }) {
     }
   }, []);
 
-  const handleUpdateMatch = useCallback(async (matchId, matchData) => {
-    setLoading(true);
-    try {
-      const response = await postData(`v1/matches/${matchId}`, matchData);
-      setMatches(prev => prev.map(match => 
-        match.id === matchId ? response.match : match
-      ));
-      toast.success("Match mis à jour avec succès");
-    } catch (error) {
-      toast.error(`Erreur: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const handleUpdateMatch = useCallback(
+    async (matchId, matchData) => {
+      setLoading(true);
+      try {
+        console.log("Updating match:", matchId, matchData);
+        const response = await putData(`v1/matches/${matchId}`, matchData);
+        console.log("Update response:", response);
+
+        if (!response) {
+          throw new Error("Réponse invalide du serveur");
+        }
+
+        // Si la réponse est un objet avec une propriété match, utilisez-la
+        // Sinon, utilisez la réponse directement
+        const updatedMatch = response.match || response;
+
+        if (!updatedMatch || !updatedMatch.id) {
+          throw new Error("Format de réponse invalide");
+        }
+
+        // Mettre à jour le cache et l'état local
+        setMatches((prev) => {
+          const newMatches = prev.map((match) =>
+            match.id === matchId ? updatedMatch : match
+          );
+          cacheMatches(selectedDate, newMatches);
+          return newMatches;
+        });
+
+        toast.success("Match mis à jour avec succès");
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour:", error);
+
+        // Gestion détaillée des erreurs
+        if (error.response) {
+          try {
+            const errorData = await error.response.json();
+            console.error("Détails de l'erreur:", errorData);
+            const errorMessage =
+              errorData.error || errorData.message || error.message;
+            toast.error(`Erreur: ${errorMessage}`);
+          } catch (e) {
+            toast.error(`Erreur: ${error.message}`);
+          }
+        } else {
+          toast.error(`Erreur: ${error.message}`);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedDate, cacheMatches]
+  );
 
   const handleDeleteMatch = useCallback(async (matchId) => {
     setLoading(true);
     try {
       await deleteData(`v1/matches/${matchId}`);
-      setMatches(prev => prev.filter(match => match.id !== matchId));
+      setMatches((prev) => prev.filter((match) => match.id !== matchId));
       toast.success("Match supprimé avec succès");
     } catch (error) {
       toast.error(`Erreur: ${error.message}`);

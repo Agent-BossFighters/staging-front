@@ -82,7 +82,7 @@ export default function MatchForm({ builds, onSubmit, unlockedSlots }) {
       <td>
         <Select value={buildId} onValueChange={(value) => handleChange("buildId", value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Select build" />
+            <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
             {builds.map((build) => (
@@ -116,7 +116,7 @@ export default function MatchForm({ builds, onSubmit, unlockedSlots }) {
       <td>
         <Select value={map} onValueChange={(value) => handleChange("map", value)}>
           <SelectTrigger className="w-24">
-            <SelectValue placeholder="Select map" />
+            <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
             {maps.map((m) => (
@@ -130,7 +130,7 @@ export default function MatchForm({ builds, onSubmit, unlockedSlots }) {
       <td>
         <Select value={result} onValueChange={(value) => handleChange("result", value)}>
           <SelectTrigger className="w-20">
-            <SelectValue placeholder="Result" />
+            <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
             {results.map(r => (
