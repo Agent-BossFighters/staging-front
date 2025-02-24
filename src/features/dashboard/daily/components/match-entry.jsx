@@ -146,6 +146,7 @@ export default function MatchEntry({
         build: selectedBuild.buildName,
         map: map,
         time: time,
+        energyUsed: parseFloat(calculateEnergyUsed(time)),
         result: result,
         totalToken: totalToken,
         totalPremiumCurrency: totalPremiumCurrency,
@@ -186,15 +187,37 @@ export default function MatchEntry({
     if (!validateForm(data)) return;
 
     const matchData = createMatchData(data, isEditing ? match : null);
+    console.log("Payload envoyé :", JSON.stringify(matchData, null, 2));
 
     if (isCreating) {
-      onSubmit(matchData);
-      setFormData({
-        ...INITIAL_FORM_STATE,
-        rarities: Array(MAX_SLOTS).fill("none"),
-      });
+      onSubmit(matchData)
+        .then(() => {
+          setFormData({
+            ...INITIAL_FORM_STATE,
+            rarities: Array(MAX_SLOTS).fill("none"),
+          });
+        })
+        .catch((error) => {
+          console.error("Erreur détaillée:", error);
+          if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Headers:", error.response.headers);
+            console.error("Data:", error.response.data);
+          }
+        });
     } else {
-      onUpdate(matchData);
+      onUpdate(matchData)
+        .then(() => {
+          onCancel(); // Sortir du mode édition après une mise à jour réussie
+        })
+        .catch((error) => {
+          console.error("Erreur détaillée:", error);
+          if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Headers:", error.response.headers);
+            console.error("Data:", error.response.data);
+          }
+        });
     }
   };
 
