@@ -8,7 +8,7 @@ export default function Layout() {
     <>
       <div className="grid grid-rows-layout min-h-screen">
         <Header />
-        <main className="flex-grow px-10 lg:px-0 lg:w-5/6 mx-auto flex flex-col">
+        <main className="flex-grow px-10 lg:px-0 lg:w-6/7 mx-auto flex flex-col">
           <Outlet />
         </main>
         <Footer />

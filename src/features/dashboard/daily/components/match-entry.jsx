@@ -325,10 +325,16 @@ export default function MatchEntry({
           value={data.map}
           onValueChange={(value) => handleChange("map", formatMapName(value))}
         >
-          <SelectTrigger className="w-24">
-            <SelectValue placeholder="Select" />
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Select">
+              {data.map
+                ? data.map
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (c) => c.toUpperCase())
+                : "Select"}
+            </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-[100]">
             {GAME_MAPS.map((m) => (
               <SelectItem key={m} value={m}>
                 {m.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}

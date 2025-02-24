@@ -41,9 +41,9 @@ export default function MatchesList({
             RATE
           </TableHead>
           <TableHead className="min-w-[80px]">
-            TIME
+            IN GAME
             <br />
-            MINUTES
+            TIME
           </TableHead>
           <TableHead className="min-w-[80px]">
             ENERGY
