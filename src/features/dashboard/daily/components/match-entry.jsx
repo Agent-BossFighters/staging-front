@@ -1,7 +1,7 @@
-import { useMatchCalculations } from "../hook/useMatchCalculations";
-import RaritySelect from "./rarity-select";
-import ActionsTable from "./actions-table";
+import RaritySelect from "@features/dashboard/daily/components/rarity-select";
+import MatchActions from "@features/dashboard/daily/components/match-actions";
 import { rarities } from "@shared/data/rarities.json";
+import { useUserPreference } from "@context/userPreference.context";
 import {
   Select,
   SelectContent,
@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@ui/select";
 
-export default function MatchRow({
+export default function MatchEntry({
   match,
   builds,
   isEditing,
@@ -22,20 +22,26 @@ export default function MatchRow({
   onEditField,
   unlockedSlots,
 }) {
-  const { calculateLuckrate, calculateEnergyUsed } = useMatchCalculations();
+  const { calculateLuckrate, calculateEnergyUsed } = useUserPreference();
 
   // Trouver le build correspondant, que ce soit en mode édition ou affichage
   const currentBuild = isEditing
     ? builds.find((b) => b.id === editedData.buildId)
     : builds.find((b) => b.buildName === match.build);
 
-  const matchRarities =
-    match.badge_used?.map((badge) => badge.rarity) ||
-    match.badges?.map((badge) => badge.rarity) ||
-    match.selectedRarities ||
-    Array(unlockedSlots).fill("rare");
+  // Créer un tableau de la taille unlockedSlots rempli de "none"
+  // Puis remplacer les valeurs avec les badges utilisés
+  const matchRarities = Array(unlockedSlots).fill("none");
+  if (match.badge_used) {
+    match.badge_used.forEach(badge => {
+      if (badge.slot <= unlockedSlots) {
+        matchRarities[badge.slot - 1] = badge.rarity;
+      }
+    });
+  }
 
-  const matchLuckrate = calculateLuckrate(matchRarities);
+  // Ne calculer le luckrate que pour les slots qui ne sont pas "none"
+  const matchLuckrate = calculateLuckrate(matchRarities.filter(r => r !== "none"));
   const matchEnergyUsed = calculateEnergyUsed(match.time);
 
   // Enrichir les données du match avec les multiplicateurs du build
@@ -75,9 +81,9 @@ export default function MatchRow({
         const rarity = isEditing
           ? editedData.rarities[index]
           : matchRarities[index];
-        const rarityInfo = rarities.find(
-          (r) => r.rarity.toLowerCase() === (rarity || "rare").toLowerCase()
-        );
+        const rarityInfo = rarity === "none" 
+          ? { color: "#666666" } 
+          : rarities.find(r => r.rarity.toLowerCase() === rarity.toLowerCase());
 
         return (
           <td key={index}>
@@ -92,7 +98,7 @@ export default function MatchRow({
               />
             ) : (
               <span style={{ color: rarityInfo?.color }}>
-                {(rarity || "rare").charAt(0).toUpperCase()}
+                {rarity === "none" ? "-" : rarity.charAt(0).toUpperCase()}
               </span>
             )}
           </td>
@@ -121,7 +127,7 @@ export default function MatchRow({
       <td>{enrichedMatch.build.bonusMultiplier}</td>
       <td>{enrichedMatch.build.perksMultiplier}</td>
       <td className="flex gap-2 items-center">
-        <ActionsTable
+        <MatchActions
           data={enrichedMatch}
           onEdit={onEdit}
           onDelete={onDelete}

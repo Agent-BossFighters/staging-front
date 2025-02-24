@@ -8,8 +8,8 @@ import {
 } from "@ui/select";
 import { Input } from "@ui/input";
 import { Plus } from "lucide-react";
-import { useMatchCalculations } from "../hook/useMatchCalculations";
-import RaritySelect from "./rarity-select";
+import { useUserPreference } from "@context/userPreference.context";
+import RaritySelect from "@features/dashboard/daily/components/rarity-select";
 
 const maps = ["Toxic river", "Award", "Radiation rift"];
 const results = ["win", "loss", "draw"];
@@ -21,16 +21,16 @@ const getInitialFormState = (unlockedSlots) => ({
   result: "",
   bft: "",
   flex: "",
-  rarities: Array(unlockedSlots).fill("rare"),
+  rarities: Array(unlockedSlots).fill("none"),
 });
 
 export default function MatchForm({ builds, onSubmit, unlockedSlots }) {
-  const { calculateLuckrate, calculateEnergyUsed } = useMatchCalculations();
+  const { calculateLuckrate, calculateEnergyUsed } = useUserPreference();
   const [formData, setFormData] = useState(() => getInitialFormState(unlockedSlots));
   const { buildId, map, time, result, bft, flex, rarities } = formData;
 
   const energyUsed = calculateEnergyUsed(time);
-  const currentLuckrate = calculateLuckrate(rarities);
+  const currentLuckrate = calculateLuckrate(rarities.filter(r => r !== "none"));
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -63,11 +63,13 @@ export default function MatchForm({ builds, onSubmit, unlockedSlots }) {
         result,
         totalToken: bft || 0,
         totalPremiumCurrency: flex || 0,
-        badge_used_attributes: rarities.map((rarity, index) => ({
-          slot: index + 1,
-          rarity: rarity.toLowerCase(),
-          _destroy: false,
-        })),
+        badge_used_attributes: rarities
+          .map((rarity, index) => ({
+            slot: index + 1,
+            rarity: rarity.toLowerCase(),
+            _destroy: rarity === "none",
+          }))
+          .filter(badge => !badge._destroy),
       },
     };
 

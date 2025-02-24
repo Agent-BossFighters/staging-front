@@ -6,10 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-import MatchForm from "./match-form";
-import MatchRow from "./match-row";
+import CreateMatchForm from "@features/dashboard/daily/components/create-match-form";
+import MatchEntry from "@features/dashboard/daily/components/match-entry";
 
-export default function MatchesTable({
+export default function MatchesList({
   matches,
   builds,
   loading,
@@ -65,9 +65,9 @@ export default function MatchesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          <MatchForm builds={builds} onSubmit={onAdd} unlockedSlots={unlockedSlots} />
+          <CreateMatchForm builds={builds} onSubmit={onAdd} unlockedSlots={unlockedSlots} />
           {matches.map((match) => (
-            <MatchRow
+            <MatchEntry
               key={match.id}
               match={match}
               builds={builds}

@@ -12,7 +12,7 @@ import {
 } from "@ui/table";
 import { NumericInput } from "@ui/numeric-input";
 import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
-import ActionsTable from "./actions-table";
+import ActionsTable from "@features/dashboard/locker/actions-table";
 import { Button } from "@ui/button";
 import { Plus } from "lucide-react";
 import { postData, deleteData } from "@utils/api/data";
@@ -22,8 +22,8 @@ import {
   handleSelectRarityContractForEdit,
   getRarityOrder,
 } from "@shared/hook/rarity";
-import { useContracts } from "./hook/useContracts";
-import { useEditContract } from "./hook/useEditContract";
+import { useContracts } from "@features/dashboard/locker/hook/useContracts";
+import { useEditContract } from "@features/dashboard/locker/hook/useEditContract";
 import { useUserPreference } from "@context/userPreference.context";
 
 export default function LockerContract() {

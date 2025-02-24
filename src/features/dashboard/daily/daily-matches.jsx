@@ -1,5 +1,5 @@
-import { useState } from "react";
-import MatchesTable from "./components/matches-table";
+import { useState, useEffect } from "react";
+import MatchesList from "@features/dashboard/daily/components/matches-list";
 import { useUserPreference } from "@context/userPreference.context";
 
 const initialEditState = {
@@ -12,22 +12,39 @@ const initialEditState = {
   rarities: [],
 };
 
-export default function DailyMatches({
-  matches,
-  builds,
-  loading,
-  onAdd,
-  onUpdate,
-  onDelete,
-}) {
-  const { unlockedSlots } = useUserPreference();
+export default function DailyMatches() {
+  const {
+    matches,
+    builds,
+    loading,
+    unlockedSlots,
+    handleAddMatch,
+    handleUpdateMatch,
+    handleDeleteMatch,
+    initializeData
+  } = useUserPreference();
+
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [editedData, setEditedData] = useState({
     ...initialEditState,
-    rarities: Array(unlockedSlots).fill("rare"),
+    rarities: Array(unlockedSlots).fill("none"),
   });
 
+  useEffect(() => {
+    initializeData();
+  }, []);
+
   const handleEdit = (match) => {
+    const initialRarities = Array(unlockedSlots).fill("none");
+    
+    if (match.badge_used) {
+      match.badge_used.forEach(badge => {
+        if (badge.slot <= unlockedSlots) {
+          initialRarities[badge.slot - 1] = badge.rarity;
+        }
+      });
+    }
+
     setEditingMatchId(match.id);
     setEditedData({
       buildId: builds.find((b) => b.buildName === match.build)?.id || "",
@@ -36,7 +53,7 @@ export default function DailyMatches({
       result: match.result,
       bft: match.totalToken,
       flex: match.totalPremiumCurrency,
-      rarities: match.selectedRarities || Array(unlockedSlots).fill("rare"),
+      rarities: initialRarities,
     });
   };
 
@@ -51,20 +68,20 @@ export default function DailyMatches({
     setEditingMatchId(null);
     setEditedData({
       ...initialEditState,
-      rarities: Array(unlockedSlots).fill("rare"),
+      rarities: Array(unlockedSlots).fill("none"),
     });
   };
 
   return (
-    <MatchesTable
+    <MatchesList
       matches={matches}
       builds={builds}
       loading={loading}
       editingMatchId={editingMatchId}
       editedData={editedData}
-      onAdd={onAdd}
-      onUpdate={onUpdate}
-      onDelete={onDelete}
+      onAdd={handleAddMatch}
+      onUpdate={handleUpdateMatch}
+      onDelete={handleDeleteMatch}
       onEdit={handleEdit}
       onEditField={handleEditField}
       onCancel={handleCancel}
