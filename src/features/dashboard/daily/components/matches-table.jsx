@@ -21,7 +21,14 @@ export default function MatchesTable({
   onEdit,
   onEditField,
   onCancel,
+  unlockedSlots,
 }) {
+  const renderSlotHeaders = () => {
+    return Array.from({ length: unlockedSlots }, (_, i) => (
+      <TableHead key={i}>SLOT {i + 1}</TableHead>
+    ));
+  };
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -40,11 +47,7 @@ export default function MatchesTable({
         <TableHeader>
           <TableRow>
             <TableHead>BUILD</TableHead>
-            <TableHead>SLOT 1</TableHead>
-            <TableHead>SLOT 2</TableHead>
-            <TableHead>SLOT 3</TableHead>
-            <TableHead>SLOT 4</TableHead>
-            <TableHead>SLOT 5</TableHead>
+            {renderSlotHeaders()}
             <TableHead>LUCK RATE</TableHead>
             <TableHead>TIME<br />MINUTES</TableHead>
             <TableHead>ENERGY<br />USED</TableHead>
@@ -62,7 +65,7 @@ export default function MatchesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          <MatchForm builds={builds} onSubmit={onAdd} />
+          <MatchForm builds={builds} onSubmit={onAdd} unlockedSlots={unlockedSlots} />
           {matches.map((match) => (
             <MatchRow
               key={match.id}
@@ -75,6 +78,7 @@ export default function MatchesTable({
               onSave={() => onUpdate(match.id)}
               onCancel={onCancel}
               onEditField={onEditField}
+              unlockedSlots={unlockedSlots}
             />
           ))}
         </TableBody>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MatchesTable from "./components/matches-table";
+import { useUserPreference } from "@context/userPreference.context";
 
 const initialEditState = {
   buildId: "",
@@ -8,7 +9,7 @@ const initialEditState = {
   result: "",
   bft: "",
   flex: "",
-  rarities: Array(5).fill("rare"),
+  rarities: [],
 };
 
 export default function DailyMatches({
@@ -19,8 +20,12 @@ export default function DailyMatches({
   onUpdate,
   onDelete,
 }) {
+  const { unlockedSlots } = useUserPreference();
   const [editingMatchId, setEditingMatchId] = useState(null);
-  const [editedData, setEditedData] = useState(initialEditState);
+  const [editedData, setEditedData] = useState({
+    ...initialEditState,
+    rarities: Array(unlockedSlots).fill("rare"),
+  });
 
   const handleEdit = (match) => {
     setEditingMatchId(match.id);
@@ -31,7 +36,7 @@ export default function DailyMatches({
       result: match.result,
       bft: match.totalToken,
       flex: match.totalPremiumCurrency,
-      rarities: match.selectedRarities || Array(5).fill("rare"),
+      rarities: match.selectedRarities || Array(unlockedSlots).fill("rare"),
     });
   };
 
@@ -44,7 +49,10 @@ export default function DailyMatches({
 
   const handleCancel = () => {
     setEditingMatchId(null);
-    setEditedData(initialEditState);
+    setEditedData({
+      ...initialEditState,
+      rarities: Array(unlockedSlots).fill("rare"),
+    });
   };
 
   return (
@@ -60,6 +68,7 @@ export default function DailyMatches({
       onEdit={handleEdit}
       onEditField={handleEditField}
       onCancel={handleCancel}
+      unlockedSlots={unlockedSlots}
     />
   );
 }

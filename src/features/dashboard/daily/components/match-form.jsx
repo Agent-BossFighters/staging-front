@@ -14,19 +14,19 @@ import RaritySelect from "./rarity-select";
 const maps = ["Toxic river", "Award", "Radiation rift"];
 const results = ["win", "loss", "draw"];
 
-const initialFormState = {
+const getInitialFormState = (unlockedSlots) => ({
   buildId: "",
   map: "",
   time: "",
   result: "",
   bft: "",
   flex: "",
-  rarities: Array(5).fill("rare"),
-};
+  rarities: Array(unlockedSlots).fill("rare"),
+});
 
-export default function MatchForm({ builds, onSubmit }) {
+export default function MatchForm({ builds, onSubmit, unlockedSlots }) {
   const { calculateLuckrate, calculateEnergyUsed } = useMatchCalculations();
-  const [formData, setFormData] = useState(initialFormState);
+  const [formData, setFormData] = useState(() => getInitialFormState(unlockedSlots));
   const { buildId, map, time, result, bft, flex, rarities } = formData;
 
   const energyUsed = calculateEnergyUsed(time);
@@ -72,7 +72,7 @@ export default function MatchForm({ builds, onSubmit }) {
     };
 
     onSubmit(matchData);
-    setFormData(initialFormState);
+    setFormData(getInitialFormState(unlockedSlots));
   };
 
   return (
@@ -91,7 +91,7 @@ export default function MatchForm({ builds, onSubmit }) {
           </SelectContent>
         </Select>
       </td>
-      {[...Array(5)].map((_, index) => (
+      {[...Array(unlockedSlots)].map((_, index) => (
         <td key={index}>
           <RaritySelect
             value={rarities[index]}

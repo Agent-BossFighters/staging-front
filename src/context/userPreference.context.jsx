@@ -8,12 +8,15 @@ export function useUserPreference() {
 
 export function UserPreferenceProvider({ children }) {
   const [maxRarity, setMaxRarity] = useState(null);
+  const [unlockedSlots, setUnlockedSlots] = useState(2);
 
   return (
     <UserPreferenceContext.Provider
       value={{
         maxRarity,
         setMaxRarity,
+        unlockedSlots,
+        setUnlockedSlots,
       }}
     >
       {children}

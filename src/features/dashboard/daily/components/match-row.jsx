@@ -20,6 +20,7 @@ export default function MatchRow({
   onSave,
   onCancel,
   onEditField,
+  unlockedSlots,
 }) {
   const { calculateLuckrate, calculateEnergyUsed } = useMatchCalculations();
 
@@ -32,7 +33,7 @@ export default function MatchRow({
     match.badge_used?.map((badge) => badge.rarity) ||
     match.badges?.map((badge) => badge.rarity) ||
     match.selectedRarities ||
-    Array(5).fill("rare");
+    Array(unlockedSlots).fill("rare");
 
   const matchLuckrate = calculateLuckrate(matchRarities);
   const matchEnergyUsed = calculateEnergyUsed(match.time);
@@ -70,7 +71,7 @@ export default function MatchRow({
           enrichedMatch.build.buildName
         )}
       </td>
-      {[...Array(5)].map((_, index) => {
+      {[...Array(unlockedSlots)].map((_, index) => {
         const rarity = isEditing
           ? editedData.rarities[index]
           : matchRarities[index];

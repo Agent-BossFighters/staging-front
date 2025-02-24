@@ -15,9 +15,16 @@ import { useUserPreference } from "@context/userPreference.context";
 const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
 
 export default function Tatics() {
-  const { setMaxRarity } = useUserPreference();
-  const [selectedValue, setSelectedValue] = useState(numbers[0].toString());
+  const { setMaxRarity, unlockedSlots, setUnlockedSlots } = useUserPreference();
   const [selectedValue1, setSelectedValue1] = useState(numbers[0].toString());
+
+  // Convertir le nombre total de slots en nombre de slots additionnels pour l'affichage
+  const displayedSlots = (unlockedSlots - 1).toString();
+  
+  const handleSlotChange = (value) => {
+    // Convertir le nombre de slots additionnels en nombre total de slots
+    setUnlockedSlots(parseInt(value) + 1);
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -56,7 +63,7 @@ export default function Tatics() {
           <h3 className="text-xl font-bold whitespace-nowrap">
             BADGE SLOT(S) UNLOCKED
           </h3>
-          <Select value={selectedValue} onValueChange={setSelectedValue}>
+          <Select value={displayedSlots} onValueChange={handleSlotChange}>
             <SelectTrigger className="inline-flex items-center gap-1 lg:w-1/4 px-4 py-2">
               <SelectValue placeholder="Select a number of slot" />
             </SelectTrigger>
