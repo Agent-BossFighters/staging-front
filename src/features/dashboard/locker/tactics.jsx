@@ -24,7 +24,7 @@ export default function Tactics() {
 
   // Convertir le nombre total de slots en nombre de slots additionnels pour l'affichage
   const displayedSlots = (unlockedSlots - 1).toString();
-  
+
   const handleSlotChange = (value) => {
     // Convertir le nombre de slots additionnels en nombre total de slots
     setUnlockedSlots(parseInt(value) + 1);
@@ -50,7 +50,7 @@ export default function Tactics() {
   return (
     <div className="flex flex-col gap-3">
       <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
-        <img src={Contract} alt="contract" className="w-10 h-10" />
+        <img src={Contract} alt="My Tactics" className="w-10 h-10" />
         MY TACTICS
       </h2>
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-9">

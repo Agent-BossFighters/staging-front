@@ -33,7 +33,7 @@ export default function Showrunner() {
           <TableRow>
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
-            <TableHead className="text-destructive">SUPPLY</TableHead>
+            <TableHead>SUPPLY</TableHead>
             <TableHead>FLOOR PRICE</TableHead>
             <TableHead>LVL MAX</TableHead>
             <TableHead>MAX ENERGY</TableHead>
@@ -42,6 +42,21 @@ export default function Showrunner() {
               NB BADGES
               <br />
               REQUIRED
+            </TableHead>
+            <TableHead className="text-destructive">
+              FLEX
+              <br />
+              /CRAFT
+            </TableHead>
+            <TableHead className="text-destructive">
+              SP.MARKS
+              <br />
+              /CRAFT
+            </TableHead>
+            <TableHead>
+              TIME TO
+              <br />
+              CHARGE
             </TableHead>
             <TableHead className="text-destructive">
               FLEX

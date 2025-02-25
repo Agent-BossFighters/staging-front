@@ -18,14 +18,14 @@ const tabs = [
 export default function DatalabTabs() {
   return (
     <Tabs defaultValue="Slot" className="w-full flex flex-col pl-8">
-      <TabsList className="bg-transparent text-2xl pb-4 justify-start">
+      <TabsList className="bg-transparent text-2xl pb-6 justify-start gap-1">
         {tabs.map((tab) => (
           <TabsTrigger key={tab.value} value={tab.value}>
             {tab.name}
           </TabsTrigger>
         ))}
       </TabsList>
-      <div className="border-primary border-b-4 w-[830px] mb-4"></div>
+      <div className="border-primary border-b-2 w-[830px] gap-4"></div>
       <TabsContent value="Slot">
         <SlotContainer />
       </TabsContent>

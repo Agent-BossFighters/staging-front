@@ -79,7 +79,6 @@ export default function MonthlyMatches({
                 PROFIT
               </TableHead>
               <TableHead className="text-center">WIN RATE</TableHead>
-              <TableHead className="text-center">BUILD</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -125,7 +124,6 @@ export default function MonthlyMatches({
                   <TableCell className="text-center">
                     {metrics.win_rate}%
                   </TableCell>
-                  <TableCell className="text-center">{metrics.build}</TableCell>
                 </TableRow>
               );
             })}

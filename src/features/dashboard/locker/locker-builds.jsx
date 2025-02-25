@@ -101,7 +101,11 @@ export default function Lockerbuilds() {
   return (
     <div className="flex flex-col h-[400px]">
       <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
-        <img src={GreenFighter} alt="Build" className="w-10 h-10" />
+        <img
+          src={GreenFighter}
+          alt="Build"
+          className="w-10 h-10 object-contain"
+        />
         BUILD(S)
       </h2>
       <div className="flex-grow overflow-auto">
