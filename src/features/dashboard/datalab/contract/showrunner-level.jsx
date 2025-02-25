@@ -23,9 +23,6 @@ export default function ShowrunnerLevel() {
 
   return (
     <>
-      <h2 className="text-3xl font-extrabold py-2">
-        {/* Icon */}SHOWRUNNER CONTRACTS LVL UP
-      </h2>
       <div className="w-[65%] overflow-x-auto">
         <Table>
           <TableHeader>
