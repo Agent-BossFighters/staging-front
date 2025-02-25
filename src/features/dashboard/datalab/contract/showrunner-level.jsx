@@ -23,7 +23,7 @@ export default function ShowrunnerLevel() {
 
   return (
     <>
-      <div className="w-[65%] overflow-x-auto">
+      <div className="w-1/2 overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

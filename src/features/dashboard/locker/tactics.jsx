@@ -24,7 +24,7 @@ export default function Tactics() {
 
   // Convertir le nombre total de slots en nombre de slots additionnels pour l'affichage
   const displayedSlots = (unlockedSlots - 1).toString();
-
+  
   const handleSlotChange = (value) => {
     // Convertir le nombre de slots additionnels en nombre total de slots
     setUnlockedSlots(parseInt(value) + 1);

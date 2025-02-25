@@ -27,7 +27,7 @@ export default function Badges() {
   return (
     <div className="w-full overflow-x-auto">
       <h2 className="text-3xl font-extrabold py-2">CRAFT</h2>
-      <Table className="w-full">
+      <Table className="w-1/2">
         <TableCaption>
           Craft requirements and SP.MARKS rewards according to rarity level
         </TableCaption>
