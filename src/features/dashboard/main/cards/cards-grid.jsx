@@ -13,7 +13,7 @@ const disabledCards = {
   datalab: false,
   daily: false,
   schedule: true,
-  monthly: true,
+  monthly: false,
   tvtools: true,
   fighting: true,
   playermap: true,
