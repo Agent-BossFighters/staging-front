@@ -31,7 +31,9 @@ export default function ShowrunnerLevel() {
               {levels.map((level) => (
                 <TableHead
                   key={level}
-                  className={level === 1 || level % 5 === 0 ? "text-primary" : ""}
+                  className={
+                    level === 1 || level % 5 === 0 ? "text-primary" : ""
+                  }
                 >
                   {level}
                 </TableHead>
@@ -40,7 +42,11 @@ export default function ShowrunnerLevel() {
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableHead>SP. MARKS<br />NB</TableHead>
+              <TableHead>
+                SP. MARKS
+                <br />
+                NB
+              </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
                   {levelData.spMarksNb[index]?.toFixed(2) || "-"}
@@ -48,7 +54,11 @@ export default function ShowrunnerLevel() {
               ))}
             </TableRow>
             <TableRow>
-              <TableHead>SP. MARKS<br />COST</TableHead>
+              <TableHead>
+                SP. MARKS
+                <br />
+                COST
+              </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
                   {levelData.spMarksCost[index] || "-"}
@@ -56,7 +66,11 @@ export default function ShowrunnerLevel() {
               ))}
             </TableRow>
             <TableRow>
-              <TableHead className="text-destructive">TOTAL<br />COST</TableHead>
+              <TableHead className="text-destructive">
+                TOTAL
+                <br />
+                COST
+              </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level} className="text-destructive">
                   {levelData.totalCost[index] || "-"}

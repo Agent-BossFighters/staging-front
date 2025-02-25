@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, X, Plus, Pencil, Trash2 } from "lucide-react";
+import { Check, X, Plus, Pencil, Trash2, Radiation } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -9,8 +9,8 @@ import {
 } from "@ui/select";
 import { Input } from "@ui/input";
 import RaritySelect from "./rarity-select";
-import { useGameConstants } from "@context/gameConstants.context";
 import { useDaily } from "../hooks/useDaily";
+import { ToxicRiver, Award, Win, Draw, Loss } from "@img/index";
 
 const MAX_SLOTS = 5; // Nombre maximum de slots possible
 const INITIAL_FORM_STATE = {
@@ -22,6 +22,71 @@ const INITIAL_FORM_STATE = {
   flex: "",
   rarities: [],
 };
+
+const GAME_RESULTS = {
+  win: { icon: Win, alt: "Win", label: "Victory" },
+  loss: { icon: Loss, alt: "Loss", label: "Defeat" },
+  draw: { icon: Draw, alt: "Draw", label: "Draw" },
+};
+
+const GAME_MAPS = {
+  toxic_river: { icon: ToxicRiver, alt: "Toxic River", label: "Toxic River" },
+  award: { icon: Award, alt: "Award", label: "Award" },
+  radiation_rift: {
+    icon: () => <Radiation className="w-5 h-5 text-yellow-400" />,
+    alt: "Radiation Rift",
+    label: "Radiation Rift",
+    isComponent: true,
+  },
+};
+
+const MapIcon = ({ map }) => {
+  const mapData = GAME_MAPS[map];
+  if (!mapData) return map;
+
+  return (
+    <div className="flex items-center justify-center gap-2">
+      {mapData.isComponent ? (
+        mapData.icon()
+      ) : (
+        <img src={mapData.icon} alt={mapData.alt} className="w-5 h-5" />
+      )}
+    </div>
+  );
+};
+
+const MapSelectItem = ({ map, mapData }) => (
+  <SelectItem key={map} value={map} className="flex items-center gap-2">
+    <div className="flex items-center gap-2">
+      {mapData.isComponent ? (
+        mapData.icon()
+      ) : (
+        <img src={mapData.icon} alt={mapData.alt} className="w-5 h-5" />
+      )}
+      <span>{mapData.label}</span>
+    </div>
+  </SelectItem>
+);
+
+const ResultIcon = ({ result }) => {
+  const resultData = GAME_RESULTS[result];
+  if (!resultData) return result;
+
+  return (
+    <div className="flex items-center justify-center gap-2">
+      <img src={resultData.icon} alt={resultData.alt} className="w-5 h-5" />
+    </div>
+  );
+};
+
+const ResultSelectItem = ({ result, resultData }) => (
+  <SelectItem key={result} value={result} className="flex items-center gap-2">
+    <div className="flex items-center gap-2">
+      <img src={resultData.icon} alt={resultData.alt} className="w-5 h-5" />
+      <span>{resultData.label}</span>
+    </div>
+  </SelectItem>
+);
 
 export default function MatchEntry({
   match,
@@ -37,7 +102,6 @@ export default function MatchEntry({
   onCancel,
   unlockedSlots,
 }) {
-  const { GAME_MAPS, GAME_RESULTS } = useGameConstants();
   const {
     calculateEnergyUsed,
     calculateEnergyCost,
@@ -250,8 +314,12 @@ export default function MatchEntry({
         <td className="text-center min-w-[80px] text-destructive">
           ${calculateEnergyCost(energyUsed)}
         </td>
-        <td className="text-center min-w-[100px] capitalize">{match.map}</td>
-        <td className="text-center min-w-[80px] capitalize">{match.result}</td>
+        <td className="text-center min-w-[100px] capitalize">
+          <MapIcon map={match.map} />
+        </td>
+        <td className="text-center min-w-[80px] capitalize">
+          <ResultIcon result={match.result} />
+        </td>
         <td className="text-center min-w-[80px]">{match.totalToken}</td>
         <td className="text-center min-w-[80px] text-accent">
           ${calculateTokenValue(match.totalToken)}
@@ -266,10 +334,10 @@ export default function MatchEntry({
           ${calculateProfit(match)}
         </td>
         <td className="text-center min-w-[80px]">
-          {currentBuild?.bonusMultiplier || "1.0"}
+          {parseFloat(currentBuild?.bonusMultiplier || 1).toFixed(1)}
         </td>
         <td className="text-center min-w-[80px]">
-          {currentBuild?.perksMultiplier || "1.0"}
+          {parseFloat(currentBuild?.perksMultiplier || 1).toFixed(1)}
         </td>
         <td className="flex gap-2 items-center justify-center min-w-[100px]">
           <button
@@ -346,22 +414,23 @@ export default function MatchEntry({
       <td className="min-w-[100px]">
         <Select
           value={data.map}
-          onValueChange={(value) => handleChange("map", formatMapName(value))}
+          onValueChange={(value) => handleChange("map", value)}
         >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Select">
-              {data.map
-                ? data.map
-                    .replace(/_/g, " ")
-                    .replace(/\b\w/g, (c) => c.toUpperCase())
-                : "Select"}
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {data.map ? (
+                <div className="flex items-center gap-2">
+                  <MapIcon map={data.map} />
+                  <span>{GAME_MAPS[data.map].label}</span>
+                </div>
+              ) : (
+                "Select map"
+              )}
             </SelectValue>
           </SelectTrigger>
-          <SelectContent className="z-[100]">
-            {GAME_MAPS.map((m) => (
-              <SelectItem key={m} value={m}>
-                {m.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-              </SelectItem>
+          <SelectContent>
+            {Object.entries(GAME_MAPS).map(([map, mapData]) => (
+              <MapSelectItem key={map} map={map} mapData={mapData} />
             ))}
           </SelectContent>
         </Select>
@@ -371,14 +440,25 @@ export default function MatchEntry({
           value={data.result}
           onValueChange={(value) => handleChange("result", value)}
         >
-          <SelectTrigger className="w-20">
-            <SelectValue placeholder="Select" />
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {data.result ? (
+                <div className="flex items-center gap-2">
+                  <ResultIcon result={data.result} />
+                  <span>{GAME_RESULTS[data.result].label}</span>
+                </div>
+              ) : (
+                "Select result"
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {GAME_RESULTS.map((r) => (
-              <SelectItem key={r} value={r}>
-                {r.charAt(0).toUpperCase() + r.slice(1)}
-              </SelectItem>
+            {Object.entries(GAME_RESULTS).map(([result, resultData]) => (
+              <ResultSelectItem
+                key={result}
+                result={result}
+                resultData={resultData}
+              />
             ))}
           </SelectContent>
         </Select>
@@ -417,10 +497,14 @@ export default function MatchEntry({
         })}
       </td>
       <td className="text-center min-w-[80px]">
-        {builds.find((b) => b.id === data.buildId)?.bonusMultiplier || "1.0"}
+        {parseFloat(
+          builds.find((b) => b.id === data.buildId)?.bonusMultiplier || 1
+        ).toFixed(1)}
       </td>
       <td className="text-center min-w-[80px]">
-        {builds.find((b) => b.id === data.buildId)?.perksMultiplier || "1.0"}
+        {parseFloat(
+          builds.find((b) => b.id === data.buildId)?.perksMultiplier || 1
+        ).toFixed(1)}
       </td>
       <td className="flex gap-2 items-center justify-center min-w-[100px]">
         {isCreating ? (

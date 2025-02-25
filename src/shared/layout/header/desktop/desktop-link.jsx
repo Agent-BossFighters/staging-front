@@ -15,13 +15,15 @@ const menuItems = [
     label: "Dashboard",
     requiresAuth: true,
     children: [
+      { path: "/dashboard/daily", label: "Daily" },
+      { path: "/dashboard/monthly", label: "Monthly" },
       { path: "/dashboard/locker", label: "Locker" },
       { path: "/dashboard/datalab", label: "Datalab" },
       //   { path: "/dashboard/schedule", label: "Schedule" },
       //   { path: "/dashboard/playing", label: "Playing" },
     ],
   },
-  { path: "/economy", label: "Economy" },
+  { path: "/economy", label: "Economy map" },
 ];
 
 export default function DesktopLink() {

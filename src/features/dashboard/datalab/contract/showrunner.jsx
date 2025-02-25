@@ -101,7 +101,9 @@ export default function Showrunner() {
                   {getValue(contract, "9. flex_craft")}
                 </TableCell>
                 <TableCell className="text-destructive">
-                  {getValue(contract, "10. sp_marks_craft")}
+                  {getValue(contract, "10. sp_marks_craft")
+                    ? Math.round(getValue(contract, "10. sp_marks_craft"))
+                    : "-"}
                 </TableCell>
                 <TableCell>
                   {getValue(contract, "11. time_to_charge")}
@@ -110,7 +112,9 @@ export default function Showrunner() {
                   {getValue(contract, "12. flex_charge")}
                 </TableCell>
                 <TableCell className="text-destructive">
-                  {getValue(contract, "13. sp_marks_charge")}
+                  {getValue(contract, "13. sp_marks_charge")
+                    ? Math.round(getValue(contract, "13. sp_marks_charge"))
+                    : "-"}
                 </TableCell>
               </TableRow>
             );

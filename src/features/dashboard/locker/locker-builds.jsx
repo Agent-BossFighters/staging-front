@@ -146,7 +146,7 @@ export default function Lockerbuilds() {
                           className="w-1/2"
                         />
                       ) : (
-                        build.bonusMultiplier
+                        parseFloat(build.bonusMultiplier).toFixed(1)
                       )}
                     </TableCell>
                     <TableCell>
@@ -158,7 +158,7 @@ export default function Lockerbuilds() {
                           className="w-1/2"
                         />
                       ) : (
-                        build.perksMultiplier
+                        parseFloat(build.perksMultiplier).toFixed(1)
                       )}
                     </TableCell>
                     <TableCell className="flex gap-2 items-center">

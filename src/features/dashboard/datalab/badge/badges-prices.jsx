@@ -24,9 +24,17 @@ export default function BadgesPrices({ badges, loading }) {
   const rows = [
     { label: "BADGE PRICE", key: "2. badge_price" },
     { label: "FULL RECHARGE PRICE", key: "3. full_recharge_price" },
-    { label: "TOTAL COST", key: "4. total_cost", className: "text-destructive" },
+    {
+      label: "TOTAL COST",
+      key: "4. total_cost",
+      className: "text-destructive",
+    },
     { label: "IN-GAME MINUTES", key: "5. in_game_minutes" },
-    { label: "$BFT/MAX RECHARGE", key: "6. bft_per_max_charge", className: "text-accent" },
+    {
+      label: "$BFT/MAX RECHARGE",
+      key: "6. bft_per_max_charge",
+      className: "text-accent",
+    },
     { label: "$BFT VALUE($)", key: "7. bft_value", className: "text-accent" },
     { label: "NB CHARGES ROI", key: "8. roi", className: "text-accent" },
   ];
@@ -34,7 +42,9 @@ export default function BadgesPrices({ badges, loading }) {
   return (
     <div>
       <Table className="w-1/2">
-        <TableCaption>Badge charges ROI according to $BFT bonus multiplier and slot(s) used</TableCaption>
+        <TableCaption>
+          Badge charges ROI according to $BFT bonus multiplier and slot(s) used
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>RARITY</TableHead>
@@ -53,10 +63,7 @@ export default function BadgesPrices({ badges, loading }) {
         <TableBody>
           {rarities.map((rarityItem) => (
             <TableRow key={rarityItem.rarity}>
-              <RarityCell
-                rarity={rarityItem.rarity}
-                color={rarityItem.color}
-              />
+              <RarityCell rarity={rarityItem.rarity} color={rarityItem.color} />
               {rows.map((row) => (
                 <TableCell key={row.key} className={row.className}>
                   {badgeMap[rarityItem.rarity]?.[row.key] || "-"}

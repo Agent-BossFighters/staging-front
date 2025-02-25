@@ -1,5 +1,4 @@
-import { Flex, Token4 } from "@img/index";
-import { Zap, TrendingUp } from "lucide-react";
+import { Flex, Token4, Purse, Spark } from "@img/index";
 
 export default function DailySummary({ date, summary }) {
   const formatDate = (dateString) => {
@@ -15,7 +14,7 @@ export default function DailySummary({ date, summary }) {
     <div className="flex border-2 border-yellow-400 rounded-lg h-full">
       {/* Date section */}
       <div className="bg-yellow-400 flex flex-col justify-center items-center">
-        <p className="text-dark text-xl font-bold px-4">{formatDate(date)}</p>
+        <p className="text-black text-xl font-bold px-4">{formatDate(date)}</p>
       </div>
 
       {/* Metrics section */}
@@ -30,7 +29,7 @@ export default function DailySummary({ date, summary }) {
 
         {/* Energy used */}
         <div className="flex flex-col items-center">
-          <Zap className="w-6 h-10 mr-2" />
+          <img src={Spark} alt="Energy" className="w-6 h-10 mr-2" />
           <p>ENERGY USED</p>
           <p className="text-red-500 text-xl">{summary.energyUsed.amount}</p>
           <p className="text-red-500 text-sm">{summary.energyUsed.cost}</p>
@@ -54,7 +53,7 @@ export default function DailySummary({ date, summary }) {
 
         {/* Profit */}
         <div className="flex flex-col items-center">
-          <TrendingUp className="w-8 h-10 mr-2" />
+          <img src={Purse} alt="Profit" className="w-8 h-8 mr-2" />
           <p>PROFIT</p>
           <p className="text-green-500 text-2xl">{summary.profit}</p>
         </div>
