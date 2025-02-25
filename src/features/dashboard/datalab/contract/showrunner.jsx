@@ -30,49 +30,18 @@ export default function Showrunner() {
           Showrunner contract information according to the rarity
         </TableCaption>
         <TableHeader>
-          <TableRow className="bg-muted-foreground/30">
+          <TableRow>
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
             <TableHead className="text-destructive">SUPPLY</TableHead>
-            <TableHead>
-              FLOOR
-              <br />
-              PRICE
-            </TableHead>
-            <TableHead>
-              MAX
-              <br />
-              LEVEL
-            </TableHead>
-            <TableHead>
-              MAX ENERGY
-              <br />
-              RECHARGE
-            </TableHead>
-            <TableHead>
-              TIME TO
-              <br />
-              CRAFT
-            </TableHead>
+            <TableHead>FLOOR PRICE</TableHead>
+            <TableHead>LVL MAX</TableHead>
+            <TableHead>MAX ENERGY</TableHead>
+            <TableHead>TIME TO CRAFT</TableHead>
             <TableHead className="text-destructive">
               NB BADGES
               <br />
-              RARITY - 1
-            </TableHead>
-            <TableHead className="text-destructive">
-              FLEX
-              <br />
-              /CRAFT
-            </TableHead>
-            <TableHead className="text-destructive">
-              SP.MARKS
-              <br />
-              /CRAFT
-            </TableHead>
-            <TableHead>
-              TIME TO
-              <br />
-              CHARGE
+              REQUIRED
             </TableHead>
             <TableHead className="text-destructive">
               FLEX

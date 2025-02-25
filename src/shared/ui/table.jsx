@@ -6,7 +6,10 @@ const Table = React.forwardRef(({ className, ...props }, ref) => (
   <div className="relative w-full overflow-auto">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn(
+        "w-full caption-bottom text-sm bg-background rounded-lg",
+        className
+      )}
       {...props}
     />
   </div>
@@ -14,14 +17,21 @@ const Table = React.forwardRef(({ className, ...props }, ref) => (
 Table.displayName = "Table";
 
 const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <thead
+    ref={ref}
+    className={cn("[&_tr]:border-b border-gray-800", className)}
+    {...props}
+  />
 ));
 TableHeader.displayName = "TableHeader";
 
 const TableBody = React.forwardRef(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
+    className={cn(
+      "[&_tr:last-child]:border-0 [&_tr]:border-b [&_tr]:border-gray-800",
+      className
+    )}
     {...props}
   />
 ));
@@ -31,7 +41,7 @@ const TableFooter = React.forwardRef(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
     className={cn(
-      "border-t bg-transparent font-medium [&>tr]:last:border-b-0",
+      "border-t bg-transparent font-medium [&>tr]:last:border-b-0 border-gray-800",
       className
     )}
     {...props}
@@ -43,7 +53,7 @@ const TableRow = React.forwardRef(({ className, ...props }, ref) => (
   <tr
     ref={ref}
     className={cn(
-      "border-b transition-colors data-[state=selected]:bg-muted [&>th]:bg-muted-foreground/30",
+      "transition-colors data-[state=selected]:bg-muted [&>th]:bg-[#1E272E]",
       className
     )}
     {...props}

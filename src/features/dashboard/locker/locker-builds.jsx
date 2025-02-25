@@ -108,7 +108,7 @@ export default function Lockerbuilds() {
         <Table className="">
           <TableCaption>Desc ?</TableCaption>
           <TableHeader>
-            <TableRow className="bg-muted-foreground/30">
+            <TableRow>
               <TableHead>BUILD NAME</TableHead>
               <TableHead>BONUS MULTIPLIER</TableHead>
               <TableHead>PERKS MULTIPLIER</TableHead>

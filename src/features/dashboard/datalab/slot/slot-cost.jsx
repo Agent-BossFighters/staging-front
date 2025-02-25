@@ -21,8 +21,8 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
         <TableCaption>
           Nb charges ROI according to the badge rarity
         </TableCaption>
-      <TableHeader>
-        <TableRow className="bg-muted-foreground/30">
+        <TableHeader>
+          <TableRow>
             <TableHead>
               NB SLOT(S)
               <br /> UNLOCKED
@@ -51,38 +51,38 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
               NB CHARGES
               <br /> ROI (3.0 MULTIPLIER)
             </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="">
-        {slots.slots_cost.map((slot, index) => {
-          const rarityMetrics = selectedRarityMetrics[index] || {};
+          </TableRow>
+        </TableHeader>
+        <TableBody className="">
+          {slots.slots_cost.map((slot, index) => {
+            const rarityMetrics = selectedRarityMetrics[index] || {};
 
-          return (
-            <TableRow key={getValue(slot, "1. slot")}>
-              <TableCell>{getValue(slot, "1. slot")}</TableCell>
-              <TableCell className="text-destructive">
-                {getValue(slot, "2. nb_flex")}
-              </TableCell>
-              <TableCell className="text-destructive">
-                {getValue(slot, "3. flex_cost")}
-              </TableCell>
-              <TableCell>
-                {getValue(rarityMetrics, "4. nb_tokens_roi")}
-              </TableCell>
-              <TableCell>
-                {getValue(rarityMetrics, "5. nb_charges_roi_1.0")}
-              </TableCell>
-              <TableCell>
-                {getValue(rarityMetrics, "6. nb_charges_roi_2.0")}
-              </TableCell>
-              <TableCell>
-                {getValue(rarityMetrics, "7. nb_charges_roi_3.0")}
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+            return (
+              <TableRow key={getValue(slot, "1. slot")}>
+                <TableCell>{getValue(slot, "1. slot")}</TableCell>
+                <TableCell className="text-destructive">
+                  {getValue(slot, "2. nb_flex")}
+                </TableCell>
+                <TableCell className="text-destructive">
+                  {getValue(slot, "3. flex_cost")}
+                </TableCell>
+                <TableCell>
+                  {getValue(rarityMetrics, "4. nb_tokens_roi")}
+                </TableCell>
+                <TableCell>
+                  {getValue(rarityMetrics, "5. nb_charges_roi_1.0")}
+                </TableCell>
+                <TableCell>
+                  {getValue(rarityMetrics, "6. nb_charges_roi_2.0")}
+                </TableCell>
+                <TableCell>
+                  {getValue(rarityMetrics, "7. nb_charges_roi_3.0")}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 }

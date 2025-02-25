@@ -126,7 +126,7 @@ export default function LockerContract() {
       <Table className="">
         <TableCaption>Desc ?</TableCaption>
         <TableHeader>
-          <TableRow className="bg-muted-foreground/30">
+          <TableRow>
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
             <TableHead>ID</TableHead>

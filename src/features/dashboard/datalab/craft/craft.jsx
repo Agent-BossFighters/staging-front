@@ -32,7 +32,7 @@ export default function Badges() {
           Craft requirements and SP.MARKS rewards according to rarity level
         </TableCaption>
         <TableHeader>
-          <TableRow className="bg-muted-foreground/30">
+          <TableRow>
             <TableHead>RARITY</TableHead>
             <TableHead>SUPPLY</TableHead>
             <TableHead>

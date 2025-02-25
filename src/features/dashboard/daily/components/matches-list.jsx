@@ -32,7 +32,7 @@ export default function MatchesList({
     <Table className="w-full">
       <TableCaption>Daily matches history and statistics</TableCaption>
       <TableHeader>
-        <TableRow className="bg-muted-foreground/30">
+        <TableRow>
           <TableHead className="min-w-[120px]">BUILD</TableHead>
           {renderSlotHeaders()}
           <TableHead className="min-w-[80px]">

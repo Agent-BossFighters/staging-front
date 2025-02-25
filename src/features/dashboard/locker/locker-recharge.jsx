@@ -22,7 +22,7 @@ export default function LockerBadges() {
         <Table className="">
           <TableCaption>Desc ?</TableCaption>
           <TableHeader>
-            <TableRow className="bg-muted-foreground/30">
+            <TableRow>
               <TableHead>DISCOUNT TIME</TableHead>
               <TableHead>NUMBER</TableHead>
               <TableHead>ACTION</TableHead>
