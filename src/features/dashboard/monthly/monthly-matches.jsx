@@ -50,13 +50,13 @@ export default function MonthlyMatches({
           <TableHeader className="sticky top-0 z-10">
             <TableRow className="bg-muted-foreground/30">
               <TableHead className="text-left">DATE</TableHead>
-              <TableHead className="text-center">MATCHES PLAYED</TableHead>
-              <TableHead className="text-center">IG TIME (Min)</TableHead>
-              <TableHead className="text-center">ENERGY USED</TableHead>
+              <TableHead className="text-center">MATCHES<br /> PLAYED</TableHead>
+              <TableHead className="text-center">IG TIME<br /> (Min)</TableHead>
+              <TableHead className="text-center">ENERGY<br /> USED</TableHead>
               <TableHead className="text-center text-destructive">
-                ENERGY COST
+                ENERGY<br /> COST
               </TableHead>
-              <TableHead className="text-center">TOTAL $BFT</TableHead>
+              <TableHead className="text-center">TOTAL<br /> $BFT</TableHead>
               <TableHead className="text-center text-accent">BFT ($)</TableHead>
               <TableHead className="text-center">FLEX</TableHead>
               <TableHead className="text-center text-accent">
