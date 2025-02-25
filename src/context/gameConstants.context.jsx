@@ -34,7 +34,7 @@ export const LUCK_RATES = {
   mythic: 12219, // 100 * 122.19
   exalted: 37574, // 100 * 375.74
   exotic: 154054,
-  transcendant: 631620,
+  transcendent: 631620,
   unique: 2589642,
 };
 
