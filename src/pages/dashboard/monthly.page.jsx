@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getData } from "@utils/api/data";
 import MonthlyMatches from "@features/dashboard/monthly/monthly-matches";
+import MonthlySummary from "@features/dashboard/monthly/monthly-summary";
 import { Button } from "@ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -83,6 +84,10 @@ export default function MonthlyPage() {
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
+      </div>
+
+      <div className="px-5 mb-6">
+        <MonthlySummary date={selectedDate} metrics={monthlyTotals} />
       </div>
 
       <MonthlyMatches
