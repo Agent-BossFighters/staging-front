@@ -114,36 +114,34 @@ export default function MonthlyPage() {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-background text-foreground">
-      <div className="flex flex-col px-10 lg:px-0 lg:w-[95%] mx-auto">
-        <div className="flex items-center justify-between py-4">
-          <h1 className="text-6xl font-extrabold text-primary">MONTHLY</h1>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-xl font-semibold min-w-[200px] text-center">
-              {selectedDate.toLocaleDateString("fr-FR", {
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
-            <Button variant="outline" size="icon" onClick={handleNextMonth}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+    <div className="flex flex-col">
+      <div className="flex items-center justify-between py-4">
+        <h1 className="text-6xl font-extrabold text-primary">MONTHLY</h1>
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-xl font-semibold min-w-[200px] text-center">
+            {selectedDate.toLocaleDateString("fr-FR", {
+              month: "long",
+              year: "numeric",
+            })}
+          </span>
+          <Button variant="outline" size="icon" onClick={handleNextMonth}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
-
-        <div className="pl-5">
-          <MonthlySummary date={selectedDate} metrics={monthlyTotals} />
-        </div>
-
-        <MonthlyMatches
-          dailyMetrics={dailyMetrics}
-          monthlyTotals={monthlyTotals}
-          loading={loading}
-        />
       </div>
+
+      <div className="pl-5">
+        <MonthlySummary date={selectedDate} metrics={monthlyTotals} />
+      </div>
+
+      <MonthlyMatches
+        dailyMetrics={dailyMetrics}
+        monthlyTotals={monthlyTotals}
+        loading={loading}
+      />
     </div>
   );
 }

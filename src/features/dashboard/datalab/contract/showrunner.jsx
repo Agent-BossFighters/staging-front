@@ -31,43 +31,43 @@ export default function Showrunner() {
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="p-2">RARITY</TableHead>
-            <TableHead className="p-2">ITEM</TableHead>
-            <TableHead className="p-2">SUPPLY</TableHead>
-            <TableHead className="p-2">FLOOR</TableHead>
-            <TableHead className="p-2">LVL</TableHead>
-            <TableHead className="p-2">ENERGY</TableHead>
-            <TableHead className="p-2">
+            <TableHead className="p-2 text-center">RARITY</TableHead>
+            <TableHead className="p-2 text-center">ITEM</TableHead>
+            <TableHead className="p-2 text-center">SUPPLY</TableHead>
+            <TableHead className="p-2 text-center">FLOOR</TableHead>
+            <TableHead className="p-2 text-center">LVL</TableHead>
+            <TableHead className="p-2 text-center">ENERGY</TableHead>
+            <TableHead className="p-2 text-center">
               CRAFT
               <br />
               TIME
             </TableHead>
-            <TableHead className="p-2 text-destructive">
+            <TableHead className="p-2 text-center text-destructive">
               BADGES
               <br />
               REQ.
             </TableHead>
-            <TableHead className="p-2 text-destructive">
+            <TableHead className="p-2 text-center text-destructive">
               FLEX
               <br />
               CRAFT
             </TableHead>
-            <TableHead className="p-2 text-destructive">
+            <TableHead className="p-2 text-center text-destructive">
               MARKS
               <br />
               CRAFT
             </TableHead>
-            <TableHead className="p-2">
+            <TableHead className="p-2 text-center">
               CHARGE
               <br />
               TIME
             </TableHead>
-            <TableHead className="p-2 text-destructive">
+            <TableHead className="p-2 text-center text-destructive">
               FLEX
               <br />
               CHARGE
             </TableHead>
-            <TableHead className="p-2 text-destructive">
+            <TableHead className="p-2 text-center text-destructive">
               MARKS
               <br />
               CHARGE
@@ -90,42 +90,42 @@ export default function Showrunner() {
                     {rarityItem.rarity}
                   </p>
                 </TableCell>
-                <TableCell className="p-2">
+                <TableCell className="p-2 text-center">
                   {getValue(contract, "2. item")}
                 </TableCell>
-                <TableCell className="p-2 text-destructive">
+                <TableCell className="p-2 text-center text-destructive">
                   {getValue(contract, "3. supply")}
                 </TableCell>
-                <TableCell className="p-2">
+                <TableCell className="p-2 text-center">
                   {getValue(contract, "4. floor_price")}
                 </TableCell>
-                <TableCell className="p-2">
+                <TableCell className="p-2 text-center">
                   {getValue(contract, "5. lvl_max")}
                 </TableCell>
-                <TableCell className="p-2">
+                <TableCell className="p-2 text-center">
                   {getValue(contract, "6. max_energy")}
                 </TableCell>
-                <TableCell className="p-2">
+                <TableCell className="p-2 text-center">
                   {getValue(contract, "7. time_to_craft")}
                 </TableCell>
-                <TableCell className="p-2 text-destructive">
+                <TableCell className="p-2 text-center text-destructive">
                   {getValue(contract, "8. nb_badges_required")}
                 </TableCell>
-                <TableCell className="p-2 text-destructive">
+                <TableCell className="p-2 text-center text-destructive">
                   {getValue(contract, "9. flex_craft")}
                 </TableCell>
-                <TableCell className="p-2 text-destructive">
+                <TableCell className="p-2 text-center text-destructive">
                   {getValue(contract, "10. sp_marks_craft")
                     ? Math.round(getValue(contract, "10. sp_marks_craft"))
                     : "-"}
                 </TableCell>
-                <TableCell className="p-2">
+                <TableCell className="p-2 text-center">
                   {getValue(contract, "11. time_to_charge")}
                 </TableCell>
-                <TableCell className="p-2 text-destructive">
+                <TableCell className="p-2 text-center text-destructive">
                   {getValue(contract, "12. flex_charge")}
                 </TableCell>
-                <TableCell className="p-2 text-destructive">
+                <TableCell className="p-2 text-center text-destructive">
                   {getValue(contract, "13. sp_marks_charge")
                     ? Math.round(getValue(contract, "13. sp_marks_charge"))
                     : "-"}

@@ -44,10 +44,10 @@ export default function MonthlyMatches({
   }
 
   return (
-    <div className="w-full px-5">
-      <div className="overflow-y-auto max-h-[600px] rounded-md border">
+    <div className="flex flex-col gap-8 h-full">
+      <div className="flex-grow overflow-auto">
         <Table>
-          <TableHeader className="sticky top-0 z-10">
+          <TableHeader>
             <TableRow>
               <TableHead className="text-left">DATE</TableHead>
               <TableHead className="text-center">

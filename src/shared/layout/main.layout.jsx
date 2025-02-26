@@ -33,7 +33,7 @@ export default function Layout() {
         {/* Content */}
         <div className="relative z-10">
           <Header />
-          <main className="flex-grow px-10 lg:px-0 lg:w-6/7 mx-auto flex flex-col">
+          <main className="flex-grow px-10 lg:px-0 lg:w-[95%] mx-auto flex flex-col">
             <Outlet />
           </main>
           <Footer />

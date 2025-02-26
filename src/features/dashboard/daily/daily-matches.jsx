@@ -51,8 +51,8 @@ export default function DailyMatches({
   }
 
   return (
-    <div className="flex flex-col px-5">
-      <h2 className="text-3xl font-extrabold py-2">MATCHES</h2>
+    <div className="flex flex-col gap-8">
+      <h2 className="text-3xl font-extrabold">MATCHES</h2>
       <MatchesList
         matches={matches}
         builds={builds}
