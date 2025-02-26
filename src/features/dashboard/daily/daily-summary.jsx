@@ -15,14 +15,19 @@ export default function DailySummary({ date, summary }) {
   }
 
   return (
-    <div className="flex border-2 border-yellow-400 rounded-lg h-full">
+    <div className="flex border-2 border-yellow-400 rounded-lg h-[160px] mb-10 w-[75%]">
       {/* Date section */}
-      <div className="bg-yellow-400 flex flex-col justify-center items-center">
-        <p className="text-black text-xl font-bold px-4">{formatDate(date)}</p>
+      <div className="bg-yellow-400 flex flex-col justify-center items-center px-12">
+        <p className="text-black text-2xl font-bold">
+          {formatDate(date).split(" ")[0]}
+        </p>
+        <p className="text-black text-2xl font-bold">
+          {formatDate(date).split(" ")[1]}
+        </p>
       </div>
 
       {/* Metrics section */}
-      <div className="flex items-center justify-around flex-grow text-white py-4">
+      <div className="flex items-center justify-around flex-grow gap-8 text-white py-4">
         {/* Matches count and results */}
         <div className="flex flex-col items-center gap-2">
           <p className="text-xl font-semibold">MATCHES PLAYED</p>

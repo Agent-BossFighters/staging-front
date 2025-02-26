@@ -134,7 +134,7 @@ export default function MonthlyPage() {
           </div>
         </div>
 
-        <div className="mb-6">
+        <div className="pl-5">
           <MonthlySummary date={selectedDate} metrics={monthlyTotals} />
         </div>
 

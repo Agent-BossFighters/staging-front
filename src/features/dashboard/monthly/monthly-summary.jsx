@@ -11,19 +11,19 @@ export default function MonthlySummary({ date, metrics }) {
   };
 
   return (
-    <div className="flex border-2 border-yellow-400 rounded-lg h-full">
+    <div className="flex border-2 border-yellow-400 rounded-lg h-[140px] mb-10 w-[75%]">
       {/* Date section */}
-      <div className="bg-yellow-400 flex flex-col justify-center items-center p-8">
-        <p className="text-black text-2xl font-bold px-4">
+      <div className="bg-yellow-400 flex flex-col justify-center items-center px-8">
+        <p className="text-black text-xl font-bold">
           {formatMonth(date).split(" ")[0]}
         </p>
-        <p className="text-black text-2xl font-bold px-4">
+        <p className="text-black text-xl font-bold">
           {formatMonth(date).split(" ")[1]}
         </p>
       </div>
 
       {/* Metrics section */}
-      <div className="flex items-center justify-around flex-grow text-white py-4">
+      <div className="flex items-center justify-around flex-grow gap-6 text-white py-4">
         {/* Matches count and results */}
         <div className="flex flex-col items-center gap-2">
           <p className="text-xl font-semibold">MATCHES PLAYED</p>
