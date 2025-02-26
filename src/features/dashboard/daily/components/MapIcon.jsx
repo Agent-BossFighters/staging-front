@@ -5,7 +5,7 @@ export const GAME_MAPS = {
   toxic_river: { icon: ToxicRiver, alt: "Toxic River", label: "Toxic River" },
   award: { icon: Award, alt: "Award", label: "Award" },
   radiation_rift: {
-    icon: () => <Radiation className="w-5 h-5 text-yellow-400" />,
+    icon: Radiation,
     alt: "Radiation Rift",
     label: "Radiation Rift",
     isComponent: true,
@@ -19,7 +19,7 @@ export default function MapIcon({ map }) {
   return (
     <div className="flex items-center justify-center gap-2">
       {mapData.isComponent ? (
-        mapData.icon()
+        <mapData.icon className="w-5 h-5 text-yellow-400" />
       ) : (
         <img src={mapData.icon} alt={mapData.alt} className="w-5 h-5" />
       )}
@@ -31,7 +31,7 @@ export function MapSelectItem({ map, mapData }) {
   return (
     <div className="flex items-center gap-2">
       {mapData.isComponent ? (
-        mapData.icon()
+        <mapData.icon className="w-5 h-5 text-yellow-400" />
       ) : (
         <img src={mapData.icon} alt={mapData.alt} className="w-5 h-5" />
       )}

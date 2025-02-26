@@ -346,7 +346,16 @@ export default function MatchEntry({
           onValueChange={(value) => handleChange("map", value)}
         >
           <SelectTrigger className="w-20 h-8 px-2">
-            <SelectValue placeholder="Select" />
+            <SelectValue placeholder="Select">
+              {data.map ? (
+                <div className="flex items-center gap-1">
+                  <MapIcon map={data.map} />
+                  <span>{GAME_MAPS[data.map]?.label.slice(0, 3)}</span>
+                </div>
+              ) : (
+                "Select"
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Object.entries(GAME_MAPS).map(([map, mapData]) => (

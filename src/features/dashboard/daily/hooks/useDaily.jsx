@@ -7,6 +7,7 @@ import { getData } from "@utils/api/data";
 export const useDaily = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [builds, setBuilds] = useState([]);
+  const [loading, setLoading] = useState(true);
   const matchOps = useMatchOperations();
   const calculations = useMatchCalculations();
   const rarityManager = useRarityManagement();
@@ -16,23 +17,14 @@ export const useDaily = () => {
       const response = await getData("v1/user_builds");
       if (response?.builds) {
         setBuilds(response.builds);
+      } else {
+        setBuilds([]);
       }
     } catch (error) {
       console.error("Error fetching builds:", error);
       setBuilds([]);
     }
   };
-
-  const initializeData = async () => {
-    await Promise.all([
-      fetchBuilds(),
-      matchOps.fetchMatches(selectedDate.toISOString().split("T")[0]),
-    ]);
-  };
-
-  useEffect(() => {
-    initializeData();
-  }, [selectedDate]);
 
   const calculateDailySummary = () => {
     if (!matchOps.matches.length) {
@@ -60,7 +52,6 @@ export const useDaily = () => {
         );
         const profit = calculations.calculateProfit(match);
 
-        // Update results count
         const results = { ...acc.results };
         if (match.result) {
           results[match.result] = (results[match.result] || 0) + 1;
@@ -99,11 +90,30 @@ export const useDaily = () => {
     );
   };
 
+  const initializeData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        fetchBuilds(),
+        matchOps.fetchMatches(selectedDate.toISOString().split("T")[0]),
+      ]);
+    } catch (error) {
+      console.error("Error initializing data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initializeData();
+  }, [selectedDate]);
+
   return {
     ...matchOps,
     ...calculations,
     ...rarityManager,
     builds,
+    loading,
     selectedDate,
     setSelectedDate,
     dailySummary: calculateDailySummary(),
