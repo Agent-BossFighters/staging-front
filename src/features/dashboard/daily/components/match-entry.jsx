@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Check, X, Plus, Pencil, Trash2, Radiation } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,7 +9,10 @@ import {
 import { Input } from "@ui/input";
 import RaritySelect from "./rarity-select";
 import { useDaily } from "../hooks/useDaily";
-import { ToxicRiver, Award, Win, Draw, Loss } from "@img/index";
+import RarityBadge from "./RarityBadge";
+import MapIcon, { GAME_MAPS, MapSelectItem } from "./MapIcon";
+import ResultIcon, { GAME_RESULTS, ResultSelectItem } from "./ResultIcon";
+import ActionButtons from "./ActionButtons";
 
 const MAX_SLOTS = 5; // Nombre maximum de slots possible
 const INITIAL_FORM_STATE = {
@@ -22,71 +24,6 @@ const INITIAL_FORM_STATE = {
   flex: "",
   rarities: [],
 };
-
-const GAME_RESULTS = {
-  win: { icon: Win, alt: "Win", label: "Victory" },
-  loss: { icon: Loss, alt: "Loss", label: "Defeat" },
-  draw: { icon: Draw, alt: "Draw", label: "Draw" },
-};
-
-const GAME_MAPS = {
-  toxic_river: { icon: ToxicRiver, alt: "Toxic River", label: "Toxic River" },
-  award: { icon: Award, alt: "Award", label: "Award" },
-  radiation_rift: {
-    icon: () => <Radiation className="w-5 h-5 text-yellow-400" />,
-    alt: "Radiation Rift",
-    label: "Radiation Rift",
-    isComponent: true,
-  },
-};
-
-const MapIcon = ({ map }) => {
-  const mapData = GAME_MAPS[map];
-  if (!mapData) return map;
-
-  return (
-    <div className="flex items-center justify-center gap-2">
-      {mapData.isComponent ? (
-        mapData.icon()
-      ) : (
-        <img src={mapData.icon} alt={mapData.alt} className="w-5 h-5" />
-      )}
-    </div>
-  );
-};
-
-const MapSelectItem = ({ map, mapData }) => (
-  <SelectItem key={map} value={map} className="flex items-center gap-2">
-    <div className="flex items-center gap-2">
-      {mapData.isComponent ? (
-        mapData.icon()
-      ) : (
-        <img src={mapData.icon} alt={mapData.alt} className="w-5 h-5" />
-      )}
-      <span>{mapData.label}</span>
-    </div>
-  </SelectItem>
-);
-
-const ResultIcon = ({ result }) => {
-  const resultData = GAME_RESULTS[result];
-  if (!resultData) return result;
-
-  return (
-    <div className="flex items-center justify-center gap-2">
-      <img src={resultData.icon} alt={resultData.alt} className="w-5 h-5" />
-    </div>
-  );
-};
-
-const ResultSelectItem = ({ result, resultData }) => (
-  <SelectItem key={result} value={result} className="flex items-center gap-2">
-    <div className="flex items-center gap-2">
-      <img src={resultData.icon} alt={resultData.alt} className="w-5 h-5" />
-      <span>{resultData.label}</span>
-    </div>
-  </SelectItem>
-);
 
 export default function MatchEntry({
   match,
@@ -151,7 +88,6 @@ export default function MatchEntry({
     return true;
   };
 
-  // Ajout d'une fonction utilitaire pour formater les noms de maps
   const formatMapName = (mapName) => {
     return mapName.toLowerCase().replace(/\s+/g, "_");
   };
@@ -160,12 +96,10 @@ export default function MatchEntry({
     const selectedBuild = builds.find((b) => b.id === data.buildId);
     if (!selectedBuild) return null;
 
-    // Validation des valeurs requises
     if (!data.map || !data.result || !data.time || !data.bft) {
       throw new Error("Tous les champs obligatoires doivent être remplis");
     }
 
-    // Validation des valeurs numériques
     const time = parseInt(data.time);
     const totalToken = parseInt(data.bft);
     const totalPremiumCurrency = parseInt(data.flex || 0);
@@ -184,11 +118,8 @@ export default function MatchEntry({
       );
     }
 
-    // Validation des valeurs énumérées
     const validMaps = ["toxic_river", "award", "radiation_rift"];
     const validResults = ["win", "loss", "draw"];
-
-    // Sécurisation des valeurs avant transformation
     const map = formatMapName(String(data.map || ""));
     const result = String(data.result || "").toLowerCase();
 
@@ -200,7 +131,9 @@ export default function MatchEntry({
 
     if (!validResults.includes(result)) {
       throw new Error(
-        `Résultat invalide '${data.result}'. Valeurs acceptées : ${validResults.join(", ")}`
+        `Résultat invalide '${data.result}'. Valeurs acceptées : ${validResults.join(
+          ", "
+        )}`
       );
     }
 
@@ -272,7 +205,7 @@ export default function MatchEntry({
     } else {
       onUpdate(matchData)
         .then(() => {
-          onCancel(); // Sortir du mode édition après une mise à jour réussie
+          onCancel();
         })
         .catch((error) => {
           console.error("Erreur détaillée:", error);
@@ -303,7 +236,7 @@ export default function MatchEntry({
         </td>
         {matchRarities.map((rarity, index) => (
           <td key={index} className="text-center min-w-[60px]">
-            <RaritySelect value={rarity} onChange={() => {}} disabled={true} />
+            <RarityBadge rarity={rarity} />
           </td>
         ))}
         <td className="text-center min-w-[80px]">
@@ -340,18 +273,14 @@ export default function MatchEntry({
           {parseFloat(currentBuild?.perksMultiplier || 1).toFixed(1)}
         </td>
         <td className="flex gap-2 items-center justify-center min-w-[100px]">
-          <button
-            onClick={() => onEdit(match)}
-            className="p-2 hover:bg-yellow-400 rounded-lg"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => onDelete(match.id)}
-            className="p-2 hover:bg-red-400 rounded-lg"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+          <ActionButtons
+            isEditing={isEditing}
+            isCreating={isCreating}
+            onEdit={() => onEdit(match)}
+            onDelete={() => onDelete(match.id)}
+            onSubmit={handleSubmit}
+            onCancel={onCancel}
+          />
         </td>
       </tr>
     );
@@ -385,7 +314,7 @@ export default function MatchEntry({
         .map((_, index) => (
           <td key={index} className="min-w-[60px]">
             {index >= unlockedSlots ? (
-              <span className="text-center text-gray-400">-</span>
+              <RarityBadge rarity="none" />
             ) : (
               <RaritySelect
                 value={data.rarities[index]}
@@ -416,21 +345,14 @@ export default function MatchEntry({
           value={data.map}
           onValueChange={(value) => handleChange("map", value)}
         >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select">
-              {data.map ? (
-                <div className="flex items-center gap-2">
-                  <MapIcon map={data.map} />
-                  <span>{GAME_MAPS[data.map].label}</span>
-                </div>
-              ) : (
-                "Select a map"
-              )}
-            </SelectValue>
+          <SelectTrigger className="w-20 h-8 px-2">
+            <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
             {Object.entries(GAME_MAPS).map(([map, mapData]) => (
-              <MapSelectItem key={map} map={map} mapData={mapData} />
+              <SelectItem key={map} value={map}>
+                <MapSelectItem map={map} mapData={mapData} />
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -440,25 +362,14 @@ export default function MatchEntry({
           value={data.result}
           onValueChange={(value) => handleChange("result", value)}
         >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select">
-              {data.result ? (
-                <div className="flex items-center gap-2">
-                  <ResultIcon result={data.result} />
-                  <span>{GAME_RESULTS[data.result].label}</span>
-                </div>
-              ) : (
-                "Select a result"
-              )}
-            </SelectValue>
+          <SelectTrigger className="w-20 h-8 px-2">
+            <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
             {Object.entries(GAME_RESULTS).map(([result, resultData]) => (
-              <ResultSelectItem
-                key={result}
-                result={result}
-                resultData={resultData}
-              />
+              <SelectItem key={result} value={result}>
+                <ResultSelectItem result={result} resultData={resultData} />
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -507,29 +418,14 @@ export default function MatchEntry({
         ).toFixed(1)}
       </td>
       <td className="flex gap-2 items-center justify-center min-w-[100px]">
-        {isCreating ? (
-          <button
-            onClick={handleSubmit}
-            className="p-2 hover:bg-yellow-400 rounded-lg"
-          >
-            <Plus className="h-4 w-4" />
-          </button>
-        ) : (
-          <>
-            <button
-              onClick={handleSubmit}
-              className="p-2 hover:bg-green-400 rounded-lg"
-            >
-              <Check className="h-4 w-4" />
-            </button>
-            <button
-              onClick={onCancel}
-              className="p-2 hover:bg-red-400 rounded-lg"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </>
-        )}
+        <ActionButtons
+          isEditing={isEditing}
+          isCreating={isCreating}
+          onEdit={() => onEdit(match)}
+          onDelete={() => onDelete(match?.id)}
+          onSubmit={handleSubmit}
+          onCancel={onCancel}
+        />
       </td>
     </tr>
   );
