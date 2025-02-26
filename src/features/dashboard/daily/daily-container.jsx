@@ -33,7 +33,7 @@ export default function DailyContainer() {
   }
 
   return (
-    <div className="flex flex-col px-5 gap-5">
+    <div className="flex flex-col px-10 lg:px-0 lg:w-[95%] mx-auto gap-5">
       <h1 className="text-6xl font-extrabold py-4 text-primary">DAILY</h1>
 
       <DailySummary date={selectedDate} summary={summary} />

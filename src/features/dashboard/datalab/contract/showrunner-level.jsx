@@ -23,7 +23,7 @@ export default function ShowrunnerLevel() {
 
   return (
     <>
-      <div className="w-1/2 overflow-x-auto">
+      <div className="w-full max-w-[1200px] overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -80,7 +80,7 @@ export default function ShowrunnerLevel() {
           </TableBody>
         </Table>
       </div>
-      <p className="mt-4 text-base text-muted-foreground text-center w-[65%]">
+      <p className="mt-4 text-base text-muted-foreground text-center max-w-[800px]">
         Showrunner contract level up costs
       </p>
     </>

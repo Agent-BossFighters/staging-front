@@ -24,49 +24,53 @@ export default function Showrunner() {
     return <div>Loading...</div>;
   }
   return (
-    <div className="overflow-x-auto">
-      <Table className="w-1/2">
+    <div className="overflow-x-auto max-w-[1200px]">
+      <Table className="w-full text-sm">
         <TableCaption>
           Showrunner contract information according to the rarity
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>RARITY</TableHead>
-            <TableHead>ITEM</TableHead>
-            <TableHead>SUPPLY</TableHead>
-            <TableHead>FLOOR PRICE</TableHead>
-            <TableHead>LVL MAX</TableHead>
-            <TableHead>MAX ENERGY</TableHead>
-            <TableHead>TIME TO CRAFT</TableHead>
-            <TableHead className="text-destructive">
-              NB BADGES
+            <TableHead className="p-2">RARITY</TableHead>
+            <TableHead className="p-2">ITEM</TableHead>
+            <TableHead className="p-2">SUPPLY</TableHead>
+            <TableHead className="p-2">FLOOR</TableHead>
+            <TableHead className="p-2">LVL</TableHead>
+            <TableHead className="p-2">ENERGY</TableHead>
+            <TableHead className="p-2">
+              CRAFT
               <br />
-              REQUIRED
+              TIME
             </TableHead>
-            <TableHead className="text-destructive">
+            <TableHead className="p-2 text-destructive">
+              BADGES
+              <br />
+              REQ.
+            </TableHead>
+            <TableHead className="p-2 text-destructive">
               FLEX
               <br />
-              /CRAFT
+              CRAFT
             </TableHead>
-            <TableHead className="text-destructive">
-              SP.MARKS
+            <TableHead className="p-2 text-destructive">
+              MARKS
               <br />
-              /CRAFT
+              CRAFT
             </TableHead>
-            <TableHead>
-              TIME TO
+            <TableHead className="p-2">
+              CHARGE
+              <br />
+              TIME
+            </TableHead>
+            <TableHead className="p-2 text-destructive">
+              FLEX
               <br />
               CHARGE
             </TableHead>
-            <TableHead className="text-destructive">
-              FLEX
+            <TableHead className="p-2 text-destructive">
+              MARKS
               <br />
-              /CHARGE
-            </TableHead>
-            <TableHead className="text-destructive">
-              SP.MARKS
-              <br />
-              /CHARGE
+              CHARGE
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -80,38 +84,48 @@ export default function Showrunner() {
               <TableRow key={rarityItem.rarity}>
                 <TableCell className="p-2 text-center">
                   <p
-                    className="border-2 rounded-2xl p-1"
+                    className="border-2 rounded-2xl p-1 text-sm"
                     style={{ borderColor: rarityItem.color }}
                   >
                     {rarityItem.rarity}
                   </p>
                 </TableCell>
-                <TableCell>{getValue(contract, "2. item")}</TableCell>
-                <TableCell className="text-destructive">
+                <TableCell className="p-2">
+                  {getValue(contract, "2. item")}
+                </TableCell>
+                <TableCell className="p-2 text-destructive">
                   {getValue(contract, "3. supply")}
                 </TableCell>
-                <TableCell>{getValue(contract, "4. floor_price")}</TableCell>
-                <TableCell>{getValue(contract, "5. lvl_max")}</TableCell>
-                <TableCell>{getValue(contract, "6. max_energy")}</TableCell>
-                <TableCell>{getValue(contract, "7. time_to_craft")}</TableCell>
-                <TableCell className="text-destructive">
+                <TableCell className="p-2">
+                  {getValue(contract, "4. floor_price")}
+                </TableCell>
+                <TableCell className="p-2">
+                  {getValue(contract, "5. lvl_max")}
+                </TableCell>
+                <TableCell className="p-2">
+                  {getValue(contract, "6. max_energy")}
+                </TableCell>
+                <TableCell className="p-2">
+                  {getValue(contract, "7. time_to_craft")}
+                </TableCell>
+                <TableCell className="p-2 text-destructive">
                   {getValue(contract, "8. nb_badges_required")}
                 </TableCell>
-                <TableCell className="text-destructive">
+                <TableCell className="p-2 text-destructive">
                   {getValue(contract, "9. flex_craft")}
                 </TableCell>
-                <TableCell className="text-destructive">
+                <TableCell className="p-2 text-destructive">
                   {getValue(contract, "10. sp_marks_craft")
                     ? Math.round(getValue(contract, "10. sp_marks_craft"))
                     : "-"}
                 </TableCell>
-                <TableCell>
+                <TableCell className="p-2">
                   {getValue(contract, "11. time_to_charge")}
                 </TableCell>
-                <TableCell className="text-destructive">
+                <TableCell className="p-2 text-destructive">
                   {getValue(contract, "12. flex_charge")}
                 </TableCell>
-                <TableCell className="text-destructive">
+                <TableCell className="p-2 text-destructive">
                   {getValue(contract, "13. sp_marks_charge")
                     ? Math.round(getValue(contract, "13. sp_marks_charge"))
                     : "-"}
