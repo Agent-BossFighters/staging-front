@@ -1,18 +1,14 @@
 import { useState } from "react";
-import { useDaily } from "./hooks/useDaily";
 import MatchesList from "./components/matches-list";
 
-export default function DailyMatches() {
-  const {
-    matches,
-    builds,
-    loading,
-    unlockedSlots,
-    addMatch,
-    updateMatch,
-    deleteMatch,
-  } = useDaily();
-
+export default function DailyMatches({
+  matches,
+  builds,
+  loading,
+  onAdd,
+  onUpdate,
+  onDelete,
+}) {
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [editedData, setEditedData] = useState(null);
 
@@ -60,12 +56,12 @@ export default function DailyMatches() {
       <MatchesList
         matches={matches}
         builds={builds}
-        unlockedSlots={unlockedSlots}
+        unlockedSlots={5}
         editingMatchId={editingMatchId}
         editedData={editedData}
-        onAdd={addMatch}
-        onUpdate={updateMatch}
-        onDelete={deleteMatch}
+        onAdd={onAdd}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
         onEdit={handleEdit}
         onEditField={handleEditField}
         onCancel={handleCancel}

@@ -1,14 +1,30 @@
 import { kyInstance } from "./ky-config";
 import toast from "react-hot-toast";
 
+const handleError = async (error) => {
+  try {
+    const errorData = await error.response?.json();
+    if (error.response?.status === 401) {
+      // Rediriger vers la page de connexion ou rafraîchir le token
+      window.location.href = "/login";
+      return null;
+    }
+    return errorData?.error || "Une erreur est survenue";
+  } catch (e) {
+    return "Une erreur est survenue";
+  }
+};
+
 // Fonction pour récupérer les données
 export async function getData(object) {
   try {
     const response = await kyInstance.get(object).json();
     return response;
   } catch (error) {
-    let errorData = await error.responseData.error;
-    toast.error(errorData);
+    if (error.responseData?.error) {
+      toast.error(error.responseData.error);
+    }
+    return null;
   }
 }
 
@@ -28,8 +44,10 @@ export async function postData(object, data) {
     }
     return response.json();
   } catch (error) {
-    let errorData = await error.responseData.error;
-    toast.error(errorData);
+    if (error.responseData?.error) {
+      toast.error(error.responseData.error);
+    }
+    return null;
   }
 }
 
@@ -47,8 +65,10 @@ export async function putData(object, data) {
     const response = await kyInstance.put(object, options);
     return response.json();
   } catch (error) {
-    let errorData = await error.responseData.error;
-    toast.error(errorData);
+    if (error.responseData?.error) {
+      toast.error(error.responseData.error);
+    }
+    return null;
   }
 }
 
@@ -58,7 +78,9 @@ export async function deleteData(object) {
     const response = await kyInstance.delete(object);
     return response;
   } catch (error) {
-    let errorData = await error.responseData.error;
-    toast.error(errorData);
+    if (error.responseData?.error) {
+      toast.error(error.responseData.error);
+    }
+    return null;
   }
 }

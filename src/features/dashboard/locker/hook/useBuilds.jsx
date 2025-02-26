@@ -6,20 +6,14 @@ export const useBuilds = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchMyBuilds = async () => {
-    try {
-      setLoading(true);
-      const payload = await getData("v1/user_builds");
-      if (payload?.builds) {
-        setBuilds(payload.builds);
-      } else {
-        setBuilds([]);
-      }
-    } catch (error) {
-      console.error("Error fetching builds:", error);
+    setLoading(true);
+    const payload = await getData("v1/user_builds");
+    if (payload?.builds) {
+      setBuilds(payload.builds);
+    } else {
       setBuilds([]);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   return { builds, setBuilds, loading, setLoading, fetchMyBuilds };

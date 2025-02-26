@@ -8,13 +8,12 @@ import {
 } from "@ui/select";
 import { Input } from "@ui/input";
 import RaritySelect from "./rarity-select";
-import { useDaily } from "../hooks/useDaily";
 import RarityBadge from "./RarityBadge";
 import MapIcon, { GAME_MAPS, MapSelectItem } from "./MapIcon";
 import ResultIcon, { GAME_RESULTS, ResultSelectItem } from "./ResultIcon";
 import ActionButtons from "./ActionButtons";
 
-const MAX_SLOTS = 5; // Nombre maximum de slots possible
+const MAX_SLOTS = 5;
 const INITIAL_FORM_STATE = {
   buildId: "",
   map: "",
@@ -39,15 +38,6 @@ export default function MatchEntry({
   onCancel,
   unlockedSlots,
 }) {
-  const {
-    calculateEnergyUsed,
-    calculateEnergyCost,
-    calculateTokenValue,
-    calculatePremiumValue,
-    calculateLuckrate,
-    calculateProfit,
-  } = useDaily();
-
   const [formData, setFormData] = useState(() => ({
     ...INITIAL_FORM_STATE,
     rarities: Array(MAX_SLOTS).fill("none"),
@@ -72,9 +62,16 @@ export default function MatchEntry({
   };
 
   const validateForm = (data) => {
-    if (!data.buildId || !data.map || !data.result || !data.time || !data.bft) {
+    const missingFields = [];
+    if (!data.buildId) missingFields.push("Build Name");
+    if (!data.map) missingFields.push("Map");
+    if (!data.result) missingFields.push("Result");
+    if (!data.time) missingFields.push("Time");
+    if (!data.bft) missingFields.push("BFT");
+
+    if (missingFields.length > 0) {
       alert(
-        "Please fill in all required fields (Build, Map, Result, Time, BFT)"
+        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`
       );
       return false;
     }
@@ -143,10 +140,11 @@ export default function MatchEntry({
         build: selectedBuild.buildName,
         map: map,
         time: time,
-        energyUsed: parseFloat(calculateEnergyUsed(time)),
         result: result,
         totalToken: totalToken,
         totalPremiumCurrency: totalPremiumCurrency,
+        bonusMultiplier: parseFloat(selectedBuild.bonusMultiplier),
+        perksMultiplier: parseFloat(selectedBuild.perksMultiplier),
         badge_used_attributes: data.rarities
           .map((rarity, index) => {
             const slot = index + 1;
@@ -221,7 +219,6 @@ export default function MatchEntry({
   // Mode affichage
   if (!isEditing && !isCreating) {
     const currentBuild = builds.find((b) => b.buildName === match.build);
-    const energyUsed = calculateEnergyUsed(match.time);
     const matchRarities = Array(MAX_SLOTS)
       .fill("none")
       .map((_, index) => {
@@ -239,13 +236,11 @@ export default function MatchEntry({
             <RarityBadge rarity={rarity} />
           </td>
         ))}
-        <td className="text-center min-w-[80px]">
-          {calculateLuckrate(matchRarities)}
-        </td>
+        <td className="text-center min-w-[80px]">{match.luckrate}</td>
         <td className="text-center min-w-[80px]">{match.time}</td>
-        <td className="text-center min-w-[80px]">{energyUsed}</td>
+        <td className="text-center min-w-[80px]">{match.energyUsed}</td>
         <td className="text-center min-w-[80px] text-destructive">
-          ${calculateEnergyCost(energyUsed)}
+          ${match.calculated.energyCost}
         </td>
         <td className="text-center min-w-[100px] capitalize">
           <MapIcon map={match.map} />
@@ -255,22 +250,22 @@ export default function MatchEntry({
         </td>
         <td className="text-center min-w-[80px]">{match.totalToken}</td>
         <td className="text-center min-w-[80px] text-accent">
-          ${calculateTokenValue(match.totalToken)}
+          ${match.calculated.tokenValue}
         </td>
         <td className="text-center min-w-[80px]">
           {match.totalPremiumCurrency}
         </td>
         <td className="text-center min-w-[80px] text-accent">
-          ${calculatePremiumValue(match.totalPremiumCurrency)}
+          ${match.calculated.premiumValue}
         </td>
         <td className="text-center min-w-[80px] text-green-500">
-          ${calculateProfit(match)}
+          ${match.calculated.profit}
         </td>
         <td className="text-center min-w-[80px]">
-          {parseFloat(currentBuild?.bonusMultiplier || 1).toFixed(1)}
+          {match.bonusMultiplier ? match.bonusMultiplier.toFixed(1) : "-"}
         </td>
         <td className="text-center min-w-[80px]">
-          {parseFloat(currentBuild?.perksMultiplier || 1).toFixed(1)}
+          {match.perksMultiplier ? match.perksMultiplier.toFixed(1) : "-"}
         </td>
         <td className="flex gap-2 items-center justify-center min-w-[100px]">
           <ActionButtons
@@ -288,7 +283,6 @@ export default function MatchEntry({
 
   // Mode édition ou création
   const data = isCreating ? formData : editedData;
-  const energyUsed = calculateEnergyUsed(data.time);
 
   return (
     <tr>
@@ -324,9 +318,7 @@ export default function MatchEntry({
             )}
           </td>
         ))}
-      <td className="text-center min-w-[80px]">
-        {calculateLuckrate(data.rarities)}
-      </td>
+      <td className="text-center min-w-[80px]">-</td>
       <td className="min-w-[80px]">
         <Input
           type="number"
@@ -336,10 +328,8 @@ export default function MatchEntry({
           onChange={(e) => handleChange("time", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px]">{energyUsed}</td>
-      <td className="text-center min-w-[80px] text-destructive">
-        ${calculateEnergyCost(energyUsed)}
-      </td>
+      <td className="text-center min-w-[80px]">-</td>
+      <td className="text-center min-w-[80px] text-destructive">-</td>
       <td className="min-w-[100px]">
         <Select
           value={data.map}
@@ -392,9 +382,7 @@ export default function MatchEntry({
           onChange={(e) => handleChange("bft", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px] text-accent">
-        ${calculateTokenValue(data.bft)}
-      </td>
+      <td className="text-center min-w-[80px] text-accent">-</td>
       <td className="min-w-[80px]">
         <Input
           type="number"
@@ -404,18 +392,8 @@ export default function MatchEntry({
           onChange={(e) => handleChange("flex", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px] text-accent">
-        ${calculatePremiumValue(data.flex)}
-      </td>
-      <td className="text-center min-w-[80px] text-green-500">
-        $
-        {calculateProfit({
-          time: data.time,
-          totalToken: data.bft,
-          totalPremiumCurrency: data.flex,
-          build: builds.find((b) => b.id === data.buildId),
-        })}
-      </td>
+      <td className="text-center min-w-[80px] text-accent">-</td>
+      <td className="text-center min-w-[80px] text-green-500">-</td>
       <td className="text-center min-w-[80px]">
         {parseFloat(
           builds.find((b) => b.id === data.buildId)?.bonusMultiplier || 1

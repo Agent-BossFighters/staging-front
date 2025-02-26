@@ -10,6 +10,10 @@ export default function DailySummary({ date, summary }) {
     });
   };
 
+  if (!summary) {
+    return null;
+  }
+
   return (
     <div className="flex border-2 border-yellow-400 rounded-lg h-full">
       {/* Date section */}
@@ -46,7 +50,7 @@ export default function DailySummary({ date, summary }) {
           <img src={Spark} alt="Energy" className="w-6 h-10 mr-2" />
           <p>ENERGY USED</p>
           <p className="text-red-500 text-xl">{summary.energyUsed.amount}</p>
-          <p className="text-red-500 text-sm">{summary.energyUsed.cost}</p>
+          <p className="text-red-500 text-sm">${summary.energyUsed.cost}</p>
         </div>
 
         {/* Total BFT */}
@@ -54,7 +58,7 @@ export default function DailySummary({ date, summary }) {
           <img src={Token4} alt="bft" className="w-10 h-10 mr-2" />
           <p>TOTAL $BFT</p>
           <p className="text-green-500 text-xl">{summary.totalBft.amount}</p>
-          <p className="text-green-500 text-sm">{summary.totalBft.value}</p>
+          <p className="text-green-500 text-sm">${summary.totalBft.value}</p>
         </div>
 
         {/* Total Flex */}
@@ -62,14 +66,14 @@ export default function DailySummary({ date, summary }) {
           <img src={Flex} alt="flex" className="w-10 h-10 mr-2" />
           <p>TOTAL FLEX</p>
           <p className="text-green-500 text-xl">{summary.totalFlex.amount}</p>
-          <p className="text-green-500 text-sm">{summary.totalFlex.value}</p>
+          <p className="text-green-500 text-sm">${summary.totalFlex.value}</p>
         </div>
 
         {/* Profit */}
         <div className="flex flex-col items-center">
           <img src={Purse} alt="Profit" className="w-8 h-8 mr-2" />
           <p>PROFIT</p>
-          <p className="text-green-500 text-2xl">{summary.profit}</p>
+          <p className="text-green-500 text-2xl">${summary.profit}</p>
         </div>
       </div>
     </div>
