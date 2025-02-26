@@ -1,7 +1,7 @@
 import { AgentLogo, Thp, Intuition, Alchemists } from "@img/index";
 export default function HomePage() {
   return (
-    <div className="">
+    <div className="w-5/6 mx-auto h-full">
       <div className="flex flex-col text-center items-center justify-center my-5">
         <img src={AgentLogo} alt="Agent Logo" className="md:w-1/2" />
         <h2 className="text-xs font-extrabold">
