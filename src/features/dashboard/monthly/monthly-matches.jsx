@@ -89,10 +89,7 @@ export default function MonthlyMatches({
               const profit = calculateProfit(bftValue, flexValue, energyCost);
 
               return (
-                <TableRow
-                  key={date}
-                  className="border-b border-border hover:bg-muted/50"
-                >
+                <TableRow key={date} className="border-b border-border">
                   <TableCell>{new Date(date).toLocaleDateString()}</TableCell>
                   <TableCell className="text-center">
                     {metrics.total_matches}
