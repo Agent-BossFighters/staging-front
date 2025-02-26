@@ -417,14 +417,14 @@ export default function MatchEntry({
           onValueChange={(value) => handleChange("map", value)}
         >
           <SelectTrigger className="w-full">
-            <SelectValue>
+            <SelectValue placeholder="Select">
               {data.map ? (
                 <div className="flex items-center gap-2">
                   <MapIcon map={data.map} />
                   <span>{GAME_MAPS[data.map].label}</span>
                 </div>
               ) : (
-                "Select map"
+                "Select a map"
               )}
             </SelectValue>
           </SelectTrigger>
@@ -441,14 +441,14 @@ export default function MatchEntry({
           onValueChange={(value) => handleChange("result", value)}
         >
           <SelectTrigger className="w-full">
-            <SelectValue>
+            <SelectValue placeholder="Select">
               {data.result ? (
                 <div className="flex items-center gap-2">
                   <ResultIcon result={data.result} />
                   <span>{GAME_RESULTS[data.result].label}</span>
                 </div>
               ) : (
-                "Select result"
+                "Select a result"
               )}
             </SelectValue>
           </SelectTrigger>

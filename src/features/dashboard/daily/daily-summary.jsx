@@ -1,4 +1,4 @@
-import { Flex, Token4, Purse, Spark } from "@img/index";
+import { Flex, Token4, Purse, Spark, Win, Draw, Loss } from "@img/index";
 
 export default function DailySummary({ date, summary }) {
   const formatDate = (dateString) => {
@@ -19,12 +19,26 @@ export default function DailySummary({ date, summary }) {
 
       {/* Metrics section */}
       <div className="flex items-center justify-around flex-grow text-white py-4">
-        {/* Matches count */}
-        <div className="flex flex-col items-center">
+        {/* Matches count and results */}
+        <div className="flex flex-col items-center gap-2">
           <p className="text-xl font-semibold">MATCHES PLAYED</p>
           <p className="text-white text-xl font-semibold">
             {summary.matchesCount}
           </p>
+          <div className="flex gap-4 mt-2">
+            <div className="flex items-center gap-1">
+              <img src={Win} alt="Victories" className="w-5 h-5" />
+              <span className="text-green-500">{summary.results.win}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <img src={Loss} alt="Defeats" className="w-5 h-5" />
+              <span className="text-red-500">{summary.results.loss}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <img src={Draw} alt="Draws" className="w-5 h-5" />
+              <span className="text-yellow-500">{summary.results.draw}</span>
+            </div>
+          </div>
         </div>
 
         {/* Energy used */}

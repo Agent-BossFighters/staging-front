@@ -42,6 +42,11 @@ export const useDaily = () => {
         totalBft: { amount: 0, value: "$0.00" },
         totalFlex: { amount: 0, value: "$0.00" },
         profit: "$0.00",
+        results: {
+          win: 0,
+          loss: 0,
+          draw: 0,
+        },
       };
     }
 
@@ -54,6 +59,12 @@ export const useDaily = () => {
           match.totalPremiumCurrency
         );
         const profit = calculations.calculateProfit(match);
+
+        // Update results count
+        const results = { ...acc.results };
+        if (match.result) {
+          results[match.result] = (results[match.result] || 0) + 1;
+        }
 
         return {
           matchesCount: matchOps.matches.length,
@@ -70,6 +81,7 @@ export const useDaily = () => {
             value: `$${((acc.totalFlex.amount + match.totalPremiumCurrency) * 0.00744).toFixed(2)}`,
           },
           profit: `$${(parseFloat(acc.profit.replace("$", "")) + parseFloat(profit)).toFixed(2)}`,
+          results,
         };
       },
       {
@@ -78,6 +90,11 @@ export const useDaily = () => {
         totalBft: { amount: 0, value: "$0.00" },
         totalFlex: { amount: 0, value: "$0.00" },
         profit: "$0.00",
+        results: {
+          win: 0,
+          loss: 0,
+          draw: 0,
+        },
       }
     );
   };
