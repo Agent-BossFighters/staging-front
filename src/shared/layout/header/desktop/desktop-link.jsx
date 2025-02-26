@@ -15,8 +15,8 @@ const menuItems = [
     label: "Dashboard",
     requiresAuth: true,
     children: [
-      { path: "/dashboard/daily", label: "Daily" },
-      { path: "/dashboard/monthly", label: "Monthly" },
+      { path: "/dashboard/schedule/daily", label: "Daily" },
+      { path: "/dashboard/schedule/monthly", label: "Monthly" },
       { path: "/dashboard/locker", label: "Locker" },
       { path: "/dashboard/datalab", label: "Datalab" },
       //   { path: "/dashboard/schedule", label: "Schedule" },
