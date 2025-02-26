@@ -286,12 +286,12 @@ export default function MatchEntry({
 
   return (
     <tr>
-      <td className="min-w-[120px]">
+      <td className="min-w-[120px] pr-4">
         <Select
           value={data.buildId}
           onValueChange={(value) => handleChange("buildId", value)}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full h-8">
             <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
@@ -306,7 +306,7 @@ export default function MatchEntry({
       {Array(MAX_SLOTS)
         .fill(null)
         .map((_, index) => (
-          <td key={index} className="min-w-[60px]">
+          <td key={index} className="min-w-[60px] pl-4 first:pl-4">
             {index >= unlockedSlots ? (
               <RarityBadge rarity="none" />
             ) : (
@@ -322,7 +322,7 @@ export default function MatchEntry({
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20"
+          className="w-20 text-center pl-8 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={data.time}
           onChange={(e) => handleChange("time", e.target.value)}
@@ -376,7 +376,7 @@ export default function MatchEntry({
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20"
+          className="w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={data.bft}
           onChange={(e) => handleChange("bft", e.target.value)}
@@ -386,7 +386,7 @@ export default function MatchEntry({
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20"
+          className="w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={data.flex}
           onChange={(e) => handleChange("flex", e.target.value)}
