@@ -33,10 +33,8 @@ export default function DailyContainer() {
   }
 
   return (
-    <div className="flex flex-col">
-      <div className="pl-5">
-        <DailySummary date={selectedDate} summary={summary} />
-      </div>
+    <div className="flex flex-col w-[110%] -ml-[5%]">
+      <DailySummary date={selectedDate} summary={summary} />
 
       {builds.length === 0 ? (
         <div className="text-yellow-400 text-xl text-center py-4">

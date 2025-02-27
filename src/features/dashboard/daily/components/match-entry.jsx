@@ -314,6 +314,9 @@ export default function MatchEntry({
                 value={data.rarities[index]}
                 onChange={(value) => handleRarityChange(index, value)}
                 disabled={index >= unlockedSlots}
+                selectedBadges={data.rarities.filter(
+                  (r, i) => i !== index && r !== "none"
+                )}
               />
             )}
           </td>

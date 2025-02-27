@@ -114,7 +114,7 @@ export default function MonthlyPage() {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="w-5/6 mx-auto h-full">
       <div className="flex items-center justify-between py-4">
         <h1 className="text-6xl font-extrabold text-primary">MONTHLY</h1>
         <div className="flex items-center gap-4">
@@ -133,10 +133,7 @@ export default function MonthlyPage() {
         </div>
       </div>
 
-      <div className="pl-5">
-        <MonthlySummary date={selectedDate} metrics={monthlyTotals} />
-      </div>
-
+      <MonthlySummary date={selectedDate} metrics={monthlyTotals} />
       <MonthlyMatches
         dailyMetrics={dailyMetrics}
         monthlyTotals={monthlyTotals}
