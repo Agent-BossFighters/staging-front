@@ -154,7 +154,7 @@ export default function Lockerbuilds() {
                         />
                       ) : (
                         <div className="flex flex-col">
-                          <span>{`${parseFloat(build.bftBonus).toFixed(1)}%`}</span>
+                          <span>{`${build.bftBonus}%`}</span>
                         </div>
                       )}
                     </TableCell>

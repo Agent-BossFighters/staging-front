@@ -141,7 +141,7 @@ export default function MatchFormRow({
       <td className="text-center min-w-[80px]">
         {data.buildId ? (
           <div className="flex flex-col">
-            <span>{`${parseFloat(builds.find((b) => b.id === data.buildId)?.bftBonus || 0).toFixed(1)}%`}</span>
+            <span>{`${builds.find((b) => b.id === data.buildId)?.bftBonus || 0}%`}</span>
           </div>
         ) : (
           "-"

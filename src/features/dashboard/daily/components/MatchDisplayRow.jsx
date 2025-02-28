@@ -49,9 +49,7 @@ export default function MatchDisplayRow({
       <td className="text-center min-w-[80px] text-accent">
         ${match.calculated.tokenValue}
       </td>
-      <td className="text-center min-w-[80px]">
-        {match.totalPremiumCurrency}
-      </td>
+      <td className="text-center min-w-[80px]">{match.totalPremiumCurrency}</td>
       <td className="text-center min-w-[80px] text-accent">
         ${match.calculated.premiumValue}
       </td>
@@ -61,7 +59,7 @@ export default function MatchDisplayRow({
       <td className="text-center min-w-[80px]">
         {currentBuild?.bftBonus ? (
           <div className="flex flex-col">
-            <span>{`${parseFloat(currentBuild.bftBonus).toFixed(1)}%`}</span>
+            <span>{`${currentBuild.bftBonus}%`}</span>
           </div>
         ) : (
           "-"
