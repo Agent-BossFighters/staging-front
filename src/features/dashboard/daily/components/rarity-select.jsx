@@ -13,11 +13,10 @@ const RaritySelect = memo(
     const { badges, loading, fetchMyBadges } = useBadges();
 
     useEffect(() => {
-      // Only fetch badges if we don't have them yet
       if (!badges.length) {
         fetchMyBadges();
       }
-    }, [fetchMyBadges]); // Add fetchMyBadges as a dependency
+    }, []); // Suppression de la dépendance fetchMyBadges
 
     const handleValueChange = useCallback(
       (selectedValue) => {

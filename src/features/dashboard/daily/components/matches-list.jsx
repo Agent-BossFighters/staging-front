@@ -74,14 +74,9 @@ export default function MatchesList({
               PROFIT
             </TableHead>
             <TableHead className="min-w-[80px]">
-              BFT
+              $BFT
               <br />
-              MULTIPLIER
-            </TableHead>
-            <TableHead className="min-w-[80px]">
-              PERKS
-              <br />
-              MULTIPLIER
+              BONUS
             </TableHead>
             <TableHead className="min-w-[100px]">ACTIONS</TableHead>
           </TableRow>

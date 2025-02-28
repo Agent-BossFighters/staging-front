@@ -262,10 +262,13 @@ export default function MatchEntry({
           ${match.calculated.profit}
         </td>
         <td className="text-center min-w-[80px]">
-          {match.bonusMultiplier ? match.bonusMultiplier.toFixed(1) : "-"}
-        </td>
-        <td className="text-center min-w-[80px]">
-          {match.perksMultiplier ? match.perksMultiplier.toFixed(1) : "-"}
+          {currentBuild?.bftBonus ? (
+            <div className="flex flex-col">
+              <span>{`${parseFloat(currentBuild.bftBonus).toFixed(1)}%`}</span>
+            </div>
+          ) : (
+            "-"
+          )}
         </td>
         <td className="flex gap-2 items-center justify-center min-w-[100px]">
           <ActionButtons
@@ -398,14 +401,13 @@ export default function MatchEntry({
       <td className="text-center min-w-[80px] text-accent">-</td>
       <td className="text-center min-w-[80px] text-green-500">-</td>
       <td className="text-center min-w-[80px]">
-        {parseFloat(
-          builds.find((b) => b.id === data.buildId)?.bonusMultiplier || 1
-        ).toFixed(1)}
-      </td>
-      <td className="text-center min-w-[80px]">
-        {parseFloat(
-          builds.find((b) => b.id === data.buildId)?.perksMultiplier || 1
-        ).toFixed(1)}
+        {data.buildId ? (
+          <div className="flex flex-col">
+            <span>{`${parseFloat(builds.find((b) => b.id === data.buildId)?.bftBonus || 0).toFixed(1)}%`}</span>
+          </div>
+        ) : (
+          "-"
+        )}
       </td>
       <td className="flex gap-2 items-center justify-center min-w-[100px]">
         <ActionButtons
