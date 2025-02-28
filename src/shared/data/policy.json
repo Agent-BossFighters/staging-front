@@ -230,7 +230,7 @@
       "content": "If you have any questions about these Terms and Conditions, You can contact us:",
       "list": [
         {
-          "definition": "By email: teamagent@gmail.com"
+          "definition": "By email: agent.opensource@gmail.com"
         },
         {
           "definition": "By visiting this page on our website: https://agent-bfcommunity/contact"
@@ -241,7 +241,7 @@
   "privacy": [
     {
       "title": "Introduction",
-      "content": "Agent (\"Agent,\" \"we,\" \"us,\" or \"our\") is committed to protecting the privacy and security of your personal information. We have prepared this Privacy Policy to explain how we collect, use, share, and protect your personal data when you use Agent website and the services provided through it. By accessing or using our website, you agree to the practices described in this policy."
+      "content": "Omiage, sole proprietorship, d/b/a Agent (\"Agent,\" \"we,\" \"us,\" or \"our\") is committed to protecting the privacy and security of your personal information. We have prepared this Privacy Policy to explain how we collect, use, share, and protect your personal data when you use Agent website and the services provided through it. By accessing or using our website, you agree to the practices described in this policy."
     },
     {
       "title": "Information we collect",
@@ -323,11 +323,11 @@
       "sections": [
         {
           "title": "Access and Correction",
-          "content": "You can access and update your personal information by making changes directly to your Profile page or by contacting us at teamagent@gmail.com."
+          "content": "You can access and update your personal information by making changes directly to your Profile page or by contacting us at agent.opensource@gmail.com."
         },
         {
           "title": "Marketing Communications",
-          "content": "You can opt out of receiving marketing communications by following the instructions in those communications, by selecting the ‘Marketing Opt-Out’ option on your Profile page, or by contacting us at teamagent@gmail.com."
+          "content": "You can opt out of receiving marketing communications by following the instructions in those communications, by selecting the ‘Marketing Opt-Out’ option on your Profile page, or by contacting us at agent.opensource@gmail.com."
         },
         {
           "title": "Cookies",
@@ -374,7 +374,7 @@
     },
     {
       "title": "Contact us",
-      "content": "If you have any questions or concerns about this Privacy Policy, please contact us at teamagent@gmail.com."
+      "content": "If you have any questions or concerns about this Privacy Policy, please contact us at agent.opensource@gmail.com."
     }
   ]
 }
