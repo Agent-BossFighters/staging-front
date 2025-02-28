@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Check, X, Plus, Pencil, Trash2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -9,10 +8,12 @@ import {
 } from "@ui/select";
 import { Input } from "@ui/input";
 import RaritySelect from "./rarity-select";
-import { useGameConstants } from "@context/gameConstants.context";
-import { useDaily } from "../hooks/useDaily";
+import RarityBadge from "./RarityBadge";
+import MapIcon, { GAME_MAPS, MapSelectItem } from "./MapIcon";
+import ResultIcon, { GAME_RESULTS, ResultSelectItem } from "./ResultIcon";
+import ActionButtons from "./ActionButtons";
 
-const MAX_SLOTS = 5; // Nombre maximum de slots possible
+const MAX_SLOTS = 5;
 const INITIAL_FORM_STATE = {
   buildId: "",
   map: "",
@@ -37,16 +38,6 @@ export default function MatchEntry({
   onCancel,
   unlockedSlots,
 }) {
-  const { GAME_MAPS, GAME_RESULTS } = useGameConstants();
-  const {
-    calculateEnergyUsed,
-    calculateEnergyCost,
-    calculateTokenValue,
-    calculatePremiumValue,
-    calculateLuckrate,
-    calculateProfit,
-  } = useDaily();
-
   const [formData, setFormData] = useState(() => ({
     ...INITIAL_FORM_STATE,
     rarities: Array(MAX_SLOTS).fill("none"),
@@ -71,9 +62,16 @@ export default function MatchEntry({
   };
 
   const validateForm = (data) => {
-    if (!data.buildId || !data.map || !data.result || !data.time || !data.bft) {
+    const missingFields = [];
+    if (!data.buildId) missingFields.push("Build Name");
+    if (!data.map) missingFields.push("Map");
+    if (!data.result) missingFields.push("Result");
+    if (!data.time) missingFields.push("Time");
+    if (!data.bft) missingFields.push("BFT");
+
+    if (missingFields.length > 0) {
       alert(
-        "Please fill in all required fields (Build, Map, Result, Time, BFT)"
+        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`
       );
       return false;
     }
@@ -87,7 +85,6 @@ export default function MatchEntry({
     return true;
   };
 
-  // Ajout d'une fonction utilitaire pour formater les noms de maps
   const formatMapName = (mapName) => {
     return mapName.toLowerCase().replace(/\s+/g, "_");
   };
@@ -96,12 +93,10 @@ export default function MatchEntry({
     const selectedBuild = builds.find((b) => b.id === data.buildId);
     if (!selectedBuild) return null;
 
-    // Validation des valeurs requises
     if (!data.map || !data.result || !data.time || !data.bft) {
       throw new Error("Tous les champs obligatoires doivent être remplis");
     }
 
-    // Validation des valeurs numériques
     const time = parseInt(data.time);
     const totalToken = parseInt(data.bft);
     const totalPremiumCurrency = parseInt(data.flex || 0);
@@ -120,11 +115,8 @@ export default function MatchEntry({
       );
     }
 
-    // Validation des valeurs énumérées
     const validMaps = ["toxic_river", "award", "radiation_rift"];
     const validResults = ["win", "loss", "draw"];
-
-    // Sécurisation des valeurs avant transformation
     const map = formatMapName(String(data.map || ""));
     const result = String(data.result || "").toLowerCase();
 
@@ -136,7 +128,9 @@ export default function MatchEntry({
 
     if (!validResults.includes(result)) {
       throw new Error(
-        `Résultat invalide '${data.result}'. Valeurs acceptées : ${validResults.join(", ")}`
+        `Résultat invalide '${data.result}'. Valeurs acceptées : ${validResults.join(
+          ", "
+        )}`
       );
     }
 
@@ -146,10 +140,11 @@ export default function MatchEntry({
         build: selectedBuild.buildName,
         map: map,
         time: time,
-        energyUsed: parseFloat(calculateEnergyUsed(time)),
         result: result,
         totalToken: totalToken,
         totalPremiumCurrency: totalPremiumCurrency,
+        bonusMultiplier: parseFloat(selectedBuild.bonusMultiplier),
+        perksMultiplier: parseFloat(selectedBuild.perksMultiplier),
         badge_used_attributes: data.rarities
           .map((rarity, index) => {
             const slot = index + 1;
@@ -208,7 +203,7 @@ export default function MatchEntry({
     } else {
       onUpdate(matchData)
         .then(() => {
-          onCancel(); // Sortir du mode édition après une mise à jour réussie
+          onCancel();
         })
         .catch((error) => {
           console.error("Erreur détaillée:", error);
@@ -224,7 +219,6 @@ export default function MatchEntry({
   // Mode affichage
   if (!isEditing && !isCreating) {
     const currentBuild = builds.find((b) => b.buildName === match.build);
-    const energyUsed = calculateEnergyUsed(match.time);
     const matchRarities = Array(MAX_SLOTS)
       .fill("none")
       .map((_, index) => {
@@ -239,51 +233,49 @@ export default function MatchEntry({
         </td>
         {matchRarities.map((rarity, index) => (
           <td key={index} className="text-center min-w-[60px]">
-            <RaritySelect value={rarity} onChange={() => {}} disabled={true} />
+            <RarityBadge rarity={rarity} />
           </td>
         ))}
-        <td className="text-center min-w-[80px]">
-          {calculateLuckrate(matchRarities)}
-        </td>
+        <td className="text-center min-w-[80px]">{match.luckrate}</td>
         <td className="text-center min-w-[80px]">{match.time}</td>
-        <td className="text-center min-w-[80px]">{energyUsed}</td>
+        <td className="text-center min-w-[80px]">{match.energyUsed}</td>
         <td className="text-center min-w-[80px] text-destructive">
-          ${calculateEnergyCost(energyUsed)}
+          ${match.calculated.energyCost}
         </td>
-        <td className="text-center min-w-[100px] capitalize">{match.map}</td>
-        <td className="text-center min-w-[80px] capitalize">{match.result}</td>
+        <td className="text-center min-w-[100px] capitalize">
+          <MapIcon map={match.map} />
+        </td>
+        <td className="text-center min-w-[80px] capitalize">
+          <ResultIcon result={match.result} />
+        </td>
         <td className="text-center min-w-[80px]">{match.totalToken}</td>
         <td className="text-center min-w-[80px] text-accent">
-          ${calculateTokenValue(match.totalToken)}
+          ${match.calculated.tokenValue}
         </td>
         <td className="text-center min-w-[80px]">
           {match.totalPremiumCurrency}
         </td>
         <td className="text-center min-w-[80px] text-accent">
-          ${calculatePremiumValue(match.totalPremiumCurrency)}
+          ${match.calculated.premiumValue}
         </td>
         <td className="text-center min-w-[80px] text-green-500">
-          ${calculateProfit(match)}
+          ${match.calculated.profit}
         </td>
         <td className="text-center min-w-[80px]">
-          {currentBuild?.bonusMultiplier || "1.0"}
+          {match.bonusMultiplier ? match.bonusMultiplier.toFixed(1) : "-"}
         </td>
         <td className="text-center min-w-[80px]">
-          {currentBuild?.perksMultiplier || "1.0"}
+          {match.perksMultiplier ? match.perksMultiplier.toFixed(1) : "-"}
         </td>
         <td className="flex gap-2 items-center justify-center min-w-[100px]">
-          <button
-            onClick={() => onEdit(match)}
-            className="p-2 hover:bg-yellow-400 rounded-lg"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => onDelete(match.id)}
-            className="p-2 hover:bg-red-400 rounded-lg"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+          <ActionButtons
+            isEditing={isEditing}
+            isCreating={isCreating}
+            onEdit={() => onEdit(match)}
+            onDelete={() => onDelete(match.id)}
+            onSubmit={handleSubmit}
+            onCancel={onCancel}
+          />
         </td>
       </tr>
     );
@@ -291,16 +283,15 @@ export default function MatchEntry({
 
   // Mode édition ou création
   const data = isCreating ? formData : editedData;
-  const energyUsed = calculateEnergyUsed(data.time);
 
   return (
     <tr>
-      <td className="min-w-[120px]">
+      <td className="min-w-[120px] pr-4">
         <Select
           value={data.buildId}
           onValueChange={(value) => handleChange("buildId", value)}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full h-8">
             <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
@@ -315,52 +306,54 @@ export default function MatchEntry({
       {Array(MAX_SLOTS)
         .fill(null)
         .map((_, index) => (
-          <td key={index} className="min-w-[60px]">
+          <td key={index} className="min-w-[60px] pl-4 first:pl-4">
             {index >= unlockedSlots ? (
-              <span className="text-center text-gray-400">-</span>
+              <RarityBadge rarity="none" />
             ) : (
               <RaritySelect
                 value={data.rarities[index]}
                 onChange={(value) => handleRarityChange(index, value)}
                 disabled={index >= unlockedSlots}
+                selectedBadges={data.rarities.filter(
+                  (r, i) => i !== index && r !== "none"
+                )}
               />
             )}
           </td>
         ))}
-      <td className="text-center min-w-[80px]">
-        {calculateLuckrate(data.rarities)}
-      </td>
+      <td className="text-center min-w-[80px]">-</td>
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20"
+          className="w-20 text-center pl-8 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={data.time}
           onChange={(e) => handleChange("time", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px]">{energyUsed}</td>
-      <td className="text-center min-w-[80px] text-destructive">
-        ${calculateEnergyCost(energyUsed)}
-      </td>
+      <td className="text-center min-w-[80px]">-</td>
+      <td className="text-center min-w-[80px] text-destructive">-</td>
       <td className="min-w-[100px]">
         <Select
           value={data.map}
-          onValueChange={(value) => handleChange("map", formatMapName(value))}
+          onValueChange={(value) => handleChange("map", value)}
         >
-          <SelectTrigger className="w-32">
+          <SelectTrigger className="w-20 h-8 px-2">
             <SelectValue placeholder="Select">
-              {data.map
-                ? data.map
-                    .replace(/_/g, " ")
-                    .replace(/\b\w/g, (c) => c.toUpperCase())
-                : "Select"}
+              {data.map ? (
+                <div className="flex items-center gap-1">
+                  <MapIcon map={data.map} />
+                  <span>{GAME_MAPS[data.map]?.label.slice(0, 3)}</span>
+                </div>
+              ) : (
+                "Select"
+              )}
             </SelectValue>
           </SelectTrigger>
-          <SelectContent className="z-[100]">
-            {GAME_MAPS.map((m) => (
-              <SelectItem key={m} value={m}>
-                {m.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+          <SelectContent>
+            {Object.entries(GAME_MAPS).map(([map, mapData]) => (
+              <SelectItem key={map} value={map}>
+                <MapSelectItem map={map} mapData={mapData} />
               </SelectItem>
             ))}
           </SelectContent>
@@ -371,13 +364,13 @@ export default function MatchEntry({
           value={data.result}
           onValueChange={(value) => handleChange("result", value)}
         >
-          <SelectTrigger className="w-20">
+          <SelectTrigger className="w-20 h-8 px-2">
             <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
-            {GAME_RESULTS.map((r) => (
-              <SelectItem key={r} value={r}>
-                {r.charAt(0).toUpperCase() + r.slice(1)}
+            {Object.entries(GAME_RESULTS).map(([result, resultData]) => (
+              <SelectItem key={result} value={result}>
+                <ResultSelectItem result={result} resultData={resultData} />
               </SelectItem>
             ))}
           </SelectContent>
@@ -386,66 +379,43 @@ export default function MatchEntry({
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20"
+          className="w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={data.bft}
           onChange={(e) => handleChange("bft", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px] text-accent">
-        ${calculateTokenValue(data.bft)}
-      </td>
+      <td className="text-center min-w-[80px] text-accent">-</td>
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20"
+          className="w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={data.flex}
           onChange={(e) => handleChange("flex", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px] text-accent">
-        ${calculatePremiumValue(data.flex)}
-      </td>
-      <td className="text-center min-w-[80px] text-green-500">
-        $
-        {calculateProfit({
-          time: data.time,
-          totalToken: data.bft,
-          totalPremiumCurrency: data.flex,
-          build: builds.find((b) => b.id === data.buildId),
-        })}
+      <td className="text-center min-w-[80px] text-accent">-</td>
+      <td className="text-center min-w-[80px] text-green-500">-</td>
+      <td className="text-center min-w-[80px]">
+        {parseFloat(
+          builds.find((b) => b.id === data.buildId)?.bonusMultiplier || 1
+        ).toFixed(1)}
       </td>
       <td className="text-center min-w-[80px]">
-        {builds.find((b) => b.id === data.buildId)?.bonusMultiplier || "1.0"}
-      </td>
-      <td className="text-center min-w-[80px]">
-        {builds.find((b) => b.id === data.buildId)?.perksMultiplier || "1.0"}
+        {parseFloat(
+          builds.find((b) => b.id === data.buildId)?.perksMultiplier || 1
+        ).toFixed(1)}
       </td>
       <td className="flex gap-2 items-center justify-center min-w-[100px]">
-        {isCreating ? (
-          <button
-            onClick={handleSubmit}
-            className="p-2 hover:bg-yellow-400 rounded-lg"
-          >
-            <Plus className="h-4 w-4" />
-          </button>
-        ) : (
-          <>
-            <button
-              onClick={handleSubmit}
-              className="p-2 hover:bg-green-400 rounded-lg"
-            >
-              <Check className="h-4 w-4" />
-            </button>
-            <button
-              onClick={onCancel}
-              className="p-2 hover:bg-red-400 rounded-lg"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </>
-        )}
+        <ActionButtons
+          isEditing={isEditing}
+          isCreating={isCreating}
+          onEdit={() => onEdit(match)}
+          onDelete={() => onDelete(match?.id)}
+          onSubmit={handleSubmit}
+          onCancel={onCancel}
+        />
       </td>
     </tr>
   );

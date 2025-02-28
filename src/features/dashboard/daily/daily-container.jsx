@@ -1,24 +1,25 @@
 import { useEffect } from "react";
 import DailySummary from "./daily-summary";
 import DailyMatches from "./daily-matches";
-import { useDaily } from "./hooks/useDaily";
+import { useDailyData } from "./hooks/useDailyData.jsx";
 
 export default function DailyContainer() {
   const {
+    summary,
     matches,
-    builds = [],
+    builds,
     loading,
+    error,
     selectedDate,
-    dailySummary,
+    fetchDailyData,
     addMatch,
     updateMatch,
     deleteMatch,
-    initializeData,
-  } = useDaily();
+  } = useDailyData();
 
   useEffect(() => {
-    initializeData();
-  }, [selectedDate]);
+    fetchDailyData(selectedDate);
+  }, [selectedDate, fetchDailyData]);
 
   if (loading) {
     return (
@@ -32,10 +33,8 @@ export default function DailyContainer() {
   }
 
   return (
-    <div className="flex flex-col px-5 gap-5">
-      <h1 className="text-6xl font-extrabold py-4 text-primary">DAILY</h1>
-
-      <DailySummary date={selectedDate} summary={dailySummary} />
+    <div className="flex flex-col w-[110%] -ml-[5%]">
+      <DailySummary date={selectedDate} summary={summary} />
 
       {builds.length === 0 ? (
         <div className="text-yellow-400 text-xl text-center py-4">

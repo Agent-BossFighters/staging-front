@@ -51,7 +51,9 @@ export default function Lockerbuilds() {
       toast.error(
         `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`
       );
+      return;
     }
+
     const payload = {
       user_build: {
         buildName: buildName,
@@ -59,17 +61,21 @@ export default function Lockerbuilds() {
         perksMultiplier: perks,
       },
     };
-    setLoading(true);
+
     toast.promise(postData("v1/user_builds/create", payload), {
-      loading: "Creating Build...",
-      success: (res) => {
-        setBuilds((prevBuilds) => [...prevBuilds, res.build]);
-        setBuildName("");
-        setBonus("");
-        setPerks("");
-        return "Build created successfully";
+      loading: "Creating build...",
+      success: (response) => {
+        if (response?.build) {
+          setBuilds((prevBuilds) => [...prevBuilds, response.build]);
+          setBuildName("");
+          setBonus("");
+          setPerks("");
+          return "Build created successfully";
+        }
+        throw new Error("Invalid response format");
       },
       error: (err) => {
+        console.error("Error creating build:", err);
         return `Error: ${err.message}`;
       },
     });
@@ -77,18 +83,20 @@ export default function Lockerbuilds() {
 
   const handleDelete = async (buildId) => {
     const confirm = window.confirm(
-      "Are you sure you want to delete this badge?"
+      "Are you sure you want to delete this build?"
     );
     if (!confirm) return;
+
     toast.promise(deleteData(`v1/user_builds/${buildId}`), {
-      loading: "Deleting NFT...",
+      loading: "Deleting build...",
       success: () => {
         setBuilds((prevBuilds) =>
-          prevBuilds.filter((buildData) => buildData.id !== buildId)
+          prevBuilds.filter((build) => build.id !== buildId)
         );
-        return "Showrunner contract deleted successfully";
+        return "Build deleted successfully";
       },
       error: (err) => {
+        console.error("Error deleting build:", err);
         return `Error: ${err.message}`;
       },
     });
@@ -146,7 +154,7 @@ export default function Lockerbuilds() {
                           className="w-1/2"
                         />
                       ) : (
-                        build.bonusMultiplier
+                        parseFloat(build.bonusMultiplier).toFixed(1)
                       )}
                     </TableCell>
                     <TableCell>
@@ -158,7 +166,7 @@ export default function Lockerbuilds() {
                           className="w-1/2"
                         />
                       ) : (
-                        build.perksMultiplier
+                        parseFloat(build.perksMultiplier).toFixed(1)
                       )}
                     </TableCell>
                     <TableCell className="flex gap-2 items-center">

@@ -8,7 +8,7 @@ import {
 
 export default function LockerPage() {
   return (
-    <>
+    <div className="w-5/6 mx-auto h-full">
       <h1 className="text-6xl font-extrabold py-4 text-primary">LOCKER</h1>
       <div className="flex flex-col lg:flex-row gap-20 flex-grow">
         <div className="flex flex-col lg:w-1/2 gap-5 h-full">
@@ -21,6 +21,6 @@ export default function LockerPage() {
           <LockerRecharge />
         </div>
       </div>
-    </>
+    </div>
   );
 }

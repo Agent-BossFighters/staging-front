@@ -1,11 +1,10 @@
+import { DailyContainer } from "@features/dashboard/daily";
+
 export default function DailyPage() {
   return (
-    <div className="flex flex-col items-center justify-center h-full py-2">
-      <div className="text-center">
-        <p className="text-sm font-semibold text-gray-900">
-          Welcome to your Daily Page
-        </p>
-      </div>
+    <div className="w-5/6 mx-auto h-full">
+      <h1 className="text-6xl font-extrabold py-4 text-primary">DAILY</h1>
+      <DailyContainer />
     </div>
   );
 }

@@ -8,12 +8,13 @@ export const useBuilds = () => {
   const fetchMyBuilds = async () => {
     setLoading(true);
     const payload = await getData("v1/user_builds");
-    if (payload && payload.builds) {
+    if (payload?.builds) {
       setBuilds(payload.builds);
     } else {
       setBuilds([]);
     }
     setLoading(false);
   };
+
   return { builds, setBuilds, loading, setLoading, fetchMyBuilds };
 };

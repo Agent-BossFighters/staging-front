@@ -8,7 +8,7 @@ export default function MonthlyCard() {
     <Card
       title="MONTHLY"
       description="ACCOUNTING"
-      path="/dashboard/monthly"
+      path="/dashboard/schedule/monthly"
       pattern={RewardsPattern2}
       patternClassName="opacity-40"
       icon={Monthly}

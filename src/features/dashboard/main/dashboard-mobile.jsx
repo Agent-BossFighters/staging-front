@@ -36,14 +36,14 @@ export function DashboardMobile() {
       description: "COMPLETE YOUR DAILY DATA",
       icon: Spark,
       pattern: RewardsPattern2,
-      path: "/dashboard/daily",
+      path: "/dashboard/schedule/daily",
     },
     {
       title: "MONTHLY",
       description: "ACCOUNTING",
       icon: Monthly,
       pattern: RewardsPattern1,
-      path: "/dashboard/monthly",
+      path: "/dashboard/schedule/monthly",
     },
     {
       title: "LOCKER",

@@ -6,7 +6,7 @@ export default function DailyCard() {
     <Card
       title="DAILY"
       description="COMPLETE YOUR DAILY DATA"
-      path="/dashboard/daily"
+      path="/dashboard/schedule/daily"
       pattern={RewardsPattern2}
       patternClassName="opacity-40"
       icon={Spark}

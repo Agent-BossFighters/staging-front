@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@ui/select";
 import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
-import { Contract } from "@img/index";
+import { MyTactic } from "@img/index";
 import { useUserPreference } from "@context/userPreference.context";
 import { useCurrencyPacks } from "./hook/useCurrencyPacks";
 
@@ -50,7 +50,7 @@ export default function Tactics() {
   return (
     <div className="flex flex-col gap-3">
       <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
-        <img src={Contract} alt="My Tactics" className="w-10 h-10" />
+        <img src={MyTactic} alt="My Tactics" className="w-10 h-10" />
         MY TACTICS
       </h2>
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-9">
