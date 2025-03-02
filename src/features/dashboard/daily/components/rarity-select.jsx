@@ -28,23 +28,28 @@ const RaritySelect = memo(
         const badge = badges.find((b) => {
           const badgeRarity =
             typeof b.rarity === "object" ? b.rarity.name : b.rarity;
-          return badgeRarity.toLowerCase() === selectedValue.toLowerCase();
+          const badgeId = String(b.id);
+          return (
+            `${badgeRarity.toLowerCase()}#${badgeId}` ===
+            selectedValue.toLowerCase()
+          );
         });
 
         if (badge) {
           const rarity =
             typeof badge.rarity === "object" ? badge.rarity.name : badge.rarity;
-          onChange(rarity.toLowerCase());
+          onChange(`${rarity.toLowerCase()}#${badge.id}`);
         }
       },
       [badges, onChange]
     );
 
-    // Filtrer les badges déjà sélectionnés
+    // Filtrer les badges par ID au lieu de la rareté
     const availableBadges = badges.filter((badge) => {
-      const badgeRarity =
-        typeof badge.rarity === "object" ? badge.rarity.name : badge.rarity;
-      return !selectedBadges.includes(badgeRarity.toLowerCase());
+      return !selectedBadges.some((selectedBadge) => {
+        const [, selectedId] = selectedBadge.split("#");
+        return selectedId === String(badge.id);
+      });
     });
 
     if (loading && !badges.length) return null;
@@ -68,11 +73,14 @@ const RaritySelect = memo(
                       typeof badge.rarity === "object"
                         ? badge.rarity.name
                         : badge.rarity;
-                    return badgeRarity.toLowerCase() === value.toLowerCase();
+                    const [selectedRarity] = value.split("#");
+                    return (
+                      badgeRarity.toLowerCase() === selectedRarity.toLowerCase()
+                    );
                   })?.rarity?.color,
                 }}
               >
-                {value.charAt(0).toUpperCase()}
+                {value.split("#")[0].charAt(0).toUpperCase()}
               </span>
             )}
           </SelectValue>
@@ -87,7 +95,7 @@ const RaritySelect = memo(
             return (
               <SelectItem
                 key={`${rarity}-${badge.id}`}
-                value={rarity.toLowerCase()}
+                value={`${rarity.toLowerCase()}#${badge.id}`}
               >
                 <div className="flex items-center gap-2">
                   <span

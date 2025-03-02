@@ -49,7 +49,9 @@ export default function ShowrunnerLevel() {
               </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
-                  {levelData.spMarksNb[index]?.toFixed(2) || "-"}
+                  {levelData.spMarksNb[index]
+                    ? Math.round(levelData.spMarksNb[index])
+                    : "-"}
                 </TableCell>
               ))}
             </TableRow>

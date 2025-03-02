@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MatchesList from "./components/matches-list";
+import { useUserPreference } from "@context/userPreference.context";
 
 export default function DailyMatches({
   matches,
@@ -11,6 +12,10 @@ export default function DailyMatches({
 }) {
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [editedData, setEditedData] = useState(null);
+  const { unlockedSlots } = useUserPreference();
+
+  // Calcul du nombre de slots disponibles (slots débloqués + 1)
+  const availableSlots = unlockedSlots;
 
   const handleEdit = (match) => {
     setEditingMatchId(match.id);
@@ -56,7 +61,7 @@ export default function DailyMatches({
       <MatchesList
         matches={matches}
         builds={builds}
-        unlockedSlots={5}
+        unlockedSlots={availableSlots}
         editingMatchId={editingMatchId}
         editedData={editedData}
         onAdd={onAdd}
