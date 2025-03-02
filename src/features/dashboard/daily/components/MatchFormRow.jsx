@@ -55,9 +55,12 @@ export default function MatchFormRow({
                 value={data.rarities[index]}
                 onChange={(value) => onRarityChange(index, value)}
                 disabled={index >= unlockedSlots}
-                selectedBadges={data.rarities.filter(
-                  (r, i) => i !== index && r !== "none"
-                )}
+                selectedBadges={data.rarities
+                  .filter((r, i) => i !== index && r !== "none")
+                  .map((r) => {
+                    const [rarity, id] = r.split("#");
+                    return id ? `${rarity}#${id}` : r;
+                  })}
               />
             )}
           </td>

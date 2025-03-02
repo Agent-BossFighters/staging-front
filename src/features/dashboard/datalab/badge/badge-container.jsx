@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import Badge from "./badges.jsx";
 import SelectSlotUsed from "./select-slot-used.jsx";
+import SelectMultiplier from "./select-multiplier.jsx";
 import BadgesPrices from "./badges-prices.jsx";
-import { Input } from "@ui/input";
 import { useBadges } from "./hook/useBadge";
 
 export default function BadgeContainer() {
@@ -22,8 +22,7 @@ export default function BadgeContainer() {
     fetchBadges();
   }, []);
 
-  const handleBftMultiplierChange = (e) => {
-    const value = parseFloat(e.target.value) || 1.0;
+  const handleBftMultiplierChange = (value) => {
     updatePriceTableMetrics(priceSlotsUsed, value);
   };
 
@@ -46,13 +45,9 @@ export default function BadgeContainer() {
             <h3 className="text-2xl font-bold whitespace-nowrap">
               $BFT BONUS MULTIPLIER
             </h3>
-            <Input
-              type="text"
-              name="bonus"
-              placeholder="1.0"
-              defaultValue={bftMultiplier}
+            <SelectMultiplier
+              value={bftMultiplier}
               onChange={handleBftMultiplierChange}
-              className="w-1/4 font-bold"
             />
           </div>
           <div className="">
