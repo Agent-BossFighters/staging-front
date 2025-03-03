@@ -124,7 +124,9 @@ export default function LockerContract() {
         SHOWRUNNER CONTRACT(S)
       </h2>
       <Table className="">
-        <TableCaption>Desc ?</TableCaption>
+        <TableCaption>
+          List of your showrunner contracts
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>RARITY</TableHead>

@@ -115,7 +115,9 @@ export default function Lockerbuilds() {
       </h2>
       <div className="flex-grow overflow-auto">
         <Table className="">
-          <TableCaption>Desc ?</TableCaption>
+          <TableCaption>
+            List of your builds with their BFT bonus multipliers
+          </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>BUILD NAME</TableHead>

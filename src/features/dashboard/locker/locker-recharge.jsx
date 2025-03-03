@@ -17,10 +17,12 @@ export default function LockerBadges() {
     <div className="flex lg:gap-5 lg:h-1/2">
       <div className="lg:w-1/2">
         <h2 className="text-3xl font-extrabold py-2">
-          {/* Icon */}RECHARGE DISCOUNT(S)
+          RECHARGE
+          <br />
+          DISCOUNT(S)
         </h2>
         <Table className="">
-          <TableCaption>Desc ?</TableCaption>
+          <TableCaption>List of your recharge discounts</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>DISCOUNT TIME</TableHead>
