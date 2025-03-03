@@ -22,9 +22,11 @@ export default function CurrencyDisplay() {
       : CURRENCY_RATES.FLEX;
 
   return (
-    <div className="flex flex-col items-start mb-2">
-      <span className="text-sm font-medium mb-1">Boss Fighters</span>
-      <div className="flex items-center gap-4 px-4 py-2 rounded-full border border-white/20 bg-background/80">
+    <div className="flex flex-col items-start mb-2 relative">
+      <span className="ml-6 pl-2 pr-2 relative top-2  text-sm font-medium bg-[#0A0800]">
+        Boss Fighters
+      </span>
+      <div className="flex items-center gap-4 px-4 py-2 rounded-full border-2 border-white bg-background/80">
         <div className="flex items-center gap-2">
           <img src={Flex} alt="Flex token" className="h-5 w-5" />
           <span className="text-sm font-medium text-white">${flexPrice}</span>

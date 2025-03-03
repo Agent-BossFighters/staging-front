@@ -19,7 +19,7 @@ export default function HomePage() {
           game and the community.
         </p>
       </div>
-      <div className="flex w-full justify-center gap-6 mt-24">
+      <div className="flex w-full justify-center gap-6 my-24">
         <div className="lg:w-1/3 flex flex-col items-center justify-center">
           <h2 className="text-6xl font-bold flex items-end mb-24">
             P
@@ -31,7 +31,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center mb-16 gap-4">
             <img src={Thp} alt="Thp" className="w-13 h-13" />
             <p>
-              “The Hacking Project” decentralized training center (students
+              "The Hacking Project" decentralized training center (students
               internship)
             </p>
           </div>
@@ -56,7 +56,7 @@ export default function HomePage() {
           </h2>
           <div className="flex flex-col items-center gap-4">
             <img src={Alchemists} alt="Alchemists" className="w-13 h-13" />
-            <p>“The Alchemists” guild present since Boss Fighters inception</p>
+            <p>"The Alchemists" guild present since Boss Fighters inception</p>
           </div>
         </div>
       </div>
