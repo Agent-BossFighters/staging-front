@@ -82,7 +82,7 @@ export default function ShowrunnerLevel() {
           </TableBody>
         </Table>
       </div>
-      <p className="mt-4 mb-4 text-base text-muted-foreground text-center max-w-[800px]">
+      <p className="mt-4 text-base text-muted-foreground text-center max-w-[800px]">
         Showrunner contract level up costs
       </p>
     </>

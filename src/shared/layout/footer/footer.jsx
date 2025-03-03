@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 export default function Footer() {
   return (
-    <footer className="w-full text-xs border-t border-border/20 py-4 ">
+    <footer className="w-full text-xs border-t border-border/20 py-4 mt-4">
       <div className="flex justify-between items-center px-10 lg:px-0 lg:w-5/6 mx-auto">
         <p>© 2025 Agent</p>
         <div className="flex flex-col md:flex-row items-center gap-4">

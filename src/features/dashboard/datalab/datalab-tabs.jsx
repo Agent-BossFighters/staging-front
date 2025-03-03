@@ -12,7 +12,7 @@ const tabs = [
   { name: "CONTRACT", value: "Contract" },
   { name: "BADGE", value: "Badge" },
   { name: "CRAFT", value: "Craft" },
-  { name: "PLAYER CYCLE", value: "Player Cycle" },
+  { name: "PLAYER CYCLE", value: "Player Cycle", disabled: true },
 ];
 
 export default function DatalabTabs() {
@@ -20,7 +20,11 @@ export default function DatalabTabs() {
     <Tabs defaultValue="Slot" className="w-full flex flex-col pl-8">
       <TabsList className="bg-transparent text-2xl pb-6 justify-start gap-1">
         {tabs.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value}>
+          <TabsTrigger
+            key={tab.value}
+            value={tab.value}
+            disabled={tab.disabled}
+          >
             {tab.name}
           </TabsTrigger>
         ))}
