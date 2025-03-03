@@ -10,14 +10,30 @@ import { toast } from "react-hot-toast";
 
 const UserPreferenceContext = createContext();
 
+const STORAGE_KEY = "userPreferences";
+
 export function useUserPreference() {
   return useContext(UserPreferenceContext);
 }
 
 export function UserPreferenceProvider({ children }) {
-  // Préférences utilisateur
-  const [maxRarity, setMaxRarity] = useState(null);
-  const [unlockedSlots, setUnlockedSlots] = useState(2);
+  // Préférences utilisateur avec initialisation depuis localStorage
+  const [maxRarity, setMaxRarity] = useState(() => {
+    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    return savedPreferences ? JSON.parse(savedPreferences).maxRarity : null;
+  });
+
+  const [unlockedSlots, setUnlockedSlots] = useState(() => {
+    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    return savedPreferences ? JSON.parse(savedPreferences).unlockedSlots : 1;
+  });
+
+  const [selectedFlexPack, setSelectedFlexPack] = useState(() => {
+    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    return savedPreferences
+      ? JSON.parse(savedPreferences).selectedFlexPack
+      : null;
+  });
 
   // État des matchs
   const [matches, setMatches] = useState([]);
@@ -212,6 +228,22 @@ export function UserPreferenceProvider({ children }) {
     }
   }, []);
 
+  const savePreferences = useCallback(() => {
+    try {
+      const preferences = {
+        maxRarity,
+        unlockedSlots,
+        selectedFlexPack,
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+      toast.success("Préférences sauvegardées avec succès");
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde des préférences:", error);
+      toast.error("Erreur lors de la sauvegarde des préférences");
+    }
+  }, [maxRarity, unlockedSlots, selectedFlexPack]);
+
   // Effet pour charger les données initiales
   useEffect(() => {
     initializeData();
@@ -225,6 +257,9 @@ export function UserPreferenceProvider({ children }) {
         setMaxRarity,
         unlockedSlots,
         setUnlockedSlots,
+        selectedFlexPack,
+        setSelectedFlexPack,
+        savePreferences,
 
         // État des matchs
         matches,

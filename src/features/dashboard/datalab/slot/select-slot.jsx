@@ -16,7 +16,12 @@ export default function SelectSlot({
   rounded,
   selectedRarity,
 }) {
-  const [selectedColor, setSelectedColor] = useState("#FFFFFF");
+  const [selectedColor, setSelectedColor] = useState(() => {
+    if (!selectedRarity) return "#FFFFFF";
+    const rarity = data.rarities.find((item) => item.rarity === selectedRarity);
+    return rarity ? rarity.color : "#FFFFFF";
+  });
+
   const rarityOrderMap = Object.fromEntries(
     data.rarities.map(({ rarity, order }) => [rarity, order])
   );
@@ -36,7 +41,7 @@ export default function SelectSlot({
   };
 
   return (
-    <Select onValueChange={handleValueChange} defaultValue={selectedRarity}>
+    <Select onValueChange={handleValueChange} value={selectedRarity || ""}>
       <SelectTrigger
         className={`inline-flex items-center gap-1 w-auto min-w-max px-4 py-2 ${rounded ? "rounded-full" : ""}`}
         style={{ color: selectedColor }}
