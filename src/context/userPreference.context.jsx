@@ -20,7 +20,9 @@ export function UserPreferenceProvider({ children }) {
   // Préférences utilisateur avec initialisation depuis localStorage
   const [maxRarity, setMaxRarity] = useState(() => {
     const savedPreferences = localStorage.getItem(STORAGE_KEY);
-    return savedPreferences ? JSON.parse(savedPreferences).maxRarity : null;
+    return savedPreferences
+      ? JSON.parse(savedPreferences).maxRarity
+      : "legendary";
   });
 
   const [unlockedSlots, setUnlockedSlots] = useState(() => {
@@ -32,8 +34,14 @@ export function UserPreferenceProvider({ children }) {
     const savedPreferences = localStorage.getItem(STORAGE_KEY);
     return savedPreferences
       ? JSON.parse(savedPreferences).selectedFlexPack
-      : null;
+      : "";
   });
+
+  const [recharges, setRecharges] = useState(
+    Object.fromEntries(
+      ["5", "9", "10", "13", "16", "20", "25"].map((percent) => [percent, 0])
+    )
+  );
 
   // État des matchs
   const [matches, setMatches] = useState([]);
@@ -234,20 +242,32 @@ export function UserPreferenceProvider({ children }) {
         maxRarity,
         unlockedSlots,
         selectedFlexPack,
+        recharges,
       };
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
-      toast.success("Préférences sauvegardées avec succès");
+      toast.success("Preferences saved successfully");
     } catch (error) {
-      console.error("Erreur lors de la sauvegarde des préférences:", error);
-      toast.error("Erreur lors de la sauvegarde des préférences");
+      console.error("Error saving preferences:", error);
+      toast.error("Failed to save preferences");
     }
-  }, [maxRarity, unlockedSlots, selectedFlexPack]);
+  }, [maxRarity, unlockedSlots, selectedFlexPack, recharges]);
 
   // Effet pour charger les données initiales
   useEffect(() => {
-    initializeData();
-  }, [selectedDate]);
+    // Charger les préférences depuis localStorage au démarrage
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      if (savedPreferences) {
+        const preferences = JSON.parse(savedPreferences);
+        if (preferences.recharges) {
+          setRecharges(preferences.recharges);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading preferences:", error);
+    }
+  }, []);
 
   return (
     <UserPreferenceContext.Provider
@@ -259,6 +279,8 @@ export function UserPreferenceProvider({ children }) {
         setUnlockedSlots,
         selectedFlexPack,
         setSelectedFlexPack,
+        recharges,
+        setRecharges,
         savePreferences,
 
         // État des matchs

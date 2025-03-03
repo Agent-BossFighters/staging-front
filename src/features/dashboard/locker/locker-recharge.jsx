@@ -11,13 +11,12 @@ import { Button } from "@ui/button";
 import { Pencil, Check, X } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@ui/input";
+import { useUserPreference } from "@context/userPreference.context";
 
 const discountPercent = ["5", "9", "10", "13", "16", "20", "25"];
 
-export default function LockerBadges() {
-  const [recharges, setRecharges] = useState(
-    Object.fromEntries(discountPercent.map((percent) => [percent, 0]))
-  );
+export default function LockerRecharge() {
+  const { recharges, setRecharges } = useUserPreference();
   const [editingPercent, setEditingPercent] = useState(null);
   const [editValue, setEditValue] = useState("");
 
@@ -46,9 +45,7 @@ export default function LockerBadges() {
   return (
     <div className="flex lg:gap-5 lg:h-1/2">
       <div className="lg:w-3/5">
-        <h2 className="text-3xl font-extrabold py-2">
-          RECHARGE DISCOUNT(S)
-        </h2>
+        <h2 className="text-3xl font-extrabold py-2">RECHARGE DISCOUNT(S)</h2>
         <Table>
           <TableCaption>List of your recharge discounts</TableCaption>
           <TableHeader>
@@ -79,28 +76,25 @@ export default function LockerBadges() {
                   {editingPercent === percent ? (
                     <div className="flex gap-2">
                       <Button
-                        variant="ghost"
-                        size="icon"
+                        variant="transparent"
+                        className="p-0 hover:text-accent hover:scale-150"
                         onClick={handleSave}
-                        className="hover:text-green-500 hover:scale-150"
                       >
                         <Check className="h-4 w-4" />
                       </Button>
                       <Button
-                        variant="ghost"
-                        size="icon"
+                        variant="transparent"
+                        className="p-0 hover:text-destructive hover:scale-150"
                         onClick={handleCancel}
-                        className="hover:text-red-500 hover:scale-150"
                       >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
                   ) : (
                     <Button
-                      variant="ghost"
-                      size="icon"
+                      variant="transparent"
+                      className="p-0 hover:text-primary hover:scale-150"
                       onClick={() => handleEdit(percent)}
-                      className="hover:text-primary hover:scale-150"
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>

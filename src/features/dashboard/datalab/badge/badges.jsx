@@ -36,7 +36,7 @@ export default function Badges({ badges, loading }) {
           <TableRow>
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
-            <TableHead>SUPPLY</TableHead>
+            <TableHead>MAX<br />SUPPLY</TableHead>
             <TableHead>
               FLOOR
               <br />

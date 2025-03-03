@@ -38,8 +38,8 @@ export default function Showrunner() {
           <TableRow>
             <TableHead className="p-2 text-center">RARITY</TableHead>
             <TableHead className="p-2 text-center">ITEM</TableHead>
-            <TableHead className="p-2 text-center">SUPPLY</TableHead>
-            <TableHead className="p-2 text-center">FLOOR</TableHead>
+            <TableHead className="p-2 text-center">MAX< br/>SUPPLY</TableHead>
+            <TableHead className="p-2 text-center">FLOOR<br />PRICE</TableHead>
             <TableHead className="p-2 text-center">LVL</TableHead>
             <TableHead className="p-2 text-center">ENERGY</TableHead>
             <TableHead className="p-2 text-center">
@@ -48,9 +48,9 @@ export default function Showrunner() {
               TIME
             </TableHead>
             <TableHead className="p-2 text-center text-destructive">
-              BADGES
+              NB BADGES
               <br />
-              REQ.
+              RARITY -1
             </TableHead>
             <TableHead className="p-2 text-center text-destructive">
               FLEX
