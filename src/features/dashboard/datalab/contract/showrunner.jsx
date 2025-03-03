@@ -11,10 +11,15 @@ import {
 import data from "@shared/data/rarities.json";
 import { useContracts } from "./hook/useContracts";
 import { getValue } from "../hook/value";
+import { useUserPreference } from "@context/userPreference.context";
+import { getRarityOrder } from "@shared/hook/rarity";
 
 export default function Showrunner() {
   const { contracts, loading, fetchMyContracts } = useContracts();
-  const rarities = data.rarities;
+  const { maxRarity } = useUserPreference();
+  const rarities = data.rarities.filter(
+    (rarity) => getRarityOrder(rarity.rarity) <= getRarityOrder(maxRarity)
+  );
 
   useEffect(() => {
     fetchMyContracts();
@@ -33,8 +38,8 @@ export default function Showrunner() {
           <TableRow>
             <TableHead className="p-2 text-center">RARITY</TableHead>
             <TableHead className="p-2 text-center">ITEM</TableHead>
-            <TableHead className="p-2 text-center">SUPPLY</TableHead>
-            <TableHead className="p-2 text-center">FLOOR</TableHead>
+            <TableHead className="p-2 text-center">MAX< br/>SUPPLY</TableHead>
+            <TableHead className="p-2 text-center">FLOOR<br />PRICE</TableHead>
             <TableHead className="p-2 text-center">LVL</TableHead>
             <TableHead className="p-2 text-center">ENERGY</TableHead>
             <TableHead className="p-2 text-center">
@@ -43,9 +48,9 @@ export default function Showrunner() {
               TIME
             </TableHead>
             <TableHead className="p-2 text-center text-destructive">
-              BADGES
+              NB BADGES
               <br />
-              REQ.
+              RARITY -1
             </TableHead>
             <TableHead className="p-2 text-center text-destructive">
               FLEX

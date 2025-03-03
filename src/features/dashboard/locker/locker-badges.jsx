@@ -123,7 +123,9 @@ export default function LockerBadges() {
         BADGE(S)
       </h2>
       <Table className="">
-        <TableCaption>Desc ?</TableCaption>
+        <TableCaption>
+          List of your badges
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>RARITY</TableHead>

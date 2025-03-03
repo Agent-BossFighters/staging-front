@@ -24,8 +24,10 @@ export default function HeaderPart() {
         <NavigationMenuItem>
           {user ? (
             <>
-              <NavigationMenuTrigger className="h-full flex p-2 ps-6 rounded-full border border-border/20 hover:bg-primary hover:text-background">
-                <p className="text-bold">{user.username.toUpperCase()}</p>
+              <NavigationMenuTrigger className="h-full flex items-center p-2 ps-6 rounded-full border border-border/20 hover:bg-primary hover:text-background">
+                <p className="text-bold text-center">
+                  {user.username.toUpperCase()}
+                </p>
                 <Avatar className="cursor-pointer">
                   <AvatarImage src={user.asset} alt={user.username} />
                   <AvatarFallback className="bg-background">

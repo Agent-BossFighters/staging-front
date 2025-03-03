@@ -145,7 +145,9 @@ export default function MatchEntry({
                 return {
                   id: existingBadge.id,
                   slot: slot,
-                  rarity: String(rarity || "").toLowerCase(),
+                  rarity: String(rarity || "")
+                    .split("#")[0]
+                    .toLowerCase(),
                   _destroy: rarity === "none",
                 };
               }
@@ -154,7 +156,7 @@ export default function MatchEntry({
             if (rarity && rarity !== "none") {
               return {
                 slot: slot,
-                rarity: String(rarity).toLowerCase(),
+                rarity: String(rarity).split("#")[0].toLowerCase(),
                 _destroy: false,
               };
             }

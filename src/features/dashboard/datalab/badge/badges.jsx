@@ -10,9 +10,15 @@ import {
 import { RarityCell } from "@ui/rarity-cell";
 import data from "@shared/data/rarities.json";
 import { getValue } from "../hook/value";
+import { useUserPreference } from "@context/userPreference.context";
+import { getRarityOrder } from "@shared/hook/rarity";
 
 export default function Badges({ badges, loading }) {
-  const rarities = data.rarities;
+  const { maxRarity } = useUserPreference();
+  const rarities = data.rarities.filter(
+    (rarity) => getRarityOrder(rarity.rarity) <= getRarityOrder(maxRarity)
+  );
+
   if (loading) return <div>Loading...</div>;
 
   if (!badges?.badges_metrics) {
@@ -23,23 +29,61 @@ export default function Badges({ badges, loading }) {
     <div>
       <h2 className="text-3xl font-extrabold py-2">{/* Icon */}BADGES</h2>
       <Table className="w-1/2">
-        <TableCaption>Badge informations according to slot(s) used</TableCaption>
+        <TableCaption>
+          Badge informations according to slot(s) used
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
-            <TableHead>SUPPLY</TableHead>
-            <TableHead>FLOOR<br />PRICE</TableHead>
+            <TableHead>MAX<br />SUPPLY</TableHead>
+            <TableHead>
+              FLOOR
+              <br />
+              PRICE
+            </TableHead>
             <TableHead>EFFICIENCY</TableHead>
             <TableHead>RATIO</TableHead>
-            <TableHead>MAX<br />ENERGY</TableHead>
-            <TableHead>TIME TO<br />CHARGE</TableHead>
-            <TableHead>IN GAME<br />TIME</TableHead>
-            <TableHead className="text-destructive">MAX CHARGE<br />COST</TableHead>
-            <TableHead className="text-destructive">COST<br />/HOUR</TableHead>
-            <TableHead className="text-accent">BFT<br />/MINUTE</TableHead>
-            <TableHead className="text-accent">BFT<br />/CHARGE</TableHead>
-            <TableHead className="text-accent">BFT<br />VALUE</TableHead>
+            <TableHead>
+              MAX
+              <br />
+              ENERGY
+            </TableHead>
+            <TableHead>
+              TIME TO
+              <br />
+              CHARGE
+            </TableHead>
+            <TableHead>
+              IN GAME
+              <br />
+              TIME
+            </TableHead>
+            <TableHead className="text-destructive">
+              MAX CHARGE
+              <br />
+              COST
+            </TableHead>
+            <TableHead className="text-destructive">
+              COST
+              <br />
+              /HOUR
+            </TableHead>
+            <TableHead className="text-accent">
+              BFT
+              <br />
+              /MINUTE
+            </TableHead>
+            <TableHead className="text-accent">
+              BFT
+              <br />
+              /CHARGE
+            </TableHead>
+            <TableHead className="text-accent">
+              BFT
+              <br />
+              VALUE
+            </TableHead>
             <TableHead className="text-accent">ROI</TableHead>
           </TableRow>
         </TableHeader>

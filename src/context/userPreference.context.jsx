@@ -10,14 +10,55 @@ import { toast } from "react-hot-toast";
 
 const UserPreferenceContext = createContext();
 
+const STORAGE_KEY = "userPreferences";
+
 export function useUserPreference() {
   return useContext(UserPreferenceContext);
 }
 
 export function UserPreferenceProvider({ children }) {
-  // Préférences utilisateur
-  const [maxRarity, setMaxRarity] = useState(null);
-  const [unlockedSlots, setUnlockedSlots] = useState(2);
+  // Préférences utilisateur avec initialisation depuis localStorage
+  const [maxRarity, setMaxRarity] = useState(() => {
+    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    return savedPreferences
+      ? JSON.parse(savedPreferences).maxRarity
+      : "legendary";
+  });
+
+  const [unlockedSlots, setUnlockedSlots] = useState(() => {
+    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    return savedPreferences ? JSON.parse(savedPreferences).unlockedSlots : 1;
+  });
+
+  const [selectedFlexPack, setSelectedFlexPack] = useState(() => {
+    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    return savedPreferences
+      ? JSON.parse(savedPreferences).selectedFlexPack
+      : "";
+  });
+
+  const [recharges, setRecharges] = useState(
+    Object.fromEntries(
+      ["5", "9", "10", "13", "16", "20", "25"].map((percent) => [percent, 0])
+    )
+  );
+
+  const savePreferences = useCallback(() => {
+    try {
+      const preferences = {
+        maxRarity,
+        unlockedSlots,
+        selectedFlexPack,
+        recharges,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+      toast.success("Preferences saved successfully");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      toast.error("Failed to save preferences");
+    }
+  }, [maxRarity, unlockedSlots, selectedFlexPack, recharges]);
 
   // État des matchs
   const [matches, setMatches] = useState([]);
@@ -214,8 +255,19 @@ export function UserPreferenceProvider({ children }) {
 
   // Effet pour charger les données initiales
   useEffect(() => {
-    initializeData();
-  }, [selectedDate]);
+    // Charger les préférences depuis localStorage au démarrage
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      if (savedPreferences) {
+        const preferences = JSON.parse(savedPreferences);
+        if (preferences.recharges) {
+          setRecharges(preferences.recharges);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading preferences:", error);
+    }
+  }, []);
 
   return (
     <UserPreferenceContext.Provider
@@ -225,6 +277,11 @@ export function UserPreferenceProvider({ children }) {
         setMaxRarity,
         unlockedSlots,
         setUnlockedSlots,
+        selectedFlexPack,
+        setSelectedFlexPack,
+        recharges,
+        setRecharges,
+        savePreferences,
 
         // État des matchs
         matches,
