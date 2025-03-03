@@ -37,23 +37,28 @@ export function UserPreferenceProvider({ children }) {
       : "";
   });
 
-  // État temporaire pour stocker les changements non sauvegardés
-  const [unsavedFlexPack, setUnsavedFlexPack] = useState(selectedFlexPack);
-
-  // Mise à jour de unsavedFlexPack quand selectedFlexPack change
-  useEffect(() => {
-    setUnsavedFlexPack(selectedFlexPack);
-  }, [selectedFlexPack]);
-
-  const handleSetSelectedFlexPack = (value) => {
-    setUnsavedFlexPack(value);
-  };
-
   const [recharges, setRecharges] = useState(
     Object.fromEntries(
       ["5", "9", "10", "13", "16", "20", "25"].map((percent) => [percent, 0])
     )
   );
+
+  const savePreferences = useCallback(() => {
+    try {
+      const preferences = {
+        maxRarity,
+        unlockedSlots,
+        selectedFlexPack,
+        recharges,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+      toast.success("Preferences saved successfully");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      toast.error("Failed to save preferences");
+    }
+  }, [maxRarity, unlockedSlots, selectedFlexPack, recharges]);
 
   // État des matchs
   const [matches, setMatches] = useState([]);
@@ -248,24 +253,6 @@ export function UserPreferenceProvider({ children }) {
     }
   }, []);
 
-  const savePreferences = useCallback(() => {
-    try {
-      setSelectedFlexPack(unsavedFlexPack);
-      const preferences = {
-        maxRarity,
-        unlockedSlots,
-        selectedFlexPack: unsavedFlexPack,
-        recharges,
-      };
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
-      toast.success("Preferences saved successfully");
-    } catch (error) {
-      console.error("Error saving preferences:", error);
-      toast.error("Failed to save preferences");
-    }
-  }, [maxRarity, unlockedSlots, unsavedFlexPack, recharges]);
-
   // Effet pour charger les données initiales
   useEffect(() => {
     // Charger les préférences depuis localStorage au démarrage
@@ -290,8 +277,8 @@ export function UserPreferenceProvider({ children }) {
         setMaxRarity,
         unlockedSlots,
         setUnlockedSlots,
-        selectedFlexPack: unsavedFlexPack,
-        setSelectedFlexPack: handleSetSelectedFlexPack,
+        selectedFlexPack,
+        setSelectedFlexPack,
         recharges,
         setRecharges,
         savePreferences,
