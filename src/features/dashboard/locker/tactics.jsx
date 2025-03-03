@@ -24,6 +24,7 @@ export default function Tactics() {
     setUnlockedSlots,
     selectedFlexPack,
     setSelectedFlexPack,
+    handleSetSelectedFlexPack,
     savePreferences,
   } = useUserPreference();
   const { currencyPacks, loading, error, fetchCurrencyPacks } =
@@ -83,7 +84,10 @@ export default function Tactics() {
           <h3 className="text-xl font-bold whitespace-nowrap">
             FAVORITE FLEX PACK
           </h3>
-          <Select value={selectedFlexPack} onValueChange={setSelectedFlexPack}>
+          <Select
+            value={selectedFlexPack}
+            onValueChange={handleSetSelectedFlexPack}
+          >
             <SelectTrigger className="inline-flex items-center gap-1 w-[200px] px-4 py-2">
               <SelectValue>{formatSelectedValue(selectedFlexPack)}</SelectValue>
             </SelectTrigger>

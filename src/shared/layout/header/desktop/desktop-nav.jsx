@@ -3,6 +3,7 @@ import { AgentLogo } from "@img/index";
 import HeaderPart from "@features/users/auth/header-part";
 import DesktopLink from "./desktop-link";
 import { useAuth } from "@context/auth.context";
+import CurrencyDisplay from "./currency-display";
 
 export default function DesktopNav() {
   const { user } = useAuth();
@@ -22,8 +23,7 @@ export default function DesktopNav() {
         <DesktopLink />
       </div>
       <div className="flex items-center gap-4">
-        {/* Currency */}
-        {/* User */}
+        <CurrencyDisplay />
         <HeaderPart />
       </div>
     </div>

@@ -37,6 +37,18 @@ export function UserPreferenceProvider({ children }) {
       : "";
   });
 
+  // État temporaire pour stocker les changements non sauvegardés
+  const [unsavedFlexPack, setUnsavedFlexPack] = useState(selectedFlexPack);
+
+  // Mise à jour de unsavedFlexPack quand selectedFlexPack change
+  useEffect(() => {
+    setUnsavedFlexPack(selectedFlexPack);
+  }, [selectedFlexPack]);
+
+  const handleSetSelectedFlexPack = (value) => {
+    setUnsavedFlexPack(value);
+  };
+
   const [recharges, setRecharges] = useState(
     Object.fromEntries(
       ["5", "9", "10", "13", "16", "20", "25"].map((percent) => [percent, 0])
@@ -238,10 +250,11 @@ export function UserPreferenceProvider({ children }) {
 
   const savePreferences = useCallback(() => {
     try {
+      setSelectedFlexPack(unsavedFlexPack);
       const preferences = {
         maxRarity,
         unlockedSlots,
-        selectedFlexPack,
+        selectedFlexPack: unsavedFlexPack,
         recharges,
       };
 
@@ -251,7 +264,7 @@ export function UserPreferenceProvider({ children }) {
       console.error("Error saving preferences:", error);
       toast.error("Failed to save preferences");
     }
-  }, [maxRarity, unlockedSlots, selectedFlexPack, recharges]);
+  }, [maxRarity, unlockedSlots, unsavedFlexPack, recharges]);
 
   // Effet pour charger les données initiales
   useEffect(() => {
@@ -277,8 +290,8 @@ export function UserPreferenceProvider({ children }) {
         setMaxRarity,
         unlockedSlots,
         setUnlockedSlots,
-        selectedFlexPack,
-        setSelectedFlexPack,
+        selectedFlexPack: unsavedFlexPack,
+        setSelectedFlexPack: handleSetSelectedFlexPack,
         recharges,
         setRecharges,
         savePreferences,
