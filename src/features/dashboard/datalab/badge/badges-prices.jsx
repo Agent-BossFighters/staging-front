@@ -10,12 +10,19 @@ import {
 } from "@ui/table";
 import { RarityCell } from "@ui/rarity-cell";
 import data from "@shared/data/rarities.json";
+import { useUserPreference } from "@context/userPreference.context";
+import { getRarityOrder } from "@shared/hook/rarity";
 
 export default function BadgesPrices({ badges, loading }) {
+  const { maxRarity } = useUserPreference();
+
   if (loading) return <p>Loading...</p>;
   if (!badges?.badges_details) return <p>No data available</p>;
 
-  const rarities = data.rarities;
+  const rarities = data.rarities.filter(
+    (rarity) => getRarityOrder(rarity.rarity) <= getRarityOrder(maxRarity)
+  );
+
   const badgeMap = badges.badges_details.reduce((acc, badge) => {
     acc[badge["1. rarity"]] = badge;
     return acc;

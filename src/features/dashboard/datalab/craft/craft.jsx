@@ -11,12 +11,17 @@ import {
 import data from "@shared/data/rarities.json";
 import { useCrafts } from "./hook/useCrafts";
 import { getValue } from "../hook/value";
+import { useUserPreference } from "@context/userPreference.context";
+import { getRarityOrder } from "@shared/hook/rarity";
 
 const rarity = data.rarities;
 
 export default function Badges() {
   const { crafts, loading, fetchCrafts } = useCrafts();
-  console.log("crafts", crafts);
+  const { maxRarity } = useUserPreference();
+  const rarities = data.rarities.filter(
+    (rarity) => getRarityOrder(rarity.rarity) <= getRarityOrder(maxRarity)
+  );
 
   useEffect(() => {
     fetchCrafts();
@@ -59,7 +64,7 @@ export default function Badges() {
           </TableRow>
         </TableHeader>
         <TableBody className="">
-          {rarity.map((rarityItem) => {
+          {rarities.map((rarityItem) => {
             const craft = crafts.find(
               (c) => c["1. rarity"] === rarityItem.rarity
             );

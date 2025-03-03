@@ -66,7 +66,7 @@ export default function Tactics() {
           onClick={savePreferences}
           className="bg-primary hover:bg-primary/90 text-black"
         >
-          Save my preferences
+          SAVE
         </Button>
       </div>
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-9">

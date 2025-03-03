@@ -11,10 +11,15 @@ import {
 import data from "@shared/data/rarities.json";
 import { useContracts } from "./hook/useContracts";
 import { getValue } from "../hook/value";
+import { useUserPreference } from "@context/userPreference.context";
+import { getRarityOrder } from "@shared/hook/rarity";
 
 export default function Showrunner() {
   const { contracts, loading, fetchMyContracts } = useContracts();
-  const rarities = data.rarities;
+  const { maxRarity } = useUserPreference();
+  const rarities = data.rarities.filter(
+    (rarity) => getRarityOrder(rarity.rarity) <= getRarityOrder(maxRarity)
+  );
 
   useEffect(() => {
     fetchMyContracts();
