@@ -2,7 +2,7 @@ import ky from "ky";
 import Cookies from "js-cookie";
 
 export const kyInstance = ky.create({
-  prefixUrl: "https://api.agent-bossfighters.com/",
+  prefixUrl: "https://api.agent-bossfighters.com/api/",
   credentials: "include",
   hooks: {
     beforeRequest: [
