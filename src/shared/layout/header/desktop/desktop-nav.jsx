@@ -4,6 +4,7 @@ import HeaderPart from "@features/users/auth/header-part";
 import DesktopLink from "./desktop-link";
 import { useAuth } from "@context/auth.context";
 import CurrencyDisplay from "./currency-display";
+import PremiumButton from "./premium-button";
 
 export default function DesktopNav() {
   const { user } = useAuth();
@@ -24,6 +25,7 @@ export default function DesktopNav() {
       </div>
       <div className="flex items-center gap-4">
         <CurrencyDisplay />
+        <PremiumButton />
         <HeaderPart />
       </div>
     </div>
