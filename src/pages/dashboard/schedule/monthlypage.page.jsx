@@ -116,7 +116,7 @@ export default function MonthlyPage() {
   return (
     <div className="w-5/6 mx-auto h-full">
       <div className="flex items-center justify-between py-4">
-        <h1 className="text-6xl font-extrabold text-primary">MONTHLY</h1>
+        <h1 className="text-5xl font-extrabold text-primary">MONTHLY</h1>
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
             <ChevronLeft className="h-4 w-4" />

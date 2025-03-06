@@ -105,7 +105,7 @@ export default function Lockerbuilds() {
 
   return (
     <div className="flex flex-col h-[400px]">
-      <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
+      <h2 className="text-2xl font-extrabold py-2 flex gap-3 items-center">
         <img
           src={GreenFighter}
           alt="Build"

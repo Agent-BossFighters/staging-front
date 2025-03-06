@@ -45,7 +45,7 @@ export default function LockerRecharge() {
   return (
     <div className="flex lg:gap-5 lg:h-1/2">
       <div className="lg:w-3/5">
-        <h2 className="text-3xl font-extrabold py-2">RECHARGE DISCOUNT(S)</h2>
+        <h2 className="text-2xl font-extrabold py-2">RECHARGE DISCOUNT(S)</h2>
         <Table>
           <TableCaption>List of your recharge discounts</TableCaption>
           <TableHeader>

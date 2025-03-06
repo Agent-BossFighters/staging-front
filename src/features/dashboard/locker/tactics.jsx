@@ -58,7 +58,7 @@ export default function Tactics() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center py-2">
-        <h2 className="text-3xl font-extrabold flex gap-3 items-center">
+        <h2 className="text-2xl font-extrabold flex gap-3 items-center">
           <img src={MyTactic} alt="My Tactics" className="w-10 h-10" />
           MY TACTICS
         </h2>
@@ -71,7 +71,7 @@ export default function Tactics() {
       </div>
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-9">
         <div className="flex flex-col">
-          <h3 className="text-xl font-bold whitespace-nowrap">
+          <h3 className="text-l font-bold whitespace-nowrap">
             MAX ITEM RARITY TO SHOW
           </h3>
           <SelectSlot
@@ -80,7 +80,7 @@ export default function Tactics() {
           />
         </div>
         <div className="flex flex-col">
-          <h3 className="text-xl font-bold whitespace-nowrap">
+          <h3 className="text-l font-bold whitespace-nowrap">
             FAVORITE FLEX PACK
           </h3>
           <Select
@@ -114,11 +114,11 @@ export default function Tactics() {
           </Select>
         </div>
         <div className="flex flex-col">
-          <h3 className="text-xl font-bold whitespace-nowrap">
+          <h3 className="text-l font-bold whitespace-nowrap">
             BADGE SLOT(S) UNLOCKED
           </h3>
           <Select value={displayedSlots} onValueChange={handleSlotChange}>
-            <SelectTrigger className="inline-flex items-center gap-1 lg:w-1/4 px-4 py-2">
+            <SelectTrigger className="inline-flex items-center gap-1 w-[70px] px-4 py-2">
               <SelectValue placeholder="Select a number of slot" />
             </SelectTrigger>
             <SelectContent>

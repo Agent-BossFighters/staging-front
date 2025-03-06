@@ -119,7 +119,7 @@ export default function LockerContract() {
 
   return (
     <div>
-      <h2 className="text-3xl font-extrabold py-2 flex gap-3 items-center">
+      <h2 className="text-2xl font-extrabold py-2 flex gap-3 items-center">
         <img src={Contract} alt="contract" className="w-10 h-10" />
         SHOWRUNNER CONTRACT(S)
       </h2>
