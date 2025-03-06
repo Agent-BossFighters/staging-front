@@ -1,5 +1,4 @@
 import { loadStripe } from "@stripe/stripe-js";
-import { api } from "@api/ky";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -25,21 +24,33 @@ export function useStripeCheckout() {
 
       console.log("Initiating checkout with URLs:", { successUrl, cancelUrl });
 
-      const data = await api
-        .post("payments/checkout/create", {
-          json: {
+      const response = await fetch(
+        "https://api.agent-bossfighters.com/api/payments/checkout/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({
             success_url: successUrl,
             cancel_url: cancelUrl,
             payment_method_types: ["card"],
             allow_promotion_codes: true,
             mode: "subscription",
-          },
-        })
-        .json();
+          }),
+          credentials: "include",
+        }
+      );
 
-      if (data.url) {
-        console.log("Redirecting to Stripe checkout:", data.url);
-        window.location.assign(data.url);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.url) {
+          console.log("Redirecting to Stripe checkout:", data.url);
+          window.location.assign(data.url);
+        }
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
       console.error("Error during checkout:", error);
