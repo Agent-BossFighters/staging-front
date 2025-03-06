@@ -3,6 +3,7 @@ import { getData } from "@utils/api/data";
 
 // Cache global pour les currency packs
 let cachedPacks = null;
+let fetchPromise = null;
 
 export const useCurrencyPacks = () => {
   const [currencyPacks, setCurrencyPacks] = useState(cachedPacks || []);
@@ -16,12 +17,27 @@ export const useCurrencyPacks = () => {
       return;
     }
 
+    // Si une requête est déjà en cours, attendons sa résolution
+    if (fetchPromise) {
+      try {
+        const result = await fetchPromise;
+        setCurrencyPacks(result);
+        return;
+      } catch (err) {
+        setError(err.message);
+        return;
+      }
+    }
+
     try {
       setLoading(true);
       setError(null);
-      const payload = await getData("v1/currency_packs");
+
+      // Créer une nouvelle promesse pour la requête
+      fetchPromise = getData("v1/currency_packs");
+      const payload = await fetchPromise;
+
       if (payload) {
-        // Les packs FLEX sont déjà filtrés et formatés par le backend
         cachedPacks = payload;
         setCurrencyPacks(payload);
       } else {
@@ -32,6 +48,7 @@ export const useCurrencyPacks = () => {
       setCurrencyPacks([]);
     } finally {
       setLoading(false);
+      fetchPromise = null;
     }
   };
 

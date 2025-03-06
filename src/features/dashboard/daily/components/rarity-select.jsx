@@ -16,7 +16,7 @@ const RaritySelect = memo(
       if (!badges.length) {
         fetchMyBadges();
       }
-    }, []); // Suppression de la dépendance fetchMyBadges
+    }, []);
 
     const handleValueChange = useCallback(
       (selectedValue) => {
@@ -44,12 +44,35 @@ const RaritySelect = memo(
       [badges, onChange]
     );
 
-    // Filtrer les badges par ID au lieu de la rareté
+    // Filtrer les badges déjà sélectionnés
     const availableBadges = badges.filter((badge) => {
+      // Si c'est le badge actuellement sélectionné dans ce slot, on le garde
+      if (value && value !== "none") {
+        const [currentRarity, currentId] = value.split("#");
+        if (
+          String(badge.id) === currentId &&
+          (typeof badge.rarity === "object"
+            ? badge.rarity.name
+            : badge.rarity
+          ).toLowerCase() === currentRarity.toLowerCase()
+        ) {
+          return true;
+        }
+      }
+
+      // Vérifier si le badge est déjà utilisé dans un autre slot
       return !selectedBadges.some((selectedBadge) => {
+        if (selectedBadge === "none") return false;
         const [, selectedId] = selectedBadge.split("#");
         return selectedId === String(badge.id);
       });
+    });
+
+    // Trier les badges par rareté
+    const sortedBadges = [...availableBadges].sort((a, b) => {
+      const rarityA = typeof a.rarity === "object" ? a.rarity.name : a.rarity;
+      const rarityB = typeof b.rarity === "object" ? b.rarity.name : b.rarity;
+      return rarityA.localeCompare(rarityB);
     });
 
     if (loading && !badges.length) return null;
@@ -87,7 +110,7 @@ const RaritySelect = memo(
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="none">Select</SelectItem>
-          {availableBadges.map((badge) => {
+          {sortedBadges.map((badge) => {
             const rarity =
               typeof badge.rarity === "object"
                 ? badge.rarity.name

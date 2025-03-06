@@ -48,13 +48,13 @@ export default function MatchFormRow({
         .fill(null)
         .map((_, index) => (
           <td key={index} className="min-w-[60px] pl-4 first:pl-4">
-            {index >= unlockedSlots ? (
+            {!isEditing && index >= unlockedSlots ? (
               <RarityBadge rarity="none" />
             ) : (
               <RaritySelect
                 value={data.rarities[index]}
                 onChange={(value) => onRarityChange(index, value)}
-                disabled={index >= unlockedSlots}
+                disabled={!isEditing && index >= unlockedSlots}
                 selectedBadges={data.rarities
                   .filter((r, i) => i !== index && r !== "none")
                   .map((r) => {
