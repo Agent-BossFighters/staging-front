@@ -4,13 +4,13 @@ import { useStripeCheckout } from "./hooks/useStripeCheckout";
 
 const PRICING_PLANS = {
   freemium: {
-    name: "Freemium",
+    name: "FREEMIUM",
     price: 0,
     features: ["Locker", "Data Lab", "Daily"],
     comingSoonFeatures: ["Schedule", "TV Tools", "Player Map"],
   },
   pro: {
-    name: "Premium",
+    name: "PREMIUM",
     price: 11.99,
     features: ["Locker", "Data Lab", "Daily", "Monthly"],
     comingSoonFeatures: [
@@ -44,7 +44,7 @@ export default function PricingComparison() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto ">
         <PricingCard
           plan={PRICING_PLANS.freemium.name}
           price={PRICING_PLANS.freemium.price}
