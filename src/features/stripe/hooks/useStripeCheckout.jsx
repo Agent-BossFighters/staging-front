@@ -1,4 +1,5 @@
 import { loadStripe } from "@stripe/stripe-js";
+import { api } from "@api/ky";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -24,33 +25,21 @@ export function useStripeCheckout() {
 
       console.log("Initiating checkout with URLs:", { successUrl, cancelUrl });
 
-      const response = await fetch(
-        "http://localhost:3000/payments/checkout/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
-          },
-          body: JSON.stringify({
+      const data = await api
+        .post("payments/checkout/create", {
+          json: {
             success_url: successUrl,
             cancel_url: cancelUrl,
             payment_method_types: ["card"],
             allow_promotion_codes: true,
             mode: "subscription",
-          }),
-          credentials: "include",
-        }
-      );
+          },
+        })
+        .json();
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.url) {
-          console.log("Redirecting to Stripe checkout:", data.url);
-          window.location.assign(data.url);
-        }
-      } else {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (data.url) {
+        console.log("Redirecting to Stripe checkout:", data.url);
+        window.location.assign(data.url);
       }
     } catch (error) {
       console.error("Error during checkout:", error);
