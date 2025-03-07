@@ -2,28 +2,20 @@ import { Flex, Token3, Token4 } from "@img/index";
 import { useGameConstants } from "@context/gameConstants.context";
 import { useUserPreference } from "@context/userPreference.context";
 import { useCurrencyPacks } from "@features/dashboard/locker/hook/useCurrencyPacks";
-import { useEffect } from "react";
+import { useAuth } from "@context/auth.context";
 
 export default function CurrencyDisplay() {
+  const { user } = useAuth();
   const { CURRENCY_RATES } = useGameConstants();
   const { selectedFlexPack } = useUserPreference();
-  const { currencyPacks, fetchCurrencyPacks } = useCurrencyPacks();
+  const { currencyPacks, loading, error } = useCurrencyPacks();
 
-  useEffect(() => {
-    fetchCurrencyPacks();
-  }, []);
+  // Si l'utilisateur n'est pas connecté ou s'il y a une erreur, ne rien afficher
+  if (!user || error) return null;
 
-  // Calculer le prix unitaire du Flex
-  const flexPrice =
-    selectedFlexPack && currencyPacks.length > 0
-      ? currencyPacks.find(
-          (pack) => pack.currencyNumber.toString() === selectedFlexPack
-        )?.unitPrice || CURRENCY_RATES.FLEX
-      : CURRENCY_RATES.FLEX;
-
-  return (
+  const renderCurrencyDisplay = (flexPrice) => (
     <div className="flex flex-col items-start mb-2 relative">
-      <span className="ml-6 pl-2 pr-2 relative top-2  text-sm font-medium bg-[#0A0800]">
+      <span className="ml-6 pl-2 pr-2 relative top-2 text-sm font-medium bg-[#0A0800]">
         Boss Fighters
       </span>
       <div className="flex items-center gap-4 px-4 py-2 rounded-full border border-white bg-background/80">
@@ -46,4 +38,19 @@ export default function CurrencyDisplay() {
       </div>
     </div>
   );
+
+  // Si chargement en cours, afficher avec opacité réduite
+  if (loading) {
+    return renderCurrencyDisplay(CURRENCY_RATES.FLEX);
+  }
+
+  // Calculer le prix unitaire du Flex avec vérification de sécurité
+  const flexPrice =
+    selectedFlexPack && Array.isArray(currencyPacks) && currencyPacks.length > 0
+      ? currencyPacks.find(
+          (pack) => pack?.currencyNumber?.toString() === selectedFlexPack
+        )?.unitPrice || CURRENCY_RATES.FLEX
+      : CURRENCY_RATES.FLEX;
+
+  return renderCurrencyDisplay(flexPrice);
 }
