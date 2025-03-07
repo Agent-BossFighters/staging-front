@@ -6,8 +6,8 @@ export default function PolicyRoutes() {
   return (
     <>
       <Routes>
-        <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/terms" element={<TermsPage />} />
+        <Route path="privacy" element={<PrivacyPage />} />
+        <Route path="terms" element={<TermsPage />} />
       </Routes>
     </>
   );

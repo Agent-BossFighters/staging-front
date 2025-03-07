@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { getData } from "@utils/api/data";
 import MonthlyMatches from "@features/dashboard/monthly/monthly-matches";
 import MonthlySummary from "@features/dashboard/monthly/monthly-summary";
-import { Button } from "@ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import MonthSelector from "@features/dashboard/monthly/MonthSelector";
 
 export default function MonthlyPage() {
   console.log("MonthlyPage component mounted");
@@ -117,20 +116,12 @@ export default function MonthlyPage() {
     <div className="w-5/6 mx-auto h-full">
       <div className="flex items-center justify-between py-4">
         <h1 className="text-5xl font-extrabold text-primary">MONTHLY</h1>
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-xl font-semibold min-w-[200px] text-center">
-            {selectedDate.toLocaleDateString("fr-FR", {
-              month: "long",
-              year: "numeric",
-            })}
-          </span>
-          <Button variant="outline" size="icon" onClick={handleNextMonth}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+        <MonthSelector
+          selectedDate={selectedDate}
+          onPreviousMonth={handlePreviousMonth}
+          onNextMonth={handleNextMonth}
+          dailyMetrics={dailyMetrics}
+        />
       </div>
 
       <MonthlySummary date={selectedDate} metrics={monthlyTotals} />
