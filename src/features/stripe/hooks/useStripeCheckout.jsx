@@ -1,4 +1,6 @@
 import { loadStripe } from "@stripe/stripe-js";
+import { kyInstance, FRONTEND_URL, BACKEND_URL } from "@utils/api/ky-config";
+import ky from "ky";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -18,42 +20,48 @@ export function useStripeCheckout() {
         return;
       }
 
-      const baseUrl = window.location.origin.replace(/\/+$/, "");
-      const successUrl = `${baseUrl}/payments/success?session_id={CHECKOUT_SESSION_ID}`;
-      const cancelUrl = `${baseUrl}/payments/cancel`;
+      const successUrl = `${FRONTEND_URL}/payments/success?session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = `${FRONTEND_URL}/payments/cancel`;
 
-      console.log("Initiating checkout with URLs:", { successUrl, cancelUrl });
+      console.log("Checkout configuration:", {
+        successUrl,
+        cancelUrl,
+      });
 
-      const response = await fetch(
-        "https://api.agent-bossfighters.com/api/payments/checkout/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
+      const response = await ky
+        .create({
+          prefixUrl: BACKEND_URL,
+          credentials: "include",
+          hooks: {
+            beforeRequest: [
+              (request) => {
+                request.headers.set("Authorization", `Bearer ${authToken}`);
+                console.log("Request URL:", request.url);
+              },
+            ],
           },
-          body: JSON.stringify({
+        })
+        .post("payments/checkout/create", {
+          json: {
             success_url: successUrl,
             cancel_url: cancelUrl,
             payment_method_types: ["card"],
             allow_promotion_codes: true,
             mode: "subscription",
-          }),
-          credentials: "include",
-        }
-      );
+          },
+        })
+        .json();
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.url) {
-          console.log("Redirecting to Stripe checkout:", data.url);
-          window.location.assign(data.url);
-        }
+      console.log("Server response:", response);
+
+      if (response?.url) {
+        console.log("Redirecting to:", response.url);
+        window.location.assign(response.url);
       } else {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error("No checkout URL received from server");
       }
     } catch (error) {
-      console.error("Error during checkout:", error);
+      console.error("Checkout error:", error);
     }
   };
 
