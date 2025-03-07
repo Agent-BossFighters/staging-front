@@ -10,6 +10,28 @@ export default function MonthlySummary({ date, metrics }) {
       .toUpperCase();
   };
 
+  const calculateBftValue = (bft) => {
+    return (bft * 0.01).toFixed(2);
+  };
+
+  const calculateFlexValue = (flex) => {
+    return (flex * 0.00744).toFixed(2);
+  };
+
+  const calculateEnergyCost = (energy) => {
+    return (energy * 1.49).toFixed(2);
+  };
+
+  const calculateTotalProfit = () => {
+    if (!metrics) return "0.00";
+    const bftValue = parseFloat(calculateBftValue(metrics.total_bft || 0));
+    const flexValue = parseFloat(calculateFlexValue(metrics.total_flex || 0));
+    const energyCost = parseFloat(
+      calculateEnergyCost(metrics.total_energy || 0)
+    );
+    return (bftValue + flexValue - energyCost).toFixed(2);
+  };
+
   return (
     <div className="flex border-2 border-yellow-400 rounded-lg h-[140px] mb-10 w-[75%]">
       {/* Date section */}
@@ -52,7 +74,7 @@ export default function MonthlySummary({ date, metrics }) {
           <p>ENERGY USED</p>
           <p className="text-red-500 text-xl">{metrics?.total_energy || 0}</p>
           <p className="text-red-500 text-sm">
-            ${((metrics?.total_energy || 0) * 1.49).toFixed(2)}
+            ${calculateEnergyCost(metrics?.total_energy || 0)}
           </p>
         </div>
 
@@ -62,7 +84,7 @@ export default function MonthlySummary({ date, metrics }) {
           <p>TOTAL $BFT</p>
           <p className="text-accent text-xl">{metrics?.total_bft || 0}</p>
           <p className="text-accent text-sm">
-            ${((metrics?.total_bft || 0) * 0.01).toFixed(2)}
+            ${calculateBftValue(metrics?.total_bft || 0)}
           </p>
         </div>
 
@@ -72,7 +94,7 @@ export default function MonthlySummary({ date, metrics }) {
           <p>TOTAL FLEX</p>
           <p className="text-accent text-xl">{metrics?.total_flex || 0}</p>
           <p className="text-accent text-sm">
-            ${((metrics?.total_flex || 0) * 0.00744).toFixed(2)}
+            ${calculateFlexValue(metrics?.total_flex || 0)}
           </p>
         </div>
 
@@ -80,9 +102,7 @@ export default function MonthlySummary({ date, metrics }) {
         <div className="flex flex-col items-center">
           <img src={Purse} alt="Profit" className="w-8 h-8" />
           <p>PROFIT</p>
-          <p className="text-green-500 text-2xl">
-            ${metrics?.profit || "0.00"}
-          </p>
+          <p className="text-green-500 text-2xl">${calculateTotalProfit()}</p>
         </div>
       </div>
     </div>

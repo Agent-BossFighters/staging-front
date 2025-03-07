@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
+import { CURRENCY_RATES } from "@context/gameConstants.context";
 
 export default function MonthlyMatches({
   dailyMetrics,
@@ -13,15 +14,15 @@ export default function MonthlyMatches({
   loading,
 }) {
   const calculateEnergyCost = (energy) => {
-    return (energy * 1.49).toFixed(2);
+    return (energy * CURRENCY_RATES.ENERGY).toFixed(2);
   };
 
   const calculateBftValue = (bft) => {
-    return (bft * 0.1).toFixed(2);
+    return (bft * CURRENCY_RATES.BFT).toFixed(2);
   };
 
   const calculateFlexValue = (flex) => {
-    return (flex * 0.00744).toFixed(2);
+    return (flex * CURRENCY_RATES.FLEX).toFixed(2);
   };
 
   const calculateProfit = (bftValue, flexValue, energyCost) => {
