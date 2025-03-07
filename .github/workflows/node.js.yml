@@ -45,8 +45,8 @@ jobs:
         run: pnpm run build
         env:
           VITE_STRIPE_PUBLIC_KEY: ${{ secrets.VITE_STRIPE_PUBLIC_KEY }}
-          VITE_BACKEND_PROD_URL : ${{ env.VITE_BACKEND_PROD_URL }}
-          VITE_FRONTEND_PROD_URL : ${{ env.VITE_FRONTEND_PROD_URL }}
+          VITE_BACKEND_PROD_URL : ${{ vars.VITE_BACKEND_PROD_URL }}
+          VITE_FRONTEND_PROD_URL : ${{ vars.VITE_FRONTEND_PROD_URL }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
