@@ -9,6 +9,7 @@ const _dirname = path.dirname(_filename);
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "./",
   css: {
     postcss: {
       plugins: [tailwind()],

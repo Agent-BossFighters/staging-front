@@ -14,18 +14,18 @@ export default function DashboardRoutes() {
         <UserPreferenceProvider>
           <Routes>
             <Route path="/" element={<DashboardPage />} />
-            <Route path="/locker" element={<LockerPage />} />
-            <Route path="/datalab" element={<DatalabPage />} />
+            <Route path="locker" element={<LockerPage />} />
+            <Route path="datalab" element={<DatalabPage />} />
             <Route
-              path="/daily"
-              element={<Navigate to="/dashboard/schedule/daily" replace />}
+              path="daily"
+              element={<Navigate to="schedule/daily" replace />}
             />
             <Route
-              path="/monthly"
-              element={<Navigate to="/dashboard/schedule/monthly" replace />}
+              path="monthly"
+              element={<Navigate to="schedule/monthly" replace />}
             />
-            <Route path="/schedule/*" element={<ScheduleRoutes />} />
-            {/* <Route path="/playing/*" element={<PlayingRoutes />} /> */}
+            <Route path="schedule/*" element={<ScheduleRoutes />} />
+            {/* <Route path="playing/*" element={<PlayingRoutes />} /> */}
           </Routes>
         </UserPreferenceProvider>
       </ProtectedRoute>
