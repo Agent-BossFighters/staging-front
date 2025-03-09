@@ -13,7 +13,7 @@ export function RarityCell({ rarity, color }) {
 export function RarityHeader({ rarity, color }) {
   return (
     <th className="text-center">
-      <p className="border-2 rounded-2xl p-1" style={{ borderColor: color }}>
+      <p className="border-2 rounded-2xl" style={{ borderColor: color }}>
         {rarity}
       </p>
     </th>
