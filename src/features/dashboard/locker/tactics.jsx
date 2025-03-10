@@ -31,11 +31,15 @@ export default function Tactics() {
   const [selectedValue1, setSelectedValue1] = useState(numbers[0].toString());
 
   // Convertir le nombre total de slots en nombre de slots additionnels pour l'affichage
-  const displayedSlots = (unlockedSlots - 1).toString();
+  const displayedSlots = unlockedSlots ? (unlockedSlots - 1).toString() : null;
 
   const handleSlotChange = (value) => {
     // Convertir le nombre de slots additionnels en nombre total de slots
-    setUnlockedSlots(parseInt(value) + 1);
+    if (value === "none") {
+      setUnlockedSlots(null);
+    } else {
+      setUnlockedSlots(parseInt(value) + 1);
+    }
   };
 
   useEffect(() => {
@@ -84,15 +88,18 @@ export default function Tactics() {
             FAVORITE FLEX PACK
           </h3>
           <Select
-            value={selectedFlexPack}
+            value={selectedFlexPack || "none"}
             onValueChange={setSelectedFlexPack}
             className="w-full"
           >
             <SelectTrigger className="inline-flex items-center gap-1 w-[200px] px-4 py-2">
-              <SelectValue>{formatSelectedValue(selectedFlexPack)}</SelectValue>
+              <SelectValue placeholder="Select">
+                {formatSelectedValue(selectedFlexPack)}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
+                <SelectItem value="none">Select</SelectItem>
                 {currencyPacks.map((pack) => (
                   <SelectItem
                     key={pack.id}
@@ -117,13 +124,17 @@ export default function Tactics() {
           <h3 className="text-l font-bold whitespace-nowrap">
             BADGE SLOT(S) UNLOCKED
           </h3>
-          <Select value={displayedSlots} onValueChange={handleSlotChange}>
+          <Select
+            value={displayedSlots || "none"}
+            onValueChange={handleSlotChange}
+          >
             <SelectTrigger className="inline-flex items-center gap-1 w-[70px] px-4 py-2">
-              <SelectValue placeholder="Select a number of slot" />
+              <SelectValue>{displayedSlots || "-"}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Slot Used</SelectLabel>
+                <SelectItem value="none">-</SelectItem>
                 {numbers.map((number) => (
                   <SelectItem key={number} value={number.toString()}>
                     {number}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -26,6 +26,15 @@ export default function SelectSlot({
     return rarityOrderMap[item.rarity] <= rarityOrderMap[limitRarity];
   });
 
+  useEffect(() => {
+    if (selectedRarity && selectedRarity !== "none") {
+      const rarity = data.rarities.find(
+        (item) => item.rarity === selectedRarity
+      );
+      setSelectedColor(rarity ? rarity.color : "#FFFFFF");
+    }
+  }, [selectedRarity]);
+
   const handleValueChange = (value) => {
     const rarity = data.rarities.find((item) => item.rarity === value);
     setSelectedColor(rarity ? rarity.color : "#FFFFFF");
@@ -46,6 +55,7 @@ export default function SelectSlot({
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Badge Rarity</SelectLabel>
+          <SelectItem value="none">Select</SelectItem>
           {filteredRarities.map((item) => (
             <SelectItem
               key={item.rarity}

@@ -2,6 +2,12 @@ import { useState } from "react";
 import PricingCard from "./PricingCard";
 import { useStripeCheckout } from "./hooks/useStripeCheckout";
 
+// Vérification de la variable d'environnement
+const STRIPE_PRICE_ID = import.meta.env.VITE_STRIPE_PRICE_ID;
+if (!STRIPE_PRICE_ID) {
+  console.error("VITE_STRIPE_PRICE_ID is not defined in .env file");
+}
+
 const PRICING_PLANS = {
   freemium: {
     name: "FREEMIUM",
@@ -12,6 +18,7 @@ const PRICING_PLANS = {
   pro: {
     name: "PREMIUM",
     price: 11.99,
+    priceId: STRIPE_PRICE_ID,
     features: ["Locker", "Data Lab", "Daily", "Monthly"],
     comingSoonFeatures: [
       "Missions",
@@ -27,7 +34,11 @@ export default function PricingComparison() {
   const { initiateCheckout } = useStripeCheckout();
 
   const handlePlanSelect = async () => {
-    await initiateCheckout();
+    if (!STRIPE_PRICE_ID) {
+      console.error("Cannot initiate checkout: STRIPE_PRICE_ID is missing");
+      return;
+    }
+    await initiateCheckout(PRICING_PLANS.pro.priceId);
   };
 
   return (
@@ -44,7 +55,7 @@ export default function PricingComparison() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto ">
+      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
         <PricingCard
           plan={PRICING_PLANS.freemium.name}
           price={PRICING_PLANS.freemium.price}
