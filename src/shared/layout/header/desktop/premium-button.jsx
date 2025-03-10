@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@shared/ui/button";
 import { useAuth } from "@context/auth.context";
-import { ManageSubscriptionButton } from "@features/stripe/components/ManageSubscriptionButton";
 
 export default function PremiumButton() {
   const { user } = useAuth();
@@ -10,9 +9,6 @@ export default function PremiumButton() {
   if (!user) return null;
 
   // Si l'utilisateur est premium, on affiche le bouton de gestion d'abonnement
-  if (user.isPremium) {
-    return <ManageSubscriptionButton />;
-  }
 
   // Sinon, on affiche le bouton pour devenir premium
   return (
