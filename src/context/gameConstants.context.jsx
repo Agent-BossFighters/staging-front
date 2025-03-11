@@ -4,12 +4,6 @@ import { createContext, useContext } from "react";
 export const GAME_MAPS = ["Toxic river", "Award", "Radiation rift"];
 export const GAME_RESULTS = ["win", "loss", "draw"];
 
-export const CURRENCY_RATES = {
-  BFT: 0.01, // Prix du BFT en USD ($0.01)
-  FLEX: 0.00744, // Prix du FLEX en USD ($0.00744)
-  ENERGY: 1.49, // Prix de l'énergie en USD ($1.49)
-};
-
 export const RARITY_MULTIPLIERS = {
   common: 1,
   uncommon: 1.5,
@@ -41,7 +35,6 @@ export const LUCK_RATES = {
 const GameConstantsContext = createContext({
   GAME_MAPS,
   GAME_RESULTS,
-  CURRENCY_RATES,
   RARITY_MULTIPLIERS,
   ENERGY_CONSUMPTION,
   LUCK_RATES,
@@ -57,7 +50,6 @@ export function GameConstantsProvider({ children }) {
       value={{
         GAME_MAPS,
         GAME_RESULTS,
-        CURRENCY_RATES,
         RARITY_MULTIPLIERS,
         ENERGY_CONSUMPTION,
         LUCK_RATES,

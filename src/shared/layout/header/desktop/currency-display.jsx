@@ -1,17 +1,18 @@
 import { Flex, Token3, Token4 } from "@img/index";
-import { useGameConstants } from "@context/gameConstants.context";
 import { useUserPreference } from "@context/userPreference.context";
 import { useCurrencyPacks } from "@features/dashboard/locker/hook/useCurrencyPacks";
 import { useAuth } from "@context/auth.context";
+import { CURRENCY_RATES } from "@shared/constants/currency";
 
 export default function CurrencyDisplay() {
   const { user } = useAuth();
-  const { CURRENCY_RATES } = useGameConstants();
   const { selectedFlexPack } = useUserPreference();
   const { currencyPacks, loading, error } = useCurrencyPacks();
 
   // Si l'utilisateur n'est pas connecté ou s'il y a une erreur, ne rien afficher
   if (!user || error) return null;
+
+  const formatCurrency = (value) => value.toFixed(4);
 
   const renderCurrencyDisplay = (flexPrice) => (
     <div className="flex flex-col items-start mb-2 relative">
@@ -21,18 +22,20 @@ export default function CurrencyDisplay() {
       <div className="flex items-center gap-4 px-4 py-2 rounded-full border border-white bg-background/80">
         <div className="flex items-center gap-2">
           <img src={Flex} alt="Flex token" className="h-5 w-5" />
-          <span className="text-sm font-medium text-white">${flexPrice}</span>
+          <span className="text-sm font-medium text-white">
+            ${formatCurrency(flexPrice)}
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <img src={Token3} alt="Token 3" className="h-5 w-5" />
           <span className="text-sm font-medium text-white">
-            ${CURRENCY_RATES.BFT}
+            ${formatCurrency(CURRENCY_RATES.SM)}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <img src={Token4} alt="Token 4" className="h-5 w-5" />
           <span className="text-sm font-medium text-white">
-            ${CURRENCY_RATES.BFT}
+            ${formatCurrency(CURRENCY_RATES.BFT)}
           </span>
         </div>
       </div>
