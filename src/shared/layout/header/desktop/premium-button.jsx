@@ -8,7 +8,6 @@ export default function PremiumButton() {
   // Si l'utilisateur n'est pas connecté, on ne rend rien
   if (!user) return null;
 
-  // Si l'utilisateur est premium, on affiche le bouton de gestion d'abonnement
 
   // Sinon, on affiche le bouton pour devenir premium
   return (
