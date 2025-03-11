@@ -1,8 +1,8 @@
 export const CURRENCY_RATES = {
-  flex: 0.00743, // Taux optimal basé sur le pack max
-  bft: 0.01, // Taux fixe
-  sm: 0.01, // Taux fixe
-  energy: 1.49, // Coût fixe
+  FLEX: 490 / 480, 
+  BFT: 19.07 / 1000, // BFT to USD (19.07/1000 = 0.01907)
+  SM: 2.95 / 100, // Sponsor Marks to USD (2.95/100 = 0.0295)
+  ENERGY: 1.49, // Energy cost in USD
 };
 
 export const FLEX_PACKS = [

@@ -1,7 +1,7 @@
 import { Button } from "@ui/button";
 import { Download } from "lucide-react";
 import * as XLSX from "xlsx";
-import { CURRENCY_RATES } from "@context/gameConstants.context";
+import { CURRENCY_RATES } from "@shared/constants/currency";
 
 export default function MonthlyDownload({ dailyMetrics }) {
   const calculateEnergyCost = (energy) => {

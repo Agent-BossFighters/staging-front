@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-import { CURRENCY_RATES } from "@context/gameConstants.context";
+import { CURRENCY_RATES } from "@shared/constants/currency";
 
 export default function MonthlyMatches({
   dailyMetrics,
