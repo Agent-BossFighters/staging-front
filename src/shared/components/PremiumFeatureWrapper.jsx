@@ -8,13 +8,13 @@ export const PremiumFeatureWrapper = ({
   const { user } = useAuth();
   const isPremium = user?.isPremium === true;
 
-  const disabledStyle =
-    requiresPremium && !isPremium
-      ? "opacity-50 pointer-events-none cursor-not-allowed"
-      : "";
+  if (requiresPremium && !isPremium) {
+    return (
+      <div className="opacity-50 pointer-events-none cursor-not-allowed h-full w-full">
+        {children}
+      </div>
+    );
+  }
 
-  return React.cloneElement(children, {
-    disabled: requiresPremium && !isPremium,
-    className: `${children.props.className || ""} ${disabledStyle}`.trim(),
-  });
+  return children;
 };
