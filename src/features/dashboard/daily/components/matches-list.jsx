@@ -24,7 +24,9 @@ export default function MatchesList({
 }) {
   const renderSlotHeaders = () => {
     return Array.from({ length: 5 }, (_, i) => (
-      <TableHead key={i}>SLOT {i + 1}</TableHead>
+      <TableHead key={i}>
+        SLOT {i + 1}
+      </TableHead>
     ));
   };
 
@@ -56,7 +58,7 @@ export default function MatchesList({
               <br />
               COST
             </TableHead>
-            <TableHead className="min-w-[100px]">MAP</TableHead>
+            <TableHead className="min-w-[60px]">MAP</TableHead>
             <TableHead className="min-w-[80px]">RESULT</TableHead>
             <TableHead className="min-w-[80px]">BFT</TableHead>
             <TableHead className="min-w-[80px] text-accent">

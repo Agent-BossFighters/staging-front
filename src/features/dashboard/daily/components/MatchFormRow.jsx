@@ -32,8 +32,10 @@ export default function MatchFormRow({
           value={data.buildId}
           onValueChange={(value) => onChange("buildId", value)}
         >
-          <SelectTrigger className="w-full h-8">
-            <SelectValue placeholder="Select" />
+          <SelectTrigger className="w-full h-8" title={builds.find((b) => b.id === data.buildId)?.buildName}>
+            <SelectValue placeholder='Select' >
+             {builds.find((b) => b.id === data.buildId)?.buildName.length < 10 ? builds.find((b) => b.id === data.buildId)?.buildName : builds.find((b) => b.id === data.buildId)?.buildName.slice(0, 10)+ '...' || 'Select'}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {builds.map((build) => (
@@ -47,7 +49,7 @@ export default function MatchFormRow({
       {Array(MAX_SLOTS)
         .fill(null)
         .map((_, index) => (
-          <td key={index} className="min-w-[60px] pl-4 first:pl-4">
+          <td key={index} className="min-w-[60px] pl-4 first:pl-4" title={data.rarities[index]?.split("#")[0] || ''}>
             {!isEditing && index >= unlockedSlots ? (
               <RarityBadge rarity="none" />
             ) : (
@@ -65,29 +67,29 @@ export default function MatchFormRow({
             )}
           </td>
         ))}
-      <td className="text-center min-w-[80px]">-</td>
+      <td className="px-4 text-left min-w-[80px]">-</td>
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20 text-center pl-8 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={data.time}
           onChange={(e) => onChange("time", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px]">-</td>
-      <td className="text-center min-w-[80px] text-destructive">-</td>
+      <td className="px-4 text-left min-w-[80px]">-</td>
+      <td className="px-4 text-left min-w-[80px] text-destructive">-</td>
       <td className="min-w-[100px]">
         <Select
           value={data.map}
           onValueChange={(value) => onChange("map", value)}
         >
-          <SelectTrigger className="w-20 h-8 px-2">
-            <SelectValue placeholder="Select">
+          <SelectTrigger className="ml-3 w-15 h-8 px-2">
+            <SelectValue placeholder="">
               {data.map ? (
                 <div className="flex items-center gap-1">
                   <MapIcon map={data.map} />
-                  <span>{GAME_MAPS[data.map]?.label.slice(0, 3)}</span>
+                  <span>{GAME_MAPS[data.map]?.slice}</span>
                 </div>
               ) : (
                 "Select"
@@ -108,8 +110,17 @@ export default function MatchFormRow({
           value={data.result}
           onValueChange={(value) => onChange("result", value)}
         >
-          <SelectTrigger className="w-20 h-8 px-2">
-            <SelectValue placeholder="Select" />
+          <SelectTrigger className="ml-3 w-15 h-8 px-2">
+            <SelectValue placeholder="">
+              {data.result ? (
+                <div className="flex items-center gap-1">
+                  <ResultIcon result={data.result} />
+                  <span>{GAME_RESULTS[data.result]?.slice}</span>
+                </div>
+              ) : (
+                "Select"
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Object.entries(GAME_RESULTS).map(([result, resultData]) => (
@@ -123,25 +134,24 @@ export default function MatchFormRow({
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={data.bft}
           onChange={(e) => onChange("bft", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px] text-accent">-</td>
+      <td className="px-4 text-left min-w-[80px] text-accent">-</td>
       <td className="min-w-[80px]">
         <Input
           type="number"
-          className="w-20 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
-          placeholder="0"
-          value={data.flex}
+          className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+          value={ data.flex || "0" }
           onChange={(e) => onChange("flex", e.target.value)}
         />
       </td>
-      <td className="text-center min-w-[80px] text-accent">-</td>
-      <td className="text-center min-w-[80px] text-green-500">-</td>
-      <td className="text-center min-w-[80px]">
+      <td className="px-4 text-left min-w-[80px] text-accent">-</td>
+      <td className="px-4 text-left min-w-[80px] text-green-500">-</td>
+      <td className="px-4 text-left min-w-[80px]">
         {data.buildId ? (
           <div className="flex flex-col">
             <span>{`${builds.find((b) => b.id === data.buildId)?.bftBonus || 0}%`}</span>
@@ -150,7 +160,7 @@ export default function MatchFormRow({
           "-"
         )}
       </td>
-      <td className="flex gap-2 items-center justify-center min-w-[100px]">
+      <td className="flex gap-2 items-left justify-left min-w-[100px]">
         <ActionButtons
           isEditing={isEditing}
           isCreating={isCreating}

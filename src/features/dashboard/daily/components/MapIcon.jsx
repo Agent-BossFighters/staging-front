@@ -23,7 +23,7 @@ export default function MapIcon({ map }) {
   if (!mapData) return map;
 
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-left justify-left gap-2">
       {mapData.isComponent ? (
         <mapData.icon />
       ) : (
@@ -35,7 +35,7 @@ export default function MapIcon({ map }) {
 
 export function MapSelectItem({ map, mapData }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-left gap-2">
       {mapData.isComponent ? (
         <mapData.icon />
       ) : (
