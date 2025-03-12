@@ -25,38 +25,38 @@ export default function MatchDisplayRow({
 
   return (
     <tr>
-      <td className="min-w-[120px] pl-4">
-        <span className="font-medium">{match.build}</span>
+      <td className="min-w-[120px] pl-4" title={match.build}>
+        <span className="font-medium">{match.build.length < 10 ? match.build : match.build.slice(0, 10) + "..."}</span>
       </td>
       {matchRarities.map((rarity, index) => (
-        <td key={index} className="text-center min-w-[60px]">
+        <td key={index} className="px-4 text-left min-w-[60px]" title={rarity}>
           <RarityBadge rarity={rarity} />
         </td>
       ))}
-      <td className="text-center min-w-[80px]">{match.luckrate}</td>
-      <td className="text-center min-w-[80px]">{match.time}</td>
-      <td className="text-center min-w-[80px]">{match.energyUsed}</td>
-      <td className="text-center min-w-[80px] text-destructive">
+      <td className="px-4 text-left min-w-[80px]">{match.luckrate}</td>
+      <td className="px-4 text-left min-w-[80px]">{match.time}</td>
+      <td className="px-4 text-left min-w-[80px]">{match.energyUsed}</td>
+      <td className="px-4 text-left min-w-[80px] text-destructive">
         ${match.calculated.energyCost}
       </td>
-      <td className="text-center min-w-[100px] capitalize">
+      <td className="px-4 text-left min-w-[80px] capitalize">
         <MapIcon map={match.map} />
       </td>
-      <td className="text-center min-w-[80px] capitalize">
+      <td className="px-4 text-left min-w-[80px] capitalize">
         <ResultIcon result={match.result} />
       </td>
-      <td className="text-center min-w-[80px]">{match.totalToken}</td>
-      <td className="text-center min-w-[80px] text-accent">
+      <td className="px-4 text-left min-w-[80px]">{match.totalToken}</td>
+      <td className="px-4 text-left min-w-[80px] text-accent">
         ${match.calculated.tokenValue}
       </td>
-      <td className="text-center min-w-[80px]">{match.totalPremiumCurrency}</td>
-      <td className="text-center min-w-[80px] text-accent">
+      <td className="px-4 text-left min-w-[80px]">{match.totalPremiumCurrency}</td>
+      <td className="px-4 text-left min-w-[80px] text-accent">
         ${match.calculated.premiumValue}
       </td>
-      <td className="text-center min-w-[80px] text-green-500">
+      <td className="px-4 text-left min-w-[80px] text-green-500">
         ${match.calculated.profit}
       </td>
-      <td className="text-center min-w-[80px]">
+      <td className="px-4 text-left min-w-[80px]">
         {currentBuild?.bftBonus ? (
           <div className="flex flex-col">
             <span>{`${currentBuild.bftBonus}%`}</span>
@@ -65,7 +65,7 @@ export default function MatchDisplayRow({
           "-"
         )}
       </td>
-      <td className="flex gap-2 items-center justify-center min-w-[100px]">
+      <td className="px-1 flex gap-2 items-left justify-left min-w-[100px]">
         <ActionButtons
           isEditing={isEditing}
           isCreating={isCreating}

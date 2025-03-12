@@ -17,7 +17,7 @@ export default function RarityBadge({ rarity }) {
   }
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-left justify-left">
       <span
         className="w-6 h-6 flex items-center justify-center text-white rounded-full border-2 leading-none"
         style={{

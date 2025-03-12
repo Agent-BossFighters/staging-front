@@ -5,15 +5,15 @@ export function DisplayActions({ onEdit, onDelete }) {
     <>
       <button
         onClick={onEdit}
-        className="p-2 hover:bg-yellow-400 rounded-lg"
+        className="p-2"
       >
-        <Pencil className="h-4 w-4" />
+        <Pencil className="font-size-bold h-6 w-6 hover:text-yellow-400" />
       </button>
       <button
         onClick={onDelete}
-        className="p-2 hover:bg-red-400 rounded-lg"
+        className="p-2"
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="font-size-bold h-6 w-6 hover:text-red-400" />
       </button>
     </>
   );
@@ -42,9 +42,9 @@ export function CreateAction({ onSubmit }) {
   return (
     <button
       onClick={onSubmit}
-      className="p-4 hover:bg-yellow-400 rounded-lg"
+      className="p-2"
     >
-      <Plus className="h-4 w-4" />
+      <Plus className="font-size-bold h-7 w-7 hover:text-yellow-400" />
     </button>
   );
 }

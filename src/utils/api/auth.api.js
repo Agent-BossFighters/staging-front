@@ -25,7 +25,7 @@ export async function authSignOut() {
     if (!accessToken) {
       throw new Error("No access token found");
     }
-    let response = await kyInstance.post(`signout`, {});
+    let response = await kyInstance.post(signout, {});
     Cookies.remove("agent-auth");
     return response;
   } catch (error) {
