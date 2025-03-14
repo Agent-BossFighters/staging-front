@@ -37,6 +37,11 @@ export default function MatchesList({
         <TableHeader>
           <TableRow>
             <TableHead className="min-w-[120px]">BUILD</TableHead>
+            <TableHead className="min-w-[80px]">
+              BFT BONUS
+              <br />
+              MULTIPLIER
+            </TableHead>
             {renderSlotHeaders()}
             <TableHead className="min-w-[80px]">
               LUCK
@@ -44,9 +49,9 @@ export default function MatchesList({
               RATE
             </TableHead>
             <TableHead className="min-w-[80px]">
-              IN GAME
+              IG TIME
               <br />
-              TIME
+              (MIN)
             </TableHead>
             <TableHead className="min-w-[80px]">
               ENERGY
@@ -60,25 +65,18 @@ export default function MatchesList({
             </TableHead>
             <TableHead className="min-w-[60px]">MAP</TableHead>
             <TableHead className="min-w-[80px]">RESULT</TableHead>
-            <TableHead className="min-w-[80px]">BFT</TableHead>
+            <TableHead className="min-w-[80px]">$BFT</TableHead>
             <TableHead className="min-w-[80px] text-accent">
-              BFT
-              <br />
-              VALUE
+              $BFT ($)
             </TableHead>
             <TableHead className="min-w-[80px]">FLEX</TableHead>
             <TableHead className="min-w-[80px] text-accent">
               FLEX
               <br />
-              VALUE
+              ($)
             </TableHead>
             <TableHead className="min-w-[80px] text-green-500">
               PROFIT
-            </TableHead>
-            <TableHead className="min-w-[80px]">
-              $BFT
-              <br />
-              BONUS
             </TableHead>
             <TableHead className="min-w-[100px]">ACTIONS</TableHead>
           </TableRow>
@@ -92,17 +90,17 @@ export default function MatchesList({
           />
           {matches.map((match) => (
             <MatchEntry
-              key={match.id}
-              match={match}
-              builds={builds}
-              isEditing={match.id === editingMatchId}
-              editedData={editedData}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              onUpdate={(data) => onUpdate(match.id, data)}
-              onEditField={onEditField}
-              onCancel={onCancel}
-              unlockedSlots={unlockedSlots}
+            key={match.id}
+            match={match}
+            builds={builds}
+            isEditing={match.id === editingMatchId}
+            editedData={editedData}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onUpdate={(data) => onUpdate(match.id, data)}
+            onEditField={onEditField}
+            onCancel={onCancel}
+            unlockedSlots={unlockedSlots}
             />
           ))}
         </TableBody>

@@ -16,6 +16,7 @@ export default function SelectSlot({
   rounded,
   selectedRarity,
 }) {
+  const [internalSelectedRarity, setInternalSelectedRarity] = useState(selectedRarity);
   const [selectedColor, setSelectedColor] = useState("#FFFFFF");
   const rarityOrderMap = Object.fromEntries(
     data.rarities.map(({ rarity, order }) => [rarity, order])
@@ -27,35 +28,43 @@ export default function SelectSlot({
   });
 
   useEffect(() => {
-    if (selectedRarity && selectedRarity !== "none") {
-      const rarity = data.rarities.find(
-        (item) => item.rarity === selectedRarity
-      );
-      setSelectedColor(rarity ? rarity.color : "#FFFFFF");
-    }
+    setInternalSelectedRarity(selectedRarity);
   }, [selectedRarity]);
 
-  const handleValueChange = (value) => {
-    const rarity = data.rarities.find((item) => item.rarity === value);
-    setSelectedColor(rarity ? rarity.color : "#FFFFFF");
+  useEffect(() => {
+    if (internalSelectedRarity && internalSelectedRarity !== "none") {
+      const rarity = data.rarities.find(
+        (item) => item.rarity === internalSelectedRarity
+      );
+      setSelectedColor(rarity ? rarity.color : "#FFFFFF");
+    } else {
+      setSelectedColor("#FFFFFF");
+    }
+  }, [internalSelectedRarity]);
 
+  const handleValueChange = (value) => {
+    setInternalSelectedRarity(value);
+    
     if (onSelectRarity) {
       onSelectRarity(value);
     }
   };
 
   return (
-    <Select onValueChange={handleValueChange} defaultValue={selectedRarity}>
+    <Select onValueChange={handleValueChange} value={internalSelectedRarity || "none"}>
       <SelectTrigger
         className={`inline-flex items-center gap-1 w-[120px] px-4 py-2 ${rounded ? "rounded-full" : ""}`}
         style={{ color: selectedColor }}
       >
-        <SelectValue placeholder="Select" />
+        <SelectValue placeholder="Select">
+          {internalSelectedRarity && internalSelectedRarity !== "none" 
+            ? internalSelectedRarity 
+            : "Select"}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Badge Rarity</SelectLabel>
-          <SelectItem value="none">Select</SelectItem>
           {filteredRarities.map((item) => (
             <SelectItem
               key={item.rarity}

@@ -28,8 +28,17 @@ export default function MatchDisplayRow({
       <td className="min-w-[120px] pl-4" title={match.build}>
         <span className="font-medium">{match.build.length < 10 ? match.build : match.build.slice(0, 10) + "..."}</span>
       </td>
+      <td className="px-4 text-left min-w-[80px]">
+        {currentBuild?.bftBonus ? (
+          <div className="flex flex-col">
+            <span>{`${currentBuild.bftBonus}%`}</span>
+          </div>
+        ) : (
+          "-"
+        )}
+      </td>
       {matchRarities.map((rarity, index) => (
-        <td key={index} className="px-4 text-left min-w-[60px]" title={rarity}>
+        <td key={index} className="px-6 text-left min-w-[60px]" title={rarity}>
           <RarityBadge rarity={rarity} />
         </td>
       ))}
@@ -39,10 +48,10 @@ export default function MatchDisplayRow({
       <td className="px-4 text-left min-w-[80px] text-destructive">
         ${match.calculated.energyCost}
       </td>
-      <td className="px-4 text-left min-w-[80px] capitalize">
+      <td className="px-6 text-left min-w-[80px] capitalize">
         <MapIcon map={match.map} />
       </td>
-      <td className="px-4 text-left min-w-[80px] capitalize">
+      <td className="px-6 text-left min-w-[80px] capitalize">
         <ResultIcon result={match.result} />
       </td>
       <td className="px-4 text-left min-w-[80px]">{match.totalToken}</td>
@@ -55,15 +64,6 @@ export default function MatchDisplayRow({
       </td>
       <td className="px-4 text-left min-w-[80px] text-green-500">
         ${match.calculated.profit}
-      </td>
-      <td className="px-4 text-left min-w-[80px]">
-        {currentBuild?.bftBonus ? (
-          <div className="flex flex-col">
-            <span>{`${currentBuild.bftBonus}%`}</span>
-          </div>
-        ) : (
-          "-"
-        )}
       </td>
       <td className="px-1 flex gap-2 items-left justify-left min-w-[100px]">
         <ActionButtons
