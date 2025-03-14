@@ -18,3 +18,4 @@ export default function FreemiumControl({ children, defaultValue }) {
 
   return <>{childrenWithProps}</>;
 }
+ 
