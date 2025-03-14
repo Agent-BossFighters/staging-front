@@ -80,7 +80,7 @@ export default function Tactics() {
           </h3>
           <SelectSlot
             onSelectRarity={(value) => setMaxRarity(value)}
-            selectedRarity={maxRarity}
+            selectedRarity="none"
           />
         </div>
         <div className="flex flex-col">
@@ -99,7 +99,6 @@ export default function Tactics() {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="none">Select</SelectItem>
                 {currencyPacks.map((pack) => (
                   <SelectItem
                     key={pack.id}

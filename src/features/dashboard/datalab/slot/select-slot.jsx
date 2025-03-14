@@ -15,7 +15,10 @@ export default function SelectSlot({
   limitRarity,
   rounded,
   selectedRarity,
+  disabled,
 }) {
+  const [internalSelectedRarity, setInternalSelectedRarity] =
+    useState(selectedRarity);
   const [selectedColor, setSelectedColor] = useState("#FFFFFF");
   const rarityOrderMap = Object.fromEntries(
     data.rarities.map(({ rarity, order }) => [rarity, order])
@@ -27,17 +30,23 @@ export default function SelectSlot({
   });
 
   useEffect(() => {
-    if (selectedRarity && selectedRarity !== "none") {
-      const rarity = data.rarities.find(
-        (item) => item.rarity === selectedRarity
-      );
-      setSelectedColor(rarity ? rarity.color : "#FFFFFF");
-    }
+    setInternalSelectedRarity(selectedRarity);
   }, [selectedRarity]);
 
+  useEffect(() => {
+    if (internalSelectedRarity && internalSelectedRarity !== "none") {
+      const rarity = data.rarities.find(
+        (item) => item.rarity === internalSelectedRarity
+      );
+      setSelectedColor(rarity ? rarity.color : "#FFFFFF");
+    } else {
+      setSelectedColor("#FFFFFF");
+    }
+  }, [internalSelectedRarity]);
+
   const handleValueChange = (value) => {
-    const rarity = data.rarities.find((item) => item.rarity === value);
-    setSelectedColor(rarity ? rarity.color : "#FFFFFF");
+    if (disabled) return;
+    setInternalSelectedRarity(value);
 
     if (onSelectRarity) {
       onSelectRarity(value);
@@ -45,17 +54,24 @@ export default function SelectSlot({
   };
 
   return (
-    <Select onValueChange={handleValueChange} defaultValue={selectedRarity}>
+    <Select
+      onValueChange={handleValueChange}
+      value={internalSelectedRarity || "none"}
+      disabled={disabled}
+    >
       <SelectTrigger
-        className={`inline-flex items-center gap-1 w-[120px] px-4 py-2 ${rounded ? "rounded-full" : ""}`}
+        className={`inline-flex items-center gap-1 w-[120px] px-4 py-2 ${rounded ? "rounded-full" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
         style={{ color: selectedColor }}
       >
-        <SelectValue placeholder="Select" />
+        <SelectValue placeholder="Select">
+          {internalSelectedRarity && internalSelectedRarity !== "none"
+            ? internalSelectedRarity
+            : "Select"}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Badge Rarity</SelectLabel>
-          <SelectItem value="none">Select</SelectItem>
           {filteredRarities.map((item) => (
             <SelectItem
               key={item.rarity}

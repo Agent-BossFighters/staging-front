@@ -30,10 +30,14 @@ export default function CancelPage() {
         <p className="text-lg text-muted-foreground">{getMessage()}</p>
         <div className="flex justify-center gap-4 mt-8">
           <Link to="/payments/pricing">
-            <Button variant="default">Try Again</Button>
+            <Button variant="default" className="font-bold">
+              TRY AGAIN
+            </Button>
           </Link>
           <Link to="/dashboard">
-            <Button variant="outline">Return to Dashboard</Button>
+            <Button variant="outline" className="font-bold">
+              RETURN TO DASHBOARD
+            </Button>
           </Link>
         </div>
       </div>
