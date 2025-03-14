@@ -83,13 +83,13 @@ const RaritySelect = memo(
         onValueChange={handleValueChange}
         disabled={disabled}
       >
-        <SelectTrigger className="w-16 h-8 px-2">
+        <SelectTrigger className="w-14 h-8 px-2 rounded-full bg-[#212121] opacity-80">
           <SelectValue>
             {value === "none" ? (
-              <span>Select</span>
+              <span></span>
             ) : (
               <span
-                className="border-2 rounded-full px-2 py-1"
+                className="border-2 rounded-full px-1.5"
                 style={{
                   borderColor: badges.find((badge) => {
                     const badgeRarity =
@@ -101,6 +101,9 @@ const RaritySelect = memo(
                       badgeRarity.toLowerCase() === selectedRarity.toLowerCase()
                     );
                   })?.rarity?.color,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 {value.split("#")[0].charAt(0).toUpperCase()}
