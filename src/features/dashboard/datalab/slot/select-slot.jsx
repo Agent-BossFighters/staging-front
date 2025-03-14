@@ -17,7 +17,8 @@ export default function SelectSlot({
   selectedRarity,
   disabled,
 }) {
-  const [internalSelectedRarity, setInternalSelectedRarity] = useState(selectedRarity);
+  const [internalSelectedRarity, setInternalSelectedRarity] =
+    useState(selectedRarity);
   const [selectedColor, setSelectedColor] = useState("#FFFFFF");
   const rarityOrderMap = Object.fromEntries(
     data.rarities.map(({ rarity, order }) => [rarity, order])
@@ -44,22 +45,27 @@ export default function SelectSlot({
   }, [internalSelectedRarity]);
 
   const handleValueChange = (value) => {
+    if (disabled) return;
     setInternalSelectedRarity(value);
-    
+
     if (onSelectRarity) {
       onSelectRarity(value);
     }
   };
 
   return (
-    <Select onValueChange={handleValueChange} value={internalSelectedRarity || "none"}>
+    <Select
+      onValueChange={handleValueChange}
+      value={internalSelectedRarity || "none"}
+      disabled={disabled}
+    >
       <SelectTrigger
         className={`inline-flex items-center gap-1 w-[120px] px-4 py-2 ${rounded ? "rounded-full" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
         style={{ color: selectedColor }}
       >
         <SelectValue placeholder="Select">
-          {internalSelectedRarity && internalSelectedRarity !== "none" 
-            ? internalSelectedRarity 
+          {internalSelectedRarity && internalSelectedRarity !== "none"
+            ? internalSelectedRarity
             : "Select"}
         </SelectValue>
       </SelectTrigger>
