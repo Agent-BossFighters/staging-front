@@ -15,6 +15,7 @@ export default function SelectSlot({
   limitRarity,
   rounded,
   selectedRarity,
+  disabled,
 }) {
   const [selectedColor, setSelectedColor] = useState("#FFFFFF");
   const rarityOrderMap = Object.fromEntries(
@@ -36,6 +37,7 @@ export default function SelectSlot({
   }, [selectedRarity]);
 
   const handleValueChange = (value) => {
+    if (disabled) return;
     const rarity = data.rarities.find((item) => item.rarity === value);
     setSelectedColor(rarity ? rarity.color : "#FFFFFF");
 
@@ -45,9 +47,13 @@ export default function SelectSlot({
   };
 
   return (
-    <Select onValueChange={handleValueChange} defaultValue={selectedRarity}>
+    <Select
+      onValueChange={handleValueChange}
+      defaultValue={selectedRarity}
+      disabled={disabled}
+    >
       <SelectTrigger
-        className={`inline-flex items-center gap-1 w-[120px] px-4 py-2 ${rounded ? "rounded-full" : ""}`}
+        className={`inline-flex items-center gap-1 w-[120px] px-4 py-2 ${rounded ? "rounded-full" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
         style={{ color: selectedColor }}
       >
         <SelectValue placeholder="Select" />

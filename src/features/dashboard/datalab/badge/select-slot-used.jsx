@@ -11,10 +11,15 @@ import {
 
 const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
 
-export default function SelectSlotUsed({ onValueChange, defaultValue = "1" }) {
+export default function SelectSlotUsed({
+  onValueChange,
+  defaultValue = "1",
+  disabled,
+}) {
   const [selectedValue, setSelectedValue] = useState(defaultValue);
 
   const handleValueChange = (value) => {
+    if (disabled) return;
     setSelectedValue(value);
     if (onValueChange) {
       onValueChange(parseInt(value));
@@ -22,8 +27,14 @@ export default function SelectSlotUsed({ onValueChange, defaultValue = "1" }) {
   };
 
   return (
-    <Select value={selectedValue} onValueChange={handleValueChange}>
-      <SelectTrigger className="inline-flex items-center gap-1 w-auto min-w-max px-4 py-2">
+    <Select
+      value={selectedValue}
+      onValueChange={handleValueChange}
+      disabled={disabled}
+    >
+      <SelectTrigger
+        className={`inline-flex items-center gap-1 w-auto min-w-max px-4 py-2 ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+      >
         <SelectValue placeholder="Select a number of slot" />
       </SelectTrigger>
       <SelectContent>
