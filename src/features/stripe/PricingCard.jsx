@@ -8,6 +8,7 @@ export default function PricingCard({
   comingSoonFeatures,
   isPremium,
   onSelect,
+  buttonText = "Subscribe",
 }) {
   return (
     <div
@@ -57,10 +58,10 @@ export default function PricingCard({
 
       {isPremium && (
         <Button
-          className="w-full mt-6 bg-primary text-background hover:bg-primary/90"
+          className="w-full mt-6 bg-primary text-background hover:bg-primary/90 font-bold uppercase"
           onClick={onSelect}
         >
-          Subscribe
+          {buttonText}
         </Button>
       )}
     </div>

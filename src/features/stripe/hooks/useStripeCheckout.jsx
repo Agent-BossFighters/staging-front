@@ -56,17 +56,11 @@ export function useStripeCheckout() {
       "zh-HK",
       "zh-TW",
     ];
-
-    if (supportedLocales.includes(locale)) {
-      return locale;
-    }
-
-    const baseLocale = locale.split("-")[0];
-    if (supportedLocales.includes(baseLocale)) {
-      return baseLocale;
-    }
-
-    return "auto";
+    return supportedLocales.includes(locale)
+      ? locale
+      : supportedLocales.includes(locale.split("-")[0])
+        ? locale.split("-")[0]
+        : "auto";
   };
 
   const initiateCheckout = async (priceId) => {
@@ -89,56 +83,39 @@ export function useStripeCheckout() {
 
       const checkoutData = {
         priceId,
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
         locale: detectLocale(),
-        successUrl: `${FRONTEND_URL}/payments/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancelUrl: `${FRONTEND_URL}/payments/cancel`,
-        allowPromotionCodes: true,
-        billingAddressCollection: "required",
-        paymentMethodTypes: ["card"],
-        mode: "subscription",
-        customerEmail: null, // Will be set by the backend if needed
       };
 
       console.log("Sending checkout data:", checkoutData);
 
-      const response = await kyInstance
-        .post("v1/payments/checkout/create", {
-          json: checkoutData,
-        })
-        .json();
+      const response = await kyInstance.post("v1/payments/checkout/create", {
+        json: checkoutData,
+      });
 
-      console.log("Checkout session response:", response);
+      const data = await response.json();
+      console.log("Checkout session response:", data);
 
-      if (response?.url) {
-        window.location.assign(response.url);
+      if (data?.url) {
+        window.location.assign(data.url);
       } else {
         throw new Error("No checkout URL received from server");
       }
     } catch (error) {
       console.error("Checkout error:", error);
-
-      let errorMessage = "An error occurred during checkout. Please try again.";
+      let errorMessage = "An error occurred during checkout. ";
 
       if (error.response) {
-        const errorResponse = error.response;
         try {
-          const errorData = await errorResponse.json();
+          const errorData = await error.response.clone().json();
           console.log("Error data:", errorData);
-          errorMessage = errorData.error || errorData.message || errorMessage;
+          errorMessage += errorData.error || "Please try again later.";
         } catch (e) {
-          console.error("Error parsing error response:", e);
-          try {
-            errorMessage = await errorResponse.text();
-          } catch (textError) {
-            console.error("Error getting response text:", textError);
-          }
+          const errorText = await error.response.clone().text();
+          console.error("Error response text:", errorText);
+          errorMessage += errorText || "Please try again later.";
         }
+      } else {
+        errorMessage += error.message || "Please try again later.";
       }
 
       toast.error(errorMessage);
@@ -175,7 +152,26 @@ export function useStripeCheckout() {
       }
     } catch (error) {
       console.error("Customer portal error:", error);
-      toast.error("Could not access customer portal. Please try again later.");
+      let errorMessage = "Could not access customer portal. ";
+
+      if (error.response) {
+        try {
+          const errorData = await error.response.json();
+          console.log("Error details:", errorData);
+
+          // Gestion spécifique de l'erreur de customer_id manquant
+          if (errorData.error === "No Stripe customer ID found") {
+            errorMessage =
+              "Your subscription information seems to be missing. Please try subscribing again or contact support.";
+          } else {
+            errorMessage += errorData.error || "Please try again later.";
+          }
+        } catch (e) {
+          errorMessage += "Please try again later.";
+        }
+      }
+
+      toast.error(errorMessage);
     } finally {
       if (loadingToast) {
         toast.dismiss(loadingToast);
