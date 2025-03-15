@@ -1,12 +1,14 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { kyInstance } from "@utils/api/ky-config";
 
 // Constantes du jeu
 export const GAME_MAPS = ["Toxic river", "Award", "Radiation rift"];
 export const GAME_RESULTS = ["win", "loss", "draw"];
 
-export const CURRENCY_RATES = {
+export let CURRENCY_RATES = {
   BFT: 0.01, // Prix du BFT en USD ($0.01)
   FLEX: 0.00744, // Prix du FLEX en USD ($0.00744)
+  SPONSOR_MARKS: 4, // Prix du FLEX en USD ($0.00744)
   ENERGY: 1.49, // Prix de l'énergie en USD ($1.49)
 };
 
@@ -52,15 +54,64 @@ export function useGameConstants() {
 }
 
 export function GameConstantsProvider({ children }) {
+  const [currencyRates, setCurrencyRates] = useState(CURRENCY_RATES);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fonction pour récupérer les taux de devises du backend
+  const fetchCurrencyRates = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Récupérer les devises depuis l'API
+      const response = await kyInstance.get('v1/currencies').json();
+      
+      // Trouver les devises spécifiques
+      const bftCurrency = response.find(c => c.name === '$BFT');
+      const flexCurrency = response.find(c => c.name === 'FLEX');
+      const sponsorMarksCurrency = response.find(c => c.name === 'Sponsor Marks');
+
+      if (bftCurrency && flexCurrency && sponsorMarksCurrency) {
+        // Mettre à jour les taux
+        const newRates = {
+          BFT: bftCurrency.price,
+          FLEX: flexCurrency.price,
+          SPONSOR_MARKS: sponsorMarksCurrency.price,
+          // Autres taux si nécessaire
+        };
+      
+        setCurrencyRates(newRates);
+        
+        // Important: mettre à jour également la variable exportée
+        CURRENCY_RATES.BFT = bftCurrency.price;
+        CURRENCY_RATES.FLEX = flexCurrency.price;
+        CURRENCY_RATES.SPONSOR_MARKS = sponsorMarksCurrency.price;
+        
+        return newRates;
+      }
+      
+      return currencyRates;
+    } catch (error) {
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Charger les taux au démarrage
+  useEffect(() => {
+    fetchCurrencyRates();
+  }, []);
+
   return (
     <GameConstantsContext.Provider
       value={{
         GAME_MAPS,
         GAME_RESULTS,
-        CURRENCY_RATES,
+        CURRENCY_RATES: currencyRates,
         RARITY_MULTIPLIERS,
         ENERGY_CONSUMPTION,
         LUCK_RATES,
+        fetchCurrencyRates,
       }}
     >
       {children}

@@ -11,7 +11,7 @@ export default function CurrencyDisplay() {
   const { currencyPacks, loading, error } = useCurrencyPacks();
 
   // Si l'utilisateur n'est pas connecté ou s'il y a une erreur, ne rien afficher
-  if (!user || error) return null;
+  if (!user) return null;
 
   const renderCurrencyDisplay = (flexPrice) => (
     <div className="flex flex-col items-start mb-2 relative">
@@ -26,7 +26,7 @@ export default function CurrencyDisplay() {
         <div className="flex items-center gap-2">
           <img src={Token3} alt="Token 3" className="h-5 w-5" />
           <span className="text-sm font-medium text-white">
-            ${CURRENCY_RATES.BFT}
+            ${CURRENCY_RATES.SPONSOR_MARKS}
           </span>
         </div>
         <div className="flex items-center gap-2">

@@ -15,7 +15,11 @@ export const AuthProvider = ({ children }) => {
       const token = AuthUtils.getAuthToken();
 
       if (userData && token) {
-        setUser(cleanUserData(userData));
+        const cleanedData = cleanUserData(userData);
+        if (userData.is_admin !== undefined) {
+          cleanedData.is_admin = userData.is_admin;
+        }
+        setUser(cleanedData);
       }
       setIsLoading(false);
     };
@@ -25,6 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData, token) => {
     const cleanedUserData = cleanUserData(userData);
+    cleanedUserData.is_admin = userData.is_admin ? userData.is_admin : undefined;
     AuthUtils.setAuthToken(token);
     AuthUtils.setUserData(cleanedUserData);
     setUser(cleanedUserData);
