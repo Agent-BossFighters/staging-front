@@ -43,7 +43,6 @@ export const LUCK_RATES = {
 const GameConstantsContext = createContext({
   GAME_MAPS,
   GAME_RESULTS,
-  CURRENCY_RATES,
   RARITY_MULTIPLIERS,
   ENERGY_CONSUMPTION,
   LUCK_RATES,

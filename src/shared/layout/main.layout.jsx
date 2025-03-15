@@ -18,15 +18,13 @@ export default function Layout() {
 
       {/* Background Image */}
       <div
-        className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 bg-no-repeat ${
-          isDashboard
-            ? "opacity-50 bg-[length:626px_600px]"
-            : "opacity-20 bg-[length:626px_600px]"
+        className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 bg-no-repeat bg-[length:626px_600px] ${
+          isDashboard ? "opacity-50" : "opacity-20"
         }`}
         style={{
           backgroundImage: `url(${A})`,
-          width: isDashboard ? "265px" : "626px",
-          height: isDashboard ? "254px" : "600px",
+          width: "626px",
+          height: "600px",
         }}
       />
 

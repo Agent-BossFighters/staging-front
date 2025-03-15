@@ -7,6 +7,7 @@ import FightingCard from "./fighting-card";
 import DailyCard from "./daily-card";
 import MonthlyCard from "./monthly-card";
 import PlayerMapCard from "./player-map-card";
+import { useAuth } from "@context/auth.context";
 
 const disabledCards = {
   locker: false,
@@ -20,55 +21,76 @@ const disabledCards = {
   xp: true,
 };
 
-const disabledStyle = "opacity-50 pointer-events-none cursor-not-allowed";
+const premiumCards = {
+  locker: false,
+  datalab: false,
+  daily: false,
+  schedule: false,
+  monthly: true,
+  tvtools: true,
+  fighting: true,
+  playermap: true,
+  xp: true,
+};
+
+const disabledStyle =
+  "opacity-50 pointer-events-none cursor-not-allowed bg-[#1A1B1E]/80";
 
 export function CardsGrid() {
+  const { user } = useAuth();
+  const isPremium = user?.isPremium === true;
+
+  const isCardDisabled = (cardKey) => {
+    if (premiumCards[cardKey] && !isPremium) return true;
+    return disabledCards[cardKey];
+  };
+
   return (
     <div className="hidden h-full py-10 lg:block p-4 my-auto">
       <div className="h-full mx-auto">
         <div className="grid h-full grid-cols-3 grid-rows-8 gap-[20px]">
           <div
-            className={`row-span-6 ${disabledCards.locker ? disabledStyle : ""}`}
+            className={`row-span-6 ${isCardDisabled("locker") ? disabledStyle : ""}`}
           >
             <LockerCard />
           </div>
           <div
-            className={`row-span-4 ${disabledCards.datalab ? disabledStyle : ""}`}
+            className={`row-span-4 ${isCardDisabled("datalab") ? disabledStyle : ""}`}
           >
             <DataLabCard />
           </div>
           <div
-            className={`row-span-3 col-start-3 row-start-2 ${disabledCards.daily ? disabledStyle : ""}`}
+            className={`row-span-3 col-start-3 row-start-2 ${isCardDisabled("daily") ? disabledStyle : ""}`}
           >
             <DailyCard />
           </div>
           <div
-            className={`row-span-2 col-start-2 row-start-5 ${disabledCards.schedule ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-2 row-start-5 ${isCardDisabled("schedule") ? disabledStyle : ""}`}
           >
             <ScheduleCard />
           </div>
           <div
-            className={`row-span-2 col-start-3 row-start-5 ${disabledCards.monthly ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-3 row-start-5 ${isCardDisabled("monthly") ? disabledStyle : ""}`}
           >
             <MonthlyCard />
           </div>
           <div
-            className={`row-span-2 col-start-1 row-start-7 ${disabledCards.tvtools ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-1 row-start-7 ${isCardDisabled("tvtools") ? disabledStyle : ""}`}
           >
             <TvToolsCard />
           </div>
           <div
-            className={`row-span-2 col-start-2 row-start-7 ${disabledCards.fighting ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-2 row-start-7 ${isCardDisabled("fighting") ? disabledStyle : ""}`}
           >
             <FightingCard />
           </div>
           <div
-            className={`row-span-2 col-start-3 row-start-7 ${disabledCards.playermap ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-3 row-start-7 ${isCardDisabled("playermap") ? disabledStyle : ""}`}
           >
             <PlayerMapCard />
           </div>
           <div
-            className={`col-start-3 row-start-1 ${disabledCards.xp ? disabledStyle : ""}`}
+            className={`col-start-3 row-start-1 ${isCardDisabled("xp") ? disabledStyle : ""}`}
           >
             <XPProgress />
           </div>
