@@ -13,8 +13,11 @@ import SelectSlot from "@features/dashboard/datalab/slot/select-slot";
 import { MyTactic } from "@img/index";
 import { useUserPreference } from "@context/userPreference.context";
 import { useCurrencyPacks } from "./hook/useCurrencyPacks";
+import TacticsSkeleton from "./skeletons/TacticsSkeleton";
+import { toast } from "react-hot-toast";
 
 const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
+const STORAGE_KEY = "userPreferences";
 
 export default function Tactics() {
   const {
@@ -27,26 +30,136 @@ export default function Tactics() {
     streamerMode,
     setStreamerMode,
     savePreferences,
+    getStoredPreferences,
+    reloadPreferences,
   } = useUserPreference();
   const { currencyPacks, loading, error, fetchCurrencyPacks } =
     useCurrencyPacks();
-  const [selectedValue1, setSelectedValue1] = useState(numbers[0].toString());
+  
+  // État local pour stocker les modifications temporaires
+  const [localMaxRarity, setLocalMaxRarity] = useState(() => {
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences && JSON.parse(savedPreferences).maxRarity
+        ? JSON.parse(savedPreferences).maxRarity
+        : maxRarity || "legendary";
+    } catch (error) {
+      console.error("Error loading maxRarity:", error);
+      return maxRarity || "legendary";
+    }
+  });
+  
+  const [localUnlockedSlots, setLocalUnlockedSlots] = useState(() => {
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences && JSON.parse(savedPreferences).unlockedSlots
+        ? JSON.parse(savedPreferences).unlockedSlots
+        : unlockedSlots || 1;
+    } catch (error) {
+      console.error("Error loading unlockedSlots:", error);
+      return unlockedSlots || 1;
+    }
+  });
+  
+  const [localSelectedFlexPack, setLocalSelectedFlexPack] = useState(() => {
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences && JSON.parse(savedPreferences).selectedFlexPack
+        ? JSON.parse(savedPreferences).selectedFlexPack
+        : selectedFlexPack || "";
+    } catch (error) {
+      console.error("Error loading selectedFlexPack:", error);
+      return selectedFlexPack || "";
+    }
+  });
+  
+  const [localStreamerMode, setLocalStreamerMode] = useState(() => {
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences && JSON.parse(savedPreferences).streamerMode
+        ? JSON.parse(savedPreferences).streamerMode
+        : streamerMode || false;
+    } catch (error) {
+      console.error("Error loading streamerMode:", error);
+      return streamerMode || false;
+    }
+  });
+  
+  const [saveStatus, setSaveStatus] = useState(null);
 
   // Convertir le nombre total de slots en nombre de slots additionnels pour l'affichage
-  const displayedSlots = unlockedSlots ? (unlockedSlots - 1).toString() : null;
+  const displayedSlots = localUnlockedSlots ? (localUnlockedSlots - 1).toString() : "0";
 
   const handleSlotChange = (value) => {
     // Convertir le nombre de slots additionnels en nombre total de slots
-    if (value === "none") {
-      setUnlockedSlots(null);
+    if (value === "none" || value === "0") {
+      setLocalUnlockedSlots(1); // Au minimum 1 slot
     } else {
-      setUnlockedSlots(parseInt(value) + 1);
+      setLocalUnlockedSlots(parseInt(value) + 1);
     }
   };
 
+  // Fonction pour sauvegarder les modifications locales dans le contexte
+  const handleSave = () => {
+    try {
+      // S'assurer que les valeurs sont définies
+      const safeMaxRarity = localMaxRarity || "legendary";
+      const safeUnlockedSlots = localUnlockedSlots || 1;
+      const safeSelectedFlexPack = localSelectedFlexPack || "";
+      const safeStreamerMode = localStreamerMode || false;
+      
+      console.log("Saving preferences:", {
+        maxRarity: safeMaxRarity,
+        unlockedSlots: safeUnlockedSlots,
+        selectedFlexPack: safeSelectedFlexPack,
+        streamerMode: safeStreamerMode
+      });
+      
+      // Mettre à jour directement le localStorage pour éviter les problèmes de synchronisation
+      const existingPrefs = localStorage.getItem(STORAGE_KEY);
+      const existingPrefsObj = existingPrefs ? JSON.parse(existingPrefs) : {};
+      
+      const preferences = {
+        ...existingPrefsObj,
+        maxRarity: safeMaxRarity,
+        unlockedSlots: safeUnlockedSlots,
+        selectedFlexPack: safeSelectedFlexPack,
+        streamerMode: safeStreamerMode
+      };
+      
+      localStorage.setItem("userPreferences", JSON.stringify(preferences));
+      
+      // Mettre à jour le contexte
+      setMaxRarity(safeMaxRarity);
+      setUnlockedSlots(safeUnlockedSlots);
+      setSelectedFlexPack(safeSelectedFlexPack);
+      setStreamerMode(safeStreamerMode);
+      
+      // Afficher un message de succès
+      toast.success("Preferences saved successfully");
+      setSaveStatus('success');
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      setSaveStatus('error');
+    }
+  };
+
+  // Charger les préférences au montage du composant
   useEffect(() => {
+    // Ne pas recharger les préférences au montage pour éviter d'écraser les modifications locales
+    // reloadPreferences();
     fetchCurrencyPacks();
   }, []);
+
+  // Réinitialiser le statut de sauvegarde après 3 secondes
+  useEffect(() => {
+    if (saveStatus) {
+      const timer = setTimeout(() => {
+        setSaveStatus(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [saveStatus]);
 
   const formatSelectedValue = (value) => {
     if (!value) return "Select";
@@ -57,7 +170,7 @@ export default function Tactics() {
     return `$${pack.price} (${pack.currencyNumber.toLocaleString()})`;
   };
 
-  if (loading) return <div className="text-center">Loading...</div>;
+  if (loading) return <TacticsSkeleton />;
   if (error)
     return <div className="text-center text-red-500">Error: {error}</div>;
 
@@ -77,8 +190,8 @@ export default function Tactics() {
             TO SHOW
           </h3>
           <SelectSlot
-            onSelectRarity={(value) => setMaxRarity(value)}
-            selectedRarity={maxRarity || "none"}
+            onSelectRarity={(value) => setLocalMaxRarity(value)}
+            selectedRarity={localMaxRarity || "none"}
           />
         </div>
         <div className="flex flex-col">
@@ -88,13 +201,13 @@ export default function Tactics() {
             FLEX PACK
           </h3>
           <Select
-            value={selectedFlexPack || "none"}
-            onValueChange={setSelectedFlexPack}
+            value={localSelectedFlexPack || "none"}
+            onValueChange={setLocalSelectedFlexPack}
             className="w-full"
           >
             <SelectTrigger className="inline-flex items-center gap-1 w-[200px] px-4 py-2">
               <SelectValue placeholder="Select">
-                {formatSelectedValue(selectedFlexPack)}
+                {formatSelectedValue(localSelectedFlexPack)}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
@@ -135,7 +248,7 @@ export default function Tactics() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Slot Used</SelectLabel>
-                <SelectItem value="none">-</SelectItem>
+                <SelectItem value="0">0</SelectItem>
                 {numbers.map((number) => (
                   <SelectItem key={number} value={number.toString()}>
                     {number}
@@ -152,11 +265,11 @@ export default function Tactics() {
             MODE
           </h3>
           <Select
-            value={streamerMode ? "yes" : "no"}
-            onValueChange={(value) => setStreamerMode(value === "yes")}
+            value={localStreamerMode ? "yes" : "no"}
+            onValueChange={(value) => setLocalStreamerMode(value === "yes")}
           >
             <SelectTrigger className="inline-flex items-center gap-1 w-[80px] px-4 py-2">
-              <SelectValue>{streamerMode ? "Yes" : "No"}</SelectValue>
+              <SelectValue>{localStreamerMode ? "Yes" : "No"}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -168,13 +281,13 @@ export default function Tactics() {
           </Select>
         </div>
         <div className="flex flex-col justify-end">
-      <Button
-        onClick={savePreferences}
-        className="bg-primary justify-end hover:bg-primary/90 text-bold text-black"
-      >
-        SAVE
-      </Button>
-      </div>
+          <Button
+            onClick={handleSave}
+            className="bg-primary justify-end hover:bg-primary/90 text-bold text-black"
+          >
+            SAVE
+          </Button>
+        </div>
       </div>
     </div>
   );

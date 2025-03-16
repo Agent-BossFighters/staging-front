@@ -27,10 +27,10 @@ export default function MatchDisplayRow({
 
   return (
     <tr>
-      <td className="min-w-[120px] pl-4 select-none" title={match.build}>
+      <td className="min-w-[6%] pl-4 select-none" title={match.build}>
         <span className="font-medium">{match.build.length < 10 ? match.build : match.build.slice(0, 10) + "..."}</span>
       </td>
-      <td className="px-4 text-left min-w-[80px]">
+      <td className="px-4 text-left min-w-[4%]">
         {currentBuild?.bftBonus ? (
           <div className="flex flex-col">
             <span>{`${currentBuild.bftBonus}%`}</span>
@@ -40,55 +40,65 @@ export default function MatchDisplayRow({
         )}
       </td>
       {matchRarities.map((rarity, index) => (
-        <td key={index} className="px-6 text-left min-w-[60px]" title={rarity}>
+        <td key={index} className="px-6 text-left min-w-[4%]" title={rarity}>
           <RarityBadge rarity={rarity} />
         </td>
       ))}
-      <td className="px-4 text-left min-w-[80px]">{match.luckrate}</td>
-      <td className="px-4 text-left min-w-[80px]">{match.time}</td>
-      <td className="px-4 text-left min-w-[80px]">{match.energyUsed}</td>
+      <td className="px-4 text-left min-w-[4%]">{match.luckrate}</td>
+      <td className="px-4 text-left min-w-[4%]">{match.time}</td>
+      <td className="px-4 text-left min-w-[4%]">{match.energyUsed}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[80px] text-destructive">
+          <td className="px-4 text-left min-w-[4%] text-destructive">
             ${match.calculated.energyCost}
           </td>
         </>
       )}
       
-      <td className="px-6 text-left min-w-[80px] capitalize" title={match.map}>
+      <td className="px-6 text-left min-w-[4%] capitalize" title={match.map}>
         <MapIcon map={match.map} />
       </td>
-      <td className="px-6 text-left min-w-[80px] capitalize" title={match.result}>
+      <td className="px-6 text-left min-w-[4%] capitalize" title={match.result}>
         <ResultIcon result={match.result} />
       </td>
-      <td className="px-4 text-left min-w-[80px]">{match.totalToken}</td>
+      <td className="px-4 text-left min-w-[4%]">{match.totalToken}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[80px] text-accent">
+          <td className="px-4 text-left min-w-[4%] text-accent">
             ${match.calculated.tokenValue}
           </td>
         </>
       )}
       
-      <td className="px-4 text-left min-w-[80px]">{match.totalPremiumCurrency}</td>
+      <td className="px-4 text-left min-w-[4%]">{match.totalToken / match.time}</td>
+
+
+      {/* Masquer les colonnes financières en mode streamer */}
+      {!streamerMode && (
+        <>
+          <td className="px-4 text-left min-w-[4%]">${match.calculated.tokenValue / match.time}</td>
+        </>
+      )}
+
+      <td className="px-4 text-left min-w-[3%]">{match.totalPremiumCurrency}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[80px] text-accent">
+          <td className="px-4 text-left min-w-[4%] text-accent">
             ${match.calculated.premiumValue}
           </td>
-          <td className="px-4 text-left min-w-[80px] text-green-500">
+          <td className="px-4 text-left min-w-[5%] text-accent">
             ${match.calculated.profit}
           </td>
         </>
       )}
       
-      <td className="px-1 flex gap-2 items-left justify-left min-w-[100px]">
+      <td className="px-1 flex gap-2 items-left justify-left min-w-[6%]">
         <ActionButtons
           isEditing={isEditing}
           isCreating={isCreating}

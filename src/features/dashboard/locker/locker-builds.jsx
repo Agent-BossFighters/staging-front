@@ -19,7 +19,7 @@ import { postData, deleteData } from "@utils/api/data";
 import { useBuilds } from "./hook/useBuilds";
 import { useEditBuild } from "./hook/useEditBuild";
 import { GreenFighter } from "@img/index";
-
+import BuildSkeleton from "./skeletons/BuildSkeleton";
 export default function Lockerbuilds() {
   const { builds, setBuilds, loading, setLoading, fetchMyBuilds } = useBuilds();
   const {
@@ -100,7 +100,7 @@ export default function Lockerbuilds() {
   };
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return <BuildSkeleton />;
   }
 
   return (

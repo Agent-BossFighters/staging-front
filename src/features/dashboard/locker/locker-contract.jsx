@@ -25,7 +25,7 @@ import {
 import { useContracts } from "@features/dashboard/locker/hook/useContracts";
 import { useEditContract } from "@features/dashboard/locker/hook/useEditContract";
 import { useUserPreference } from "@context/userPreference.context";
-
+import ShowrunnerContractSkeleton from "./skeletons/ShowrunnerContractSkeleton";
 export default function LockerContract() {
   const { contracts, setContracts, loading, setLoading, fetchMyContracts } =
     useContracts();
@@ -114,7 +114,7 @@ export default function LockerContract() {
   };
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return <ShowrunnerContractSkeleton />;
   }
 
   return (

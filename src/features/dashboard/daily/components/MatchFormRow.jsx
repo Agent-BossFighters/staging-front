@@ -30,7 +30,7 @@ export default function MatchFormRow({
   
   return (
     <tr>
-      <td className="min-w-[120px] pl-4">
+      <td className="min-w-[6%] pl-4">
         <Select
           value={data.buildId}
           onValueChange={(value) => onChange("buildId", value)}
@@ -49,7 +49,7 @@ export default function MatchFormRow({
           </SelectContent>
         </Select>
       </td>
-      <td className="px-4 text-left min-w-[80px]">
+      <td className="px-4 text-left min-w-[4%]">
         {data.buildId ? (
           <div className="flex flex-col">
             <span>{`${builds.find((b) => b.id === data.buildId)?.bftBonus || 0}%`}</span>
@@ -61,9 +61,9 @@ export default function MatchFormRow({
       {Array(MAX_SLOTS)
         .fill(null)
         .map((_, index) => (
-          <td key={index} className="min-w-[60px] pl-4 first:pl-4" title={data.rarities[index]?.split("#")[0] || ''}>
+          <td key={index} className="px-6 min-w-[4%] pl-4 first:pl-4" title={data.rarities[index]?.split("#")[0] || ''}>
             {!isEditing && index >= unlockedSlots ? (
-              <RarityBadge rarity="none" />
+              <RarityBadge rarity="none"/>
             ) : (
               <RaritySelect
                 value={data.rarities[index]}
@@ -79,8 +79,8 @@ export default function MatchFormRow({
             )}
           </td>
         ))}
-      <td className="px-4 text-left min-w-[80px]">-</td>
-      <td className="min-w-[80px]">
+      <td className="px-4 text-left min-w-[4%]">-</td>
+      <td className="min-w-[4%]">
         <Input
           type="number"
           className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
@@ -89,14 +89,14 @@ export default function MatchFormRow({
           onChange={(e) => onChange("time", e.target.value)}
         />
       </td>
-      <td className="px-4 text-left min-w-[80px]">-</td>
+      <td className="px-4 text-left min-w-[4%]">-</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
-        <td className="px-4 text-left min-w-[80px] text-destructive">-</td>
+        <td className="px-4 text-left min-w-[4%] text-destructive">-</td>
       )}
       
-      <td className="min-w-[80px]" title={data.map}>
+      <td className="min-w-[4%]" title={data.map}>
         <Select
           value={data.map}
           onValueChange={(value) => onChange("map", value)}
@@ -122,7 +122,7 @@ export default function MatchFormRow({
           </SelectContent>
         </Select>
       </td>
-      <td className="min-w-[80px]" title={data.result}>
+      <td className="min-w-[4%]" title={data.result}>
         <Select
           value={data.result}
           onValueChange={(value) => onChange("result", value)}
@@ -148,7 +148,7 @@ export default function MatchFormRow({
           </SelectContent>
         </Select>
       </td>
-      <td className="min-w-[80px]">
+      <td className="min-w-[4%]">
         <Input
           type="number"
           className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
@@ -160,10 +160,17 @@ export default function MatchFormRow({
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
-        <td className="px-4 text-left min-w-[80px] text-accent">-</td>
+        <td className="px-4 text-left min-w-[4%] text-accent">-</td>
       )}
       
-      <td className="min-w-[80px]">
+      <td className="px-4 text-left min-w-[4%]">-</td>
+
+      {/* Masquer les colonnes financières en mode streamer */}
+      {!streamerMode && (
+        <td className="px-4 text-left min-w-[3%]">-</td>
+      )}
+      
+      <td className="min-w-[4%]">
         <Input
           type="number"
           className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
@@ -175,12 +182,12 @@ export default function MatchFormRow({
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[80px] text-accent">-</td>
-          <td className="px-4 text-left min-w-[80px] text-green-500">-</td>
+          <td className="px-4 text-left min-w-[4%] text-accent">-</td>
+          <td className="px-4 text-left min-w-[5%] text-accent">-</td>
         </>
       )}
       
-      <td className="flex gap-2 items-left justify-left min-w-[100px]">
+      <td className="flex gap-2 items-left justify-left min-w-[6%]">
         <ActionButtons
           isEditing={isEditing}
           isCreating={isCreating}
