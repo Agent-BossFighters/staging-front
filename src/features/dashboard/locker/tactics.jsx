@@ -24,6 +24,8 @@ export default function Tactics() {
     setUnlockedSlots,
     selectedFlexPack,
     setSelectedFlexPack,
+    streamerMode,
+    setStreamerMode,
     savePreferences,
   } = useUserPreference();
   const { currencyPacks, loading, error, fetchCurrencyPacks } =
@@ -66,26 +68,24 @@ export default function Tactics() {
           <img src={MyTactic} alt="My Tactics" className="w-10 h-10" />
           MY TACTICS
         </h2>
-        <Button
-          onClick={savePreferences}
-          className="bg-primary hover:bg-primary/90 text-black"
-        >
-          SAVE
-        </Button>
       </div>
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-9">
         <div className="flex flex-col">
-          <h3 className="text-l font-bold whitespace-nowrap">
-            MAX ITEM RARITY TO SHOW
+          <h3 className="text-l font-bold whitespace-nowrap leading-tight pb-[8px]">
+            MAX ITEM RARITY
+            <br />
+            TO SHOW
           </h3>
           <SelectSlot
             onSelectRarity={(value) => setMaxRarity(value)}
-            selectedRarity="none"
+            selectedRarity={maxRarity || "none"}
           />
         </div>
         <div className="flex flex-col">
-          <h3 className="text-l font-bold whitespace-nowrap">
-            FAVORITE FLEX PACK
+          <h3 className="text-l font-bold whitespace-nowrap leading-tight pb-[8px]">
+            FAVORITE
+            <br />
+            FLEX PACK
           </h3>
           <Select
             value={selectedFlexPack || "none"}
@@ -120,8 +120,10 @@ export default function Tactics() {
           </Select>
         </div>
         <div className="flex flex-col">
-          <h3 className="text-l font-bold whitespace-nowrap">
-            BADGE SLOT(S) UNLOCKED
+          <h3 className="text-l font-bold whitespace-nowrap leading-tight pb-[8px]">
+            BADGE SLOT(S)
+            <br />
+            UNLOCKED
           </h3>
           <Select
             value={displayedSlots || "none"}
@@ -143,6 +145,36 @@ export default function Tactics() {
             </SelectContent>
           </Select>
         </div>
+        <div className="flex flex-col">
+          <h3 className="text-l font-bold whitespace-nowrap leading-tight pb-[8px]">
+            STREAMER
+            <br />
+            MODE
+          </h3>
+          <Select
+            value={streamerMode ? "yes" : "no"}
+            onValueChange={(value) => setStreamerMode(value === "yes")}
+          >
+            <SelectTrigger className="inline-flex items-center gap-1 w-[80px] px-4 py-2">
+              <SelectValue>{streamerMode ? "Yes" : "No"}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Enable Streamer Mode</SelectLabel>
+                <SelectItem value="yes">Yes</SelectItem>
+                <SelectItem value="no">No</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col justify-end">
+      <Button
+        onClick={savePreferences}
+        className="bg-primary justify-end hover:bg-primary/90 text-bold text-black"
+      >
+        SAVE
+      </Button>
+      </div>
       </div>
     </div>
   );

@@ -37,6 +37,14 @@ export function UserPreferenceProvider({ children }) {
       : "";
   });
 
+  // Ajout de l'état pour le mode streamer
+  const [streamerMode, setStreamerMode] = useState(() => {
+    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    return savedPreferences
+      ? JSON.parse(savedPreferences).streamerMode || false
+      : false;
+  });
+
   const [recharges, setRecharges] = useState(
     Object.fromEntries(
       ["5", "9", "10", "13", "16", "20", "25"].map((percent) => [percent, 0])
@@ -49,6 +57,7 @@ export function UserPreferenceProvider({ children }) {
         maxRarity,
         unlockedSlots,
         selectedFlexPack,
+        streamerMode, // Ajout du mode streamer aux préférences sauvegardées
         recharges,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
@@ -58,7 +67,7 @@ export function UserPreferenceProvider({ children }) {
       console.error("Error saving preferences:", error);
       toast.error("Failed to save preferences");
     }
-  }, [maxRarity, unlockedSlots, selectedFlexPack, recharges]);
+  }, [maxRarity, unlockedSlots, selectedFlexPack, streamerMode, recharges]);
 
   // État des matchs
   const [matches, setMatches] = useState([]);
@@ -279,6 +288,8 @@ export function UserPreferenceProvider({ children }) {
         setUnlockedSlots,
         selectedFlexPack,
         setSelectedFlexPack,
+        streamerMode,
+        setStreamerMode,
         recharges,
         setRecharges,
         savePreferences,

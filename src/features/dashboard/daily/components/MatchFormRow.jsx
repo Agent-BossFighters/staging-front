@@ -11,6 +11,7 @@ import RarityBadge from "./RarityBadge";
 import MapIcon, { GAME_MAPS, MapSelectItem } from "./MapIcon";
 import ResultIcon, { GAME_RESULTS, ResultSelectItem } from "./ResultIcon";
 import ActionButtons from "./ActionButtons";
+import { useUserPreference } from "@context/userPreference.context";
 
 const MAX_SLOTS = 5;
 
@@ -25,6 +26,8 @@ export default function MatchFormRow({
   onChange,
   onRarityChange,
 }) {
+  const { streamerMode } = useUserPreference();
+  
   return (
     <tr>
       <td className="min-w-[120px] pl-4">
@@ -87,8 +90,13 @@ export default function MatchFormRow({
         />
       </td>
       <td className="px-4 text-left min-w-[80px]">-</td>
-      <td className="px-4 text-left min-w-[80px] text-destructive">-</td>
-      <td className="min-w-[80px]">
+      
+      {/* Masquer les colonnes financières en mode streamer */}
+      {!streamerMode && (
+        <td className="px-4 text-left min-w-[80px] text-destructive">-</td>
+      )}
+      
+      <td className="min-w-[80px]" title={data.map}>
         <Select
           value={data.map}
           onValueChange={(value) => onChange("map", value)}
@@ -114,7 +122,7 @@ export default function MatchFormRow({
           </SelectContent>
         </Select>
       </td>
-      <td className="min-w-[80px]">
+      <td className="min-w-[80px]" title={data.result}>
         <Select
           value={data.result}
           onValueChange={(value) => onChange("result", value)}
@@ -149,17 +157,29 @@ export default function MatchFormRow({
           onChange={(e) => onChange("bft", e.target.value)}
         />
       </td>
-      <td className="px-4 text-left min-w-[80px] text-accent">-</td>
+      
+      {/* Masquer les colonnes financières en mode streamer */}
+      {!streamerMode && (
+        <td className="px-4 text-left min-w-[80px] text-accent">-</td>
+      )}
+      
       <td className="min-w-[80px]">
         <Input
           type="number"
           className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
-          value={ data.flex || "0" }
+          value={data.flex || "0"}
           onChange={(e) => onChange("flex", e.target.value)}
         />
       </td>
-      <td className="px-4 text-left min-w-[80px] text-accent">-</td>
-      <td className="px-4 text-left min-w-[80px] text-green-500">-</td>
+      
+      {/* Masquer les colonnes financières en mode streamer */}
+      {!streamerMode && (
+        <>
+          <td className="px-4 text-left min-w-[80px] text-accent">-</td>
+          <td className="px-4 text-left min-w-[80px] text-green-500">-</td>
+        </>
+      )}
+      
       <td className="flex gap-2 items-left justify-left min-w-[100px]">
         <ActionButtons
           isEditing={isEditing}

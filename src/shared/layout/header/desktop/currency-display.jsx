@@ -2,7 +2,7 @@ import { Flex, Token3, Token4 } from "@img/index";
 import { useUserPreference } from "@context/userPreference.context";
 import { useCurrencyPacks } from "@features/dashboard/locker/hook/useCurrencyPacks";
 import { useAuth } from "@context/auth.context";
-import { CURRENCY_RATES } from "@shared/constants/currency";
+import { CURRENCY_RATES } from "@context/gameConstants.context";
 
 export default function CurrencyDisplay() {
   const { user } = useAuth();

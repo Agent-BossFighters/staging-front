@@ -8,6 +8,7 @@ import {
 } from "@ui/table";
 import MatchEntry from "./match-entry";
 import { useGameConstants } from "@context/gameConstants.context";
+import { useUserPreference } from "@context/userPreference.context";
 
 export default function MatchesList({
   matches,
@@ -22,6 +23,8 @@ export default function MatchesList({
   onEditField,
   onCancel,
 }) {
+  const { streamerMode } = useUserPreference();
+
   const renderSlotHeaders = () => {
     return Array.from({ length: 5 }, (_, i) => (
       <TableHead key={i}>
@@ -58,26 +61,43 @@ export default function MatchesList({
               <br />
               USED
             </TableHead>
-            <TableHead className="min-w-[80px] text-destructive">
-              ENERGY
-              <br />
-              COST
-            </TableHead>
+            
+            {/* Masquer les colonnes financières en mode streamer */}
+            {!streamerMode && (
+              <TableHead className="min-w-[80px] text-destructive">
+                ENERGY
+                <br />
+                COST
+              </TableHead>
+            )}
+            
             <TableHead className="min-w-[60px]">MAP</TableHead>
             <TableHead className="min-w-[80px]">RESULT</TableHead>
             <TableHead className="min-w-[80px]">$BFT</TableHead>
-            <TableHead className="min-w-[80px] text-accent">
-              $BFT ($)
-            </TableHead>
+            
+            {/* Masquer les colonnes financières en mode streamer */}
+            {!streamerMode && (
+              <TableHead className="min-w-[80px] text-accent">
+                $BFT ($)
+              </TableHead>
+            )}
+            
             <TableHead className="min-w-[80px]">FLEX</TableHead>
-            <TableHead className="min-w-[80px] text-accent">
-              FLEX
-              <br />
-              ($)
-            </TableHead>
-            <TableHead className="min-w-[80px] text-green-500">
-              PROFIT
-            </TableHead>
+            
+            {/* Masquer les colonnes financières en mode streamer */}
+            {!streamerMode && (
+              <>
+                <TableHead className="min-w-[80px] text-accent">
+                  FLEX
+                  <br />
+                  ($)
+                </TableHead>
+                <TableHead className="min-w-[80px] text-green-500">
+                  PROFIT
+                </TableHead>
+              </>
+            )}
+            
             <TableHead className="min-w-[100px]">ACTIONS</TableHead>
           </TableRow>
         </TableHeader>
@@ -90,17 +110,17 @@ export default function MatchesList({
           />
           {matches.map((match) => (
             <MatchEntry
-            key={match.id}
-            match={match}
-            builds={builds}
-            isEditing={match.id === editingMatchId}
-            editedData={editedData}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onUpdate={(data) => onUpdate(match.id, data)}
-            onEditField={onEditField}
-            onCancel={onCancel}
-            unlockedSlots={unlockedSlots}
+              key={match.id}
+              match={match}
+              builds={builds}
+              isEditing={match.id === editingMatchId}
+              editedData={editedData}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onUpdate={(data) => onUpdate(match.id, data)}
+              onEditField={onEditField}
+              onCancel={onCancel}
+              unlockedSlots={unlockedSlots}
             />
           ))}
         </TableBody>

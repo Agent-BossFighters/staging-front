@@ -34,7 +34,7 @@ const premiumCards = {
 };
 
 const disabledStyle =
-  "opacity-50 pointer-events-none cursor-not-allowed bg-[#1A1B1E]/80";
+  "opacity-50 pointer-events-none cursor-not-allowed bg-[#1A1B1E]/80 rounded-2xl";
 
 export function CardsGrid() {
   const { user } = useAuth();
