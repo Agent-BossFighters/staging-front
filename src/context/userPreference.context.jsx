@@ -19,22 +19,51 @@ export function useUserPreference() {
 export function UserPreferenceProvider({ children }) {
   // Préférences utilisateur avec initialisation depuis localStorage
   const [maxRarity, setMaxRarity] = useState(() => {
-    const savedPreferences = localStorage.getItem(STORAGE_KEY);
-    return savedPreferences
-      ? JSON.parse(savedPreferences).maxRarity
-      : "legendary";
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences && JSON.parse(savedPreferences).maxRarity
+        ? JSON.parse(savedPreferences).maxRarity
+        : "legendary";
+    } catch (error) {
+      console.error("Error loading maxRarity:", error);
+      return "legendary";
+    }
   });
 
   const [unlockedSlots, setUnlockedSlots] = useState(() => {
-    const savedPreferences = localStorage.getItem(STORAGE_KEY);
-    return savedPreferences ? JSON.parse(savedPreferences).unlockedSlots : 1;
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences && JSON.parse(savedPreferences).unlockedSlots
+        ? JSON.parse(savedPreferences).unlockedSlots
+        : 1;
+    } catch (error) {
+      console.error("Error loading unlockedSlots:", error);
+      return 1;
+    }
   });
 
   const [selectedFlexPack, setSelectedFlexPack] = useState(() => {
-    const savedPreferences = localStorage.getItem(STORAGE_KEY);
-    return savedPreferences
-      ? JSON.parse(savedPreferences).selectedFlexPack
-      : "";
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences && JSON.parse(savedPreferences).selectedFlexPack
+        ? JSON.parse(savedPreferences).selectedFlexPack
+        : "";
+    } catch (error) {
+      console.error("Error loading selectedFlexPack:", error);
+      return "";
+    }
+  });
+
+  const [streamerMode, setStreamerMode] = useState(() => {
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences && JSON.parse(savedPreferences).streamerMode
+        ? JSON.parse(savedPreferences).streamerMode
+        : false;
+    } catch (error) {
+      console.error("Error loading streamerMode:", error);
+      return false;
+    }
   });
 
   const [recharges, setRecharges] = useState(
@@ -45,20 +74,33 @@ export function UserPreferenceProvider({ children }) {
 
   const savePreferences = useCallback(() => {
     try {
+      // S'assurer que les valeurs sont définies
+      const safeMaxRarity = maxRarity || "legendary";
+      const safeUnlockedSlots = unlockedSlots || 1;
+      const safeSelectedFlexPack = selectedFlexPack || "";
+      const safeStreamerMode = streamerMode || false;
+      
+      // Récupérer les préférences existantes pour ne pas écraser d'autres valeurs
+      const existingPrefs = localStorage.getItem(STORAGE_KEY);
+      const existingPrefsObj = existingPrefs ? JSON.parse(existingPrefs) : {};
+      
       const preferences = {
-        maxRarity,
-        unlockedSlots,
-        selectedFlexPack,
+        ...existingPrefsObj,
+        maxRarity: safeMaxRarity,
+        unlockedSlots: safeUnlockedSlots,
+        selectedFlexPack: safeSelectedFlexPack,
+        streamerMode: safeStreamerMode,
         recharges,
       };
+      
       localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+      console.log("Preferences saved:", preferences);
       toast.success("Preferences saved successfully");
-      window.location.reload();
     } catch (error) {
       console.error("Error saving preferences:", error);
       toast.error("Failed to save preferences");
     }
-  }, [maxRarity, unlockedSlots, selectedFlexPack, recharges]);
+  }, [maxRarity, unlockedSlots, selectedFlexPack, streamerMode, recharges]);
 
   // État des matchs
   const [matches, setMatches] = useState([]);
@@ -269,6 +311,53 @@ export function UserPreferenceProvider({ children }) {
     }
   }, []);
 
+  // Fonction pour récupérer les préférences stockées
+  const getStoredPreferences = useCallback(() => {
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      return savedPreferences ? JSON.parse(savedPreferences) : {
+        maxRarity: "legendary",
+        unlockedSlots: 1,
+        selectedFlexPack: "",
+        streamerMode: false,
+        recharges: Object.fromEntries(
+          ["5", "9", "10", "13", "16", "20", "25"].map((percent) => [percent, 0])
+        )
+      };
+    } catch (error) {
+      console.error("Error loading preferences:", error);
+      return {
+        maxRarity: "legendary",
+        unlockedSlots: 1,
+        selectedFlexPack: "",
+        streamerMode: false,
+        recharges: Object.fromEntries(
+          ["5", "9", "10", "13", "16", "20", "25"].map((percent) => [percent, 0])
+        )
+      };
+    }
+  }, []);
+
+  // Fonction pour forcer le rechargement des préférences depuis localStorage
+  const reloadPreferences = useCallback(() => {
+    try {
+      const savedPreferences = localStorage.getItem(STORAGE_KEY);
+      if (savedPreferences) {
+        const preferences = JSON.parse(savedPreferences);
+        setMaxRarity(preferences.maxRarity || "legendary");
+        setUnlockedSlots(preferences.unlockedSlots || 1);
+        setSelectedFlexPack(preferences.selectedFlexPack || "");
+        setStreamerMode(preferences.streamerMode || false);
+        if (preferences.recharges) {
+          setRecharges(preferences.recharges);
+        }
+        console.log("Preferences reloaded:", preferences);
+      }
+    } catch (error) {
+      console.error("Error reloading preferences:", error);
+    }
+  }, []);
+
   return (
     <UserPreferenceContext.Provider
       value={{
@@ -279,9 +368,13 @@ export function UserPreferenceProvider({ children }) {
         setUnlockedSlots,
         selectedFlexPack,
         setSelectedFlexPack,
+        streamerMode,
+        setStreamerMode,
         recharges,
         setRecharges,
         savePreferences,
+        getStoredPreferences,
+        reloadPreferences,
 
         // État des matchs
         matches,

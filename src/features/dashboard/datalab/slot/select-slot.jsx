@@ -60,7 +60,7 @@ export default function SelectSlot({
       disabled={disabled}
     >
       <SelectTrigger
-        className={`inline-flex items-center gap-1 w-[120px] px-4 py-2 ${rounded ? "rounded-full" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+        className={`inline-flex items-center gap-1 w-[150px] px-4 py-2 ${rounded ? "rounded-full" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
         style={{ color: selectedColor }}
       >
         <SelectValue placeholder="Select">

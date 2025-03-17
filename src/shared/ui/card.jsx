@@ -29,9 +29,9 @@ const Card = React.forwardRef(
         <div
           ref={ref}
           className={cn(
-            "relative block rounded-2xl bg-[#1A1B1E] border border-gray-800/50 transition-all duration-300 overflow-hidden group h-full",
+            "relative block rounded-2xl bg-[#1A1B1E] border-2 border-gray-800/50 transition-all duration-300 overflow-hidden group h-full",
             path &&
-              "hover:bg-gradient-to-br hover:from-yellow-500/10 hover:to-yellow-900/10 hover:scale-[1.02] hover:border-gray-700/50",
+              "hover:scale-[1.01] hover:border-gray-700/50",
             className
           )}
           {...props}

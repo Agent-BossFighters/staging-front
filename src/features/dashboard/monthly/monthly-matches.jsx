@@ -6,32 +6,14 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
-import { CURRENCY_RATES } from "@shared/constants/currency";
+import { useUserPreference } from "@context/userPreference.context";
 
 export default function MonthlyMatches({
   dailyMetrics,
   monthlyTotals,
   loading,
 }) {
-  const calculateEnergyCost = (energy) => {
-    return (energy * CURRENCY_RATES.ENERGY).toFixed(2);
-  };
-
-  const calculateBftValue = (bft) => {
-    return (bft * CURRENCY_RATES.BFT).toFixed(2);
-  };
-
-  const calculateFlexValue = (flex) => {
-    return (flex * CURRENCY_RATES.FLEX).toFixed(2);
-  };
-
-  const calculateProfit = (bftValue, flexValue, energyCost) => {
-    return (
-      parseFloat(bftValue) +
-      parseFloat(flexValue) -
-      parseFloat(energyCost)
-    ).toFixed(2);
-  };
+  const { streamerMode } = useUserPreference();
 
   if (loading) {
     return (
@@ -44,6 +26,21 @@ export default function MonthlyMatches({
     );
   }
 
+  // Calculer le temps total pour un jour
+  const calculateDailyIGTime = (dayData) => {
+    if (!dayData || !Array.isArray(dayData.matches)) {
+      return 0;
+    }
+    
+    const totalTime = dayData.matches.reduce((total, match) => {
+      if (!match || typeof match.time !== 'number') {
+        return total;
+      }
+      return total + match.time;
+    }, 0);
+    return totalTime;
+  };
+
   return (
     <div className="flex flex-col gap-8 h-full">
       <div className="flex-grow overflow-auto">
@@ -51,75 +48,100 @@ export default function MonthlyMatches({
           <TableHeader>
             <TableRow>
               <TableHead className="text-left">DATE</TableHead>
-              <TableHead className="text-center">
+              <TableHead className="text-left">
                 MATCHES
                 <br /> PLAYED
               </TableHead>
-              <TableHead className="text-center">
+              <TableHead className="text-left">
                 IG TIME
                 <br /> (Min)
               </TableHead>
-              <TableHead className="text-center">
+              <TableHead className="text-left">
                 ENERGY
                 <br /> USED
               </TableHead>
-              <TableHead className="text-center text-destructive">
-                ENERGY
-                <br /> COST
-              </TableHead>
-              <TableHead className="text-center">
+
+              {/* Masquer les colonnes financières en mode streamer */}
+              {!streamerMode && (
+                <TableHead className="text-left text-destructive">
+                  ENERGY
+                  <br /> COST
+                </TableHead>
+              )}
+              <TableHead className="text-left">
                 TOTAL
                 <br /> $BFT
               </TableHead>
-              <TableHead className="text-center text-accent">BFT ($)</TableHead>
-              <TableHead className="text-center">FLEX</TableHead>
-              <TableHead className="text-center text-accent">
-                FLEX ($)
-              </TableHead>
-              <TableHead className="text-center text-green-500">
-                PROFIT
-              </TableHead>
-              <TableHead className="text-center">WIN RATE</TableHead>
+
+              {/* Masquer les colonnes financières en mode streamer */}
+              {!streamerMode && (
+                <TableHead className="text-left text-accent">BFT ($)</TableHead>
+              )}
+              <TableHead className="text-left">FLEX</TableHead>
+
+              {/* Masquer les colonnes financières en mode streamer */}
+              {!streamerMode && (
+                <>
+                  <TableHead className="text-left text-accent">
+                    FLEX ($)
+                  </TableHead>
+                  <TableHead className="text-left text-green-500">
+                    PROFIT
+                  </TableHead>
+                </>
+              )}
+              <TableHead className="text-left">WIN RATE</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {Object.entries(dailyMetrics || {}).map(([date, metrics]) => {
-              const energyCost = calculateEnergyCost(metrics.total_energy);
-              const bftValue = calculateBftValue(metrics.total_bft);
-              const flexValue = calculateFlexValue(metrics.total_flex);
-              const profit = calculateProfit(bftValue, flexValue, energyCost);
-
               return (
                 <TableRow key={date} className="border-b border-border">
                   <TableCell>{new Date(date).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-left">
                     {metrics.total_matches}
                   </TableCell>
-                  <TableCell className="text-center">
-                    {metrics.total_matches * 60}
+                  <TableCell className="text-left">
+                    {calculateDailyIGTime(metrics)}
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-left">
                     {metrics.total_energy}
                   </TableCell>
-                  <TableCell className="text-center text-destructive">
-                    ${energyCost}
-                  </TableCell>
-                  <TableCell className="text-center">
+                  
+                  {/* Masquer les colonnes financières en mode streamer */}
+                  {!streamerMode && (
+                    <TableCell className="text-left text-destructive">
+                      ${metrics.total_energy_cost}
+                    </TableCell>
+                  )}
+                  <TableCell className="text-left">
                     {metrics.total_bft}
                   </TableCell>
-                  <TableCell className="text-center text-accent">
-                    ${bftValue}
-                  </TableCell>
-                  <TableCell className="text-center">
+
+                  {/* Masquer les colonnes financières en mode streamer */}
+                  {!streamerMode && (
+                    <TableCell className="text-left text-accent">
+                      ${metrics.total_bft_value}
+                    </TableCell>
+                  )}
+                  <TableCell className="text-left">
                     {metrics.total_flex}
                   </TableCell>
-                  <TableCell className="text-center text-accent">
-                    ${flexValue}
-                  </TableCell>
-                  <TableCell className="text-center text-green-500">
-                    ${profit}
-                  </TableCell>
-                  <TableCell className="text-center">
+
+                  {/* Masquer les colonnes financières en mode streamer */}
+                  {!streamerMode && (
+                    <>
+                      <TableCell className="text-left text-accent">
+                        ${metrics.total_flex_value}
+                      </TableCell>
+
+                      <TableCell className="text-left text-green-500">
+                        ${metrics.total_profit}
+                      </TableCell>
+                    </>
+                  )}
+                  <TableCell className="text-left">
                     {metrics.win_rate}%
                   </TableCell>
                 </TableRow>

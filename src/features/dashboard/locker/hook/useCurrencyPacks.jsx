@@ -30,9 +30,11 @@ export const useCurrencyPacks = () => {
       try {
         const result = await fetchPromise;
         setCurrencyPacks(result);
+        setLoading(false);
         return;
       } catch (err) {
         setError(err.message);
+        setLoading(false);
         return;
       }
     }

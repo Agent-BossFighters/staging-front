@@ -25,7 +25,7 @@ import { useBadges } from "./hook/useBadges";
 import { useEditBadge } from "./hook/useEditBadge";
 import { BadgeCommon } from "@img/index";
 import { useUserPreference } from "@context/userPreference.context";
-
+import BadgeSkeleton from "./skeletons/BadgeSkeleton";
 export default function LockerBadges() {
   const { badges, setBadges, loading, setLoading, fetchMyBadges } = useBadges();
   const {
@@ -113,7 +113,7 @@ export default function LockerBadges() {
   };
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return <BadgeSkeleton />;
   }
 
   return (

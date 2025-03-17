@@ -8,6 +8,7 @@ import {
 } from "@ui/table";
 import MatchEntry from "./match-entry";
 import { useGameConstants } from "@context/gameConstants.context";
+import { useUserPreference } from "@context/userPreference.context";
 
 export default function MatchesList({
   matches,
@@ -22,63 +23,97 @@ export default function MatchesList({
   onEditField,
   onCancel,
 }) {
+  const { streamerMode } = useUserPreference();
+
   const renderSlotHeaders = () => {
     return Array.from({ length: 5 }, (_, i) => (
-      <TableHead key={i}>
+      <TableHead key={i} className="w-[4%]">
         SLOT {i + 1}
       </TableHead>
     ));
   };
 
   return (
-    <div className="flex-grow overflow-auto">
-      <Table className="w-full">
-        <TableCaption>Daily matches history and statistics</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="min-w-[120px]">BUILD</TableHead>
-            <TableHead className="min-w-[80px]">
-              BFT BONUS
+    <div className="flex-grow overflow-y-auto overflow-x-auto">
+      <div className="w-full min-w-0">
+        <Table className="w-full table-fixed min-w-[1350px]">
+          <TableCaption>Daily matches history and statistics</TableCaption>
+          <TableHeader>
+            <TableRow className="text-xs md:text-sm">
+              <TableHead className="w-[6%]">BUILD</TableHead>
+              <TableHead className="w-[4%]">
+                $BFT %
+                <br />
+                BONUS
+              </TableHead>
+              {renderSlotHeaders()}
+              <TableHead className="w-[4%]">
+                LUCK
+                <br />
+                RATE
+              </TableHead>
+              <TableHead className="w-[4%]">
+                IG TIME
+                <br />
+                (MIN)
+              </TableHead>
+              <TableHead className="w-[4%]">
+                ENERGY
+                <br />
+                USED
+            </TableHead>
+            
+            {/* Masquer les colonnes financières en mode streamer */}
+            {!streamerMode && (
+              <TableHead className="w-[4%] text-destructive">
+                ENERGY
+                <br />
+                COST
+              </TableHead>
+            )}
+            
+            <TableHead className="w-[4%]">MAP</TableHead>
+            <TableHead className="w-[4%]">RESULT</TableHead>
+            <TableHead className="w-[4%]">$BFT</TableHead>
+            
+            {/* Masquer les colonnes financières en mode streamer */}
+            {!streamerMode && (
+              <TableHead className="w-[4%] text-accent">
+                $BFT ($)
+              </TableHead>
+            )}
+            
+            <TableHead className="w-[4%]">
+              BFT /
               <br />
-              MULTIPLIER
+              MINUTE
             </TableHead>
-            {renderSlotHeaders()}
-            <TableHead className="min-w-[80px]">
-              LUCK
-              <br />
-              RATE
-            </TableHead>
-            <TableHead className="min-w-[80px]">
-              IG TIME
-              <br />
-              (MIN)
-            </TableHead>
-            <TableHead className="min-w-[80px]">
-              ENERGY
-              <br />
-              USED
-            </TableHead>
-            <TableHead className="min-w-[80px] text-destructive">
-              ENERGY
-              <br />
-              COST
-            </TableHead>
-            <TableHead className="min-w-[60px]">MAP</TableHead>
-            <TableHead className="min-w-[80px]">RESULT</TableHead>
-            <TableHead className="min-w-[80px]">$BFT</TableHead>
-            <TableHead className="min-w-[80px] text-accent">
-              $BFT ($)
-            </TableHead>
-            <TableHead className="min-w-[80px]">FLEX</TableHead>
-            <TableHead className="min-w-[80px] text-accent">
-              FLEX
-              <br />
-              ($)
-            </TableHead>
-            <TableHead className="min-w-[80px] text-green-500">
-              PROFIT
-            </TableHead>
-            <TableHead className="min-w-[100px]">ACTIONS</TableHead>
+
+            {/* Masquer les colonnes financières en mode streamer */}
+            {!streamerMode && (
+              <TableHead className="w-[4%]">
+                $ /
+                <br />
+                MINUTE
+              </TableHead>
+            )}
+            <TableHead className="w-[3%]">FLEX</TableHead>
+            
+            {/* Masquer les colonnes financières en mode streamer */}
+            {!streamerMode && (
+              <>
+                <TableHead className="w-[4%] text-accent">
+                  FLEX
+                  <br />
+                  ($)
+                </TableHead>
+                <TableHead className="w-[5%] text-accent">
+                  PROFIT
+                </TableHead>
+              </>
+            )}
+            
+            <TableHead className="w-[6%]">ACTIONS</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -90,21 +125,22 @@ export default function MatchesList({
           />
           {matches.map((match) => (
             <MatchEntry
-            key={match.id}
-            match={match}
-            builds={builds}
-            isEditing={match.id === editingMatchId}
-            editedData={editedData}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onUpdate={(data) => onUpdate(match.id, data)}
-            onEditField={onEditField}
-            onCancel={onCancel}
-            unlockedSlots={unlockedSlots}
+              key={match.id}
+              match={match}
+              builds={builds}
+              isEditing={match.id === editingMatchId}
+              editedData={editedData}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onUpdate={(data) => onUpdate(match.id, data)}
+              onEditField={onEditField}
+              onCancel={onCancel}
+              unlockedSlots={unlockedSlots}
             />
-          ))}
-        </TableBody>
-      </Table>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

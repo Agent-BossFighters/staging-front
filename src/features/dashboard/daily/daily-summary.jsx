@@ -1,6 +1,9 @@
 import { Flex, Token4, Purse, Spark, Win, Draw, Loss } from "@img/index";
+import { useUserPreference } from "@context/userPreference.context";
 
 export default function DailySummary({ date, summary }) {
+  const { streamerMode } = useUserPreference();
+  
   const formatDate = (dateString) => {
     const d = new Date(dateString);
     const day = d.toLocaleDateString("fr-FR", { day: "2-digit" });
@@ -47,36 +50,44 @@ export default function DailySummary({ date, summary }) {
           <p className="text-3xl">{summary.matchesCount}</p>
         </div>
 
-        {/* Energy used */}
+        {/* Energy used - Afficher la quantité mais pas le coût en mode streamer */}
         <div className="flex flex-col items-center gap-1">
           <img src={Spark} alt="Energy" className="w-6 h-10" />
           <p className="text-2xl font-bold">ENERGY USED</p>
           <p className="text-red-500 text-2xl">{summary.energyUsed.amount}</p>
-          <p className="text-red-500 text-2sm">${summary.energyUsed.cost}</p>
+          {!streamerMode && (
+            <p className="text-red-500 text-2sm">${summary.energyUsed.cost}</p>
+          )}
         </div>
 
-        {/* Total BFT */}
+        {/* Total BFT - Afficher la quantité mais pas la valeur en mode streamer */}
         <div className="flex flex-col items-center gap-1">
           <img src={Token4} alt="bft" className="w-10 h-10" />
           <p className="text-2xl font-bold">$BFT</p>
           <p className="text-green-500 text-2xl">{summary.totalBft.amount}</p>
-          <p className="text-green-500 text-2sm">${summary.totalBft.value}</p>
+          {!streamerMode && (
+            <p className="text-green-500 text-2sm">${summary.totalBft.value}</p>
+          )}
         </div>
 
-        {/* Total Flex */}
+        {/* Total Flex - Afficher la quantité mais pas la valeur en mode streamer */}
         <div className="flex flex-col items-center gap-1">
           <img src={Flex} alt="flex" className="w-10 h-10" />
           <p className="text-2xl font-bold">FLEX</p>
           <p className="text-green-500 text-2xl">{summary.totalFlex.amount}</p>
-          <p className="text-green-500 text-2sm">${summary.totalFlex.value}</p>
+          {!streamerMode && (
+            <p className="text-green-500 text-2sm">${summary.totalFlex.value}</p>
+          )}
         </div>
 
-        {/* Profit */}
-        <div className="pb-4 flex flex-col items-center gap-2">
-          <img src={Purse} alt="Profit" className="w-8 h-10" />
-          <p className="text-2xl font-bold">PROFIT</p>
-          <p className="text-green-500 text-3xl">${summary.profit}</p>
-        </div>
+        {/* Profit - Ne pas afficher du tout en mode streamer */}
+        {!streamerMode && (
+          <div className="pb-4 flex flex-col items-center gap-2">
+            <img src={Purse} alt="Profit" className="w-8 h-10" />
+            <p className="text-2xl font-bold">PROFIT</p>
+            <p className="text-green-500 text-3xl">${summary.profit}</p>
+          </div>
+        )}
       </div>
     </div>
   );
