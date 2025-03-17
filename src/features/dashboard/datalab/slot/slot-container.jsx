@@ -25,7 +25,7 @@ export default function SlotContainer() {
           />
         </div>
         <div className="w-full lg:w-1/5">
-          <h3 className="text-2xl font-bold whitespace-nowrap">BADGE RARITY</h3>
+          <h3 className="text-1rem font-bold whitespace-nowrap">BADGE RARITY</h3>
           <FreemiumControl defaultValue="Common">
             <SelectSlot
               onSelectRarity={handleRarityChange}

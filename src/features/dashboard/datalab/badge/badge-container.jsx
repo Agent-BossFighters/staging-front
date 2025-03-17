@@ -32,7 +32,7 @@ export default function BadgeContainer() {
       <div className="flex-grow flex justify-start items-start gap-5">
         <Badge badges={badges} loading={loading} />
         <div className="pt-12">
-          <h3 className="text-2xl font-bold whitespace-nowrap">SLOT(S) USED</h3>
+          <h3 className="text-1rem font-bold whitespace-nowrap">SLOT(S) USED</h3>
           <FreemiumControl defaultValue="1">
             <SelectSlotUsed
               defaultValue={mainSlotsUsed.toString()}
@@ -45,7 +45,7 @@ export default function BadgeContainer() {
         <BadgesPrices badges={priceBadges} loading={loading} />
         <div className="flex flex-col gap-5">
           <div className="">
-            <h3 className="text-2xl font-bold whitespace-nowrap">
+            <h3 className="text-1rem font-bold whitespace-nowrap">
               $BFT BONUS MULTIPLIER
             </h3>
             <FreemiumControl defaultValue={1.0}>
@@ -56,7 +56,7 @@ export default function BadgeContainer() {
             </FreemiumControl>
           </div>
           <div className="">
-            <h3 className="text-2xl font-bold whitespace-nowrap">
+            <h3 className="text-1rem font-bold whitespace-nowrap">
               SLOT(S) USED
             </h3>
             <FreemiumControl defaultValue="1">

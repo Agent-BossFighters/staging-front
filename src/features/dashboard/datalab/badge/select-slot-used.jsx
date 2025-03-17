@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@ui/select";
 
-const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
+const numbers = Array.from({ length: 5 }, (_, i) => i + 1);
 
 export default function SelectSlotUsed({
   onValueChange,

@@ -35,7 +35,7 @@ export default function MatchFormRow({
           value={data.buildId}
           onValueChange={(value) => onChange("buildId", value)}
         >
-          <SelectTrigger className="w-full h-8 rounded-full bg-[#212121] opacity-80" title={builds.find((b) => b.id === data.buildId)?.buildName}>
+          <SelectTrigger className="w-full h-8 rounded-full bg-[#212121] " title={builds.find((b) => b.id === data.buildId)?.buildName}>
             <SelectValue placeholder='Select' >
              {builds.find((b) => b.id === data.buildId)?.buildName.length < 10 ? builds.find((b) => b.id === data.buildId)?.buildName : builds.find((b) => b.id === data.buildId)?.buildName.slice(0, 10)+ '...' || 'Select'}
             </SelectValue>
@@ -101,7 +101,7 @@ export default function MatchFormRow({
           value={data.map}
           onValueChange={(value) => onChange("map", value)}
         >
-          <SelectTrigger className="ml-3 w-14 h-8 px-2 rounded-full bg-[#212121] opacity-80">
+          <SelectTrigger className="ml-3 w-14 h-8 px-2 rounded-full bg-[#212121] ">
             <SelectValue placeholder="">
               {data.map ? (
                 <div className="flex items-center gap-1">
@@ -127,7 +127,7 @@ export default function MatchFormRow({
           value={data.result}
           onValueChange={(value) => onChange("result", value)}
         >
-          <SelectTrigger className="ml-3 w-14 h-8 px-2 rounded-full bg-[#212121] opacity-80">
+          <SelectTrigger className="ml-3 w-14 h-8 px-2 rounded-full bg-[#212121] ">
             <SelectValue placeholder="">
               {data.result ? (
                 <div className="flex items-center gap-1">

@@ -74,13 +74,13 @@ export default function MatchDisplayRow({
         </>
       )}
       
-      <td className="px-4 text-left min-w-[4%]">{match.totalToken / match.time}</td>
+      <td className="px-4 text-left min-w-[4%]">{Math.round(match.totalToken / match.time)}</td>
 
 
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[4%]">${match.calculated.tokenValue / match.time}</td>
+          <td className="px-4 text-left min-w-[4%]">${(match.calculated.tokenValue / match.time).toFixed(2)}</td>
         </>
       )}
 
