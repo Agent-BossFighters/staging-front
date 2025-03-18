@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import DailySummary from "./daily-summary";
 import DailyMatches from "./daily-matches";
 import { useDailyData } from "./hooks/useDailyData.jsx";
+import DateSelector from "./components/DateSelector";
 
 export default function DailyContainer() {
   const {
@@ -11,15 +12,14 @@ export default function DailyContainer() {
     loading,
     error,
     selectedDate,
-    fetchDailyData,
+    createDateHandlers,
     addMatch,
     updateMatch,
     deleteMatch,
   } = useDailyData();
 
-  useEffect(() => {
-    fetchDailyData(selectedDate);
-  }, [selectedDate, fetchDailyData]);
+  // Obtenir les gestionnaires de date
+  const { handlePreviousDay, handleNextDay, handleToday } = createDateHandlers(7);
 
   if (loading) {
     return (
@@ -34,6 +34,16 @@ export default function DailyContainer() {
 
   return (
     <div className="flex flex-col w-[100%]">
+      <div className="flex items-center justify-end mb-4">
+        <DateSelector
+          selectedDate={selectedDate}
+          onPreviousDay={handlePreviousDay}
+          onNextDay={handleNextDay}
+          onToday={handleToday}
+          maxDaysBack={7}
+        />
+      </div>
+
       <DailySummary date={selectedDate} summary={summary} />
 
       {builds.length === 0 ? (

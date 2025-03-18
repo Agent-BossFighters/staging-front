@@ -25,7 +25,7 @@ export default function HeaderPart() {
           {user ? (
             <>
               <NavigationMenuTrigger className="h-full flex items-center p-2 ps-6 rounded-full border border-border/20 hover:bg-primary hover:text-background">
-                <p className="text-bold text-center">
+                <p className="text-bold pr-2">
                   {user.username.toUpperCase()}
                 </p>
                 <Avatar className="cursor-pointer">
@@ -36,21 +36,21 @@ export default function HeaderPart() {
                 </Avatar>
               </NavigationMenuTrigger>
               <NavigationMenuContent className="w-full p-3 bg-background border border-border rounded-lg text-foreground">
-                <div className="w-64 flex flex-col items-end justify-between gap-2">
-                  <p className="border-b border-border/20 w-full text-center py-2">
+                <div className="w-full flex flex-col items-start">
+                  <p className="border-b border-border/20 w-full py-2 px-2 font-medium">
                     {user.username.toUpperCase()}
                   </p>
-                  <NavigationMenuLink asChild>
+                  <NavigationMenuLink asChild className="w-full">
                     <Link
                       to="/users/profile"
-                      className="px-4 hover:text-primary"
+                      className="py-2 px-2 hover:text-primary w-full block whitespace-nowrap"
                     >
-                      My profile | Edit
+                      My profile
                     </Link>
                   </NavigationMenuLink>
                   <Button
                     variant="ghost"
-                    className="text-xs text-muted-foreground hover:bg-transparent hover:text-destructive/70"
+                    className="text-xs py-2 px-2 h-auto text-muted-foreground hover:bg-transparent hover:text-destructive/70 w-full justify-start"
                     onClick={logout}
                   >
                     Sign out

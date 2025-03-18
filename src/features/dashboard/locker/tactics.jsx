@@ -175,14 +175,8 @@ export default function Tactics() {
     return <div className="text-center text-red-500">Error: {error}</div>;
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex justify-between items-center py-2">
-        <h2 className="text-2xl font-extrabold flex gap-3 items-center">
-          <img src={MyTactic} alt="My Tactics" className="w-10 h-10" />
-          MY TACTICS
-        </h2>
-      </div>
-      <div className="flex flex-col lg:flex-row gap-5 lg:gap-9">
+    <div className="flex flex-col px-5 gap-3">
+      <div className="flex flex-col lg:flex-row gap-5 lg:gap-9 pt-2">
         <div className="flex flex-col">
           <h3 className="text-l font-bold whitespace-nowrap leading-tight pb-[8px]">
             MAX ITEM RARITY

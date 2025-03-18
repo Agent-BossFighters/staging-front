@@ -17,7 +17,7 @@ const tabs = [
 
 export default function DatalabTabs() {
   return (
-    <Tabs defaultValue="Slot" className="w-full flex flex-col pl-8">
+    <Tabs defaultValue="Slot" className="w-full flex flex-col">
       <div className="w-fit">
         <TabsList className="bg-transparent text-2xl pb-0 justify-start gap-1 flex flex-col">
           <div className="flex gap-1">

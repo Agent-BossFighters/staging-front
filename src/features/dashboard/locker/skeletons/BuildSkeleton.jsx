@@ -4,11 +4,6 @@ import { Skeleton, TableRowSkeleton, ButtonSkeleton } from "@shared/ui/skeleton"
 export default function BuildSkeleton() {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-3">
-        <img src="/path-to-build-icon.png" alt="" className="w-8 h-8" />
-        <h2 className="text-2xl font-extrabold">BUILD(S)</h2>
-      </div>
-      
       <div className="flex flex-col">
         {/* Header */}
         <div className="bg-gray-800 p-3 rounded-t-md">

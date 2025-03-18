@@ -117,11 +117,8 @@ export default function LockerBadges() {
   }
 
   return (
-    <div>
-      <h2 className="text-2xl font-extrabold py-2 flex gap-3 items-center">
-        <img src={BadgeCommon} alt="Badge" className="w-10 h-10" />
-        BADGE(S)
-      </h2>
+    <div className="flex flex-col px-5 gap-5">
+      <div className="pt-2">
       <Table className="">
         <TableCaption>
           List of your badges
@@ -131,7 +128,7 @@ export default function LockerBadges() {
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
             <TableHead>ID</TableHead>
-            <TableHead>PURCHASE PRICE ($)</TableHead>
+            <TableHead>PURCHASE PRICE</TableHead>
             <TableHead>ACTION(S)</TableHead>
           </TableRow>
         </TableHeader>
@@ -185,7 +182,7 @@ export default function LockerBadges() {
                         className="w-1/2"
                       />
                     ) : (
-                      badge.purchasePrice.toFixed(2)
+                      `${'$' + badge.purchasePrice.toFixed(2)}`
                     )}
                   </TableCell>
                   <TableCell className="flex gap-2 items-center">
@@ -248,6 +245,7 @@ export default function LockerBadges() {
           </TableRow>
         </TableFooter>
       </Table>
+      </div>
     </div>
   );
 }

@@ -1,14 +1,16 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { getData, postData, putData, deleteData } from "@utils/api/data";
+import { useDateNavigation } from "@shared/hook/useDateNavigation";
 
 export const useDailyData = () => {
+  const { selectedDate, setSelectedDate, createDateHandlers } = useDateNavigation();
+  
   const [state, setState] = useState({
     summary: null,
     matches: [],
     builds: [],
     loading: false,
     error: null,
-    selectedDate: new Date(),
   });
 
   const fetchDailyData = useCallback(async (date) => {
@@ -35,7 +37,6 @@ export const useDailyData = () => {
         matches: matchesResponse?.matches || [],
         builds: buildsResponse?.builds || [],
         loading: false,
-        selectedDate: date,
       }));
     } catch (error) {
       console.error("Error fetching daily data:", error);
@@ -47,6 +48,11 @@ export const useDailyData = () => {
     }
   }, []);
 
+  // Charger les données lorsque la date change
+  useEffect(() => {
+    fetchDailyData(selectedDate);
+  }, [selectedDate, fetchDailyData]);
+
   const addMatch = useCallback(
     async (matchData) => {
       try {
@@ -56,7 +62,7 @@ export const useDailyData = () => {
 
         if (response?.match) {
           // Après avoir ajouté un match, on rafraîchit toutes les données
-          await fetchDailyData(state.selectedDate);
+          await fetchDailyData(selectedDate);
           return response.match;
         }
         setState((prev) => ({ ...prev, loading: false }));
@@ -71,7 +77,7 @@ export const useDailyData = () => {
         return null;
       }
     },
-    [state.selectedDate, fetchDailyData]
+    [selectedDate, fetchDailyData]
   );
 
   const updateMatch = useCallback(
@@ -83,7 +89,7 @@ export const useDailyData = () => {
 
         if (response?.match) {
           // Après avoir mis à jour un match, on rafraîchit toutes les données
-          await fetchDailyData(state.selectedDate);
+          await fetchDailyData(selectedDate);
           return response.match;
         }
         setState((prev) => ({ ...prev, loading: false }));
@@ -98,7 +104,7 @@ export const useDailyData = () => {
         return null;
       }
     },
-    [state.selectedDate, fetchDailyData]
+    [selectedDate, fetchDailyData]
   );
 
   const deleteMatch = useCallback(
@@ -110,7 +116,7 @@ export const useDailyData = () => {
 
         if (response) {
           // Après avoir supprimé un match, on rafraîchit toutes les données
-          await fetchDailyData(state.selectedDate);
+          await fetchDailyData(selectedDate);
           return true;
         }
         setState((prev) => ({ ...prev, loading: false }));
@@ -125,12 +131,15 @@ export const useDailyData = () => {
         return false;
       }
     },
-    [state.selectedDate, fetchDailyData]
+    [selectedDate, fetchDailyData]
   );
 
   return {
     ...state,
+    selectedDate,
     fetchDailyData,
+    setSelectedDate,
+    createDateHandlers,
     addMatch,
     updateMatch,
     deleteMatch,

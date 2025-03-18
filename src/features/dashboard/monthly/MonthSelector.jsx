@@ -9,7 +9,7 @@ export default function MonthSelector({
   dailyMetrics,
 }) {
   return (
-    <div className="flex flex-col items-center gap-4 mb-8">
+    <div className="flex flex-col items-center gap-2">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" onClick={onPreviousMonth}>
           <ChevronLeft className="h-4 w-4" />
@@ -22,9 +22,7 @@ export default function MonthSelector({
         </span>
         <Button variant="outline" size="icon" onClick={onNextMonth}>
           <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="w-[calc(200px+5rem)]">
+        </Button >
         <MonthlyDownload dailyMetrics={dailyMetrics} />
       </div>
     </div>
