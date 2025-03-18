@@ -83,7 +83,7 @@ const RaritySelect = memo(
         onValueChange={handleValueChange}
         disabled={disabled}
       >
-        <SelectTrigger className="w-14 h-8 px-2 rounded-full bg-[#212121] opacity-80">
+        <SelectTrigger className="w-14 h-8 px-2 rounded-full bg-[#212121] ">
           <SelectValue>
             {value === "none" ? (
               <span></span>

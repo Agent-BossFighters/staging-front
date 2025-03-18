@@ -132,7 +132,7 @@ export default function LockerContract() {
             <TableHead>RARITY</TableHead>
             <TableHead>ITEM</TableHead>
             <TableHead>ID</TableHead>
-            <TableHead>PURCHASE PRICE</TableHead>
+            <TableHead>PURCHASE PRICE ($)</TableHead>
             <TableHead>ACTION(S)</TableHead>
           </TableRow>
         </TableHeader>
@@ -189,7 +189,7 @@ export default function LockerContract() {
                         className="w-1/2"
                       />
                     ) : (
-                      contract.purchasePrice
+                      contract.purchasePrice.toFixed(2)
                     )}
                   </TableCell>
                   <TableCell className="flex gap-2 items-center">

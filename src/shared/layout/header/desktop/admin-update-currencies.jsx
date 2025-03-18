@@ -3,6 +3,7 @@ import { useGameConstants } from "@context/gameConstants.context";
 import { useAuth } from "@context/auth.context";
 import { kyInstance } from "@utils/api/ky-config";
 import toast from "react-hot-toast";
+import { Button } from "@shared/ui/button";
 
 export default function AdminUpdateCurrencies() {
   const { user } = useAuth();
@@ -123,18 +124,17 @@ export default function AdminUpdateCurrencies() {
 
   return (
     <div className="ml-4 relative">
-      <button
+      <Button
         onClick={handleUpdateClick}
-        className="px-3 py-1 text-xs font-medium text-black bg-primary hover:bg-blue-700 rounded-md transition-colors"
       >
         Update Currencies
-      </button>
+      </Button>
       
       {isEditMode && (
         <div 
           className="absolute top-full left-0 mt-2 z-50 bg-gray-800 p-4 rounded-md border border-gray-700 w-64 shadow-lg"
         >
-          <h3 className="text-white text-sm font-medium mb-3">Update Currency Rates</h3>
+          <h3 className="text-white text-sm font-medium mb-3 uper">Update Currency Rates</h3>
           
           <div className="max-h-80 overflow-y-auto">
             {currencies.map(currency => (

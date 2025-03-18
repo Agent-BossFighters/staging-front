@@ -11,7 +11,7 @@ export default function PremiumButton() {
   // Sinon, on affiche le bouton pour devenir premium
   return (
     <Link to="/payments/pricing">
-      <Button className="bg-primary text-background hover:bg-primary/90 font-bold">
+      <Button>
         PREMIUM
       </Button>
     </Link>

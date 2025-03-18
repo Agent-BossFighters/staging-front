@@ -1,23 +1,23 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/tabs";
 import {
-  SlotContainer,
-  ContractContainer,
-  BadgeContainer,
-  CraftContainer,
-  PlayerCycleContainer,
+  LockerContainer,
+  LockerContract,
+  LockerBadges,
+  LockerBuilds,
+  LockerRecharge,
 } from "./index";
 
 const tabs = [
-  { name: "SLOT", value: "Slot" },
+  { name: "MY TACTICS", value: "Container" },
   { name: "CONTRACT", value: "Contract" },
-  { name: "BADGE", value: "Badge" },
-  { name: "CRAFT", value: "Craft" },
-  { name: "PLAYER CYCLE", value: "Player Cycle", disabled: true },
+  { name: "BADGES", value: "Badges" },
+  { name: "BUILDS", value: "Builds" },
+  { name: "RECHARGE", value: "Recharge" },
 ];
 
-export default function DatalabTabs() {
+export default function LockerTabs() {
   return (
-    <Tabs defaultValue="Slot" className="w-full flex flex-col pl-8">
+    <Tabs defaultValue="Container" className="w-full flex flex-col pl-8">
       <div className="w-fit">
         <TabsList className="bg-transparent text-2xl pb-0 justify-start gap-1 flex flex-col">
           <div className="flex gap-1">
@@ -35,20 +35,20 @@ export default function DatalabTabs() {
         </TabsList>
       </div>
       <div className="mt-6">
-        <TabsContent value="Slot">
-          <SlotContainer />
+        <TabsContent value="Container">
+          <LockerContainer />
         </TabsContent>
         <TabsContent value="Contract">
-          <ContractContainer />
+          <LockerContract />
         </TabsContent>
-        <TabsContent value="Badge">
-          <BadgeContainer />
+        <TabsContent value="Badges">
+          <LockerBadges />
         </TabsContent>
-        <TabsContent value="Craft">
-          <CraftContainer />
+        <TabsContent value="Builds">
+          <LockerBuilds />
         </TabsContent>
-        <TabsContent value="Player Cycle">
-          <PlayerCycleContainer />
+        <TabsContent value="Recharge">
+          <LockerRecharge />
         </TabsContent>
       </div>
     </Tabs>
