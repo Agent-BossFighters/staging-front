@@ -82,7 +82,7 @@ export default function Register() {
 
       <Button
         type="submit"
-        className="w-full h-12 text-background"
+        className="w-full h-12"
         disabled={loading}
       >
         {loading ? "Chargement..." : "Sign up"}

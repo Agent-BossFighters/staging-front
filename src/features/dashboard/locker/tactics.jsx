@@ -283,7 +283,6 @@ export default function Tactics() {
         <div className="flex flex-col justify-end">
           <Button
             onClick={handleSave}
-            className="bg-primary justify-end hover:bg-primary/90 text-bold text-black"
           >
             SAVE
           </Button>

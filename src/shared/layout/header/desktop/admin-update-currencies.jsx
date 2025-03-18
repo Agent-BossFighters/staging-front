@@ -126,7 +126,6 @@ export default function AdminUpdateCurrencies() {
     <div className="ml-4 relative">
       <Button
         onClick={handleUpdateClick}
-        className="bg-primary text-background hover:bg-primary/90 font-bold uppercase"
       >
         Update Currencies
       </Button>

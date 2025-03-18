@@ -72,7 +72,7 @@ export default function Login() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full text-background"
+        className="w-full"
       >
         {loading ? "Loading..." : "Edit"}
       </Button>
