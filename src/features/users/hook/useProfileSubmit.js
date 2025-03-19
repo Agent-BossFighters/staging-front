@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import { AuthUtils } from "@utils/api/auth.utils";
+import { kyInstance } from "@utils/api/ky-config";
 
 /**
  * Mettre à jour le localStorage avec les nouvelles données utilisateur
@@ -28,17 +29,17 @@ function updateLocalStorage(formData, isChangingEmail) {
 function generateSuccessMessage(formData, user, isChangingEmail, isChangingPassword) {
   const changes = [];
   
-  if (formData.username !== user.username) changes.push("nom d'utilisateur");
+  if (formData.username !== user.username) changes.push("username");
   if (isChangingEmail) changes.push("email");
-  if (isChangingPassword) changes.push("mot de passe");
+  if (isChangingPassword) changes.push("password");
   
   if (changes.length > 1) {
     const lastChange = changes.pop();
-    return `${changes.join(", ")} et ${lastChange} mis à jour avec succès`;
+    return `${changes.join(", ")} and ${lastChange} updated successfully`;
   } else if (changes.length === 1) {
-    return `${changes[0]} mis à jour avec succès`;
+    return `${changes[0]} updated successfully`;
   } else {
-    return "Profil mis à jour avec succès";
+    return "Profile updated successfully";
   }
 }
 
@@ -54,9 +55,9 @@ async function handleResponse(response, { formData, setFormData, isChangingEmail
     
     try {
       const errorData = JSON.parse(errorText);
-      errorMessage = errorData.error || errorData.errors?.join(', ') || `Erreur ${response.status}: ${response.statusText}`;
+      errorMessage = errorData.error || errorData.errors?.join(', ') || `Error ${response.status}: ${response.statusText}`;
     } catch (e) {
-      errorMessage = errorText || `Erreur ${response.status}: ${response.statusText}`;
+      errorMessage = errorText || `Error ${response.status}: ${response.statusText}`;
     }
     
     throw new Error(errorMessage);
@@ -68,7 +69,7 @@ async function handleResponse(response, { formData, setFormData, isChangingEmail
       JSON.parse(responseText);
     }
   } catch (e) {
-    console.warn("Impossible de parser la réponse en JSON:", e);
+    console.warn("Unable to parse the response in JSON:", e);
   }
   
   // Mettre à jour les données utilisateur localement
@@ -100,12 +101,12 @@ async function handleResponse(response, { formData, setFormData, isChangingEmail
  */
 function handleError(error, setErrors) {
   
-  if (error.message.includes("mot de passe") || error.message.includes("password")) {
-    setErrors({ current_password: "Le mot de passe actuel est incorrect" });
-    toast.error("Le mot de passe actuel est incorrect");
+  if (error.message.includes("password") || error.message.includes("Password")) {
+    setErrors({ current_password: "Current password is incorrect" });
+    toast.error("Current password is incorrect");
   } else {
-    setErrors({ general: error.message || "Une erreur s'est produite. Veuillez réessayer." });
-    toast.error(error.message || "Une erreur s'est produite. Veuillez réessayer.");
+    setErrors({ general: error.message || "An error occurred. Please try again." });
+    toast.error(error.message || "An error occurred. Please try again.");
   }
 }
 
@@ -154,8 +155,7 @@ export function useProfileSubmit(user, formData, setFormData, validateForm, setE
         dataToUpdate.user.password = formData.new_password;
       }
       
-      const response = await fetch(`http://localhost:3000/api/v1/users/${user.id}`, {
-        method: 'PUT',
+      const response = await kyInstance.put(`v1/users/${user.id}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`

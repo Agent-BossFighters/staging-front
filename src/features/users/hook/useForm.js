@@ -39,11 +39,11 @@ export default function useForm(initialValues = {}, formType = "login") {
       }
     } else if (formType === "profile") {
       if (!values.password) {
-        validationErrors.password = "Le mot de passe actuel est requis";
+        validationErrors.password = "Current password is required";
       }
       
       if (values.username && values.username.trim() === "") {
-        validationErrors.username = "Le nom d'utilisateur ne peut pas être vide";
+        validationErrors.username = "Username cannot be empty";
       }
     } else {
       // Validation pour le login

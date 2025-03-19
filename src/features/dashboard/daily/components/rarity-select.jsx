@@ -7,6 +7,7 @@ import {
 } from "@ui/select";
 import { useBadges } from "@features/dashboard/locker/hook/useBadges";
 import { useEffect, useCallback, memo } from "react";
+import rarities from "@shared/data/rarities.json";
 
 const RaritySelect = memo(
   ({ value, onChange, disabled = false, selectedBadges = [] }) => {
@@ -73,26 +74,19 @@ const RaritySelect = memo(
       const rarityA = typeof a.rarity === "object" ? a.rarity.name : a.rarity;
       const rarityB = typeof b.rarity === "object" ? b.rarity.name : b.rarity;
       
-      // Ordre défini des raretés
-      const rarityOrder = [
-        "common",
-        "uncommon", 
-        "rare",
-        "epic",
-        "legendary",
-        "mythic",
-        "exalted",
-        "exotic",
-        "transcendent",
-        "unique"
-      ];
+      // Utiliser l'ordre défini dans le fichier rarities.json
+      const getRarityOrder = (rarityName) => {
+        const rarityObj = rarities.rarities.find(
+          r => r.rarity.toLowerCase() === rarityName.toLowerCase()
+        );
+        return rarityObj ? rarityObj.order : Number.MAX_SAFE_INTEGER;
+      };
       
-      // Trouver la position de chaque rareté dans l'ordre
-      const indexA = rarityOrder.indexOf(rarityA.toLowerCase());
-      const indexB = rarityOrder.indexOf(rarityB.toLowerCase());
+      const orderA = getRarityOrder(rarityA);
+      const orderB = getRarityOrder(rarityB);
       
-      // Comparer les positions (ou utiliser l'ordre alphabétique si la rareté n'est pas listée)
-      return (indexA === -1 || indexB === -1) ? rarityA.localeCompare(rarityB) : indexA - indexB;
+      // Comparer les ordres (ou utiliser l'ordre alphabétique si la rareté n'est pas listée)
+      return orderA === orderB ? rarityA.localeCompare(rarityB) : orderA - orderB;
     });
 
     if (loading && !badges.length) return null;

@@ -40,19 +40,19 @@ export function useProfileForm(user) {
     const newErrors = {};
     
     if (!formData.current_password) {
-      newErrors.current_password = "Le mot de passe actuel est requis";
+      newErrors.current_password = "Current password is required";
     }
     
     if (formData.new_password && formData.new_password.length < 6) {
-      newErrors.new_password = "Le nouveau mot de passe doit contenir au moins 6 caractères";
+      newErrors.new_password = "New password must contain at least 6 characters";
     }
     
     if (formData.new_password !== formData.new_password_confirmation) {
-      newErrors.new_password_confirmation = "Les mots de passe ne correspondent pas";
+      newErrors.new_password_confirmation = "Passwords do not match";
     }
 
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Format d'email invalide";
+      newErrors.email = "Invalid email format";
     }
 
     const hasChanges = 
@@ -61,7 +61,7 @@ export function useProfileForm(user) {
       formData.new_password;
       
     if (!hasChanges) {
-      newErrors.general = "Aucune modification à effectuer";
+      newErrors.general = "No changes to make";
     }
     
     setErrors(newErrors);
