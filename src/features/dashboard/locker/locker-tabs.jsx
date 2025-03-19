@@ -8,16 +8,16 @@ import {
 } from "./index";
 
 const tabs = [
-  { name: "MY TACTICS", value: "Container" },
-  { name: "CONTRACT", value: "Contract" },
-  { name: "BADGES", value: "Badges" },
-  { name: "BUILDS", value: "Builds" },
-  { name: "RECHARGE", value: "Recharge" },
+  { name: "TACTICS", value: "Container" },
+  { name: "CONTRACT(S)", value: "Contract" },
+  { name: "BADGE(S)", value: "Badges" },
+  { name: "BUILD(S)", value: "Builds" },
+  { name: "RECHARGE DISCOUNT(S)", value: "Recharge" },
 ];
 
 export default function LockerTabs() {
   return (
-    <Tabs defaultValue="Container" className="w-full flex flex-col pl-8">
+    <Tabs defaultValue="Container" className="w-full flex flex-col">
       <div className="w-fit">
         <TabsList className="bg-transparent text-2xl pb-0 justify-start gap-1 flex flex-col">
           <div className="flex gap-1">

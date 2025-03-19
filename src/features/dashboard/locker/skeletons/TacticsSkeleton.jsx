@@ -5,12 +5,6 @@ import { Skeleton, SelectSkeleton, ButtonSkeleton } from "@ui/skeleton";
 export default function TacticsSkeleton() {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex justify-between items-center py-2">
-        <h2 className="text-2xl font-extrabold flex gap-3 items-center">
-          <img src={MyTactic} alt="My Tactics" className="w-10 h-10" />
-          MY TACTICS
-        </h2>
-      </div>
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-9">
         {/* MAX ITEM RARITY */}
         <div className="flex flex-col">

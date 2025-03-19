@@ -43,9 +43,8 @@ export default function LockerRecharge() {
   const total = Object.values(recharges).reduce((sum, val) => sum + val, 0);
 
   return (
-    <div className="flex lg:gap-5 lg:h-1/2">
-      <div className="lg:w-3/5">
-        <h2 className="text-2xl font-extrabold py-2">RECHARGE DISCOUNT(S)</h2>
+    <div className="flex lg:gap-5 lg:h-1/2 px-5 gap-5">
+      <div className="lg:w-3/5 pt-2">
         <Table>
           <TableCaption>List of your recharge discounts</TableCaption>
           <TableHeader>
