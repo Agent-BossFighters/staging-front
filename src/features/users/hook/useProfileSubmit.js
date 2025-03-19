@@ -78,7 +78,7 @@ async function handleResponse(response, { formData, setFormData, isChangingEmail
   // Message de succès adapté aux modifications effectuées
   const successMsg = generateSuccessMessage(formData, user, isChangingEmail, isChangingPassword);
   toast.success(successMsg);
-  setSuccessMessage(successMsg);
+  // setSuccessMessage(successMsg);
   
   // Réinitialiser les champs de mot de passe
   setFormData(prevState => ({
