@@ -33,11 +33,12 @@ export const AuthUtils = {
 };
 
 export const cleanUserData = (userData) => {
-  const { id, username, isPremium, slotUnlockedId, level, experience, is_admin } =
+  const { id, username, email, isPremium, slotUnlockedId, level, experience, is_admin } =
     userData;
   return {
     id,
     username,
+    email,
     isPremium,
     slotUnlockedId,
     level,

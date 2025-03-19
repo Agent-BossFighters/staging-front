@@ -72,7 +72,27 @@ const RaritySelect = memo(
     const sortedBadges = [...availableBadges].sort((a, b) => {
       const rarityA = typeof a.rarity === "object" ? a.rarity.name : a.rarity;
       const rarityB = typeof b.rarity === "object" ? b.rarity.name : b.rarity;
-      return rarityA.localeCompare(rarityB);
+      
+      // Ordre défini des raretés
+      const rarityOrder = [
+        "common",
+        "uncommon", 
+        "rare",
+        "epic",
+        "legendary",
+        "mythic",
+        "exalted",
+        "exotic",
+        "transcendent",
+        "unique"
+      ];
+      
+      // Trouver la position de chaque rareté dans l'ordre
+      const indexA = rarityOrder.indexOf(rarityA.toLowerCase());
+      const indexB = rarityOrder.indexOf(rarityB.toLowerCase());
+      
+      // Comparer les positions (ou utiliser l'ordre alphabétique si la rareté n'est pas listée)
+      return (indexA === -1 || indexB === -1) ? rarityA.localeCompare(rarityB) : indexA - indexB;
     });
 
     if (loading && !badges.length) return null;
@@ -131,7 +151,7 @@ const RaritySelect = memo(
                     {rarity}
                   </span>
                   <span>{badge.name}</span>
-                  <span className="text-muted-foreground">#{badge.id}</span>
+                  <span className="text-muted-foreground">#{badge.issueId}</span>
                 </div>
               </SelectItem>
             );

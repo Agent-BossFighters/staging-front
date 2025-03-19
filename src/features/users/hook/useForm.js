@@ -37,6 +37,14 @@ export default function useForm(initialValues = {}, formType = "login") {
       } else if (values.password.length < 6) {
         validationErrors.password = "Password must be at least 6 characters";
       }
+    } else if (formType === "profile") {
+      if (!values.password) {
+        validationErrors.password = "Le mot de passe actuel est requis";
+      }
+      
+      if (values.username && values.username.trim() === "") {
+        validationErrors.username = "Le nom d'utilisateur ne peut pas être vide";
+      }
     } else {
       // Validation pour le login
       if (!values.email) {
@@ -67,7 +75,7 @@ export default function useForm(initialValues = {}, formType = "login") {
       .promise(callback(values), {
         loading: "loading...",
         success: (res) => res?.message,
-        error: (err) => err?.message.error,
+        error: (err) => err?.message || err,
       })
       .finally(() => setLoading(false));
   };

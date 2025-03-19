@@ -5,6 +5,9 @@ import { kyInstance } from "@utils/api/ky-config";
 import toast from "react-hot-toast";
 import { Button } from "@shared/ui/button";
 
+// Liste des devises autorisées à être modifiées
+const ALLOWED_CURRENCIES = ["$BFT", "Sponsor Marks"];
+
 export default function AdminUpdateCurrencies() {
   const { user } = useAuth();
   const { fetchCurrencyRates } = useGameConstants();
@@ -18,11 +21,15 @@ export default function AdminUpdateCurrencies() {
     const fetchCurrencies = async () => {
       try {
         const response = await kyInstance.get('v1/admin/currencies').json();
-        setCurrencies(response);
+        // Filtrer uniquement les devises autorisées
+        const allowedCurrencies = response.filter(currency => 
+          ALLOWED_CURRENCIES.includes(currency.name)
+        );
+        setCurrencies(allowedCurrencies);
         
-        // Initialiser les valeurs des devises
+        // Initialiser les valeurs des devises autorisées
         const initialValues = {};
-        response.forEach(currency => {
+        allowedCurrencies.forEach(currency => {
           initialValues[currency.id] = currency.price;
         });
         setCurrencyValues(initialValues);
@@ -79,7 +86,7 @@ export default function AdminUpdateCurrencies() {
         return;
       }
       
-      // Mettre à jour chaque devise
+      // Mettre à jour chaque devise autorisée
       for (const currency of currencies) {
         const newValue = parseFloat(currencyValues[currency.id]);
         
@@ -99,13 +106,16 @@ export default function AdminUpdateCurrencies() {
         await fetchCurrencyRates();
       }
       
-      // Rafraîchir la liste des devises
+      // Rafraîchir la liste des devises autorisées
       const updatedCurrencies = await kyInstance.get('v1/admin/currencies').json();
-      setCurrencies(updatedCurrencies);
+      const updatedAllowedCurrencies = updatedCurrencies.filter(currency => 
+        ALLOWED_CURRENCIES.includes(currency.name)
+      );
+      setCurrencies(updatedAllowedCurrencies);
       
       // Mettre à jour les valeurs affichées
       const updatedValues = {};
-      updatedCurrencies.forEach(currency => {
+      updatedAllowedCurrencies.forEach(currency => {
         updatedValues[currency.id] = currency.price;
       });
       setCurrencyValues(updatedValues);
@@ -119,7 +129,7 @@ export default function AdminUpdateCurrencies() {
     } finally {
       setIsUpdating(false);
     }
-    // window.location.reload();
+    window.location.reload();
   };
 
   return (
@@ -127,7 +137,7 @@ export default function AdminUpdateCurrencies() {
       <Button
         onClick={handleUpdateClick}
       >
-        Update Currencies
+        Currencies
       </Button>
       
       {isEditMode && (
