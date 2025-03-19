@@ -6,7 +6,7 @@ export default function PrivacyPage() {
   return (
     <div className="w-3/4 mx-auto">
       <div className="flex flex-col items-center justify-center pt-9">
-        <h1 className="flex items-center justify-center font-extrabold text-4xl lg:text-6xl">
+        <h1 className="flex items-center justify-center font-extrabold text-4xl lg:text-6xl pb-4">
           TERMS & CONDITIONS
         </h1>
         <p className="text-sm ps-9 lg:-translate-y-3">

@@ -12,6 +12,7 @@ export { default as Economy } from "./economy-map.png";
 export { default as Flex } from "./Flex.png";
 export { default as GreenFighter } from "./green_fighter.png";
 export { default as Intuition } from "./Intuition.png";
+export { default as IntuitionLogo } from "./Intuition-logo.svg";
 export { default as Items } from "./Items.png";
 export { default as LogoWork } from "./Logo-work.svg";
 export { default as Logo } from "./Logo.png";

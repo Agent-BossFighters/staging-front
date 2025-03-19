@@ -7,6 +7,7 @@ import {
 } from "@ui/select";
 import { useBadges } from "@features/dashboard/locker/hook/useBadges";
 import { useEffect, useCallback, memo } from "react";
+import rarities from "@shared/data/rarities.json";
 
 const RaritySelect = memo(
   ({ value, onChange, disabled = false, selectedBadges = [] }) => {
@@ -72,7 +73,20 @@ const RaritySelect = memo(
     const sortedBadges = [...availableBadges].sort((a, b) => {
       const rarityA = typeof a.rarity === "object" ? a.rarity.name : a.rarity;
       const rarityB = typeof b.rarity === "object" ? b.rarity.name : b.rarity;
-      return rarityA.localeCompare(rarityB);
+      
+      // Utiliser l'ordre défini dans le fichier rarities.json
+      const getRarityOrder = (rarityName) => {
+        const rarityObj = rarities.rarities.find(
+          r => r.rarity.toLowerCase() === rarityName.toLowerCase()
+        );
+        return rarityObj ? rarityObj.order : Number.MAX_SAFE_INTEGER;
+      };
+      
+      const orderA = getRarityOrder(rarityA);
+      const orderB = getRarityOrder(rarityB);
+      
+      // Comparer les ordres (ou utiliser l'ordre alphabétique si la rareté n'est pas listée)
+      return orderA === orderB ? rarityA.localeCompare(rarityB) : orderA - orderB;
     });
 
     if (loading && !badges.length) return null;
@@ -131,7 +145,7 @@ const RaritySelect = memo(
                     {rarity}
                   </span>
                   <span>{badge.name}</span>
-                  <span className="text-muted-foreground">#{badge.id}</span>
+                  <span className="text-muted-foreground">#{badge.issueId}</span>
                 </div>
               </SelectItem>
             );
