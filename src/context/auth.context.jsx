@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }) => {
         const respObject = await response.json();
         const userData = respObject.user;
         isPremiumContext = createContext(userData.isPremium);
-        console.log(userData.isPremium);
       } catch (error) {
         console.error("Erreur lors de la récupération du statut premium:", error);
       }
