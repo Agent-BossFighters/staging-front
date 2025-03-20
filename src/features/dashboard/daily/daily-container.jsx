@@ -48,8 +48,7 @@ export default function DailyContainer() {
 
       {builds.length === 0 ? (
         <div className="text-yellow-400 text-xl text-center py-4">
-          Aucun build disponible. Veuillez d'abord créer des builds dans la
-          section Locker.
+          No builds available. Please create a build in the Locker section first.
         </div>
       ) : (
         <DailyMatches

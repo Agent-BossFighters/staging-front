@@ -60,7 +60,7 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
         <TableBody className="">
           {slots.slots_cost.map((slot, index) => {
             const rarityMetrics = selectedRarityMetrics[index] || {};
-            const totalBonusBft = index > 0 ? `${slot["4. bonus_bft"]}%` : "0 %";
+            const totalBonusBft = index > 0 ? `${rarityMetrics["3. total_bonus_bft"]}%` : "0 %";
 
             return (
               <TableRow key={getValue(slot, "1. slot")}>

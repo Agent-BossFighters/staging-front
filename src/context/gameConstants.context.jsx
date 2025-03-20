@@ -6,9 +6,9 @@ export const GAME_MAPS = ["Toxic river", "Award", "Radiation rift"];
 export const GAME_RESULTS = ["win", "loss", "draw"];
 
 export let CURRENCY_RATES = {
-  BFT: 0.01, // Prix du BFT en USD ($0.01)
-  FLEX: 0.00744, // Prix du FLEX en USD ($0.00744)
-  SPONSOR_MARKS: 4, // Prix du FLEX en USD ($0.00744)
+  BFT: 0.0230, // Prix du BFT en USD ($0.01)
+  FLEX: 0.0104, // Prix du FLEX en USD ($0.00744)
+  SPONSOR_MARKS: 0.0280, // Prix du FLEX en USD ($0.00744)
   ENERGY: 1.49, // Prix de l'énergie en USD ($1.49)
 };
 
