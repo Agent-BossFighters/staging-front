@@ -1,6 +1,10 @@
 import { Check, X, Plus, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { ConfirmDialog } from "@shared/ui/dialog";
 
-export function DisplayActions({ onEdit, onDelete, editDisabled }) {
+export function DisplayActions({ onEdit, onDelete, editDisabled, itemName = "this item" }) {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
   return (
     <>
       <button
@@ -12,11 +16,22 @@ export function DisplayActions({ onEdit, onDelete, editDisabled }) {
         <Pencil className="font-size-bold h-6 w-6 hover:text-yellow-400" />
       </button>
       <button
-        onClick={onDelete}
+        onClick={() => setIsConfirmOpen(true)}
         className="p-2"
       >
         <Trash2 className="font-size-bold h-6 w-6 hover:text-red-400" />
       </button>
+      
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={onDelete}
+        title="Confirm Delete"
+        message={`Are you sure you want to delete ${itemName}?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDanger={true}
+      />
     </>
   );
 }
@@ -51,7 +66,7 @@ export function CreateAction({ onSubmit }) {
   );
 }
 
-export default function ActionButtons({ isEditing, isCreating, onEdit, onDelete, onSubmit, onCancel, editDisabled }) {
+export default function ActionButtons({ isEditing, isCreating, onEdit, onDelete, onSubmit, onCancel, editDisabled, itemName }) {
   if (isCreating) {
     return <CreateAction onSubmit={onSubmit} />;
   }
@@ -60,5 +75,5 @@ export default function ActionButtons({ isEditing, isCreating, onEdit, onDelete,
     return <EditActions onSubmit={onSubmit} onCancel={onCancel} />;
   }
 
-  return <DisplayActions onEdit={onEdit} onDelete={onDelete} editDisabled={editDisabled} />;
+  return <DisplayActions onEdit={onEdit} onDelete={onDelete} editDisabled={editDisabled} itemName={itemName} />;
 }

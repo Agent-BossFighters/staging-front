@@ -118,7 +118,7 @@ export default function LockerContract() {
   }
 
   return (
-    <div className="flex flex-col px-5 gap-5">
+    <div className="flex flex-col w-[60%] px-5 gap-5">
       <div className="pt-2">
       <Table className="">
         <TableCaption>
@@ -225,7 +225,7 @@ export default function LockerContract() {
             </TableCell>
             <TableCell>
               <NumericInput
-                placeholder="Issue ID"
+                placeholder="ID"
                 value={issueId}
                 onChange={setIssueId}
                 className="w-1/2"

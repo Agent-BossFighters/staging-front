@@ -117,7 +117,7 @@ export default function LockerBadges() {
   }
 
   return (
-    <div className="flex flex-col px-5 gap-5">
+    <div className="flex flex-col w-[60%] px-5 gap-5">
       <div className="pt-2">
       <Table className="">
         <TableCaption>
