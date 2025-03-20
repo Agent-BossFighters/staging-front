@@ -1,11 +1,13 @@
 import { Check, X, Plus, Pencil, Trash2 } from "lucide-react";
 
-export function DisplayActions({ onEdit, onDelete }) {
+export function DisplayActions({ onEdit, onDelete, editDisabled }) {
   return (
     <>
       <button
         onClick={onEdit}
         className="p-2"
+        disabled={editDisabled}
+        style={editDisabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
       >
         <Pencil className="font-size-bold h-6 w-6 hover:text-yellow-400" />
       </button>
@@ -49,7 +51,7 @@ export function CreateAction({ onSubmit }) {
   );
 }
 
-export default function ActionButtons({ isEditing, isCreating, onEdit, onDelete, onSubmit, onCancel }) {
+export default function ActionButtons({ isEditing, isCreating, onEdit, onDelete, onSubmit, onCancel, editDisabled }) {
   if (isCreating) {
     return <CreateAction onSubmit={onSubmit} />;
   }
@@ -58,5 +60,5 @@ export default function ActionButtons({ isEditing, isCreating, onEdit, onDelete,
     return <EditActions onSubmit={onSubmit} onCancel={onCancel} />;
   }
 
-  return <DisplayActions onEdit={onEdit} onDelete={onDelete} />;
+  return <DisplayActions onEdit={onEdit} onDelete={onDelete} editDisabled={editDisabled} />;
 }
