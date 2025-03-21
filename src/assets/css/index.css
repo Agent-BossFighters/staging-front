@@ -70,6 +70,11 @@
   }
 }
 
+button {
+  min-width: 42px;
+  min-height: 42px;
+} 
+
 @layer base {
   * {
     @apply border-border;
