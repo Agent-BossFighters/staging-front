@@ -1,19 +1,21 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { AuthUtils, cleanUserData } from "@utils/api/auth.utils";
 import { useNavigate } from "react-router-dom";
+import { kyInstance } from "@utils/api/ky-config";
 
 const AuthContext = createContext(null);
+export let isPremiumContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const initializeUser = () => {
       const userData = AuthUtils.getUserData();
       const token = AuthUtils.getAuthToken();
-
+      
       if (userData && token) {
         const cleanedData = cleanUserData(userData);
         if (userData.is_admin !== undefined) {
@@ -23,9 +25,25 @@ export const AuthProvider = ({ children }) => {
       }
       setIsLoading(false);
     };
-
+    
     initializeUser();
   }, []);
+  
+  useEffect(() => {
+    const fetchPremiumStatus = async () => {
+      if (!user) return;
+      try {
+        const response = await kyInstance.get(`v1/users/${user.id}`);
+        const respObject = await response.json();
+        const userData = respObject.user;
+        isPremiumContext = createContext(userData.isPremium);
+      } catch (error) {
+        console.error("Erreur lors de la récupération du statut premium:", error);
+      }
+    };
+    
+    fetchPremiumStatus();
+  }, [user]);
 
   const login = (userData, token) => {
     const cleanedUserData = cleanUserData(userData);

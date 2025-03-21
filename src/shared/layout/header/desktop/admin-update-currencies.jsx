@@ -22,7 +22,7 @@ export default function AdminUpdateCurrencies() {
       try {
         const response = await kyInstance.get('v1/admin/currencies').json();
         // Filtrer uniquement les devises autorisées
-        const allowedCurrencies = response.filter(currency => 
+        const allowedCurrencies = response.currencies.filter(currency => 
           ALLOWED_CURRENCIES.includes(currency.name)
         );
         setCurrencies(allowedCurrencies);
