@@ -61,8 +61,8 @@ export default function Slot({ slots, loading }) {
                 {getValue(item, "3. flex_cost")}
               </TableCell>
               <TableCell>{getValue(item, "4. bonus_bft")}&nbsp;%</TableCell>
-              <TableCell>{item.normalPart}</TableCell>
-              <TableCell>{item.bonusPart}</TableCell>
+              <TableCell>{getValue(item, "5. bft_per_badge")}</TableCell>
+              <TableCell>{getValue(item, "6. bonus_per_badge")}</TableCell>
             </TableRow>
           ))}
         </TableBody>
