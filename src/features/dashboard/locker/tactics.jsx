@@ -15,6 +15,7 @@ import { useUserPreference } from "@context/userPreference.context";
 import { useCurrencyPacks } from "./hook/useCurrencyPacks";
 import TacticsSkeleton from "./skeletons/TacticsSkeleton";
 import { toast } from "react-hot-toast";
+import { kyInstance } from "@utils/api/ky-config";
 
 const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
 const STORAGE_KEY = "userPreferences";
@@ -100,7 +101,7 @@ export default function Tactics() {
   };
 
   // Fonction pour sauvegarder les modifications locales dans le contexte
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
       // S'assurer que les valeurs sont définies
       const safeMaxRarity = localMaxRarity || "legendary";
@@ -134,6 +135,30 @@ export default function Tactics() {
       setUnlockedSlots(safeUnlockedSlots);
       setSelectedFlexPack(safeSelectedFlexPack);
       setStreamerMode(safeStreamerMode);
+      
+      // Sauvegarder le flex pack choisi en BDD via l'API
+      if (safeSelectedFlexPack) {
+        try {
+          // Trouver le pack correspondant pour obtenir des informations supplémentaires si nécessaire
+          const packId = currencyPacks.findIndex(pack =>
+            pack.currencyNumber.toString() === safeSelectedFlexPack) + 1;
+          
+          // Envoyer la mise à jour à l'API
+          const response = await kyInstance.patch('v1/users/tactics', {
+            json: {
+              user: {
+                flex_pack: packId
+              }
+            }
+          });
+          
+          console.log('Flex pack updated in database:', response);
+        } catch (apiError) {
+          console.error('Error updating flex pack in database:', apiError);
+          // Ne pas bloquer la sauvegarde locale si l'API échoue
+          toast.error("Your preferences were saved locally, but we couldn't update the server. Some features may not work correctly until next login.");
+        }
+      }
       
       // Afficher un message de succès
       toast.success("Preferences saved successfully");

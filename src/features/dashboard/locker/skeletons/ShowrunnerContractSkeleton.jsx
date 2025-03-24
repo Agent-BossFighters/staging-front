@@ -3,7 +3,7 @@ import { Skeleton, TableRowSkeleton, ButtonSkeleton } from "@shared/ui/skeleton"
 
 export default function ShowrunnerContractSkeleton() {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col w-[60%] gap-3">
       <div className="flex flex-col">
         {/* Header */}
         <div className="bg-gray-800 p-3 rounded-t-md">

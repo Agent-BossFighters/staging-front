@@ -25,12 +25,16 @@ export const useDateNavigation = (initialDate = new Date()) => {
       const newDate = new Date(selectedDate);
       newDate.setDate(newDate.getDate() + 1);
       
+      // Normaliser l'heure de la nouvelle date
+      newDate.setHours(0, 0, 0, 0);
+      
       // Empêcher de naviguer vers des dates futures
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
       if (newDate <= today) {
         setSelectedDate(newDate);
+      } else {
       }
     };
     

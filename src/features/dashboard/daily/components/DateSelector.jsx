@@ -19,7 +19,7 @@ export default function DateSelector({
   selectedDateMidnight.setHours(0, 0, 0, 0);
   
   const isPreviousDisabled = selectedDateMidnight.getTime() <= sevenDaysAgo.getTime();
-  const isNextDisabled = selectedDateMidnight.getTime() >= currentDate.getTime();
+  const isNextDisabled = selectedDateMidnight.getTime() > currentDate.getTime();
 
   // Fonction pour formater les dates pour la comparaison
   const formatDateForComparison = (date) => {

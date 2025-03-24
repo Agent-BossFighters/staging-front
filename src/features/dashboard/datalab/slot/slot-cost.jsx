@@ -60,21 +60,22 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
         <TableBody className="">
           {slots.slots_cost.map((slot, index) => {
             const rarityMetrics = selectedRarityMetrics[index] || {};
-            const totalBonusBft = index > 0 ? `${slot["4. bonus_bft"]}%` : "0 %";
+            const totalFlex = rarityMetrics["1. total_flex"] || 0;
+            const totalFlexCost = rarityMetrics["2. total_cost"] || 0;
+            const totalBonusBft = index > 0 ? `${rarityMetrics["3. total_bonus_bft"]}%` : "0 %";
+            const totalTokensRoi = rarityMetrics["4. nb_tokens_roi"] || 0;
 
             return (
               <TableRow key={getValue(slot, "1. slot")}>
                 <TableCell>{getValue(slot, "1. slot")}</TableCell>
                 <TableCell className="text-destructive">
-                  {getValue(slot, "2. nb_flex")}
+                  {totalFlex}
                 </TableCell>
                 <TableCell className="text-destructive">
-                  {getValue(slot, "3. flex_cost")}
+                  {totalFlexCost}
                 </TableCell>
                 <TableCell>{totalBonusBft}</TableCell>
-                <TableCell>
-                  {getValue(rarityMetrics, "4. nb_tokens_roi")}
-                </TableCell>
+                <TableCell>{totalTokensRoi}</TableCell>
                 <TableCell>
                   {getValue(rarityMetrics, "5. nb_charges_roi_1.0")}
                 </TableCell>

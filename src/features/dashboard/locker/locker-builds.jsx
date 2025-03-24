@@ -104,7 +104,7 @@ export default function Lockerbuilds() {
   }
 
   return (
-    <div className="flex flex-col h-[400px] px-5 gap-5">
+    <div className="flex flex-col h-[400px] w-[60%] px-5 gap-5">
       <div className="flex-grow overflow-auto pt-2">
         <Table className="">
           <TableCaption>
