@@ -9,6 +9,7 @@ export let isPremiumContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPremium, setIsPremium] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }) => {
           cleanedData.is_admin = userData.is_admin;
         }
         setUser(cleanedData);
+        setIsPremium(cleanedData.isPremium || false);
       }
       setIsLoading(false);
     };
@@ -36,7 +38,7 @@ export const AuthProvider = ({ children }) => {
         const response = await kyInstance.get(`v1/users/${user.id}`);
         const respObject = await response.json();
         const userData = respObject.user;
-        isPremiumContext = createContext(userData.isPremium);
+        setIsPremium(userData.isPremium);
       } catch (error) {
         console.error("Erreur lors de la récupération du statut premium:", error);
       }
@@ -44,6 +46,15 @@ export const AuthProvider = ({ children }) => {
     
     fetchPremiumStatus();
   }, [user]);
+
+  const updateUserAndToken = (userData, token) => {
+    const cleanedUserData = cleanUserData(userData);
+    cleanedUserData.is_admin = userData.is_admin ? userData.is_admin : undefined;
+    AuthUtils.setAuthToken(token);
+    AuthUtils.setUserData(cleanedUserData);
+    setUser(cleanedUserData);
+    setIsPremium(cleanedUserData.isPremium || false);
+  };
 
   const login = (userData, token) => {
     const cleanedUserData = cleanUserData(userData);
@@ -53,10 +64,15 @@ export const AuthProvider = ({ children }) => {
     setUser(cleanedUserData);
   };
 
+  const updateToken = (newToken) => {
+    AuthUtils.setAuthToken(newToken);
+  };
+
   const logout = async () => {
     try {
       await AuthUtils.clearAuth();
       setUser(null);
+      setIsPremium(false);
       navigate("/users/login");
     } catch (error) {
       console.error("Logout error:", error);
@@ -64,8 +80,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
-      {!isLoading && children}
+    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUserAndToken, updateToken }}>
+      <isPremiumContext.Provider value={{ isPremium, setIsPremium }}>
+        {!isLoading && children}
+      </isPremiumContext.Provider>
     </AuthContext.Provider>
   );
 };
@@ -75,6 +93,16 @@ export const useAuth = () => {
 
   if (!context) {
     throw new Error("useAuth must be used within a AuthProvider");
+  }
+
+  return context;
+};
+
+export const usePremium = () => {
+  const context = useContext(isPremiumContext);
+
+  if (!context) {
+    throw new Error("usePremium must be used within a PremiumContext");
   }
 
   return context;
