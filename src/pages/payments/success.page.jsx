@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@shared/ui/button";
 import { kyInstance } from "@utils/api/ky-config";
 import { useAuth } from "@context/auth.context";
+import { usePremium } from "@context/auth.context";
 import toast from "react-hot-toast";
 
 export default function SuccessPage() {
@@ -12,6 +13,8 @@ export default function SuccessPage() {
   const sessionId = searchParams.get("session_id");
   const [isLoading, setIsLoading] = useState(true);
   const { login } = useAuth();
+  const { setIsPremium } = usePremium();
+  const [hasProcessed, setHasProcessed] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -21,6 +24,10 @@ export default function SuccessPage() {
       if (!sessionId) {
         toast.error("No session ID found");
         navigate("/payments/pricing");
+        return;
+      }
+
+      if (hasProcessed) {
         return;
       }
 
@@ -43,6 +50,9 @@ export default function SuccessPage() {
           // Mettre à jour le statut premium de l'utilisateur
           if (response.user) {
             login(response.user, response.token);
+            localStorage.setItem("auth_token", response.token);
+            setIsPremium(response.user.isPremium);
+            setHasProcessed(true);
           }
 
           toast.success("Payment successful! Welcome to Premium!");
