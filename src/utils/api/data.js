@@ -9,9 +9,9 @@ const handleError = async (error) => {
       window.location.href = "/login";
       return null;
     }
-    return errorData?.error || "Une erreur est survenue";
+    return errorData?.error || "an error has occurred";
   } catch (e) {
-    return "Une erreur est survenue";
+    return "an error has occurred";
   }
 };
 
@@ -24,7 +24,7 @@ export async function getData(object) {
     if (error.responseData?.error) {
       toast.error(error.responseData.error);
     }
-    return null;
+    throw error;
   }
 }
 
@@ -42,12 +42,12 @@ export async function postData(object, data) {
     if (response.message) {
       toast.success(response.message);
     }
-    return response.json();
+    return await response.json();
   } catch (error) {
     if (error.responseData?.error) {
       toast.error(error.responseData.error);
     }
-    return null;
+    throw error;
   }
 }
 
@@ -63,12 +63,12 @@ export async function putData(object, data) {
     }
 
     const response = await kyInstance.put(object, options);
-    return response.json();
+    return await response.json();
   } catch (error) {
     if (error.responseData?.error) {
       toast.error(error.responseData.error);
     }
-    return null;
+    throw error;
   }
 }
 
@@ -76,11 +76,11 @@ export async function putData(object, data) {
 export async function deleteData(object) {
   try {
     const response = await kyInstance.delete(object);
-    return response;
+    return await response.json();
   } catch (error) {
     if (error.responseData?.error) {
       toast.error(error.responseData.error);
     }
-    return null;
+    throw error;
   }
 }
