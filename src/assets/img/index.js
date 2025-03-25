@@ -38,3 +38,4 @@ export { default as Win } from "./win.png";
 export { default as Draw } from "./draw.png";
 export { default as Loss } from "./loss.png";
 export { default as MyTactic } from "./my_tactic_icon.png";
+export { default as DataLabBackground } from "./datalab_background.jpg";
