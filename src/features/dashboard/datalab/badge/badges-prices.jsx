@@ -29,21 +29,21 @@ export default function BadgesPrices({ badges, loading }) {
   }, {});
 
   const rows = [
-    { label: "BADGE PRICE", key: "2. badge_price" },
+    { label: "FLOOR\nPRICE", key: "2. badge_price" },
     { label: "FULL RECHARGE\nPRICE", key: "3. full_recharge_price" },
     {
-      label: "TOTAL COST",
+      label: "TOTAL\nCOST",
       key: "4. total_cost",
       className: "text-destructive",
     },
     { label: "IN GAME\nTIME", key: "5. in_game_minutes" },
     {
-      label: "$BFT/\nMAX RECHARGE",
+      label: "$BFT / MAX\nRECHARGE",
       key: "6. bft_per_max_charge",
       className: "text-accent",
     },
-    { label: "$BFT VALUE($)", key: "7. bft_value", className: "text-accent" },
-    { label: "NB CHARGES ROI", key: "8. roi", className: "text-accent" },
+    { label: "$BFT\nVALUE($)", key: "7. bft_value", className: "text-accent" },
+    { label: "NB CHARGES\nROI", key: "8. roi", className: "text-accent" },
   ];
 
   return (
