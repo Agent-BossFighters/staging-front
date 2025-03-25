@@ -15,6 +15,9 @@ export async function authSignInUp(object, data) {
   } catch (error) {
     let errorData =
       (await error?.responseData?.status?.message) || error?.responseData.error;
+    if (errorData === 'Invalid session. Please reconnect.') {
+      AuthUtils.clearAuth();
+    }
     throw new Error(errorData);
   }
 }

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { AuthUtils, cleanUserData } from "@utils/api/auth.utils";
 import { useNavigate } from "react-router-dom";
 import { kyInstance } from "@utils/api/ky-config";
-
+import { toast } from "react-hot-toast";
 const AuthContext = createContext(null);
 export let isPremiumContext = createContext(null);
 
@@ -13,17 +13,27 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    const initializeUser = () => {
+    const initializeUser = async () => {
       const userData = AuthUtils.getUserData();
       const token = AuthUtils.getAuthToken();
       
       if (userData && token) {
-        const cleanedData = cleanUserData(userData);
-        if (userData.is_admin !== undefined) {
-          cleanedData.is_admin = userData.is_admin;
+        try {
+          await kyInstance.get(`v1/users/${userData.id}`);
+          const cleanedData = cleanUserData(userData);
+          if (userData.is_admin !== undefined) {
+            cleanedData.is_admin = userData.is_admin;
+          }
+          setUser(cleanedData);
+          setIsPremium(cleanedData.isPremium || false);
+        } catch (error) {
+          if (error.responseData?.error === 'Invalid session. Please reconnect.') {
+            toast.error('Your session has expired, please reconnect', {
+              autoClose: 5000,
+            });
+            await logout();
+          }
         }
-        setUser(cleanedData);
-        setIsPremium(cleanedData.isPremium || false);
       }
       setIsLoading(false);
     };
@@ -75,6 +85,10 @@ export const AuthProvider = ({ children }) => {
       setIsPremium(false);
       navigate("/users/login");
     } catch (error) {
+      AuthUtils.clearAuth();
+      setUser(null);
+      setIsPremium(false);
+      navigate("/users/login");
       console.error("Logout error:", error);
     }
   };
