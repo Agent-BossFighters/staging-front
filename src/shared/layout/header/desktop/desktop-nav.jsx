@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { AgentLogo } from "@img/index";
+import { AgentLogo, A } from "@img/index";
 import HeaderPart from "@features/users/auth/header-part";
 import DesktopLink from "./desktop-link";
 import { useAuth } from "@context/auth.context";
@@ -11,21 +11,25 @@ export default function DesktopNav() {
   const { user } = useAuth();
 
   return (
-    <div className="hidden md:flex h-full items-center justify-between py-4 px-10 lg:px-0 lg:w-5/6 mx-auto">
+    <div className="hidden lg:flex h-full items-center justify-between py-4 px-10 lg:px-0 lg:w-5/6 mx-auto">
       <div className="flex items-center gap-20 h-full">
         {user ? (
           <Link to="/dashboard" className="flex items-center h-full">
-            <img src={AgentLogo} alt="Agent logo" className="h-full" />
+            <img src={A} alt="A logo" className="lg:block xl:hidden w-10 h-10 object-contain" />
+            <img src={AgentLogo} alt="Agent logo" className="hidden xl:block h-full" />
           </Link>
         ) : (
           <Link to="/" className="flex items-center h-full mr-4">
-            <img src={AgentLogo} alt="Agent logo" className="h-full" />
+            <img src={A} alt="A logo" className="lg:block xl:hidden w-10 h-10 object-contain" />
+            <img src={AgentLogo} alt="Agent logo" className="hidden xl:block h-full" />
           </Link>
         )}
         <DesktopLink />
       </div>
       <div className="flex items-center gap-4">
-        <CurrencyDisplay />
+        <div className="hidden xl:block">
+          <CurrencyDisplay />
+        </div>
         <AdminUpdateCurrencies />
         <PremiumButton />
         <HeaderPart />
