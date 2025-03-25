@@ -94,10 +94,14 @@ export default function Badges({ badges, loading }) {
             );
             return (
               <TableRow key={rarityItem.rarity}>
-                <RarityCell
-                  rarity={rarityItem.rarity}
-                  color={rarityItem.color}
-                />
+                <TableCell className="p-2 text-center">
+                  <p
+                    className="border-2 rounded-2xl p-1 text-sm"
+                    style={{ borderColor: rarityItem.color }}
+                  >
+                    {rarityItem.rarity}
+                  </p>
+                </TableCell>
                 <TableCell>{getValue(badge, "2. item")}</TableCell>
                 <TableCell>{getValue(badge, "3. supply")}</TableCell>
                 <TableCell>{getValue(badge, "4. floor_price")}</TableCell>

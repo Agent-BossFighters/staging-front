@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Table,
   TableBody,
@@ -18,8 +18,8 @@ import ActionsTable from "./actions-table";
 import { postData, deleteData } from "@utils/api/data";
 import { useBuilds } from "./hook/useBuilds";
 import { useEditBuild } from "./hook/useEditBuild";
-import { GreenFighter } from "@img/index";
 import BuildSkeleton from "./skeletons/BuildSkeleton";
+
 export default function Lockerbuilds() {
   const { builds, setBuilds, loading, setLoading, fetchMyBuilds } = useBuilds();
   const {
@@ -37,10 +37,57 @@ export default function Lockerbuilds() {
   const [buildName, setBuildName] = useState("");
   const [bonus, setBonus] = useState("");
   const [perks, setPerks] = useState("");
+  const [startIndex, setStartIndex] = useState(0);
+  const [isMouseOverTable, setIsMouseOverTable] = useState(false);
+  const [showScrollMessage, setShowScrollMessage] = useState(false);
+  const tableRef = useRef(null);
+  
+  // Nombre de lignes à afficher
+  const visibleRowsCount = 8;
 
   useEffect(() => {
     fetchMyBuilds();
   }, []);
+
+  useEffect(() => {
+    setShowScrollMessage(builds.length > visibleRowsCount);
+  }, [builds.length]);
+  
+  useEffect(() => {
+    const wheelHandler = (e) => {
+      if (!isMouseOverTable) return;
+      
+      // Si la souris est sur le tableau, empêcher le défilement de la page
+      e.preventDefault();
+      
+      if (builds.length <= visibleRowsCount) return;
+      
+      if (e.deltaY > 0) {
+        // Défilement vers le bas
+        setStartIndex(prev => Math.min(prev + 1, builds.length - visibleRowsCount));
+      } else if (e.deltaY < 0) {
+        // Défilement vers le haut
+        setStartIndex(prev => Math.max(prev - 1, 0));
+      }
+    };
+
+    window.addEventListener('wheel', wheelHandler, { passive: false });
+    
+    return () => {
+      window.removeEventListener('wheel', wheelHandler);
+    };
+  }, [isMouseOverTable, builds.length, visibleRowsCount]);
+  
+  const handleMouseEnter = () => {
+    setIsMouseOverTable(true);
+  };
+  
+  const handleMouseLeave = () => {
+    setIsMouseOverTable(false);
+  };
+
+  // Sélectionner les lignes visibles en fonction de l'indice de départ
+  const visibleBuilds = builds.slice(startIndex, startIndex + visibleRowsCount);
 
   const handleSubmit = async () => {
     const missingFields = [];
@@ -104,108 +151,119 @@ export default function Lockerbuilds() {
   }
 
   return (
-    <div className="flex flex-col h-[400px] w-[60%] px-5 gap-5">
-      <div className="flex-grow overflow-auto pt-2">
-        <Table className="">
-          <TableCaption>
-            List of your builds with their BFT bonus multipliers
-          </TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>BUILD NAME</TableHead>
-              <TableHead>$BFT BONUS</TableHead>
-              <TableHead>ACTION(S)</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="overflow-y-auto">
-            {builds.length > 0 ? (
-              builds.map((build, index) => {
-                const isEditing = build.id === editingBuildId;
+    <div className="flex flex-col w-[60%] px-5 gap-5">
+      <div className="pt-2">
+        <div 
+          ref={tableRef}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <Table className="">
+            <TableHeader>
+              <TableRow className="h-8">
+                <TableHead className="py-0 px-2">BUILD NAME</TableHead>
+                <TableHead className="py-0 px-2">$BFT BONUS</TableHead>
+                <TableHead className="py-0 px-2">ACTION(S)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="overflow-y-auto">
+              {visibleBuilds.length > 0 ? (
+                visibleBuilds.map((build, index) => {
+                  const isEditing = build.id === editingBuildId;
 
-                return (
-                  <TableRow key={index} className="">
-                    <TableCell>
-                      {isEditing ? (
-                        <Input
-                          type="text"
-                          value={editedName}
-                          onChange={(e) => setEditedName(e.target.value)}
+                  return (
+                    <TableRow key={index} className="h-8">
+                      <TableCell className="py-0 px-2">
+                        {isEditing ? (
+                          <Input
+                            type="text"
+                            value={editedName}
+                            onChange={(e) => setEditedName(e.target.value)}
+                          />
+                        ) : (
+                          build.buildName
+                        )}
+                      </TableCell>
+                      <TableCell className="py-0 px-2">
+                        {isEditing ? (
+                          <NumericInput
+                            placeholder="$BFT Bonus"
+                            value={editedBonus}
+                            onChange={setEditedBonus}
+                            className="w-1/2"
+                            min={0}
+                            max={600}
+                            step={0.1}
+                          />
+                        ) : (
+                          <div className="flex flex-col">
+                            <span>{`${build.bftBonus}%`}</span>
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="py-0 px-2 flex gap-2 items-center">
+                        <ActionsTable
+                          data={build}
+                          onEdit={handleEdit}
+                          onDelete={() => handleDelete(build.id)}
+                          onSave={handleSave}
+                          onCancel={handleCancel}
+                          isEditing={isEditing}
                         />
-                      ) : (
-                        build.buildName
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {isEditing ? (
-                        <NumericInput
-                          placeholder="$BFT Bonus"
-                          value={editedBonus}
-                          onChange={setEditedBonus}
-                          className="w-1/2"
-                          min={0}
-                          max={600}
-                          step={0.1}
-                        />
-                      ) : (
-                        <div className="flex flex-col">
-                          <span>{`${build.bftBonus}%`}</span>
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="flex gap-2 items-center">
-                      <ActionsTable
-                        data={build}
-                        onEdit={handleEdit}
-                        onDelete={() => handleDelete(build.id)}
-                        onSave={handleSave}
-                        onCancel={handleCancel}
-                        isEditing={isEditing}
-                      />
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            ) : (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center">
-                  No Builds found
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-1 px-2">
+                    No Builds found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter className="bg-transparent">
+              <TableRow className="h-10">
+                <TableCell className="py-1 px-2">
+                  <Input
+                    type="text"
+                    placeholder="Build Name"
+                    value={buildName}
+                    onChange={(e) => setBuildName(e.target.value)}
+                  />
+                </TableCell>
+                <TableCell className="py-1 px-2">
+                  <NumericInput
+                    placeholder="$BFT Bonus"
+                    value={bonus}
+                    onChange={setBonus}
+                    className="w-1/2"
+                    min={0}
+                    max={600}
+                    step={0.1}
+                  />
+                </TableCell>
+                <TableCell className="py-1 px-2 flex items-center">
+                  <Button
+                    variant="transparent"
+                    onClick={handleSubmit}
+                    className="p-0 hover:text-primary hover:scale-150"
+                  >
+                    <Plus />
+                  </Button>
                 </TableCell>
               </TableRow>
-            )}
-          </TableBody>
-          <TableFooter className="bg-transparent">
-            <TableRow>
-              <TableCell>
-                <Input
-                  type="text"
-                  placeholder="Build Name"
-                  value={buildName}
-                  onChange={(e) => setBuildName(e.target.value)}
-                />
-              </TableCell>
-              <TableCell>
-                <NumericInput
-                  placeholder="$BFT Bonus"
-                  value={bonus}
-                  onChange={setBonus}
-                  className="w-1/2"
-                  min={0}
-                  max={600}
-                  step={0.1}
-                />
-              </TableCell>
-              <TableCell className="flex items-center">
-                <Button
-                  variant="transparent"
-                  onClick={handleSubmit}
-                  className="p-0 hover:text-primary hover:scale-150"
-                >
-                  <Plus />
-                </Button>
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
+            </TableFooter>
+          </Table>
+          {showScrollMessage && (
+            <div className="text-primary text-center text-3xl py-1">
+              ⩔⩔ <span className="text-xl">Scroll down for more</span> ⩔⩔
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="text-center text-sm text-muted-foreground py-2">
+        List of your builds with their BFT bonus multipliers
       </div>
     </div>
   );

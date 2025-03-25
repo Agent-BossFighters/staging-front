@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -16,7 +16,6 @@ import ActionsTable from "@features/dashboard/locker/actions-table";
 import { Button } from "@ui/button";
 import { Plus } from "lucide-react";
 import { postData, deleteData } from "@utils/api/data";
-import { Contract } from "@img/index";
 import {
   handleSelectRarityContract,
   handleSelectRarityContractForEdit,
@@ -26,6 +25,7 @@ import { useContracts } from "@features/dashboard/locker/hook/useContracts";
 import { useEditContract } from "@features/dashboard/locker/hook/useEditContract";
 import { useUserPreference } from "@context/userPreference.context";
 import ShowrunnerContractSkeleton from "./skeletons/ShowrunnerContractSkeleton";
+
 export default function LockerContract() {
   const { contracts, setContracts, loading, setLoading, fetchMyContracts } =
     useContracts();
@@ -47,6 +47,13 @@ export default function LockerContract() {
   const [issueId, setIssueId] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
   const { maxRarity } = useUserPreference();
+  const [startIndex, setStartIndex] = useState(0);
+  const [isMouseOverTable, setIsMouseOverTable] = useState(false);
+  const [showScrollMessage, setShowScrollMessage] = useState(false);
+  const tableRef = useRef(null);
+  
+  // Nombre de lignes à afficher
+  const visibleRowsCount = 8;
 
   useEffect(() => {
     fetchMyContracts();
@@ -56,6 +63,46 @@ export default function LockerContract() {
     (contract) =>
       getRarityOrder(contract.rarity.name) <= getRarityOrder(maxRarity)
   );
+
+  useEffect(() => {
+    setShowScrollMessage(filteredContracts.length > visibleRowsCount);
+  }, [filteredContracts.length]);
+
+  useEffect(() => {
+    const wheelHandler = (e) => {
+      if (!isMouseOverTable) return;
+      
+      // Si la souris est sur le tableau, empêcher le défilement de la page
+      e.preventDefault();
+      
+      if (filteredContracts.length <= visibleRowsCount) return;
+      
+      if (e.deltaY > 0) {
+        // Défilement vers le bas
+        setStartIndex(prev => Math.min(prev + 1, filteredContracts.length - visibleRowsCount));
+      } else if (e.deltaY < 0) {
+        // Défilement vers le haut
+        setStartIndex(prev => Math.max(prev - 1, 0));
+      }
+    };
+
+    window.addEventListener('wheel', wheelHandler, { passive: false });
+    
+    return () => {
+      window.removeEventListener('wheel', wheelHandler);
+    };
+  }, [isMouseOverTable, filteredContracts.length, visibleRowsCount]);
+  
+  const handleMouseEnter = () => {
+    setIsMouseOverTable(true);
+  };
+  
+  const handleMouseLeave = () => {
+    setIsMouseOverTable(false);
+  };
+
+  // Sélectionner les lignes visibles en fonction de l'indice de départ
+  const visibleContracts = filteredContracts.slice(startIndex, startIndex + visibleRowsCount);
 
   const handleSubmit = async () => {
     const missingFields = [];
@@ -120,27 +167,29 @@ export default function LockerContract() {
   return (
     <div className="flex flex-col w-[60%] px-5 gap-5">
       <div className="pt-2">
+      <div 
+        ref={tableRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
       <Table className="">
-        <TableCaption>
-          List of your showrunner contracts
-        </TableCaption>
         <TableHeader>
-          <TableRow>
-            <TableHead>RARITY</TableHead>
-            <TableHead>ITEM</TableHead>
-            <TableHead>ID</TableHead>
-            <TableHead>PURCHASE PRICE</TableHead>
-            <TableHead>ACTION(S)</TableHead>
+          <TableRow className="h-8">
+            <TableHead className="py-0 px-2">RARITY</TableHead>
+            <TableHead className="py-0 px-2">ITEM</TableHead>
+            <TableHead className="py-0 px-2">ID</TableHead>
+            <TableHead className="py-0 px-2">PURCHASE PRICE</TableHead>
+            <TableHead className="py-0 px-2">ACTION(S)</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="overflow-y-auto">
-          {filteredContracts.length > 0 ? (
-            filteredContracts.map((contract, index) => {
+          {visibleContracts.length > 0 ? (
+            visibleContracts.map((contract, index) => {
               const isEditing = contract.id === editingContractId;
 
               return (
-                <TableRow key={index}>
-                  <TableCell>
+                <TableRow key={index} className="h-8">
+                  <TableCell className="py-1 pl-2 pr-16 text-center">
                     {isEditing ? (
                       <SelectSlot
                         onSelectRarity={(rarity) => {
@@ -155,17 +204,17 @@ export default function LockerContract() {
                       />
                     ) : (
                       <p
-                        className="border-2 rounded-full text-center"
+                        className="border-2 rounded-2xl p-1 text-sm"
                         style={{ borderColor: contract.rarity.color }}
                       >
                         {contract.rarity.name}
                       </p>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-0 px-2">
                     {isEditing ? <p>{editedName.name}</p> : contract.name}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-0 px-2">
                     {isEditing ? (
                       <NumericInput
                         placeholder="Issue ID"
@@ -177,7 +226,7 @@ export default function LockerContract() {
                       contract.issueId
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-0 px-2">
                     {isEditing ? (
                       <NumericInput
                         placeholder="Purchase Price"
@@ -189,7 +238,7 @@ export default function LockerContract() {
                       `${'$' + contract.purchasePrice.toFixed(2)}`
                     )}
                   </TableCell>
-                  <TableCell className="flex gap-2 items-center">
+                  <TableCell className="py-0 px-2 flex gap-2 items-center">
                     <ActionsTable
                       data={contract}
                       onEdit={handleEdit}
@@ -204,15 +253,15 @@ export default function LockerContract() {
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="text-center">
+              <TableCell colSpan={5} className="text-center py-1 px-2">
                 No contract found
               </TableCell>
             </TableRow>
           )}
         </TableBody>
         <TableFooter className="bg-transparent">
-          <TableRow>
-            <TableCell>
+          <TableRow className="h-10">
+            <TableCell className="py-1 px-2">
               <SelectSlot
                 onSelectRarity={(rarity) =>
                   handleSelectRarityContract(setSelectedContract, rarity)
@@ -220,10 +269,10 @@ export default function LockerContract() {
                 rounded={true}
               />
             </TableCell>
-            <TableCell>
+            <TableCell className="py-1 px-2">
               {selectedContract ? selectedContract.name : ""}
             </TableCell>
-            <TableCell>
+            <TableCell className="py-1 px-2">
               <NumericInput
                 placeholder="ID"
                 value={issueId}
@@ -231,7 +280,7 @@ export default function LockerContract() {
                 className="w-1/2"
               />
             </TableCell>
-            <TableCell>
+            <TableCell className="py-1 px-2">
               <NumericInput
                 placeholder="Purchase Price"
                 value={purchasePrice}
@@ -239,7 +288,7 @@ export default function LockerContract() {
                 className="w-1/2"
               />
             </TableCell>
-            <TableCell className="flex items-center">
+            <TableCell className="py-1 px-2 flex items-center">
               <Button
                 variant="transparent"
                 onClick={handleSubmit}
@@ -251,6 +300,15 @@ export default function LockerContract() {
           </TableRow>
           </TableFooter>
         </Table>
+        {showScrollMessage && (
+          <div className="text-primary text-center text-3xl py-1">
+            ⩔⩔ <span className="text-xl">Scroll down for more</span> ⩔⩔
+          </div>
+        )}
+        </div>
+      </div>
+      <div className="text-center text-sm text-muted-foreground py-2">
+          List of your showrunner contracts
       </div>
     </div>
   );

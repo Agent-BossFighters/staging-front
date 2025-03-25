@@ -48,17 +48,17 @@ export default function LockerRecharge() {
         <Table>
           <TableCaption>List of your recharge discounts</TableCaption>
           <TableHeader>
-            <TableRow>
-              <TableHead>DISCOUNT TIME</TableHead>
-              <TableHead>NUMBER</TableHead>
-              <TableHead>ACTION</TableHead>
+            <TableRow className="h-8">
+              <TableHead className="py-0 px-2">DISCOUNT TIME</TableHead>
+              <TableHead className="py-0 px-2">NUMBER</TableHead>
+              <TableHead className="py-0 px-2">ACTION</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="overflow-y-auto">
             {discountPercent.map((percent) => (
-              <TableRow key={percent}>
-                <TableCell>{percent} %</TableCell>
-                <TableCell>
+              <TableRow key={percent} className="h-8">
+                <TableCell className="py-0 px-2">{percent} %</TableCell>
+                <TableCell className="py-0 px-2">
                   {editingPercent === percent ? (
                     <Input
                       type="number"
@@ -71,7 +71,7 @@ export default function LockerRecharge() {
                     recharges[percent]
                   )}
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-0 px-2">
                   {editingPercent === percent ? (
                     <div className="flex gap-2">
                       <Button
