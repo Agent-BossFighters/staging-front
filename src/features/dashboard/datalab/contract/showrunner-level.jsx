@@ -44,9 +44,9 @@ export default function ShowrunnerLevel() {
           <TableBody>
             <TableRow>
               <TableHead>
-                SP. MARKS
-                <br />
                 NB
+                <br />
+                SP. MARKS
               </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
@@ -79,9 +79,9 @@ export default function ShowrunnerLevel() {
               ))}
             </TableRow>
             <TableRow>
-              <TableHead>TOTAL COST</TableHead>
+              <TableHead className="text-destructive">TOTAL COST</TableHead>
               {levels.map((level, index) => (
-                <TableCell key={level}>
+                <TableCell key={level} className="text-destructive">
                   {levelData?.total_cost?.[index] || "-"}
                 </TableCell>
               ))}

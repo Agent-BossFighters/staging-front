@@ -95,13 +95,6 @@ export default function PricingCard({
           >
             {buttonText}
           </Button>
-          <Button
-            variant="outline"
-            className="w-full border-primary text-primary hover:bg-primary/50"
-            onClick={handleCryptoPayment}
-          >
-            Pay with Crypto
-          </Button>
         </div>
       )}
     </div>

@@ -53,7 +53,7 @@ export default function Showrunner() {
               <br />
               MAX
             </TableHead>
-            <TableHead className="p-2 text-left">ENERGY</TableHead>
+            <TableHead className="p-2 text-left">MAX <br/> ENERGY</TableHead>
             <TableHead className="p-2 text-left">
               CRAFT
               <br />
@@ -67,12 +67,12 @@ export default function Showrunner() {
             <TableHead className="p-2 text-left text-destructive">
               FLEX
               <br />
-              CRAFT
+              / CRAFT
             </TableHead>
             <TableHead className="p-2 text-left text-destructive">
-              MARKS
+              SP. MARKS
               <br />
-              CRAFT
+              / CRAFT
             </TableHead>
             <TableHead className="p-2 text-left text-destructive">
               CRAFTING
@@ -87,12 +87,12 @@ export default function Showrunner() {
             <TableHead className="p-2 text-left text-destructive">
               FLEX
               <br />
-              CHARGE
+              / CHARGE
             </TableHead>
             <TableHead className="p-2 text-left text-destructive">
-              MARKS
+              SP. MARKS
               <br />
-              CHARGE
+              / CHARGE
             </TableHead>
           </TableRow>
         </TableHeader>
