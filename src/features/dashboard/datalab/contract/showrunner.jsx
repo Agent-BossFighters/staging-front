@@ -74,6 +74,11 @@ export default function Showrunner() {
               <br />
               CRAFT
             </TableHead>
+            <TableHead className="p-2 text-left text-destructive">
+              CRAFTING
+              <br />
+              COST
+            </TableHead>
             <TableHead className="p-2 text-left">
               CHARGE
               <br />
@@ -93,7 +98,7 @@ export default function Showrunner() {
         </TableHeader>
         <TableBody>
           {rarities.map((rarityItem) => {
-            const contract = contracts.contracts.find(
+            const contract = contracts.find(
               (c) => c["1. rarity"] === rarityItem.rarity
             );
 
@@ -136,15 +141,18 @@ export default function Showrunner() {
                     ? Math.round(getValue(contract, "10. sp_marks_craft"))
                     : "-"}
                 </TableCell>
+                <TableCell className="p-2 text-left text-destructive">
+                  {getValue(contract, "11. total_craft_cost")}
+                </TableCell>
                 <TableCell className="p-2 text-left">
-                  {getValue(contract, "11. time_to_charge")}
+                  {getValue(contract, "12. time_to_charge")}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "12. flex_charge")}
+                  {getValue(contract, "13. flex_charge")}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "13. sp_marks_charge")
-                    ? Math.round(getValue(contract, "13. sp_marks_charge"))
+                  {getValue(contract, "14. sp_marks_charge")
+                    ? Math.round(getValue(contract, "14. sp_marks_charge"))
                     : "-"}
                 </TableCell>
               </TableRow>
