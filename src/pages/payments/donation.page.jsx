@@ -41,7 +41,7 @@ export default function DonationPage() {
           </p>
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold text-center">
-              💖 Why Donate?
+              💖 Why Support Us?
             </h2>
             <ul className="space-y-4 text-lg text-left">
               <li>• Support ongoing development and innovation</li>
@@ -70,7 +70,7 @@ export default function DonationPage() {
             onClick={handleDonation}
             className="w-64 bg-yellow-400 text-black hover:bg-yellow-500 text-lg py-6 font-bold uppercase"
           >
-            Donate
+            Support Us
           </Button>
         </div>
       </div>

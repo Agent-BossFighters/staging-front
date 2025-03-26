@@ -24,7 +24,7 @@ const menuItems = [
     ],
   },
   { path: "/economy", label: "Economy map" },
-  { path: "/payments/donation", label: "Donate" },
+  { path: "/payments/donation", label: "Support us" },
 ];
 
 export default function DesktopLink() {

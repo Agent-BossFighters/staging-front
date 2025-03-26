@@ -14,7 +14,7 @@ export default function MobileNav() {
   const menuItems = [
     { path: "/dashboard", label: "Dashboard", requiresAuth: true },
     { path: "/economy", label: "Economy" },
-    { path: "/payments/donation", label: "Donate" },
+    { path: "/payments/donation", label: "Support us" },
   ];
 
   useEffect(() => {
