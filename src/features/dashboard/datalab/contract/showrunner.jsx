@@ -53,7 +53,7 @@ export default function Showrunner() {
               <br />
               MAX
             </TableHead>
-            <TableHead className="p-2 text-left">ENERGY</TableHead>
+            <TableHead className="p-2 text-left">MAX <br/> ENERGY</TableHead>
             <TableHead className="p-2 text-left">
               CRAFT
               <br />
@@ -67,12 +67,17 @@ export default function Showrunner() {
             <TableHead className="p-2 text-left text-destructive">
               FLEX
               <br />
-              CRAFT
+              / CRAFT
             </TableHead>
             <TableHead className="p-2 text-left text-destructive">
-              MARKS
+              SP. MARKS
               <br />
-              CRAFT
+              / CRAFT
+            </TableHead>
+            <TableHead className="p-2 text-left text-destructive">
+              CRAFTING
+              <br />
+              COST
             </TableHead>
             <TableHead className="p-2 text-left">
               CHARGE
@@ -82,18 +87,18 @@ export default function Showrunner() {
             <TableHead className="p-2 text-left text-destructive">
               FLEX
               <br />
-              CHARGE
+              / CHARGE
             </TableHead>
             <TableHead className="p-2 text-left text-destructive">
-              MARKS
+              SP. MARKS
               <br />
-              CHARGE
+              / CHARGE
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rarities.map((rarityItem) => {
-            const contract = contracts.contracts.find(
+            const contract = contracts.find(
               (c) => c["1. rarity"] === rarityItem.rarity
             );
 
@@ -136,15 +141,18 @@ export default function Showrunner() {
                     ? Math.round(getValue(contract, "10. sp_marks_craft"))
                     : "-"}
                 </TableCell>
+                <TableCell className="p-2 text-left text-destructive">
+                  {getValue(contract, "11. total_craft_cost")}
+                </TableCell>
                 <TableCell className="p-2 text-left">
-                  {getValue(contract, "11. time_to_charge")}
+                  {getValue(contract, "12. time_to_charge")}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "12. flex_charge")}
+                  {getValue(contract, "13. flex_charge")}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "13. sp_marks_charge")
-                    ? Math.round(getValue(contract, "13. sp_marks_charge"))
+                  {getValue(contract, "14. sp_marks_charge")
+                    ? Math.round(getValue(contract, "14. sp_marks_charge"))
                     : "-"}
                 </TableCell>
               </TableRow>

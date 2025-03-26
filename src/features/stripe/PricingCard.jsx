@@ -1,5 +1,6 @@
 import { Button } from "@shared/ui/button";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function PricingCard({
   plan,
@@ -10,6 +11,36 @@ export default function PricingCard({
   onSelect,
   buttonText = "Subscribe",
 }) {
+  const navigate = useNavigate();
+
+  const handleCryptoPayment = () => {
+    try {
+      const params = new URLSearchParams({
+        destination_currency: "usdc",
+        destination_amount: price.toFixed(2),
+        destination_network: "ethereum",
+        success_url: `${window.location.origin}/payments/success`,
+        cancel_url: `${window.location.origin}/payments/cancel`,
+        transaction_details: JSON.stringify({
+          type: "subscription",
+          plan: plan,
+        }),
+        client_reference_id: `plan_${plan.toLowerCase()}_${Date.now()}`,
+        publishable_key: import.meta.env.VITE_STRIPE_PUBLIC_KEY,
+        theme: "dark",
+        customer_email: "",
+        customer_wallet_address: "",
+        source_currency: "usd",
+        lock_source_currency: "true",
+        lock_destination_currency: "true",
+      });
+
+      window.location.href = `https://crypto.link.com?${params.toString()}`;
+    } catch (error) {
+      console.error("Error initiating crypto payment:", error);
+    }
+  };
+
   return (
     <div
       className={`relative p-6 rounded-xl border ${
@@ -57,12 +88,14 @@ export default function PricingCard({
       </div>
 
       {isPremium && (
-        <Button
-          className="w-full mt-6 bg-primary text-background hover:bg-primary/90 font-bold uppercase"
-          onClick={onSelect}
-        >
-          {buttonText}
-        </Button>
+        <div className="space-y-3 mt-6">
+          <Button
+            className="w-full bg-primary text-background hover:bg-primary/90 font-bold uppercase"
+            onClick={onSelect}
+          >
+            {buttonText}
+          </Button>
+        </div>
       )}
     </div>
   );

@@ -20,6 +20,7 @@ export default function ShowrunnerLevel() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!levelData) return <div>No data available</div>;
 
   return (
     <>
@@ -43,14 +44,14 @@ export default function ShowrunnerLevel() {
           <TableBody>
             <TableRow>
               <TableHead>
-                SP. MARKS
-                <br />
                 NB
+                <br />
+                SP. MARKS
               </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
-                  {levelData.spMarksNb[index]
-                    ? Math.round(levelData.spMarksNb[index])
+                  {levelData?.sp_marks_nb?.[index] !== undefined
+                    ? String(Math.round(levelData.sp_marks_nb[index]))
                     : "-"}
                 </TableCell>
               ))}
@@ -63,19 +64,25 @@ export default function ShowrunnerLevel() {
               </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
-                  {levelData.spMarksCost[index] || "-"}
+                  {levelData?.sp_marks_cost?.[index] || "-"}
                 </TableCell>
               ))}
             </TableRow>
             <TableRow>
-              <TableHead className="text-destructive">
-                TOTAL
-                <br />
-                COST
-              </TableHead>
+              <TableHead>TOTAL SP. MARKS</TableHead>
+              {levels.map((level, index) => (
+                <TableCell key={level}>
+                  {levelData?.total_sp_marks?.[index] !== undefined
+                    ? String(levelData.total_sp_marks[index])
+                    : "-"}
+                </TableCell>
+              ))}
+            </TableRow>
+            <TableRow>
+              <TableHead className="text-destructive">TOTAL COST</TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level} className="text-destructive">
-                  {levelData.totalCost[index] || "-"}
+                  {levelData?.total_cost?.[index] || "-"}
                 </TableCell>
               ))}
             </TableRow>

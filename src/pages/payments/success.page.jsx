@@ -20,7 +20,7 @@ export default function SuccessPage() {
     let isMounted = true;
     let timer;
 
-    const checkSubscription = async () => {
+    const checkPayment = async () => {
       if (!sessionId) {
         toast.error("No session ID found");
         navigate("/payments/pricing");
@@ -33,9 +33,16 @@ export default function SuccessPage() {
 
       try {
         setIsLoading(true);
-        // Vérifier le statut de l'abonnement
+
+        // Vérifier si c'est une donation ou un abonnement
+        const isDonation = window.location.pathname.includes("/donations/");
+        const endpoint = isDonation
+          ? "v1/payments/donation/success"
+          : "v1/payments/checkout/success";
+
+        // Vérifier le statut du paiement
         const response = await kyInstance
-          .get(`v1/payments/checkout/success`, {
+          .get(endpoint, {
             searchParams: {
               session_id: sessionId,
             },
@@ -47,15 +54,21 @@ export default function SuccessPage() {
         setSubscriptionDetails(response);
 
         if (response.success) {
-          // Mettre à jour le statut premium de l'utilisateur
           if (response.user) {
-            login(response.user, response.token);
-            localStorage.setItem("auth_token", response.token);
-            setIsPremium(response.user.isPremium);
+            // Pour les abonnements, mettre à jour le statut premium
+            if (!isDonation) {
+              login(response.user, response.token);
+              localStorage.setItem("auth_token", response.token);
+              setIsPremium(response.user.isPremium);
+            }
             setHasProcessed(true);
           }
 
-          toast.success("Payment successful! Welcome to Premium!");
+          toast.success(
+            isDonation
+              ? "Thank you for your donation!"
+              : "Payment successful! Welcome to Premium!"
+          );
 
           // Attendre un peu pour laisser le temps au backend de traiter le webhook
           await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -63,7 +76,7 @@ export default function SuccessPage() {
           toast.error("Payment verification failed");
         }
       } catch (error) {
-        console.error("Error fetching subscription details:", error);
+        console.error("Error fetching payment details:", error);
         toast.error("Error verifying payment. Please contact support.");
       } finally {
         if (isMounted) {
@@ -72,7 +85,7 @@ export default function SuccessPage() {
       }
     };
 
-    checkSubscription();
+    checkPayment();
 
     // Redirection après 5 secondes
     timer = setTimeout(() => {
@@ -87,22 +100,32 @@ export default function SuccessPage() {
     };
   }, [sessionId, navigate, login]);
 
+  const isDonation = window.location.pathname.includes("/donations/");
+
   return (
     <div className="container mx-auto py-16 px-4 text-center">
       <div className="space-y-6">
         <h1 className="text-3xl font-bold text-green-600">
-          Subscription Activated!
+          {isDonation
+            ? "Thank You for Your Donation!"
+            : "Subscription Activated!"}
         </h1>
         {subscriptionDetails && (
           <div className="text-lg text-muted-foreground">
-            <p>Your premium access is now active.</p>
-            {subscriptionDetails.current_period_end && (
-              <p className="mt-2">
-                Next payment:{" "}
-                {new Date(
-                  subscriptionDetails.current_period_end * 1000
-                ).toLocaleDateString()}
-              </p>
+            {isDonation ? (
+              <p>Your generous donation has been received.</p>
+            ) : (
+              <>
+                <p>Your premium access is now active.</p>
+                {subscriptionDetails.current_period_end && (
+                  <p className="mt-2">
+                    Next payment:{" "}
+                    {new Date(
+                      subscriptionDetails.current_period_end * 1000
+                    ).toLocaleDateString()}
+                  </p>
+                )}
+              </>
             )}
           </div>
         )}
@@ -119,11 +142,13 @@ export default function SuccessPage() {
           <Link to="/dashboard">
             <Button className="font-bold">GO TO DASHBOARD</Button>
           </Link>
-          <Link to="/payments/pricing">
-            <Button variant="outline" className="font-bold">
-              MANAGE SUBSCRIPTION
-            </Button>
-          </Link>
+          {!isDonation && (
+            <Link to="/payments/pricing">
+              <Button variant="outline" className="font-bold">
+                MANAGE SUBSCRIPTION
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

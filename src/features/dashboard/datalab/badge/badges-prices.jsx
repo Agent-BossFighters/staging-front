@@ -42,8 +42,12 @@ export default function BadgesPrices({ badges, loading }) {
       key: "6. bft_per_max_charge",
       className: "text-accent",
     },
-    { label: "$BFT\nVALUE($)", key: "7. bft_value", className: "text-accent" },
-    { label: "NB CHARGES\nROI", key: "8. roi", className: "text-accent" },
+    { label: "$BFT VALUE($)", key: "7. bft_value", className: "text-accent" },
+    {
+      label: "NB CHARGES ROI",
+      key: "9. nb_charges_roi",
+      className: "text-accent",
+    },
   ];
 
   return (

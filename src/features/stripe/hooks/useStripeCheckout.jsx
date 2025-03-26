@@ -63,39 +63,72 @@ export function useStripeCheckout() {
         : "auto";
   };
 
-  const initiateCheckout = async (priceId) => {
+  const initiateCheckout = async (
+    priceId,
+    isDonation = false,
+    amount = null
+  ) => {
     let loadingToast = null;
     try {
       const authToken = getCookie("agent-auth");
+      console.log("Auth token:", authToken ? "Present" : "Missing");
+
       if (!authToken) {
-        toast.error("Authentication required. Please log in.");
+        toast.error("Please log in to continue with your donation");
         return;
       }
 
-      if (!priceId) {
-        toast.error("Price ID is required");
+      if (!priceId && !isDonation) {
+        toast.error("Price ID is required for subscriptions");
         return;
       }
 
-      console.log("Starting checkout with priceId:", priceId);
+      if (isDonation && !amount) {
+        toast.error("Please enter a donation amount");
+        return;
+      }
+
+      if (isDonation && amount < 100) {
+        toast.error("Minimum donation amount is 1€");
+        return;
+      }
+
+      console.log("Starting checkout with:", { priceId, isDonation, amount });
 
       loadingToast = toast.loading("Preparing checkout session...");
+
+      const endpoint = isDonation
+        ? "v1/payments/donations/create"
+        : "v1/payments/checkout/create";
+
+      // Construire les URLs complètes avec le hash pour le routage
+      const successUrl = isDonation
+        ? `${window.location.origin}/#/payments/donation-success`
+        : `${window.location.origin}/#/payments/success`;
 
       const checkoutData = {
         priceId,
         locale: detectLocale(),
+        isDonation,
+        amount: isDonation ? amount : undefined,
+        success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${window.location.origin}/#/payments/cancel`,
       };
 
       console.log("Sending checkout data:", checkoutData);
 
-      const response = await kyInstance.post("v1/payments/checkout/create", {
+      const response = await kyInstance.post(endpoint, {
         json: checkoutData,
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
       });
 
       const data = await response.json();
       console.log("Checkout session response:", data);
 
       if (data?.url) {
+        console.log("Redirecting to Stripe checkout:", data.url);
         window.location.assign(data.url);
       } else {
         throw new Error("No checkout URL received from server");
@@ -106,13 +139,20 @@ export function useStripeCheckout() {
 
       if (error.response) {
         try {
-          const errorData = await error.response.clone().json();
+          const errorData = await error.response.json();
           console.log("Error data:", errorData);
-          errorMessage += errorData.error || "Please try again later.";
+
+          if (error.response.status === 401) {
+            errorMessage = "Please log in to continue with your donation";
+            window.location.href = "/#/users/login";
+          } else if (error.response.status === 422) {
+            errorMessage =
+              errorData.error || "Please check your input and try again";
+          } else {
+            errorMessage += errorData.error || "Please try again later.";
+          }
         } catch (e) {
-          const errorText = await error.response.clone().text();
-          console.error("Error response text:", errorText);
-          errorMessage += errorText || "Please try again later.";
+          errorMessage += "Please try again later.";
         }
       } else {
         errorMessage += error.message || "Please try again later.";
