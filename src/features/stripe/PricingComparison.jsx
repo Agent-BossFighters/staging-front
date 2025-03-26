@@ -12,7 +12,7 @@ const PRICING_PLANS = {
   freemium: {
     name: "FREEMIUM",
     price: 0,
-    features: ["Locker", "Data Lab", "Daily"],
+    features: ["Locker", "Data Lab (Basic Filters)", "Daily"],
     comingSoonFeatures: ["Schedule", "TV Tools", "Player Map"],
   },
   pro: {
