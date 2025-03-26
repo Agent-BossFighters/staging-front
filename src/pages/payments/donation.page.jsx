@@ -27,24 +27,30 @@ export default function DonationPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-6">Support Our Mission</h1>
-          <p className="text-lg text-white mb-8">
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold mb-6 text-center">
+            Support Our Project
+          </h1>
+          <p className="text-lg text-white mb-8 text-left">
             Your support makes a difference! By donating, you help us continue
             to improve our services and create a better experience for everyone.
             Every contribution, no matter the size, helps us grow and sustain
-            our mission. All collected funds will be exclusively used for the
+            our project. All collected funds will be exclusively used for the
             development of the application, including events, new features, and
             future improvements.
           </p>
           <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">💖 Why Donate?</h2>
-            <ul className="space-y-4 text-lg">
+            <h2 className="text-2xl font-semibold text-center">
+              💖 Why Donate?
+            </h2>
+            <ul className="space-y-4 text-lg text-left">
               <li>• Support ongoing development and innovation</li>
               <li>• Keep our platform free and accessible</li>
               <li>• Help us introduce new features and improvements</li>
             </ul>
-            <p className="text-lg mt-6">Thank you for your generosity! 🙌</p>
+            <p className="text-xl font-bold mt-6 text-center">
+              Thank you for your generosity! 🙌
+            </p>
           </div>
         </div>
 
@@ -64,7 +70,7 @@ export default function DonationPage() {
             onClick={handleDonation}
             className="w-64 bg-yellow-400 text-black hover:bg-yellow-500 text-lg py-6 font-bold uppercase"
           >
-            Donate Now
+            Donate
           </Button>
         </div>
       </div>

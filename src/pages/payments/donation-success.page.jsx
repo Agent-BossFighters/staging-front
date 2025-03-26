@@ -25,7 +25,7 @@ export default function DonationSuccessPage() {
         setIsLoading(true);
 
         const response = await kyInstance
-          .get("v1/payments/donation/success", {
+          .get("v1/payments/donations/success", {
             searchParams: {
               session_id: sessionId,
             },

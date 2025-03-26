@@ -98,12 +98,12 @@ export function useStripeCheckout() {
       loadingToast = toast.loading("Preparing checkout session...");
 
       const endpoint = isDonation
-        ? "v1/payments/donation/create"
+        ? "v1/payments/donations/create"
         : "v1/payments/checkout/create";
 
       // Construire les URLs complètes avec le hash pour le routage
       const successUrl = isDonation
-        ? `${window.location.origin}/#/payments/donations/success`
+        ? `${window.location.origin}/#/payments/donation-success`
         : `${window.location.origin}/#/payments/success`;
 
       const checkoutData = {

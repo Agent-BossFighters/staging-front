@@ -10,7 +10,7 @@ export default function StripeRoutes() {
     <Routes>
       <Route path="pricing" element={<PricingComparison />} />
       <Route path="donation" element={<DonationPage />} />
-      <Route path="donations/success" element={<DonationSuccessPage />} />
+      <Route path="donation-success" element={<DonationSuccessPage />} />
       <Route path="success" element={<SuccessPage />} />
       <Route path="cancel" element={<CancelPage />} />
       <Route path="*" element={<Navigate to="/payments/cancel" />} />
