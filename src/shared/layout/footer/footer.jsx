@@ -14,8 +14,17 @@ export default function Footer() {
           </Link>
         </div>
         {/* Icon de discord */}
-        <p className="hidden md:block">Join our community on Discord</p>
-        <p className="md:hidden">Discord</p>
+        <a
+          href="https://discord.gg/YDVXgKeg"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-primary transition-colors"
+        >
+          <span className="hidden md:inline">
+            Join our community on Discord
+          </span>
+          <span className="md:hidden">Discord</span>
+        </a>
       </div>
     </footer>
   );
