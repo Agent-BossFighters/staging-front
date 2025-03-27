@@ -68,6 +68,9 @@ export const useDailyData = () => {
         setState((prev) => ({ ...prev, loading: false }));
         return null;
       } catch (error) {
+        if (error.responseData?.error === 'Invalid session. Please reconnect.') {
+          return null;
+        }
         console.error("Error adding match:", error);
         setState((prev) => ({
           ...prev,
@@ -95,6 +98,9 @@ export const useDailyData = () => {
         setState((prev) => ({ ...prev, loading: false }));
         return null;
       } catch (error) {
+        if (error.responseData?.error === 'Invalid session. Please reconnect.') {
+          return null;
+        }
         console.error("Error updating match:", error);
         setState((prev) => ({
           ...prev,
@@ -122,6 +128,9 @@ export const useDailyData = () => {
         setState((prev) => ({ ...prev, loading: false }));
         return false;
       } catch (error) {
+        if (error.responseData?.error === 'Invalid session. Please reconnect.') {
+          return false;
+        }
         console.error("Error deleting match:", error);
         setState((prev) => ({
           ...prev,

@@ -6,6 +6,7 @@ import { A } from "@img/index";
 import { useAuth } from "@context/auth.context";
 import { Button } from "@shared/ui/button";
 import { Bot } from "lucide-react";
+import PremiumButton from "../desktop/premium-button";
 
 export default function MobileNav() {
   const { user } = useAuth();
@@ -40,26 +41,31 @@ export default function MobileNav() {
 
   return (
     <>
-      <div className="md:hidden h-20 flex justify-between items-center p-4">
+      <div className="lg:hidden h-20 flex justify-between items-center p-4">
         <button onClick={() => setIsOpen(!isOpen)} className="z-50">
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-        <Link to="/" className="h-full">
-          <img src={A} alt="logo" className="h-full" />
+        
+        <Link to="/" className="flex items-center">
+          <img src={A} alt="logo" className="w-10 h-10 object-contain" />
         </Link>
-        {user ? (
-          <Link to="/users/profile" className="pr-4 text-md hover:text-primary">
-            {user.asset ? (
-              <img src={user.asset} alt={user.username} />
-            ) : (
+
+        <div className="flex items-center gap-2">
+          <PremiumButton isMobile={true} />
+          {user ? (
+            <Link to="/users/profile" className="text-md hover:text-primary">
+              {user.asset ? (
+                <img src={user.asset} alt={user.username} />
+              ) : (
+                <Bot size={24} className="text-primary" />
+              )}
+            </Link>
+          ) : (
+            <Link to="users/login">
               <Bot size={24} className="text-primary" />
-            )}
-          </Link>
-        ) : (
-          <Link className="pr-4" to="users/login">
-            <Bot size={24} className="text-primary" />
-          </Link>
-        )}
+            </Link>
+          )}
+        </div>
       </div>
 
       <MobileMenu

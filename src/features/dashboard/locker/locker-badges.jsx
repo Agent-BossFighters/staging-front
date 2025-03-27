@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -23,9 +23,9 @@ import {
 } from "@shared/hook/rarity";
 import { useBadges } from "./hook/useBadges";
 import { useEditBadge } from "./hook/useEditBadge";
-import { BadgeCommon } from "@img/index";
 import { useUserPreference } from "@context/userPreference.context";
 import BadgeSkeleton from "./skeletons/BadgeSkeleton";
+
 export default function LockerBadges() {
   const { badges, setBadges, loading, setLoading, fetchMyBadges } = useBadges();
   const {
@@ -46,6 +46,13 @@ export default function LockerBadges() {
   const [purchasePrice, setPurchasePrice] = useState("");
   const [selectedBadge, setSelectedBadge] = useState(null);
   const { maxRarity } = useUserPreference();
+  const [startIndex, setStartIndex] = useState(0);
+  const [isMouseOverTable, setIsMouseOverTable] = useState(false);
+  const [showScrollMessage, setShowScrollMessage] = useState(false);
+  const tableRef = useRef(null);
+  
+  // Nombre de lignes à afficher
+  const visibleRowsCount = 8;
 
   useEffect(() => {
     fetchMyBadges();
@@ -54,6 +61,46 @@ export default function LockerBadges() {
   const filteredBadges = badges.filter(
     (badge) => getRarityOrder(badge.rarity.name) <= getRarityOrder(maxRarity)
   );
+
+  // Sélectionner les lignes visibles en fonction de l'indice de départ
+  const visibleBadges = filteredBadges.slice(startIndex, startIndex + visibleRowsCount);
+
+  useEffect(() => {
+    setShowScrollMessage(filteredBadges.length > visibleRowsCount);
+  }, [filteredBadges.length]);
+
+  useEffect(() => {
+    const wheelHandler = (e) => {
+      if (!isMouseOverTable) return;
+      
+      // Si la souris est sur le tableau, empêcher le défilement de la page
+      e.preventDefault();
+      
+      if (filteredBadges.length <= visibleRowsCount) return;
+      
+      if (e.deltaY > 0) {
+        // Défilement vers le bas
+        setStartIndex(prev => Math.min(prev + 1, filteredBadges.length - visibleRowsCount));
+      } else if (e.deltaY < 0) {
+        // Défilement vers le haut
+        setStartIndex(prev => Math.max(prev - 1, 0));
+      }
+    };
+
+    window.addEventListener('wheel', wheelHandler, { passive: false });
+    
+    return () => {
+      window.removeEventListener('wheel', wheelHandler);
+    };
+  }, [isMouseOverTable, filteredBadges.length, visibleRowsCount]);
+  
+  const handleMouseEnter = () => {
+    setIsMouseOverTable(true);
+  };
+  
+  const handleMouseLeave = () => {
+    setIsMouseOverTable(false);
+  };
 
   const handleSubmit = async () => {
     const missingFields = [];
@@ -119,27 +166,29 @@ export default function LockerBadges() {
   return (
     <div className="flex flex-col w-[60%] px-5 gap-5">
       <div className="pt-2">
+      <div 
+        ref={tableRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
       <Table className="">
-        <TableCaption>
-          List of your badges
-        </TableCaption>
         <TableHeader>
-          <TableRow>
-            <TableHead>RARITY</TableHead>
-            <TableHead>ITEM</TableHead>
-            <TableHead>ID</TableHead>
-            <TableHead>PURCHASE PRICE</TableHead>
-            <TableHead>ACTION(S)</TableHead>
+          <TableRow className="h-8">
+            <TableHead className="py-0 px-2">RARITY</TableHead>
+            <TableHead className="py-0 px-2">ITEM</TableHead>
+            <TableHead className="py-0 px-2">ID</TableHead>
+            <TableHead className="py-0 px-2">PURCHASE PRICE</TableHead>
+            <TableHead className="py-0 px-2">ACTION(S)</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="overflow-y-auto">
-          {filteredBadges.length > 0 ? (
-            filteredBadges.map((badge, index) => {
+          {visibleBadges.length > 0 ? (
+            visibleBadges.map((badge, index) => {
               const isEditing = badge.id === editingBadgeId;
 
               return (
-                <TableRow key={index} className="">
-                  <TableCell>
+                <TableRow key={index} className="h-8">
+                  <TableCell className="py-1 pl-2 pr-16 text-center">
                     {isEditing ? (
                       <SelectSlot
                         onSelectRarity={(rarity) => {
@@ -151,17 +200,17 @@ export default function LockerBadges() {
                       />
                     ) : (
                       <p
-                        className="border-2 rounded-full text-center"
+                        className="border-2 rounded-2xl p-1 text-sm"
                         style={{ borderColor: badge.rarity.color }}
                       >
                         {badge.rarity.name}
                       </p>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-0 px-2">
                     {isEditing ? <p>{editedName.name}</p> : badge.name}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-0 px-2">
                     {isEditing ? (
                       <NumericInput
                         placeholder="ID"
@@ -173,7 +222,7 @@ export default function LockerBadges() {
                       badge.issueId
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-0 px-2">
                     {isEditing ? (
                       <NumericInput
                         placeholder="Purchase Price"
@@ -185,7 +234,7 @@ export default function LockerBadges() {
                       `${'$' + badge.purchasePrice.toFixed(2)}`
                     )}
                   </TableCell>
-                  <TableCell className="flex gap-2 items-center">
+                  <TableCell className="py-0 px-2 flex gap-2 items-center">
                     <ActionsTable
                       data={badge}
                       onEdit={handleEdit}
@@ -200,15 +249,15 @@ export default function LockerBadges() {
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="text-center">
+              <TableCell colSpan={5} className="text-center py-1 px-2">
                 No badge found
               </TableCell>
             </TableRow>
           )}
         </TableBody>
         <TableFooter className="bg-transparent">
-          <TableRow>
-            <TableCell>
+          <TableRow className="h-10">
+            <TableCell className="py-1 px-2">
               <SelectSlot
                 onSelectRarity={(rarity) =>
                   handleSelectRarityBadges(setSelectedBadge, rarity)
@@ -216,8 +265,8 @@ export default function LockerBadges() {
                 rounded={true}
               />
             </TableCell>
-            <TableCell>{selectedBadge ? selectedBadge.name : ""}</TableCell>
-            <TableCell>
+            <TableCell className="py-1 px-2">{selectedBadge ? selectedBadge.name : ""}</TableCell>
+            <TableCell className="py-1 px-2">
               <NumericInput
                 placeholder="ID"
                 value={issueId}
@@ -225,7 +274,7 @@ export default function LockerBadges() {
                 className="w-1/2"
               />
             </TableCell>
-            <TableCell>
+            <TableCell className="py-1 px-2">
               <NumericInput
                 placeholder="Purchase Price"
                 value={purchasePrice}
@@ -233,7 +282,7 @@ export default function LockerBadges() {
                 className="w-1/2"
               />
             </TableCell>
-            <TableCell className="flex items-center">
+            <TableCell className="py-1 px-2 flex items-center">
               <Button
                 variant="transparent"
                 onClick={handleSubmit}
@@ -245,6 +294,15 @@ export default function LockerBadges() {
           </TableRow>
         </TableFooter>
       </Table>
+      {showScrollMessage && (
+        <div className="text-primary text-center text-3xl py-1">
+          ⩔⩔ <span className="text-xl">Scroll down for more</span> ⩔⩔
+        </div>
+      )}
+      </div>
+      </div>
+      <div className="text-center text-sm text-muted-foreground py-2">
+        List of your badges
       </div>
     </div>
   );

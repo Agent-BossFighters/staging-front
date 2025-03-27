@@ -74,7 +74,14 @@ export default function BadgesPrices({ badges, loading }) {
         <TableBody>
           {rarities.map((rarityItem) => (
             <TableRow key={rarityItem.rarity}>
-              <RarityCell rarity={rarityItem.rarity} color={rarityItem.color} />
+              <TableCell className="p-2 text-center">
+                <p
+                  className="border-2 rounded-2xl p-1 text-sm"
+                  style={{ borderColor: rarityItem.color }}
+                >
+                  {rarityItem.rarity}
+                </p>
+              </TableCell>
               {rows.map((row) => (
                 <TableCell key={row.key} className={row.className}>
                   {badgeMap[rarityItem.rarity]?.[row.key] || "-"}
