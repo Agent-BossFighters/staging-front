@@ -45,7 +45,7 @@ export default function DonationPage() {
       <h1 className="text-4xl font-bold mb-4 text-yellow-400 text-center">
         SUPPORT US
       </h1>
-      <div className="text-center mb-12">
+      <div className="text-justify mb-12">
         <p className="text-muted-foreground max-w-5xl mx-auto text-white">
           Your support makes a difference! By donating, you help us continue to
           improve our services and create a better experience for everyone.
