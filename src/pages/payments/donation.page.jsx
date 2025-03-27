@@ -27,22 +27,16 @@ export default function DonationPage() {
 
   const donationPlans = {
     why: {
-      name: "💖 Why Support Us?",
+      name: "💖 WHY SUPPORT US ?",
       features: [
-        "• Support ongoing development and innovation",
-        "• Keep our platform free and accessible",
-        "• Help us introduce new features and improvements",
+        "Develop Boss Fighters community",
+        "Enable us to improve the platform with new features",
+        "Offer rewards for upcoming events",
       ],
-      comingSoonFeatures: [],
     },
     they: {
-      name: "🙌 They Support Us",
-      features: [
-        "Join our amazing supporters",
-        "Help make this project possible",
-        "Be part of our community",
-      ],
-      comingSoonFeatures: [],
+      name: "🙌 THEY SUPPORT US",
+      features: [],
     },
   };
 
@@ -52,7 +46,7 @@ export default function DonationPage() {
         SUPPORT US
       </h1>
       <div className="text-center mb-12">
-        <p className="text-muted-foreground max-w-3xl mx-auto text-white">
+        <p className="text-muted-foreground max-w-5xl mx-auto text-white">
           Your support makes a difference! By donating, you help us continue to
           improve our services and create a better experience for everyone.
           Every contribution, no matter the size, helps us grow and sustain our
@@ -83,21 +77,22 @@ export default function DonationPage() {
       </div>
 
       {/* Donation Form */}
-      <div className="mt-8 flex flex-col items-center gap-4 max-w-md mx-auto">
-        <div className="w-full">
+      <div className="mt-8 flex flex-col items-center gap-4 max-w-sm mx-auto">
+        <div className="w-1/2 flex items-center">
+          <span className="text-xl font-bold text-white mr-2">$</span>
           <Input
             type="number"
             min="1"
             step="0.01"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter amount ($)"
-            className="text-center text-lg h-12"
+            placeholder="Enter amount"
+            className="text-center text-lg h-10"
           />
         </div>
         <Button
           onClick={handleDonation}
-          className="w-full bg-primary text-background hover:bg-primary/90 font-bold uppercase py-6"
+          className="w-1/2 bg-primary text-background hover:bg-primary/90 font-bold uppercase py-4"
         >
           Donate
         </Button>

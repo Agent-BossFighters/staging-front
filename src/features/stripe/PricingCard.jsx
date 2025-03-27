@@ -61,8 +61,10 @@ export default function PricingCard({
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div>
+      <div
+        className={`${comingSoonFeatures?.length > 0 ? "grid grid-cols-2 gap-6" : ""}`}
+      >
+        <div className="w-full">
           {showPriceAndLabels && <h4 className="font-medium mb-3">Features</h4>}
           <ul className="space-y-3">
             {features.map((feature, index) => (
