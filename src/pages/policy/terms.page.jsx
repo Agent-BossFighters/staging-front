@@ -10,7 +10,7 @@ export default function PrivacyPage() {
           TERMS & CONDITIONS
         </h1>
         <p className="text-sm ps-9 lg:-translate-y-3">
-          Last updated: February 14, 2023
+          Last updated: March 27, 2025
         </p>
       </div>
       {terms.map((section, index) => (

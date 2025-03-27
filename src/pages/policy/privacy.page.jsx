@@ -8,12 +8,12 @@ export default function PrivacyPage() {
     <div className="w-3/4 mx-auto">
       <div className="flex flex-col items-center justify-center pt-9">
         <h1 className="flex items-center justify-center font-extrabold text-4xl lg:text-6xl">
-          Priv
+          PRIV
           <img src={A} alt="A" className="w-14 lg:w-20 h-14 lg:h-20" />
-          cy Policy
+          CY POLICY
         </h1>
         <p className="text-sm ps-9 lg:-translate-y-3">
-          Last updated: February 14, 2023
+          Last updated: March 27, 2025
         </p>
       </div>
       {privacy.map((section, index) => (

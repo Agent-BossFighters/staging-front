@@ -12,7 +12,7 @@ import { useEffect } from "react";
 
 export default function ShowrunnerLevel() {
   const { levelData, loading, error, fetchMyContracts } = useContracts();
-  const levels = Array.from({ length: 30 }, (_, i) => i + 1);
+  const levels = Array.from({ length: 70 }, (_, i) => i + 1);
 
   useEffect(() => {
     fetchMyContracts();
@@ -52,7 +52,7 @@ export default function ShowrunnerLevel() {
                 <TableCell key={level}>
                   {levelData?.sp_marks_nb?.[index] !== undefined
                     ? String(Math.round(levelData.sp_marks_nb[index]))
-                    : "-"}
+                    : "N/A"}
                 </TableCell>
               ))}
             </TableRow>
@@ -64,7 +64,7 @@ export default function ShowrunnerLevel() {
               </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
-                  {levelData?.sp_marks_cost?.[index] || "-"}
+                  {levelData?.sp_marks_cost?.[index] || "N/A"}
                 </TableCell>
               ))}
             </TableRow>
@@ -74,7 +74,7 @@ export default function ShowrunnerLevel() {
                 <TableCell key={level}>
                   {levelData?.total_sp_marks?.[index] !== undefined
                     ? String(levelData.total_sp_marks[index])
-                    : "-"}
+                    : "N/A"}
                 </TableCell>
               ))}
             </TableRow>
@@ -82,7 +82,7 @@ export default function ShowrunnerLevel() {
               <TableHead className="text-destructive">TOTAL COST</TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level} className="text-destructive">
-                  {levelData?.total_cost?.[index] || "-"}
+                  {levelData?.total_cost?.[index] || "N/A"}
                 </TableCell>
               ))}
             </TableRow>

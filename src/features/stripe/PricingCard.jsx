@@ -10,6 +10,8 @@ export default function PricingCard({
   isPremium,
   onSelect,
   buttonText = "Subscribe",
+  showPriceAndLabels = true,
+  showButton = true,
 }) {
   const navigate = useNavigate();
 
@@ -49,17 +51,21 @@ export default function PricingCard({
     >
       <div className="text-center mb-6">
         <h3 className="text-3xl font-semibold">{plan}</h3>
-        <div className="mt-4">
-          <span className="text-3xl font-bold">
-            {price === 0 ? "Free" : `$${price.toFixed(2)}`}
-          </span>
-          {price > 0 && <span className="text-muted-foreground">/month</span>}
-        </div>
+        {showPriceAndLabels && (
+          <div className="mt-4">
+            <span className="text-3xl font-bold">
+              {price === 0 ? "Free" : `$${price.toFixed(2)}`}
+            </span>
+            {price > 0 && <span className="text-muted-foreground">/month</span>}
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div>
-          <h4 className="font-medium mb-3">Features</h4>
+      <div
+        className={`${comingSoonFeatures?.length > 0 ? "grid grid-cols-2 gap-6" : ""}`}
+      >
+        <div className="w-full">
+          {showPriceAndLabels && <h4 className="font-medium mb-3">Features</h4>}
           <ul className="space-y-3">
             {features.map((feature, index) => (
               <li key={index} className="flex items-center gap-2">
@@ -87,7 +93,7 @@ export default function PricingCard({
         )}
       </div>
 
-      {isPremium && (
+      {isPremium && showButton && (
         <div className="space-y-3 mt-6">
           <Button
             className="w-full bg-primary text-background hover:bg-primary/90 font-bold uppercase"
@@ -97,6 +103,8 @@ export default function PricingCard({
           </Button>
         </div>
       )}
+
+      {isPremium && !showButton && <div className="mt-[72px]" />}
     </div>
   );
 }
