@@ -56,7 +56,7 @@ export default function DailySummary({ date, summary }) {
           <p className="text-2xl font-bold">ENERGY USED</p>
           <p className="text-red-500 text-2xl">{summary.energyUsed.amount}</p>
           {!streamerMode && (
-            <p className="text-red-500 text-2sm">${summary.energyUsed.cost}</p>
+            <p className="text-red-500 text-2sm">{summary.energyUsed.cost}</p>
           )}
         </div>
 
@@ -66,7 +66,7 @@ export default function DailySummary({ date, summary }) {
           <p className="text-2xl font-bold">$BFT</p>
           <p className="text-green-500 text-2xl">{formatNumber(summary.totalBft.amount)}</p>
           {!streamerMode && (
-            <p className="text-green-500 text-2sm">${formatPrice(summary.totalBft.value)}</p>
+            <p className="text-green-500 text-2sm">{formatPrice(summary.totalBft.value)}</p>
           )}
         </div>
 
@@ -76,7 +76,7 @@ export default function DailySummary({ date, summary }) {
           <p className="text-2xl font-bold">FLEX</p>
           <p className="text-green-500 text-2xl">{formatNumber(summary.totalFlex.amount)}</p>
           {!streamerMode && (
-            <p className="text-green-500 text-2sm">${formatPrice(summary.totalFlex.value)}</p>
+            <p className="text-green-500 text-2sm">{formatPrice(summary.totalFlex.value)}</p>
           )}
         </div>
 
@@ -85,7 +85,7 @@ export default function DailySummary({ date, summary }) {
           <div className="pb-4 flex flex-col items-center gap-2">
             <img src={Purse} alt="Profit" className="w-8 h-10" />
             <p className="text-2xl font-bold">PROFIT</p>
-            <p className="text-green-500 text-3xl">${formatPrice(summary.profit)}</p>
+            <p className="text-green-500 text-3xl">{formatPrice(summary.profit)}</p>
           </div>
         )}
       </div>
