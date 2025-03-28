@@ -12,7 +12,7 @@ import data from "@shared/data/rarities.json";
 import { getValue } from "../hook/value";
 import { useUserPreference } from "@context/userPreference.context";
 import { getRarityOrder } from "@shared/hook/rarity";
-import { formatNumber, formatPrice, formatPercent } from "@utils/formatters";
+import { formatNumber, formatPrice } from "@utils/formatters";
 
 export default function Badges({ badges, loading }) {
   const { maxRarity } = useUserPreference();
