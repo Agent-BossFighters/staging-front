@@ -13,6 +13,7 @@ import { useCrafts } from "./hook/useCrafts";
 import { getValue } from "../hook/value";
 import { useUserPreference } from "@context/userPreference.context";
 import { getRarityOrder } from "@shared/hook/rarity";
+import { formatNumber, formatPrice } from "@utils/formatters";
 
 const rarity = data.rarities;
 
@@ -79,17 +80,17 @@ export default function Badges() {
                     {rarityItem.rarity}
                   </p>
                 </TableCell>
-                <TableCell>{getValue(craft, "2. supply")}</TableCell>
+                <TableCell>{formatNumber(getValue(craft, "2. supply"))}</TableCell>
                 <TableCell>
-                  {getValue(craft, "3. nb_previous_rarity_item")}
+                  {formatNumber(getValue(craft, "3. nb_previous_rarity_item"))}
                 </TableCell>
-                <TableCell>{getValue(craft, "4. flex_craft")}</TableCell>
-                <TableCell>{getValue(craft, "5. flex_craft_cost")}</TableCell>
+                <TableCell>{formatNumber(getValue(craft, "4. flex_craft"))}</TableCell>
+                <TableCell>{formatPrice(getValue(craft, "5. flex_craft_cost"))}</TableCell>
                 <TableCell className="text-accent">
-                  {getValue(craft, "6. sp_marks_craft")}
+                  {formatNumber(getValue(craft, "6. sp_marks_craft"))}
                 </TableCell>
                 <TableCell className="text-accent">
-                  {getValue(craft, "7. sp_marks_value")}
+                  {formatPrice(getValue(craft, "7. sp_marks_value"), 2)}
                 </TableCell>
               </TableRow>
             );

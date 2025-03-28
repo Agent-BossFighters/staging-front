@@ -25,7 +25,7 @@ import { useContracts } from "@features/dashboard/locker/hook/useContracts";
 import { useEditContract } from "@features/dashboard/locker/hook/useEditContract";
 import { useUserPreference } from "@context/userPreference.context";
 import ShowrunnerContractSkeleton from "./skeletons/ShowrunnerContractSkeleton";
-
+import { formatPrice, formatNumber } from "@utils/formatters";
 export default function LockerContract() {
   const { contracts, setContracts, loading, setLoading, fetchMyContracts } =
     useContracts();
@@ -223,7 +223,7 @@ export default function LockerContract() {
                         className="w-1/2"
                       />
                     ) : (
-                      contract.issueId
+                      formatNumber(contract.issueId)
                     )}
                   </TableCell>
                   <TableCell className="py-0 px-2">
@@ -235,7 +235,7 @@ export default function LockerContract() {
                         className="w-1/2"
                       />
                     ) : (
-                      `${'$' + contract.purchasePrice.toFixed(2)}`
+                      formatPrice(contract.purchasePrice)
                     )}
                   </TableCell>
                   <TableCell className="py-0 px-2 flex gap-2 items-center">

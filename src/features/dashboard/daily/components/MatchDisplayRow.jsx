@@ -3,6 +3,7 @@ import MapIcon from "./MapIcon";
 import ResultIcon from "./ResultIcon";
 import ActionButtons from "./ActionButtons";
 import { useUserPreference } from "@context/userPreference.context";
+import { formatPrice, formatNumber, formatPercent } from "@utils/formatters";
 
 const MAX_SLOTS = 5;
 
@@ -33,7 +34,7 @@ export default function MatchDisplayRow({
       <td className="px-4 text-left min-w-[4%]">
         {currentBuild?.bftBonus ? (
           <div className="flex flex-col">
-            <span>{`${currentBuild.bftBonus}%`}</span>
+            <span>{formatPercent(currentBuild.bftBonus, 2)}</span>
           </div>
         ) : (
           "-"
@@ -44,15 +45,15 @@ export default function MatchDisplayRow({
           <RarityBadge rarity={rarity} />
         </td>
       ))}
-      <td className="px-4 text-left min-w-[4%]">{match.luckrate}</td>
-      <td className="px-4 text-left min-w-[4%]">{match.time}</td>
-      <td className="px-4 text-left min-w-[4%]">{match.energyUsed}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.luckrate)}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.time)}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.energyUsed, 2)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
           <td className="px-4 text-left min-w-[4%] text-destructive">
-            ${match.calculated.energyCost}
+            {formatPrice(match.calculated.energyCost)}
           </td>
         </>
       )}
@@ -63,37 +64,37 @@ export default function MatchDisplayRow({
       <td className="px-6 text-left min-w-[4%] capitalize" title={match.result}>
         <ResultIcon result={match.result} />
       </td>
-      <td className="px-4 text-left min-w-[4%]">{match.totalToken}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.totalToken)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
           <td className="px-4 text-left min-w-[4%] text-accent">
-            ${match.calculated.tokenValue}
+            {formatPrice(match.calculated.tokenValue)}
           </td>
         </>
       )}
       
-      <td className="px-4 text-left min-w-[4%]">{Math.round(match.totalToken / match.time)}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(Math.round(match.totalToken / match.time))}</td>
 
 
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[4%]">${(match.calculated.tokenValue / match.time).toFixed(2)}</td>
+          <td className="px-4 text-left min-w-[4%]">{formatPrice(match.calculated.tokenValue / match.time)}</td>
         </>
       )}
 
-      <td className="px-4 text-left min-w-[3%]">{match.totalPremiumCurrency}</td>
+      <td className="px-4 text-left min-w-[3%]">{formatNumber(match.totalPremiumCurrency)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
           <td className="px-4 text-left min-w-[4%] text-accent">
-            ${match.calculated.premiumValue}
+            {formatPrice(match.calculated.premiumValue)}
           </td>
           <td className="px-4 text-left min-w-[5%] text-accent">
-            ${match.calculated.profit}
+            {formatPrice(match.calculated.profit)}
           </td>
         </>
       )}

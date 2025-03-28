@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@ui/table";
 import { getValue } from "../hook/value";
+import { formatNumber, formatPrice, formatPercent } from "@utils/formatters";
 
 export default function SlotCost({ slots, loading, selectedRarity }) {
   if (loading) return <div>Loading...</div>;
@@ -60,30 +61,26 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
         <TableBody className="">
           {slots.slots_cost.map((slot, index) => {
             const rarityMetrics = selectedRarityMetrics[index] || {};
-            const totalFlex = rarityMetrics["1. total_flex"] || 0;
-            const totalFlexCost = rarityMetrics["2. total_cost"] || 0;
-            const totalBonusBft = index > 0 ? `${rarityMetrics["3. total_bonus_bft"]}%` : "0 %";
-            const totalTokensRoi = rarityMetrics["4. nb_tokens_roi"] || 0;
 
             return (
               <TableRow key={getValue(slot, "1. slot")}>
-                <TableCell>{getValue(slot, "1. slot")}</TableCell>
+                <TableCell>{formatNumber(getValue(slot, "1. slot"))}</TableCell>
                 <TableCell className="text-destructive">
-                  {totalFlex}
+                  {formatNumber(getValue(rarityMetrics, "1. total_flex"))}
                 </TableCell>
                 <TableCell className="text-destructive">
-                  {totalFlexCost}
+                  {formatPrice(getValue(rarityMetrics, "2. total_cost"))}
                 </TableCell>
-                <TableCell>{totalBonusBft}</TableCell>
-                <TableCell>{totalTokensRoi}</TableCell>
+                <TableCell>{formatPercent(getValue(rarityMetrics, "3. total_bonus_bft"))}</TableCell>
+                <TableCell>{formatNumber(getValue(rarityMetrics, "4. nb_tokens_roi"))}</TableCell>
                 <TableCell>
-                  {getValue(rarityMetrics, "5. nb_charges_roi_1.0")}
-                </TableCell>
-                <TableCell>
-                  {getValue(rarityMetrics, "6. nb_charges_roi_2.0")}
+                  {formatNumber(getValue(rarityMetrics, "5. nb_charges_roi_1.0"), 2)}
                 </TableCell>
                 <TableCell>
-                  {getValue(rarityMetrics, "7. nb_charges_roi_3.0")}
+                  {formatNumber(getValue(rarityMetrics, "6. nb_charges_roi_2.0"), 2)}
+                </TableCell>
+                <TableCell>
+                  {formatNumber(getValue(rarityMetrics, "7. nb_charges_roi_3.0"), 2)}
                 </TableCell>
               </TableRow>
             );

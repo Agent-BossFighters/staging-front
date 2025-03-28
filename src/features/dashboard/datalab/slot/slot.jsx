@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@ui/table";
 import { getValue } from "../hook/value";
+import { formatNumber, formatPrice, formatPercent } from "@utils/formatters";
 
 export default function Slot({ slots, loading }) {
   if (loading) return <div>Loading...</div>;
@@ -55,14 +56,14 @@ export default function Slot({ slots, loading }) {
             <TableRow key={item.slot}>
               <TableCell>{getValue(item, "1. slot")}</TableCell>
               <TableCell className="text-destructive">
-                {getValue(item, "2. nb_flex")}
+                {formatNumber(getValue(item, "2. nb_flex"))}
               </TableCell>
               <TableCell className="text-destructive">
-                {getValue(item, "3. flex_cost")}
+                {formatPrice(getValue(item, "3. flex_cost"))}
               </TableCell>
-              <TableCell>{getValue(item, "4. bonus_bft")}&nbsp;%</TableCell>
-              <TableCell>{getValue(item, "5. bft_per_badge")}</TableCell>
-              <TableCell>{getValue(item, "6. bonus_per_badge")}</TableCell>
+              <TableCell>{formatPercent(getValue(item, "4. bonus_bft"))}</TableCell>
+              <TableCell>{formatNumber(getValue(item, "5. bft_per_badge"))}</TableCell>
+              <TableCell>{formatNumber(getValue(item, "6. bonus_per_badge"))}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -16,6 +16,7 @@ import { useCurrencyPacks } from "./hook/useCurrencyPacks";
 import TacticsSkeleton from "./skeletons/TacticsSkeleton";
 import { toast } from "react-hot-toast";
 import { kyInstance } from "@utils/api/ky-config";
+import { formatNumber, formatPrice } from "@utils/formatters";
 
 const numbers = Array.from({ length: 4 }, (_, i) => i + 1);
 const STORAGE_KEY = "userPreferences";
@@ -192,7 +193,7 @@ export default function Tactics() {
       (p) => p.currencyNumber.toString() === value
     );
     if (!pack) return "Select";
-    return `$${pack.price} (${pack.currencyNumber.toLocaleString()})`;
+    return `${formatPrice(pack.price)} (${formatNumber(pack.currencyNumber)})`;
   };
 
   if (loading) return <TacticsSkeleton />;
@@ -239,10 +240,10 @@ export default function Tactics() {
                   >
                     <div className="flex flex-col">
                       <span className="font-medium">
-                        ${pack.price} ({pack.currencyNumber.toLocaleString()})
+                        {formatPrice(pack.price)} ({formatNumber(pack.currencyNumber)})
                       </span>
                       <span className="text-sm text-gray-400">
-                        ${pack.unitPrice}/FLEX
+                        {formatPrice(pack.unitPrice, 4)}/FLEX
                       </span>
                     </div>
                   </SelectItem>
