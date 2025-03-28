@@ -12,6 +12,7 @@ import data from "@shared/data/rarities.json";
 import { getValue } from "../hook/value";
 import { useUserPreference } from "@context/userPreference.context";
 import { getRarityOrder } from "@shared/hook/rarity";
+import { formatNumber, formatPrice, formatPercent } from "@utils/formatters";
 
 export default function Badges({ badges, loading }) {
   const { maxRarity } = useUserPreference();
@@ -103,30 +104,30 @@ export default function Badges({ badges, loading }) {
                   </p>
                 </TableCell>
                 <TableCell>{getValue(badge, "2. item")}</TableCell>
-                <TableCell>{getValue(badge, "3. supply")}</TableCell>
-                <TableCell>{getValue(badge, "4. floor_price")}</TableCell>
-                <TableCell>{getValue(badge, "5. efficiency")}</TableCell>
-                <TableCell>{getValue(badge, "6. ratio")}</TableCell>
-                <TableCell>{getValue(badge, "7. max_energy")}</TableCell>
+                <TableCell>{formatNumber(getValue(badge, "3. supply"))}</TableCell>
+                <TableCell>{formatPrice(getValue(badge, "4. floor_price"))}</TableCell>
+                <TableCell>{formatNumber(getValue(badge, "5. efficiency"), 2)}</TableCell>
+                <TableCell>{formatNumber(getValue(badge, "6. ratio"), 2)}</TableCell>
+                <TableCell>{formatNumber(getValue(badge, "7. max_energy"))}</TableCell>
                 <TableCell>{getValue(badge, "8. time_to_charge")}</TableCell>
                 <TableCell>{getValue(badge, "9. in_game_time")}</TableCell>
                 <TableCell className="text-destructive">
-                  {getValue(badge, "10. recharge_cost")}
+                  {formatPrice(getValue(badge, "10. recharge_cost"))}
                 </TableCell>
                 <TableCell className="text-destructive">
-                  {getValue(badge, "11. cost_per_hour")}
+                  {formatPrice(getValue(badge, "11. cost_per_hour"))}
                 </TableCell>
                 <TableCell className="text-accent">
-                  {getValue(badge, "12. bft_per_minute")}
+                  {formatNumber(getValue(badge, "12. bft_per_minute"))}
                 </TableCell>
                 <TableCell className="text-accent">
-                  {getValue(badge, "13. bft_per_max_charge")}
+                  {formatNumber(getValue(badge, "13. bft_per_max_charge"))}
                 </TableCell>
                 <TableCell className="text-accent">
-                  {getValue(badge, "14. bft_value_per_max_charge")}
+                  {formatPrice(getValue(badge, "14. bft_value_per_max_charge"), 2)}
                 </TableCell>
                 <TableCell className="text-accent">
-                  {getValue(badge, "15. roi")}
+                  {formatNumber(getValue(badge, "15. roi"), 2)}
                 </TableCell>
               </TableRow>
             );

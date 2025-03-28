@@ -1,6 +1,6 @@
 import { Flex, Token4, Purse, Spark, Win, Draw, Loss } from "@img/index";
 import { useUserPreference } from "@context/userPreference.context";
-
+import { formatNumber, formatPrice } from "@utils/formatters";
 export default function DailySummary({ date, summary }) {
   const { streamerMode } = useUserPreference();
   
@@ -35,19 +35,19 @@ export default function DailySummary({ date, summary }) {
           <div className="flex gap-4">
             <div className="flex items-center gap-1">
               <img src={Win} alt="Victories" className="w-7 h-7" />
-              <span className="pl-1 text-green-500 text-2xl">{summary.results.win}</span>
+              <span className="pl-1 text-green-500 text-2xl">{formatNumber(summary.results.win)}</span>
             </div>
             <div className="flex items-center gap-1">
               <img src={Draw} alt="Draws" className="w-7 h-7" />
-              <span className="pl-1 text-blue-500 text-2xl">{summary.results.draw}</span>
+              <span className="pl-1 text-blue-500 text-2xl">{formatNumber(summary.results.draw)}</span>
             </div>
             <div className="flex items-center gap-1">
               <img src={Loss} alt="Defeats" className="w-7 h-7" />
-              <span className="pl-1 text-red-500 text-2xl">{summary.results.loss}</span>
+              <span className="pl-1 text-red-500 text-2xl">{formatNumber(summary.results.loss)}</span>
             </div>
           </div>
           <p className="text-2xl justify-center font-bold">MATCH(ES)</p>
-          <p className="text-3xl">{summary.matchesCount}</p>
+          <p className="text-3xl">{formatNumber(summary.matchesCount)}</p>
         </div>
 
         {/* Energy used - Afficher la quantité mais pas le coût en mode streamer */}
@@ -64,9 +64,9 @@ export default function DailySummary({ date, summary }) {
         <div className="flex flex-col items-center gap-1">
           <img src={Token4} alt="bft" className="w-10 h-10" />
           <p className="text-2xl font-bold">$BFT</p>
-          <p className="text-green-500 text-2xl">{summary.totalBft.amount}</p>
+          <p className="text-green-500 text-2xl">{formatNumber(summary.totalBft.amount)}</p>
           {!streamerMode && (
-            <p className="text-green-500 text-2sm">${summary.totalBft.value}</p>
+            <p className="text-green-500 text-2sm">${formatPrice(summary.totalBft.value)}</p>
           )}
         </div>
 
@@ -74,9 +74,9 @@ export default function DailySummary({ date, summary }) {
         <div className="flex flex-col items-center gap-1">
           <img src={Flex} alt="flex" className="w-10 h-10" />
           <p className="text-2xl font-bold">FLEX</p>
-          <p className="text-green-500 text-2xl">{summary.totalFlex.amount}</p>
+          <p className="text-green-500 text-2xl">{formatNumber(summary.totalFlex.amount)}</p>
           {!streamerMode && (
-            <p className="text-green-500 text-2sm">${summary.totalFlex.value}</p>
+            <p className="text-green-500 text-2sm">${formatPrice(summary.totalFlex.value)}</p>
           )}
         </div>
 
@@ -85,7 +85,7 @@ export default function DailySummary({ date, summary }) {
           <div className="pb-4 flex flex-col items-center gap-2">
             <img src={Purse} alt="Profit" className="w-8 h-10" />
             <p className="text-2xl font-bold">PROFIT</p>
-            <p className="text-green-500 text-3xl">${summary.profit}</p>
+            <p className="text-green-500 text-3xl">${formatPrice(summary.profit)}</p>
           </div>
         )}
       </div>

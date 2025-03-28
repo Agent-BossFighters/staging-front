@@ -19,6 +19,7 @@ import { postData, deleteData } from "@utils/api/data";
 import { useBuilds } from "./hook/useBuilds";
 import { useEditBuild } from "./hook/useEditBuild";
 import BuildSkeleton from "./skeletons/BuildSkeleton";
+import { formatPercent } from "@utils/formatters";
 
 export default function Lockerbuilds() {
   const { builds, setBuilds, loading, setLoading, fetchMyBuilds } = useBuilds();
@@ -197,7 +198,7 @@ export default function Lockerbuilds() {
                           />
                         ) : (
                           <div className="flex flex-col">
-                            <span>{`${build.bftBonus}%`}</span>
+                            <span>{formatPercent(build.bftBonus, 2)}</span>
                           </div>
                         )}
                       </TableCell>

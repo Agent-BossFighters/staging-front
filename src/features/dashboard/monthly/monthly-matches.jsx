@@ -8,6 +8,7 @@ import {
 } from "@ui/table";
 import { useUserPreference } from "@context/userPreference.context";
 import { useState, useEffect, useRef } from "react";
+import { formatPrice, formatNumber, formatPercent } from "@utils/formatters";
 
 export default function MonthlyMatches({
   dailyMetrics,
@@ -160,49 +161,49 @@ export default function MonthlyMatches({
                 <TableRow key={date} className="border-b border-border">
                   <TableCell>{new Date(date).toLocaleDateString()}</TableCell>
                   <TableCell className="text-left">
-                    {metrics.total_matches}
+                    {formatNumber(metrics.total_matches)}
                   </TableCell>
                   <TableCell className="text-left">
-                    {calculateDailyIGTime(metrics)}
+                    {formatNumber(calculateDailyIGTime(metrics))}
                   </TableCell>
                   <TableCell className="text-left">
-                    {metrics.total_energy}
+                    {formatNumber(metrics.total_energy, 1)}
                   </TableCell>
                   
                   {/* Masquer les colonnes financières en mode streamer */}
                   {!streamerMode && (
                     <TableCell className="text-left text-destructive">
-                      ${metrics.total_energy_cost}
+                      {formatPrice(metrics.total_energy_cost)}
                     </TableCell>
                   )}
                   <TableCell className="text-left">
-                    {metrics.total_bft}
+                    {formatNumber(metrics.total_bft)}
                   </TableCell>
 
                   {/* Masquer les colonnes financières en mode streamer */}
                   {!streamerMode && (
                     <TableCell className="text-left text-accent">
-                      ${metrics.total_bft_value}
+                      {formatPrice(metrics.total_bft_value)}
                     </TableCell>
                   )}
                   <TableCell className="text-left">
-                    {metrics.total_flex}
+                    {formatNumber(metrics.total_flex)}
                   </TableCell>
 
                   {/* Masquer les colonnes financières en mode streamer */}
                   {!streamerMode && (
                     <>
                       <TableCell className="text-left text-accent">
-                        ${metrics.total_flex_value}
+                        {formatPrice(metrics.total_flex_value)}
                       </TableCell>
 
                       <TableCell className="text-left text-green-500">
-                        ${metrics.total_profit}
+                        {formatPrice(metrics.total_profit)}
                       </TableCell>
                     </>
                   )}
                   <TableCell className="text-left">
-                    {metrics.win_rate}%
+                    {formatPercent(metrics.win_rate, 2)}
                   </TableCell>
                 </TableRow>
               );

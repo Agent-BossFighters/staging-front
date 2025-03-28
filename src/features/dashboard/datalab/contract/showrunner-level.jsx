@@ -9,6 +9,7 @@ import {
 } from "@ui/table";
 import { useContracts } from "./hook/useContracts";
 import { useEffect } from "react";
+import { formatNumber, formatPrice } from "@utils/formatters";
 
 export default function ShowrunnerLevel() {
   const { levelData, loading, error, fetchMyContracts } = useContracts();
@@ -51,7 +52,7 @@ export default function ShowrunnerLevel() {
               {levels.map((level, index) => (
                 <TableCell key={level}>
                   {levelData?.sp_marks_nb?.[index] !== undefined
-                    ? String(Math.round(levelData.sp_marks_nb[index]))
+                    ? formatNumber(Math.round(levelData.sp_marks_nb[index]))
                     : "N/A"}
                 </TableCell>
               ))}
@@ -64,7 +65,9 @@ export default function ShowrunnerLevel() {
               </TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
-                  {levelData?.sp_marks_cost?.[index] || "N/A"}
+                  {levelData?.sp_marks_cost?.[index] !== undefined 
+                    ? formatPrice(levelData.sp_marks_cost[index])
+                    : "N/A"}
                 </TableCell>
               ))}
             </TableRow>
@@ -73,7 +76,7 @@ export default function ShowrunnerLevel() {
               {levels.map((level, index) => (
                 <TableCell key={level}>
                   {levelData?.total_sp_marks?.[index] !== undefined
-                    ? String(levelData.total_sp_marks[index])
+                    ? formatNumber(levelData.total_sp_marks[index])
                     : "N/A"}
                 </TableCell>
               ))}
@@ -82,7 +85,9 @@ export default function ShowrunnerLevel() {
               <TableHead className="text-destructive">TOTAL COST</TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level} className="text-destructive">
-                  {levelData?.total_cost?.[index] || "N/A"}
+                  {levelData?.total_cost?.[index] !== undefined
+                    ? formatPrice(levelData.total_cost[index])
+                    : "N/A"}
                 </TableCell>
               ))}
             </TableRow>
