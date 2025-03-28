@@ -25,6 +25,7 @@ import { useBadges } from "./hook/useBadges";
 import { useEditBadge } from "./hook/useEditBadge";
 import { useUserPreference } from "@context/userPreference.context";
 import BadgeSkeleton from "./skeletons/BadgeSkeleton";
+import { formatPrice, formatNumber } from "@utils/formatters";
 
 export default function LockerBadges() {
   const { badges, setBadges, loading, setLoading, fetchMyBadges } = useBadges();
@@ -219,7 +220,7 @@ export default function LockerBadges() {
                         className="w-1/2"
                       />
                     ) : (
-                      badge.issueId
+                      formatNumber(badge.issueId)
                     )}
                   </TableCell>
                   <TableCell className="py-0 px-2">
@@ -231,7 +232,7 @@ export default function LockerBadges() {
                         className="w-1/2"
                       />
                     ) : (
-                      `${'$' + badge.purchasePrice.toFixed(2)}`
+                      formatPrice(badge.purchasePrice)
                     )}
                   </TableCell>
                   <TableCell className="py-0 px-2 flex gap-2 items-center">

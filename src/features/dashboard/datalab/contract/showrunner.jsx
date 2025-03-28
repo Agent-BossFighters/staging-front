@@ -13,6 +13,7 @@ import { useContracts } from "./hook/useContracts";
 import { getValue } from "../hook/value";
 import { useUserPreference } from "@context/userPreference.context";
 import { getRarityOrder } from "@shared/hook/rarity";
+import { formatNumber, formatPrice } from "@utils/formatters";
 
 export default function Showrunner() {
   const { contracts, loading, fetchMyContracts } = useContracts();
@@ -116,44 +117,40 @@ export default function Showrunner() {
                   {getValue(contract, "2. item")}
                 </TableCell>
                 <TableCell className="p-2 text-left">
-                  {getValue(contract, "3. supply")}
+                  {formatNumber(getValue(contract, "3. supply"))}
                 </TableCell>
                 <TableCell className="py-2 text-left">
-                  {getValue(contract, "4. floor_price")}
+                  {formatPrice(getValue(contract, "4. floor_price"))}
                 </TableCell>
                 <TableCell className="p-2 text-left">
-                  {getValue(contract, "5. lvl_max")}
+                  {formatNumber(getValue(contract, "5. lvl_max"))}
                 </TableCell>
                 <TableCell className="p-2 text-left">
-                  {getValue(contract, "6. max_energy")}
+                  {formatNumber(getValue(contract, "6. max_energy"))}
                 </TableCell>
                 <TableCell className="p-2 text-left">
                   {getValue(contract, "7. time_to_craft")}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "8. nb_badges_required")}
+                  {formatNumber(getValue(contract, "8. nb_badges_required"))}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "9. flex_craft")}
+                  {formatNumber(getValue(contract, "9. flex_craft"), 2)}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "10. sp_marks_craft")
-                    ? Math.round(getValue(contract, "10. sp_marks_craft"))
-                    : "-"}
+                  {formatNumber(getValue(contract, "10. sp_marks_craft"))}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "11. total_craft_cost")}
+                  {formatPrice(getValue(contract, "11. total_craft_cost"))}
                 </TableCell>
                 <TableCell className="p-2 text-left">
                   {getValue(contract, "12. time_to_charge")}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "13. flex_charge")}
+                  {formatNumber(getValue(contract, "13. flex_charge"))}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {getValue(contract, "14. sp_marks_charge")
-                    ? Math.round(getValue(contract, "14. sp_marks_charge"))
-                    : "-"}
+                  {formatNumber(getValue(contract, "14. sp_marks_charge"))}
                 </TableCell>
               </TableRow>
             );

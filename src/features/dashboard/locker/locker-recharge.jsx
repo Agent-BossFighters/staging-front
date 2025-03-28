@@ -12,6 +12,7 @@ import { Pencil, Check, X } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@ui/input";
 import { useUserPreference } from "@context/userPreference.context";
+import { formatPercent, formatNumber } from "@utils/formatters";
 
 const discountPercent = ["5", "9", "10", "13", "16", "20", "25"];
 
@@ -57,7 +58,7 @@ export default function LockerRecharge() {
           <TableBody className="overflow-y-auto">
             {discountPercent.map((percent) => (
               <TableRow key={percent} className="h-8">
-                <TableCell className="py-0 px-2">{percent} %</TableCell>
+                <TableCell className="py-0 px-2">{formatPercent(percent, 0)}</TableCell>
                 <TableCell className="py-0 px-2">
                   {editingPercent === percent ? (
                     <Input
@@ -68,7 +69,7 @@ export default function LockerRecharge() {
                       className="w-20"
                     />
                   ) : (
-                    recharges[percent]
+                    formatNumber(recharges[percent])
                   )}
                 </TableCell>
                 <TableCell className="py-0 px-2">

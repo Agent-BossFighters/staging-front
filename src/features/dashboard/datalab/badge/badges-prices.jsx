@@ -12,6 +12,8 @@ import { RarityCell } from "@ui/rarity-cell";
 import data from "@shared/data/rarities.json";
 import { useUserPreference } from "@context/userPreference.context";
 import { getRarityOrder } from "@shared/hook/rarity";
+import { formatPrice, formatNumber } from "@utils/formatters";
+import { getValue } from "../hook/value";
 
 export default function BadgesPrices({ badges, loading }) {
   const { maxRarity } = useUserPreference();
@@ -29,24 +31,27 @@ export default function BadgesPrices({ badges, loading }) {
   }, {});
 
   const rows = [
-    { label: "FLOOR\nPRICE", key: "2. badge_price" },
-    { label: "FULL RECHARGE\nPRICE", key: "3. full_recharge_price" },
+    { label: "FLOOR\nPRICE", key: "2. badge_price", type: "price" },
+    { label: "FULL RECHARGE\nPRICE", key: "3. full_recharge_price", type: "price" },
     {
       label: "TOTAL\nCOST",
       key: "4. total_cost",
       className: "text-destructive",
+      type: "price",
     },
-    { label: "IN GAME\nTIME", key: "5. in_game_minutes" },
+    { label: "IN GAME\nTIME", key: "5. in_game_minutes", type: "number" },
     {
       label: "$BFT / MAX\nRECHARGE",
       key: "6. bft_per_max_charge",
       className: "text-accent",
+      type: "number",
     },
-    { label: "$BFT VALUE($)", key: "7. bft_value", className: "text-accent" },
+    { label: "$BFT\nVALUE($)", key: "7. bft_value", className: "text-accent", type: "price" },
     {
-      label: "NB CHARGES ROI",
+      label: "NB CHARGES\nROI",
       key: "9. nb_charges_roi",
       className: "text-accent",
+      type: "number",
     },
   ];
 
@@ -84,7 +89,13 @@ export default function BadgesPrices({ badges, loading }) {
               </TableCell>
               {rows.map((row) => (
                 <TableCell key={row.key} className={row.className}>
-                  {badgeMap[rarityItem.rarity]?.[row.key] || "-"}
+                  {row.type === "price" 
+                   ? formatPrice(getValue(badgeMap[rarityItem.rarity], row.key) || "-") 
+                   : row.type === "number"
+                     ? row.key.includes("roi")
+                        ? formatNumber(getValue(badgeMap[rarityItem.rarity], row.key) || "-", 2)
+                        : formatNumber(getValue(badgeMap[rarityItem.rarity], row.key) || "-")
+                     : getValue(badgeMap[rarityItem.rarity], row.key) || "-"}
                 </TableCell>
               ))}
             </TableRow>
