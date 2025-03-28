@@ -1,6 +1,7 @@
 import { Button } from "@shared/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@context/auth.context";
 
 export default function PricingCard({
   plan,
@@ -9,11 +10,13 @@ export default function PricingCard({
   comingSoonFeatures,
   isPremium,
   onSelect,
-  buttonText = "Subscribe",
+  buttonTextFree = "Subscribe",
+  buttonTextPremium = "Manage Subscription",
   showPriceAndLabels = true,
   showButton = true,
 }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleCryptoPayment = () => {
     try {
@@ -99,7 +102,7 @@ export default function PricingCard({
             className="w-full bg-primary text-background hover:bg-primary/90 font-bold uppercase"
             onClick={onSelect}
           >
-            {buttonText}
+            {user && user.isPremium ? buttonTextPremium : buttonTextFree}
           </Button>
         </div>
       )}

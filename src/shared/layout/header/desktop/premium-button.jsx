@@ -11,6 +11,7 @@ export default function PremiumButton({ isMobile = false }) {
   // Sinon, on affiche le bouton pour devenir premium
   return (
     <>
+      {!user.isPremium ? (
       <Link to="/payments/pricing">
         <Button
           className={`${isMobile ? "text-xs py-1 px-2" : ""}`}
@@ -19,9 +20,9 @@ export default function PremiumButton({ isMobile = false }) {
           PREMIUM
         </Button>
       </Link>
-
-      <Link to="/payments/donation">
-        <Button
+      ) : ( '' )}
+        <Link to="/payments/donation">
+          <Button
           className={`${isMobile ? "text-xs py-1 px-2" : ""}`}
           size={isMobile ? "sm" : "default"}
         >
