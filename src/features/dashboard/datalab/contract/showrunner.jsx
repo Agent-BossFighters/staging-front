@@ -14,6 +14,7 @@ import { getValue } from "../hook/value";
 import { useUserPreference } from "@context/userPreference.context";
 import { getRarityOrder } from "@shared/hook/rarity";
 import { formatNumber, formatPrice } from "@utils/formatters";
+import ShowrunnerSkeleton from "@features/dashboard/datalab/skeletons/ShowrunnerSkeleton";
 
 export default function Showrunner() {
   const { contracts, loading, fetchMyContracts } = useContracts();
@@ -27,7 +28,7 @@ export default function Showrunner() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <ShowrunnerSkeleton />;
   }
   return (
     <div className="overflow-x-auto max-w-[1200px]">

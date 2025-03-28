@@ -10,9 +10,10 @@ import {
 } from "@ui/table";
 import { getValue } from "../hook/value";
 import { formatNumber, formatPrice, formatPercent } from "@utils/formatters";
+import SlotSkeleton from "@features/dashboard/datalab/skeletons/SlotSkeleton";
 
 export default function Slot({ slots, loading }) {
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <SlotSkeleton />;
 
   return (
     <div>

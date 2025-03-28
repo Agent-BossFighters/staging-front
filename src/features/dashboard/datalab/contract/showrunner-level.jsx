@@ -10,6 +10,7 @@ import {
 import { useContracts } from "./hook/useContracts";
 import { useEffect } from "react";
 import { formatNumber, formatPrice } from "@utils/formatters";
+import ShowrunnerLevelSkeleton from "@features/dashboard/datalab/skeletons/ShowrunnerLevelSkeleton";
 
 export default function ShowrunnerLevel() {
   const { levelData, loading, error, fetchMyContracts } = useContracts();
@@ -19,7 +20,7 @@ export default function ShowrunnerLevel() {
     fetchMyContracts();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <ShowrunnerLevelSkeleton />;
   if (error) return <div>Error: {error}</div>;
   if (!levelData) return <div>No data available</div>;
 
