@@ -10,13 +10,24 @@ export default function PremiumButton({ isMobile = false }) {
 
   // Sinon, on affiche le bouton pour devenir premium
   return (
-    <Link to="/payments/pricing">
-      <Button 
-        className={`${isMobile ? 'text-xs py-1 px-2' : ''}`}
-        size={isMobile ? "sm" : "default"}
-      >
-        PREMIUM
-      </Button>
-    </Link>
+    <>
+      <Link to="/payments/pricing">
+        <Button
+          className={`${isMobile ? "text-xs py-1 px-2" : ""}`}
+          size={isMobile ? "sm" : "default"}
+        >
+          PREMIUM
+        </Button>
+      </Link>
+
+      <Link to="/payments/donation">
+        <Button
+          className={`${isMobile ? "text-xs py-1 px-2" : ""}`}
+          size={isMobile ? "sm" : "default"}
+        >
+          SUPPORT US
+        </Button>
+      </Link>
+    </>
   );
 }
