@@ -14,6 +14,7 @@ import { getValue } from "../hook/value";
 import { useUserPreference } from "@context/userPreference.context";
 import { getRarityOrder } from "@shared/hook/rarity";
 import { formatNumber, formatPrice } from "@utils/formatters";
+import CraftSkeleton from "@features/dashboard/datalab/skeletons/CraftSkeleton";
 
 const rarity = data.rarities;
 
@@ -28,7 +29,7 @@ export default function Badges() {
     fetchCrafts();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <CraftSkeleton />;
 
   return (
     <div className="w-full overflow-x-auto">
