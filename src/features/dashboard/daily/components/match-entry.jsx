@@ -134,33 +134,55 @@ export default function MatchEntry({
         totalPremiumCurrency: totalPremiumCurrency,
         bonusMultiplier: parseFloat(selectedBuild.bonusMultiplier),
         perksMultiplier: parseFloat(selectedBuild.perksMultiplier),
+        energyUsed: parseFloat((time / 10.0).toFixed(2)),
         badge_used_attributes: data.rarities
           .map((rarity, index) => {
             const slot = index + 1;
+            
             if (existingMatch?.badge_used) {
               const existingBadge = existingMatch.badge_used.find(
                 (b) => b.slot === slot
               );
+              
               if (existingBadge) {
-                return {
-                  id: existingBadge.id,
-                  slot: slot,
-                  rarity: String(rarity || "")
-                    .split("#")[0]
-                    .toLowerCase(),
-                  _destroy: rarity === "none",
-                };
+                const newRarity = rarity === "none" ? null : String(rarity).split("#")[0].toLowerCase();
+                
+                if (rarity === "none") {
+                  console.log(`Marquage du badge slot ${slot} pour suppression`);
+                  return {
+                    id: existingBadge.id,
+                    slot: slot,
+                    _destroy: true
+                  };
+                }
+                else if (newRarity !== existingBadge.rarity) {
+                  console.log(`Mise à jour du badge slot ${slot} de ${existingBadge.rarity} à ${newRarity}`);
+                  return {
+                    id: existingBadge.id,
+                    slot: slot,
+                    rarity: newRarity,
+                    _destroy: false
+                  };
+                }
+                else {
+                  console.log(`Pas de changement pour le badge slot ${slot}`);
+                  return {
+                    id: existingBadge.id,
+                    slot: slot,
+                    rarity: existingBadge.rarity,
+                    _destroy: false
+                  };
+                }
               }
             }
-
+            
             if (rarity && rarity !== "none") {
               return {
                 slot: slot,
                 rarity: String(rarity).split("#")[0].toLowerCase(),
-                _destroy: false,
+                _destroy: false
               };
             }
-
             return null;
           })
           .filter(Boolean),
@@ -192,7 +214,7 @@ export default function MatchEntry({
           }
         });
     } else {
-      onUpdate(matchData)
+      onUpdate(matchData.match)
         .then(() => {
           onCancel();
         })

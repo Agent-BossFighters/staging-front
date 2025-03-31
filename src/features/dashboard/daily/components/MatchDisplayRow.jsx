@@ -107,7 +107,7 @@ export default function MatchDisplayRow({
           onDelete={() => onDelete(match.id)}
           onSubmit={onSubmit}
           onCancel={onCancel}
-          editDisabled={true}
+          editDisabled={false}
         />
       </td>
     </tr>

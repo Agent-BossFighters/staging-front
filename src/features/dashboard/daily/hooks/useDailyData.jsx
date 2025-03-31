@@ -87,7 +87,7 @@ export const useDailyData = () => {
     async (matchId, matchData) => {
       try {
         setState((prev) => ({ ...prev, loading: true }));
-        const response = await putData(`v1/matches/${matchId}`, matchData);
+        const response = await putData(`v1/matches/${matchId}`, { match: matchData });
         console.log("Update match response:", response);
 
         if (response?.match) {
