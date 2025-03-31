@@ -33,12 +33,14 @@ export const ConfirmDialog = ({
           <p className="text-gray-300">{message}</p>
         </div>
         <div className="flex justify-end gap-3">
+          {cancelText !== null && (
           <Button
             variant="secondary"
             onClick={onClose}
           >
-            {cancelText}
-          </Button>
+              {cancelText}
+            </Button>
+          )}
           <Button
             variant={isDanger ? "destructive" : "default"}
             onClick={() => {
