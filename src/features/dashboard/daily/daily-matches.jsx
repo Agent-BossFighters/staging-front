@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MatchesList from "./components/matches-list";
 import { useUserPreference } from "@context/userPreference.context";
+import { MatchDialogs } from "./components/MatchDialogs";
 
 export default function DailyMatches({
   matches,
@@ -13,11 +14,22 @@ export default function DailyMatches({
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [editedData, setEditedData] = useState(null);
   const { unlockedSlots } = useUserPreference();
+  const [showEditTimeoutDialog, setShowEditTimeoutDialog] = useState(false);
+  const [currentMatch, setCurrentMatch] = useState(null);
 
-  // Calcul du nombre de slots disponibles (slots débloqués + 1)
   const availableSlots = unlockedSlots;
 
   const handleEdit = (match) => {
+    const creationTime = new Date(match.created_at || match.date);
+    const currentTime = new Date();
+    const timeDifferenceInMinutes = (currentTime - creationTime) / (1000 * 60);
+    
+    if (timeDifferenceInMinutes > 15) {
+      setCurrentMatch(match);
+      setShowEditTimeoutDialog(true);
+      return;
+    }
+    
     setEditingMatchId(match.id);
     setEditedData({
       buildId: builds.find((b) => b.buildName === match.build)?.id || "",
@@ -69,6 +81,19 @@ export default function DailyMatches({
         onEdit={handleEdit}
         onEditField={handleEditField}
         onCancel={handleCancel}
+      />
+      
+      {/* Dialog for edit timeout */}
+      <MatchDialogs
+        showMissingFieldsDialog={false}
+        setShowMissingFieldsDialog={() => {}}
+        missingFieldsList={[]}
+        showCreateWarningDialog={false}
+        setShowCreateWarningDialog={() => {}}
+        onCreateConfirm={() => {}}
+        showEditTimeoutDialog={showEditTimeoutDialog}
+        setShowEditTimeoutDialog={setShowEditTimeoutDialog}
+        onTimeoutConfirm={() => setShowEditTimeoutDialog(false)}
       />
     </div>
   );

@@ -20,9 +20,9 @@ export default function DesktopNav() {
               <img src={AgentLogo} alt="Agent logo" className="hidden xl:block h-full" />
             </Link>
               {user.isPremium ? (
-                <p className="text-sm font-bold italic text-primary flex justify-end">PREMIUM</p>
+                <p className="text-sm font-bold italic text-primary flex justify-end -translate-y-1/2">PREMIUM</p>
               ) : (
-                <p className="text-sm font-bold italic text-secondary flex justify-end">FREEMIUM</p>
+                <p className="text-sm font-bold italic text-secondary flex justify-end -translate-y-1/2">FREEMIUM</p>
               )}
           </div>
         ) : (

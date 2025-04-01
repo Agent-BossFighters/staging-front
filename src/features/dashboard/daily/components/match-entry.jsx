@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MatchDisplayRow from "./MatchDisplayRow";
 import MatchFormRow from "./MatchFormRow";
+import { MatchDialogs } from "./MatchDialogs";
 
 const MAX_SLOTS = 5;
 const INITIAL_FORM_STATE = {
@@ -31,6 +32,10 @@ export default function MatchEntry({
     ...INITIAL_FORM_STATE,
     rarities: Array(MAX_SLOTS).fill("none"),
   }));
+  const [showMissingFieldsDialog, setShowMissingFieldsDialog] = useState(false);
+  const [missingFieldsList, setMissingFieldsList] = useState([]);
+  const [showCreateWarningDialog, setShowCreateWarningDialog] = useState(false);
+  const [showEditTimeoutDialog, setShowEditTimeoutDialog] = useState(false);
 
   const handleChange = (field, value) => {
     if (isCreating) {
@@ -59,15 +64,15 @@ export default function MatchEntry({
     if (!data.bft) missingFields.push("BFT");
 
     if (missingFields.length > 0) {
-      alert(
-        `Missing fields: ${missingFields.join(", ")}. Please fill all fields.`
-      );
+      setMissingFieldsList(missingFields);
+      setShowMissingFieldsDialog(true);
       return false;
     }
 
     const selectedBuild = builds.find((b) => b.id === data.buildId);
     if (!selectedBuild) {
-      alert("Build not found");
+      setMissingFieldsList(["Build not found"]);
+      setShowMissingFieldsDialog(true);
       return false;
     }
 
@@ -190,10 +195,8 @@ export default function MatchEntry({
     };
   };
 
-  const handleSubmit = () => {
+  const prepareAndSubmit = () => {
     const data = isCreating ? formData : editedData;
-    if (!validateForm(data)) return;
-
     const matchData = createMatchData(data, isEditing ? match : null);
     console.log("Payload envoyé :", JSON.stringify(matchData, null, 2));
 
@@ -229,32 +232,72 @@ export default function MatchEntry({
     }
   };
 
+  const handleSubmit = () => {
+    const data = isCreating ? formData : editedData;
+    if (!validateForm(data)) return;
+
+    if (isCreating) {
+      setShowCreateWarningDialog(true);
+      return;
+    }
+
+    if (isEditing && match) {
+      const creationTime = new Date(match.created_at || match.date);
+      const currentTime = new Date();
+      const timeDifferenceInMinutes = (currentTime - creationTime) / (1000 * 60);
+      
+      if (timeDifferenceInMinutes > 15) {
+        setShowEditTimeoutDialog(true);
+        return;
+      }
+    }
+
+    // Si toutes les validations sont passées, soumettre le formulaire
+    prepareAndSubmit();
+  };
+
   if (!isEditing && !isCreating) {
     return (
-      <MatchDisplayRow
-        match={match}
-        builds={builds}
-        isEditing={isEditing}
-        isCreating={isCreating}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onSubmit={handleSubmit}
-        onCancel={onCancel}
-      />
+      <>
+        <MatchDisplayRow
+          match={match}
+          builds={builds}
+          isEditing={isEditing}
+          isCreating={isCreating}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onSubmit={handleSubmit}
+          onCancel={onCancel}
+        />
+      </>
     );
   }
 
   return (
-    <MatchFormRow
-      data={isCreating ? formData : editedData}
-      builds={builds}
-      isEditing={isEditing}
-      isCreating={isCreating}
-      unlockedSlots={unlockedSlots}
-      onSubmit={handleSubmit}
-      onCancel={onCancel}
-      onChange={handleChange}
-      onRarityChange={handleRarityChange}
-    />
+    <>
+      <MatchFormRow
+        data={isCreating ? formData : editedData}
+        builds={builds}
+        isEditing={isEditing}
+        isCreating={isCreating}
+        unlockedSlots={unlockedSlots}
+        onSubmit={handleSubmit}
+        onCancel={onCancel}
+        onChange={handleChange}
+        onRarityChange={handleRarityChange}
+      />
+
+      <MatchDialogs
+        showMissingFieldsDialog={showMissingFieldsDialog}
+        setShowMissingFieldsDialog={setShowMissingFieldsDialog}
+        missingFieldsList={missingFieldsList}
+        showCreateWarningDialog={showCreateWarningDialog}
+        setShowCreateWarningDialog={setShowCreateWarningDialog}
+        onCreateConfirm={prepareAndSubmit}
+        showEditTimeoutDialog={showEditTimeoutDialog}
+        setShowEditTimeoutDialog={setShowEditTimeoutDialog}
+        onTimeoutConfirm={onCancel}
+      />
+    </>
   );
 }
