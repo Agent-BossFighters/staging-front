@@ -17,7 +17,7 @@ export default function DashboardRoutes() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="locker" element={<LockerPage />} />
             <Route path="datalab" element={<DatalabPage />} />
-            <Route path="mission" element={<MissionPage />} />
+            <Route path="missions" element={<MissionPage />} />
             <Route
               path="daily"
               element={<Navigate to="schedule/daily" replace />}
