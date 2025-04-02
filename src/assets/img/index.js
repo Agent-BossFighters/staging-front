@@ -39,3 +39,8 @@ export { default as Draw } from "./draw.png";
 export { default as Loss } from "./loss.png";
 export { default as MyTactic } from "./my_tactic_icon.png";
 export { default as DataLabBackground } from "./datalab_background.jpg";
+export { default as backgroundMission } from "./backgroundMission.jpg";
+export { default as loginQuest } from "./quest/loginQuest.svg";
+export { default as matchesQuest } from "./quest/matchesQuest.svg";
+export {default as xQuest } from "./quest/xQuest.svg";
+export {default as chevronQuest } from "./quest/chevronQuest.svg";

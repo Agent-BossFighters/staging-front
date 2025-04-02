@@ -18,7 +18,7 @@ const disabledCards = {
   tvtools: true,
   fighting: true,
   playermap: true,
-  xp: true,
+  xp: false,
 };
 
 const premiumCards = {
@@ -30,7 +30,7 @@ const premiumCards = {
   tvtools: true,
   fighting: true,
   playermap: true,
-  xp: true,
+  xp: false,
 };
 
 const disabledStyle =
