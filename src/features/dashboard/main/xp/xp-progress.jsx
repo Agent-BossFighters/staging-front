@@ -97,7 +97,7 @@ export function XPProgress() {
   }, [loadUserXP, user, updateCounter]);
 
   const handleClick = () => {
-    navigate("/dashboard/mission");
+    navigate("/dashboard/missions");
   };
 
   // Calculer le pourcentage de progression vers le niveau suivant

@@ -6,7 +6,6 @@ import { A } from "@img/index";
 import { useAuth } from "@context/auth.context";
 import { Button } from "@shared/ui/button";
 import { Bot } from "lucide-react";
-import PremiumButton from "../desktop/premium-button";
 
 export default function MobileNav() {
   const { user } = useAuth();
@@ -50,8 +49,7 @@ export default function MobileNav() {
           <img src={A} alt="logo" className="w-10 h-10 object-contain" />
         </Link>
 
-        <div className="flex items-center gap-2">
-          <PremiumButton isMobile={true} />
+        <div className="flex items-center">
           {user ? (
             <Link to="/users/profile" className="text-md hover:text-primary">
               {user.asset ? (
