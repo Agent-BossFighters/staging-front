@@ -21,12 +21,8 @@ const QuestSection = () => {
     setIsLoadingQuests(true);
     try {
       const response = await getQuests();
-      console.log('Response from API:', response);
-      console.log('Quests from API:', response.quests);
       setQuests(response.quests || []);
-      console.log('Quests state after setting:', response.quests || []);
     } catch (error) {
-      console.error('Erreur lors du chargement des quêtes:', error);
       toast.error('Impossible de charger vos quêtes. Veuillez réessayer plus tard.');
     } finally {
       setIsLoadingQuests(false);
@@ -52,9 +48,7 @@ const QuestSection = () => {
         return;
       }
       
-      console.log(`Mise à jour de la quête ${questId} avec progression ${newProgress}`);
       const response = await updateQuestProgress(questId, newProgress);
-      console.log('Réponse de mise à jour:', response);
       
       // Si la requête a réussi, mettre à jour les quêtes
       await fetchQuests();
@@ -71,8 +65,6 @@ const QuestSection = () => {
             level: response.user_level || userData.level || 1,
             experience: response.user_experience || userData.experience || 0
           };
-          
-          console.log('Données utilisateur mises à jour:', updatedUserData);
           
           // Mettre à jour les données utilisateur dans le localStorage
           AuthUtils.setUserData(updatedUserData);
@@ -99,7 +91,6 @@ const QuestSection = () => {
         }
       }
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de la progression:", error);
       toast.error("Impossible de mettre à jour la progression de la quête");
     } finally {
       setUpdating(false);
@@ -121,10 +112,6 @@ const QuestSection = () => {
   // Filtrer les quêtes par type
   const dailyQuests = quests.filter(quest => quest.quest_type === 'daily' || quest.id.includes('daily'));
   const socialQuests = quests.filter(quest => quest.quest_type === 'social' || quest.id.includes('social'));
-  
-  console.log('Daily quests:', dailyQuests);
-  console.log('Social quests:', socialQuests);
-  console.log('All quests:', quests);
 
   return (
     <div className="w-full">

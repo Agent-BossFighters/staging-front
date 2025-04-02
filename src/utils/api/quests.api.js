@@ -29,21 +29,16 @@ export async function getQuest(questId) {
 // Mettre à jour la progression d'une quête
 export async function updateQuestProgress(questId, progress) {
   try {
-    console.log(`Envoi de la requête pour mettre à jour la quête ${questId} avec progression ${progress}`);
     const response = await kyInstance.patch(`v1/quests/${questId}/progress`, {
       json: {
         progress: progress
       }
     }).json();
     
-    console.log('Réponse brute de l\'API:', response);
-    
     // Mettre à jour les données utilisateur dans le localStorage si l'XP a été gagnée
     if (response && response.experience_gained > 0) {
       const userData = AuthUtils.getUserData();
-      if (userData) {
-        console.log(`Mise à jour des données localStorage: Level ${userData.level || 1} -> ${response.user_level}, XP ${userData.experience || 0} -> ${response.user_experience}`);
-        
+      if (userData) {        
         // Mettre à jour le localStorage avec les nouvelles valeurs
         AuthUtils.setUserData({
           ...userData,
@@ -83,14 +78,10 @@ export async function getUserXP() {
       throw new Error("User not authenticated");
     }
     
-    console.log(`Requête XP pour l'utilisateur ${userData.id}`);
-    
     const response = await kyInstance.get(`v1/users/${userData.id}/xp`).json();
-    console.log("Réponse brute XP:", response);
     
     return response;
   } catch (error) {
-    console.error("Error fetching user XP:", error);
     
     // Essayer d'obtenir des détails d'erreur
     if (error.response) {

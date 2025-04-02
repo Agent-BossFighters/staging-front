@@ -28,7 +28,6 @@ export function XPProgress() {
     
     try {
       setIsLoading(true);
-      console.log('Chargement des données XP...');
       
       // Récupérer les données utilisateur du localStorage d'abord (pour une mise à jour immédiate)
       const localUserData = AuthUtils.getUserData();
@@ -37,16 +36,10 @@ export function XPProgress() {
         setCurrentLevel(localUserData.level || 1);
         const calculatedNextLevelXP = (localUserData.level || 1) * 1000;
         setNextLevelXP(calculatedNextLevelXP);
-        console.log('Données chargées depuis localStorage:', {
-          level: localUserData.level || 1,
-          experience: localUserData.experience || 0,
-          nextLevelXP: calculatedNextLevelXP
-        });
       }
       
       // Puis récupérer les données XP de l'utilisateur depuis l'API (pour s'assurer qu'elles sont à jour)
       const xpData = await getUserXP();
-      console.log('Données XP reçues de l\'API:', xpData);
       
       if (xpData && xpData.user) {
         setCurrentExperience(xpData.user.experience || 0);
@@ -55,12 +48,6 @@ export function XPProgress() {
         // Utiliser next_level_experience s'il est disponible, sinon calculer
         const serverNextLevelXP = xpData.level_stats?.next_level_experience || (xpData.user.level || 1) * 1000;
         setNextLevelXP(serverNextLevelXP);
-        
-        console.log('Données mises à jour depuis l\'API:', {
-          level: xpData.user.level || 1,
-          experience: xpData.user.experience || 0,
-          nextLevelXP: serverNextLevelXP
-        });
         
         // Mettre à jour les données dans le localStorage si elles diffèrent
         const storedData = AuthUtils.getUserData();
@@ -73,11 +60,9 @@ export function XPProgress() {
             experience: xpData.user.experience
           };
           AuthUtils.setUserData(updatedData);
-          console.log('Données localStorage mises à jour avec les valeurs du serveur');
         }
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des données XP:', error);
       
       // En cas d'erreur, essayer d'utiliser les données du localStorage
       const localData = AuthUtils.getUserData();
@@ -85,7 +70,6 @@ export function XPProgress() {
         setCurrentExperience(localData.experience || 0);
         setCurrentLevel(localData.level || 1);
         setNextLevelXP((localData.level || 1) * 1000);
-        console.log('Fallback aux données localStorage en cas d\'erreur');
       }
     } finally {
       setIsLoading(false);
@@ -94,7 +78,6 @@ export function XPProgress() {
 
   // Fonction pour forcer le rechargement des données XP
   const refreshXP = useCallback(() => {
-    console.log('Demande de rafraîchissement XP reçue');
     
     // Forcer le rechargement depuis le localStorage d'abord (pour une réponse immédiate)
     const userData = AuthUtils.getUserData();
@@ -102,11 +85,6 @@ export function XPProgress() {
       setCurrentExperience(userData.experience || 0);
       setCurrentLevel(userData.level || 1);
       setNextLevelXP((userData.level || 1) * 1000);
-      console.log('Rafraîchissement immédiat depuis localStorage:', {
-        level: userData.level || 1,
-        experience: userData.experience || 0,
-        nextLevelXP: (userData.level || 1) * 1000
-      });
     }
     
     // Puis déclencher le chargement depuis l'API
