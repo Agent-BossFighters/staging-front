@@ -48,14 +48,14 @@ const TournamentDetails = ({ tournament, isCreator }) => {
             <span className="text-white">{new Date(tournament.scheduled_end_time).toLocaleString()}</span>
           </div>
         )}
-        
+
         <div className="border-t border-gray-700 pt-3 mt-3">
           <span className="text-gray-400">Status:</span>
           <div className="text-white mt-1">
             {getTournamentTimeStatus(tournament)}
           </div>
         </div>
-        
+
         {/* Zone d'administration - informations supplémentaires pour les admins */}
         {isCreator && (
           <div className="border-t border-gray-700 pt-3 mt-3">
@@ -63,7 +63,7 @@ const TournamentDetails = ({ tournament, isCreator }) => {
               <Settings size={16} className="mr-1" />
               <span className="font-medium">Admin Controls</span>
             </div>
-            
+
             <div className="text-sm text-gray-300 space-y-2">
               <div>ID: {tournament.id}</div>
               {tournament.entry_code && (
