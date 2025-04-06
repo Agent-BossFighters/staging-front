@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { useTournamentsList } from "@features/tournaments/hooks/useTournaments";
+import { useTournamentsList, useTournament, useTournamentTeams, useTournamentMatches, useMyTournaments, useRegisteredTournaments } from "@features/tournaments/hooks/useTournaments";
 import TournamentTable from "@features/tournaments/components/TournamentTable";
+import TournamentBracketShowtime from "@features/tournaments/components/TournamentBracketShowtime";
 import { Button } from "@shared/ui/button";
 import { Input } from "@shared/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/tabs";
 import TournamentCreateModal from "@features/tournaments/components/TournamentCreateModal";
 import { bracketIcon } from "@img";
 import { useAuth } from "@context/auth.context";
-import { kyInstance } from "@utils/api/ky-config";
 
 export default function TournamentListPage() {
   const { user } = useAuth();
@@ -23,16 +23,18 @@ export default function TournamentListPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { tournaments, isLoading, error, refetch } = useTournamentsList(filters);
   
-  // États pour les tournois filtrés
-  const [myTournaments, setMyTournaments] = useState([]);
-  // Commenté : État pour les tournois auxquels l'utilisateur est inscrit
-  // const [registeredTournaments, setRegisteredTournaments] = useState([]);
-  const [loadingMyTournaments, setLoadingMyTournaments] = useState(false);
-  // Commenté : État de chargement pour les tournois auxquels l'utilisateur est inscrit
-  // const [loadingRegisteredTournaments, setLoadingRegisteredTournaments] = useState(false);
-  const [myTournamentsError, setMyTournamentsError] = useState(null);
-  // Commenté : État d'erreur pour les tournois auxquels l'utilisateur est inscrit
-  // const [registeredTournamentsError, setRegisteredTournamentsError] = useState(null);
+  // Utiliser le hook useMyTournaments pour récupérer les tournois de l'utilisateur
+  const { myTournaments, isLoading: loadingMyTournaments, error: myTournamentsError, refetch: refetchMyTournaments } = useMyTournaments(user?.id);
+  
+  // Utiliser le hook useRegisteredTournaments pour récupérer les tournois auxquels l'utilisateur est inscrit
+  const { registeredTournaments, isLoading: loadingRegisteredTournaments, error: registeredTournamentsError, refetch: refetchRegisteredTournaments } = useRegisteredTournaments();
+
+  // États pour la gestion des onglets
+  const [openTabs, setOpenTabs] = useState([]);
+  const [activeTab, setActiveTab] = useState("all");
+
+  // Déterminer si l'onglet actif est un tournoi spécifique
+  const isTournamentTabActive = !["all", "my", "registered"].includes(activeTab);
 
   // Mettre à jour les tournois filtrés lorsque les tournois ou la recherche changent
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function TournamentListPage() {
       const query = searchQuery.toLowerCase();
       const filtered = tournaments.filter(tournament => 
         tournament.name.toLowerCase().includes(query) ||
-        tournament.rules?.toLowerCase().includes(query)
+        (tournament.rules && tournament.rules.toLowerCase().includes(query))
       );
       setFilteredTournaments(filtered);
     }
@@ -53,86 +55,79 @@ export default function TournamentListPage() {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    // Ne pas mettre à jour les filtres API ici pour éviter des appels inutiles
-    // La recherche se fait maintenant côté client
   };
 
   const handleTournamentCreated = () => {
     refetch(); // Actualiser la liste des tournois après création
-    fetchMyTournaments(); // Actualiser mes tournois
-    // Commenté : Actualiser les tournois auxquels je suis inscrit
-    // fetchRegisteredTournaments();
+    refetchMyTournaments(); // Actualiser mes tournois avec la fonction fournie par le hook
+    refetchRegisteredTournaments(); // Actualiser les tournois auxquels je suis inscrit
     setIsCreateModalOpen(false);
   };
   
-  // Récupérer les tournois dont l'utilisateur est créateur
-  const fetchMyTournaments = async () => {
-    if (!user) return;
+  // Fonction pour ouvrir un tournoi dans un onglet
+  const handleOpenTournament = (tournament) => {
+    console.log("Opening tournament:", tournament.name, tournament.id);
     
-    setLoadingMyTournaments(true);
+    // Vérifier si l'onglet est déjà ouvert
+    if (openTabs.some(tab => tab.id.toString() === tournament.id.toString())) {
+      setActiveTab(tournament.id.toString());
+      return;
+    }
     
-    try {
-      // Récupérer tous les tournois puis filtrer côté client
-      const response = await kyInstance.get('v1/tournaments').json();
-      
-      let tournamentList = [];
-      if (response.tournaments && Array.isArray(response.tournaments)) {
-        tournamentList = response.tournaments;
-      }
-      
-      // Filtrer uniquement les tournois créés par l'utilisateur actuel
-      const createdTournaments = tournamentList.filter(
-        tournament => tournament.creator_id === user.id
+    // Ajouter un nouvel onglet
+    setOpenTabs(prev => [...prev, {
+      id: tournament.id.toString(),
+      name: tournament.name
+    }]);
+    
+    // Activer le nouvel onglet
+    setActiveTab(tournament.id.toString());
+  };
+
+  // Fonction pour fermer un onglet
+  const handleCloseTab = (tabId, e) => {
+    e.stopPropagation(); // Empêcher l'activation de l'onglet lors de la fermeture
+    
+    // Supprimer l'onglet
+    setOpenTabs(prev => prev.filter(tab => tab.id !== tabId));
+    
+    // Si l'onglet actif est fermé, revenir à l'onglet "all"
+    if (activeTab === tabId) {
+      setActiveTab("all");
+    }
+  };
+
+  // Composant pour afficher le contenu d'un onglet de tournoi
+  const TournamentTabContent = ({ tournamentId }) => {
+    const { tournament, isLoading, error } = useTournament(tournamentId);
+    const { teams } = useTournamentTeams(tournamentId);
+    const { matches, refetch: refetchMatches } = useTournamentMatches(tournamentId);
+    
+    if (isLoading) {
+      return (
+        <div className="flex justify-center py-10">
+          <div className="loader">Loading tournament details...</div>
+        </div>
       );
-      
-      setMyTournaments(createdTournaments);
-      setMyTournamentsError(null);
-    } catch (err) {
-      console.error("Error fetching my tournaments:", err);
-      setMyTournaments([]);
-      setMyTournamentsError("Failed to load your tournaments: " + (err.message || "Unknown error"));
-    } finally {
-      setLoadingMyTournaments(false);
     }
-  };
-  
-  /* Commenté : Fonction pour récupérer les tournois auxquels l'utilisateur est inscrit
-  const fetchRegisteredTournaments = async () => {
-    if (!user) return;
     
-    setLoadingRegisteredTournaments(true);
+    if (error || !tournament) {
+      return (
+        <div className="text-red-500 p-4 text-center">
+          Error loading tournament: {error?.message || "Tournament not found"}
+        </div>
+      );
+    }
     
-    try {
-      // Utiliser l'endpoint correct pour les tournois auxquels l'utilisateur est inscrit
-      const response = await kyInstance.get(`v1/users/${user.id}/registered_tournaments`).json();
-      
-      let tournamentList = [];
-      if (response.tournaments && Array.isArray(response.tournaments)) {
-        tournamentList = response.tournaments;
-      } else if (Array.isArray(response)) {
-        tournamentList = response;
-      }
-      
-      setRegisteredTournaments(tournamentList);
-      setRegisteredTournamentsError(null);
-    } catch (err) {
-      console.error("Error fetching registered tournaments:", err);
-      setRegisteredTournaments([]);
-      setRegisteredTournamentsError("Failed to load tournaments you're registered in: " + (err.message || "Unknown error"));
-    } finally {
-      setLoadingRegisteredTournaments(false);
-    }
+    return (
+      <TournamentBracketShowtime 
+        tournament={tournament} 
+        teams={teams || []} 
+        matches={matches || []}
+        onMatchUpdated={refetchMatches}
+      />
+    );
   };
-  */
-  
-  // Charger les tournois au chargement de la page
-  useEffect(() => {
-    if (user) {
-      fetchMyTournaments();
-      // Commenté : Charger les tournois auxquels l'utilisateur est inscrit
-      // fetchRegisteredTournaments();
-    }
-  }, [user]);
 
   return (
     <div className="w-5/6 mx-auto h-full">
@@ -140,50 +135,66 @@ export default function TournamentListPage() {
         <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">FIGHTING</h1>
       </div>
 
-      <Tabs defaultValue="all" className="w-full flex flex-col">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col">
         <div className="w-fit">
           <TabsList className="bg-transparent text-2xl pb-0 justify-start gap-1 flex flex-col">
             <div className="flex gap-1">
               <TabsTrigger value="all">TOURNAMENT(S)</TabsTrigger>
-              {/* Onglet désactivé: Tournois auxquels l'utilisateur est inscrit */}
-              <TabsTrigger value="registered" disabled>REGISTERED TOURNAMENT(S)</TabsTrigger>
+              <TabsTrigger value="registered">REGISTERED TOURNAMENT(S)</TabsTrigger>
               <TabsTrigger value="my">MY TOURNAMENT(S)</TabsTrigger>
+              
+              {/* Onglets dynamiques pour les tournois */}
+              {openTabs.map(tab => (
+                <TabsTrigger key={tab.id} value={tab.id} className="relative pr-8">
+                  {tab.name}
+                  <button 
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    onClick={(e) => handleCloseTab(tab.id, e)}
+                  >
+                    ×
+                  </button>
+                </TabsTrigger>
+              ))}
             </div>
             <div className="border-primary border-b-2 w-full gap-4"></div>
           </TabsList>
         </div>
         
-        <div className="mt-6">
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-white flex items-center">
-                <img src={bracketIcon} alt="bracket" className="w-6 h-6 mr-2" />
-                TOURNAMENT LIST
-              </h2>
-            </div>
-            
-            <div className="flex justify-start gap-4 items-center">
-              <div className="max-w-xs w-full md:w-72">
-                <Input
-                  type="text"
-                  placeholder="Search Tournament"
-                  value={searchQuery}
-                  onChange={handleSearch}
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
+        {/* Section TOURNAMENT LIST - masquée lorsqu'un onglet de tournoi est actif */}
+        {!isTournamentTabActive && (
+          <div className="mt-6">
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-white flex items-center">
+                  <img src={bracketIcon} alt="bracket" className="w-6 h-6 mr-2" />
+                  TOURNAMENT LIST
+                </h2>
               </div>
               
-              <Button 
-                variant="accent" 
-                className="bg-primary hover:bg-primary/90 text-black"
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                CREATE A TOURNAMENT
-              </Button>
+              <div className="flex justify-start gap-4 items-center mb-4">
+                <div className="max-w-xs w-full md:w-72">
+                  <Input
+                    type="text"
+                    placeholder="Search Tournament"
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    className="bg-gray-800 border-gray-700 text-white"
+                  />
+                </div>
+                
+                <Button 
+                  variant="default" 
+                  className="bg-primary hover:bg-primary/90 text-black"
+                  onClick={() => setIsCreateModalOpen(true)}
+                >
+                  CREATE
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
+        {/* Contenu des onglets de catégorie */}
         <TabsContent value="all" className="mt-4">
           {isLoading ? (
             <div className="flex justify-center py-10">
@@ -192,11 +203,13 @@ export default function TournamentListPage() {
           ) : error ? (
             <div className="text-red-500 p-4 text-center">Error loading tournaments: {error.message}</div>
           ) : (
-            <TournamentTable tournaments={filteredTournaments} />
+            <TournamentTable 
+              tournaments={filteredTournaments} 
+              onTournamentClick={handleOpenTournament}
+            />
           )}
         </TabsContent>
         
-        {/* Commenté : Contenu de l'onglet des tournois auxquels l'utilisateur est inscrit
         <TabsContent value="registered" className="mt-4">
           {loadingRegisteredTournaments ? (
             <div className="flex justify-center py-10">
@@ -206,13 +219,15 @@ export default function TournamentListPage() {
             <div className="text-red-500 p-4 text-center">{registeredTournamentsError}</div>
           ) : registeredTournaments.length === 0 ? (
             <div className="text-center py-10 text-gray-400">
-              You are not registered to any tournaments yet.
+              You have not registered for any tournaments yet.
             </div>
           ) : (
-            <TournamentTable tournaments={registeredTournaments} />
+            <TournamentTable 
+              tournaments={registeredTournaments} 
+              onTournamentClick={handleOpenTournament}
+            />
           )}
         </TabsContent>
-        */}
         
         <TabsContent value="my" className="mt-4">
           {loadingMyTournaments ? (
@@ -226,9 +241,19 @@ export default function TournamentListPage() {
               You have not created any tournaments yet.
             </div>
           ) : (
-            <TournamentTable tournaments={myTournaments} />
+            <TournamentTable 
+              tournaments={myTournaments} 
+              onTournamentClick={handleOpenTournament}
+            />
           )}
         </TabsContent>
+
+        {/* Onglets dynamiques pour les tournois */}
+        {openTabs.map(tab => (
+          <TabsContent key={tab.id} value={tab.id} className="mt-4">
+            <TournamentTabContent tournamentId={tab.id} />
+          </TabsContent>
+        ))}
       </Tabs>
 
       {isCreateModalOpen && (

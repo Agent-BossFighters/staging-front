@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -11,7 +10,7 @@ import {
 import { Badge } from "@shared/ui/badge";
 import { TYPE_LABELS, STATUS_COLORS, STATUS_LABELS } from "../constants/uiConfigs";
 
-const TournamentTable = ({ tournaments }) => {
+const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
   const [showScrollMessage, setShowScrollMessage] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const [isMouseOverTable, setIsMouseOverTable] = useState(false);
@@ -19,6 +18,9 @@ const TournamentTable = ({ tournaments }) => {
   
   // Nombre de lignes à afficher
   const visibleRowsCount = 8;
+  
+  // Vérifier si la fonction onTournamentClick est valide
+  const isClickable = typeof onTournamentClick === 'function';
   
   useEffect(() => {
     setShowScrollMessage(tournaments.length > visibleRowsCount);
@@ -55,6 +57,14 @@ const TournamentTable = ({ tournaments }) => {
   
   const handleMouseLeave = () => {
     setIsMouseOverTable(false);
+  };
+
+  // Fonction pour gérer le clic sur un tournoi
+  const handleTournamentClick = (tournament) => {
+    if (isClickable) {
+      console.log("Tournament clicked:", tournament.name, tournament.id);
+      onTournamentClick(tournament);
+    }
   };
 
   // Fonction pour obtenir le statut du tournoi correctement
@@ -144,15 +154,13 @@ const TournamentTable = ({ tournaments }) => {
               return (
                 <TableRow 
                   key={tournament.id} 
-                  className={index % 2 === 0 ? "bg-black hover:bg-gray-900" : "bg-gray-900 hover:bg-gray-800"}
+                  className={`${index % 2 === 0 ? "bg-black" : "bg-gray-900"} ${isClickable ? "hover:bg-gray-800 cursor-pointer" : ""}`}
+                  onClick={isClickable ? () => handleTournamentClick(tournament) : undefined}
                 >
                   <TableCell className="font-medium py-3">
-                    <Link 
-                      to={`/dashboard/tournaments/${tournament.id}`} 
-                      className="text-white hover:text-yellow-400"
-                    >
+                    <span className="text-white hover:text-yellow-400">
                       {tournament.name}
-                    </Link>
+                    </span>
                   </TableCell>
                   <TableCell className="py-3">
                     {TYPE_LABELS[tournament.tournament_type?.toString()] === "Arena" 
@@ -188,14 +196,17 @@ const TournamentTable = ({ tournaments }) => {
                     {tournament.entry_code ? "Yes" : "No"}
                   </TableCell>
                   <TableCell className="py-3 text-center">
-                    <Link 
-                      to={`/dashboard/tournaments/${tournament.id}`} 
+                    <button 
                       className="inline-flex justify-center"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Empêcher la propagation pour éviter le double clic
+                        if (isClickable) handleTournamentClick(tournament);
+                      }}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-400 hover:text-yellow-300">
                         <polyline points="9 18 15 12 9 6"></polyline>
                       </svg>
-                    </Link>
+                    </button>
                   </TableCell>
                 </TableRow>
               );

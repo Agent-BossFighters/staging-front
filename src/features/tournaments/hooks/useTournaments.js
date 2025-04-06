@@ -288,4 +288,91 @@ export function useTeam(tournamentId, teamId) {
   }, [tournamentId, teamId]);
 
   return { team, isLoading, error };
+}
+
+// Hook pour récupérer les tournois créés par l'utilisateur actuel
+export function useMyTournaments(userId) {
+  const [myTournaments, setMyTournaments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchMyTournaments = async () => {
+    if (!userId) return;
+    
+    setIsLoading(true);
+    
+    try {
+      // Récupérer tous les tournois puis filtrer côté client
+      const response = await kyInstance.get('v1/tournaments').json();
+      
+      let tournamentList = [];
+      if (response.tournaments && Array.isArray(response.tournaments)) {
+        tournamentList = response.tournaments;
+      }
+      
+      // Filtrer uniquement les tournois créés par l'utilisateur actuel
+      const createdTournaments = tournamentList.filter(
+        tournament => tournament.creator_id === userId
+      );
+      
+      setMyTournaments(createdTournaments);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching my tournaments:", err);
+      setMyTournaments([]);
+      setError("Failed to load your tournaments: " + (err.message || "Unknown error"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchMyTournaments();
+    }
+  }, [userId]);
+
+  return { myTournaments, isLoading, error, refetch: fetchMyTournaments };
+}
+
+// Hook pour récupérer les tournois auxquels l'utilisateur est inscrit
+export function useRegisteredTournaments() {
+  const [registeredTournaments, setRegisteredTournaments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchRegisteredTournaments = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Utiliser l'endpoint spécifique pour les tournois de l'utilisateur
+      const response = await kyInstance.get('v1/tournaments/my_tournaments').json();
+      
+      console.log('[useRegisteredTournaments] Réponse API my_tournaments:', response);
+      
+      let tournamentList = [];
+      if (response.tournaments && Array.isArray(response.tournaments)) {
+        tournamentList = response.tournaments;
+      } else if (Array.isArray(response)) {
+        // Au cas où la réponse serait directement un tableau
+        tournamentList = response;
+      }
+      
+      console.log('[useRegisteredTournaments] Tournois récupérés:', tournamentList);
+      setRegisteredTournaments(tournamentList);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching registered tournaments:", err);
+      setRegisteredTournaments([]);
+      setError("Failed to load your registered tournaments: " + (err.message || "Unknown error"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRegisteredTournaments();
+  }, []);
+
+  return { registeredTournaments, isLoading, error, refetch: fetchRegisteredTournaments };
 } 

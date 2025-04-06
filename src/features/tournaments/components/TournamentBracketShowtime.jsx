@@ -3,20 +3,24 @@ import { useAuth } from "@context/auth.context";
 import generateTournamentMatches from "../utils/generateMatchesTournament";
 import calculateTeamScores from "../utils/teamScoring";
 import { formatTimeOrScore } from "../utils/timeFormatters";
-import { saveMatchScores, editMatchScores, updateScoreValue } from "../utils/scoreHandlers";
+import { initializeAllScores, updateAllScoreValue, saveAllScores } from "../utils/scoreHandlers";
 import { groupMatchesByRound, updateMatchStatus } from "../utils/matchUtils";
 import { isCreatorOfTournament } from "../utils/tournamentUtils";
 import TeamsList from './bracket/teamsList';
 import TeamRanking from './bracket/teamRanking';
 import RoundsList from './bracket/roundsList';
 import EmptyTournamentMessage from './bracket/emptyTournamentMessage';
+import { Button } from "@shared/ui/button";
+import { Share, Save, X } from 'lucide-react';
 
 const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated }) => {
   const { user } = useAuth();
   const [generatingMatches, setGeneratingMatches] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
-  const [scores, setScores] = useState({ team_a_points: 0, team_b_points: 0 });
+  const [scores, setScores] = useState({ team_a_points: 0, team_b_points: 0, team_a_time: "00:00" });
   const [saving, setSaving] = useState(false);
+  const [isEditingAllScores, setIsEditingAllScores] = useState(false);
+  const [allScores, setAllScores] = useState({});
   
   const isCreator = isCreatorOfTournament(user, tournament);
   
@@ -47,94 +51,172 @@ const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated 
   const handleCompleteMatch = async (match) => {
     await updateMatchStatus(match, tournament, 'completed', onMatchUpdated);
   };
-  
-  const handleSaveScores = async () => {
-    await saveMatchScores(
-      editingMatch,
-      tournament,
-      scores,
-      isShowtimeSurvival,
-      onMatchUpdated,
-      setEditingMatch,
-      setSaving
-    );
-  };
-  
-  const handleScoreChange = (team, value) => {
-    updateScoreValue(team, value, setScores);
-  };
-  
-  const handleCancelEdit = () => {
-    setEditingMatch(null);
-  };
-  
-  const handleEditScores = (match) => {
-    editMatchScores(
-      match,
-      tournament,
-      isShowtimeSurvival,
-      formatTimeOrScore,
-      setEditingMatch,
-      setScores
-    );
-  };
 
   const handleStartMatch = async (match) => {
     await updateMatchStatus(match, tournament, 'in_progress', onMatchUpdated);
   };
 
+  const handleUpdateResult = () => {
+    const initialScores = initializeAllScores(groupedMatches, isShowtimeSurvival, formatTimeOrScore);
+    setAllScores(initialScores);
+    setIsEditingAllScores(true);
+  };
+  
+  const handleAllScoreChange = (matchId, team, value) => {
+    updateAllScoreValue(matchId, team, value, setAllScores);
+  };
+  
+  const handleSaveAllScores = async () => {
+    await saveAllScores(
+      allScores,
+      matches,
+      tournament,
+      isShowtimeSurvival,
+      onMatchUpdated,
+      setIsEditingAllScores,
+      setSaving
+    );
+  };
+  
+  const handleCancelAllScoresEdit = () => {
+    setIsEditingAllScores(false);
+  };
+  
+  const handleShare = () => {
+    console.log('Partage des résultats');
+  };
+  
+  const handleValidate = () => {
+    console.log('Validation des résultats');
+  };
+
   return (
-    <div className="bracket-container">
-      <h2 className="text-xl font-bold text-primary mb-6">
-        {isShowtimeSurvival ? "Tournoi Showtime Survival" : "Tournoi Showtime Score Counter"}
-      </h2>
-      
-      <div className="grid gap-6 md:grid-cols-2 mb-8">
-        <TeamsList teams={teams} />
-        <TeamRanking 
-          tournament={tournament}
-          teamScores={teamScores}
-          isShowtimeSurvival={isShowtimeSurvival}
-        />
+    <div className="tournament-bracket">
+      {/* En-tête du tournoi */}
+      <div className="bg-gray-800 p-4 mb-4 rounded flex items-center justify-between">
+        <h1 className="text-xl font-bold text-white">{tournament?.name}</h1>
+        
+        <div className="flex items-center gap-4">
+          <div className="flex items-center">
+            <div className="text-gray-400 mr-2">TYPE</div>
+            <div className="text-white">{isShowtimeSurvival ? "SURVIVAL" : "SCORE"}</div>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="text-gray-400 mr-2">MODE</div>
+            <div className="text-white">SHOWTIME</div>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="text-gray-400 mr-2">RÈGLES</div>
+            <div className="text-white">
+              Obtenez le meilleur {isShowtimeSurvival ? "temps" : "score"} possible
+            </div>
+          </div>
+        </div>
       </div>
-      {matches?.length > 0 ? (
-        <>
-          {/* Info sur les rounds */}
-          <div className="mb-4 p-2 bg-gray-800 rounded">
-            <p className="text-gray-400 text-sm">
-              Ce tournoi est configuré pour se dérouler en {parseInt(tournament?.rounds) || 1} round(s). 
-              Nombre total de matchs: {matches?.length}.
-            </p>
-                </div>
-                
-          <RoundsList
+
+      <div className="grid grid-cols-12 gap-4">
+        {/* Teams and Rounds in the same column */}
+        <div className="col-span-9">
+          {/* Teams list first */}
+          <div className="mb-4">
+            <TeamsList teams={teams} />
+          </div>
+
+          {/* Rounds list below */}
+          <div>
+            {matches?.length > 0 ? (
+              <RoundsList
+                tournament={tournament}
+                teams={teams}
+                numberOfRounds={numberOfRounds}
+                groupedMatches={groupedMatches}
+                isCreator={isCreator}
+                generatingMatches={generatingMatches}
+                editingMatch={editingMatch}
+                isShowtimeSurvival={isShowtimeSurvival}
+                scores={scores}
+                saving={saving}
+                isEditingAllScores={isEditingAllScores}
+                allScores={allScores}
+                onGenerateMatches={handleGenerateMatches}
+                onStartMatch={handleStartMatch}
+                onCompleteMatch={handleCompleteMatch}
+                onAllScoreChange={handleAllScoreChange}
+              />
+            ) : (
+              <EmptyTournamentMessage
+                isCreator={isCreator}
+                tournament={tournament}
+                generatingMatches={generatingMatches}
+                onGenerateMatches={handleGenerateMatches}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Ranking */}
+        <div className="col-span-3">
+          <TeamRanking 
             tournament={tournament}
-            teams={teams}
-            numberOfRounds={numberOfRounds}
-            groupedMatches={groupedMatches}
-            isCreator={isCreator}
-            generatingMatches={generatingMatches}
-            editingMatch={editingMatch}
+            teamScores={teamScores}
             isShowtimeSurvival={isShowtimeSurvival}
-            scores={scores}
-            saving={saving}
-            onGenerateMatches={handleGenerateMatches}
-            onEditScores={handleEditScores}
-            onStartMatch={handleStartMatch}
-            onCompleteMatch={handleCompleteMatch}
-            onScoreChange={handleScoreChange}
-            onSaveScores={handleSaveScores}
-            onCancelEdit={handleCancelEdit}
           />
-        </>
-      ) : (
-        <EmptyTournamentMessage
-          isCreator={isCreator}
-          tournament={tournament}
-          generatingMatches={generatingMatches}
-          onGenerateMatches={handleGenerateMatches}
-        />
-      )}
+        </div>
+      </div>
+
+      {/* Boutons d'action */}
+      <div className="flex justify-between mt-6">
+        {isEditingAllScores ? (
+          <div className="flex gap-3">
+            <Button 
+              onClick={handleCancelAllScoresEdit}
+              className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3"
+              disabled={saving}
+            >
+              <X size={16} className="mr-2" />
+              CANCEL
+            </Button>
+            <Button 
+              onClick={handleSaveAllScores}
+              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3"
+              disabled={saving}
+            >
+              <Save size={16} className="mr-2" />
+              {saving ? "SAVING..." : "SAVE ALL SCORES"}
+            </Button>
+          </div>
+        ) : (
+          <Button 
+            onClick={handleUpdateResult}
+            className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3"
+          >
+            UPDATE RESULT
+          </Button>
+        )}
+        
+        <div className="flex gap-3">
+          <Button 
+            onClick={handleShare} 
+            className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3"
+            disabled={isEditingAllScores}
+          >
+            <Share size={16} className="mr-2" />
+            SHARE
+          </Button>
+          
+          {isCreator && (
+            <Button 
+              onClick={handleValidate} 
+              className="bg-primary text-black px-6 py-3"
+              disabled={isEditingAllScores}
+            >
+              VALIDATE RESULTS
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
