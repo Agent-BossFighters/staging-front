@@ -41,12 +41,22 @@ export default function HeaderPart() {
                     {user.username.toUpperCase()}
                   </p>
                   <NavigationMenuLink asChild className="w-full">
+                    <>
                     <Link
                       to="/users/profile"
                       className="py-2 px-2 hover:text-primary w-full block whitespace-nowrap"
                     >
                       My profile
                     </Link>
+                    {user.isPremium ? (
+                      <Link
+                        to="/payments/pricing"
+                        className="py-2 px-2 hover:text-primary w-full block whitespace-nowrap"
+                      >
+                        Subscription
+                      </Link>
+                    ) : ( '' )}
+                    </>
                   </NavigationMenuLink>
                   <Button
                     variant="ghost"

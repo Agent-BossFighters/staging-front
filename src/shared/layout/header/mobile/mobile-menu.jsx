@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth.context";
 import { Button } from "@shared/ui/button";
+import AdminUpdateCurrencies from "../desktop/admin-update-currencies";
+import PremiumButton from "../desktop/premium-button";
 
 export default function MobileMenu({ menuItems, isOpen, onClose }) {
   const { user, logout } = useAuth();
@@ -25,6 +27,11 @@ export default function MobileMenu({ menuItems, isOpen, onClose }) {
             <p className="text-bold text-2xl text-primary">
               {user.username.toUpperCase()}
             </p>
+            {user.isPremium ? (
+              <p className="text-sm font-bold italic text-primary">PREMIUM</p>
+            ) : (
+              <p className="text-sm font-bold italic text-secondary">FREEMIUM</p>
+            )}
             <Link to="/users/profile" className="text-md hover:text-primary">
               My profile
             </Link>
@@ -43,6 +50,17 @@ export default function MobileMenu({ menuItems, isOpen, onClose }) {
             </Link>
           </div>
         )}
+        
+        {/* Boutons du header */}
+        {user && (
+          <div className="px-4 py-4 border-b border-foreground/50">
+            <div className="flex items-center gap-2">
+              <AdminUpdateCurrencies />
+              <PremiumButton />
+            </div>
+          </div>
+        )}
+
         <nav className="h-full pt-4 px-4">
           <ul className="space-y-4">
             {filteredMenu.map((item) => (

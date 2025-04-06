@@ -107,9 +107,18 @@ export default function MatchDisplayRow({
           onDelete={() => onDelete(match.id)}
           onSubmit={onSubmit}
           onCancel={onCancel}
-          editDisabled={true}
+          editDisabled={isMatchEditDisabled(match)}
         />
       </td>
     </tr>
   );
+}
+
+// Fonction pour vérifier si le match peut être édité (moins de 15 minutes après sa création)
+function isMatchEditDisabled(match) {
+  const creationTime = new Date(match.created_at || match.date);
+  const currentTime = new Date();
+  const timeDifferenceInMinutes = (currentTime - creationTime) / (1000 * 60);
+  
+  return timeDifferenceInMinutes > 15;
 }

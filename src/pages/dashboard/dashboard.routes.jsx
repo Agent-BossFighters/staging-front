@@ -4,8 +4,10 @@ import { UserPreferenceProvider } from "@context/userPreference.context";
 import DashboardPage from "./dashboard.page";
 import LockerPage from "./locker.page";
 import DatalabPage from "./datalab.page";
+import MissionPage from "./mission.page";
 import ScheduleRoutes from "./schedule/schedule.routes";
 import PlayingRoutes from "./playing/playing.routes";
+import TournamentRoutes from "./tournaments/tournament.routes";
 
 export default function DashboardRoutes() {
   return (
@@ -16,6 +18,7 @@ export default function DashboardRoutes() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="locker" element={<LockerPage />} />
             <Route path="datalab" element={<DatalabPage />} />
+            <Route path="missions" element={<MissionPage />} />
             <Route
               path="daily"
               element={<Navigate to="schedule/daily" replace />}
@@ -25,6 +28,7 @@ export default function DashboardRoutes() {
               element={<Navigate to="schedule/monthly" replace />}
             />
             <Route path="schedule/*" element={<ScheduleRoutes />} />
+            <Route path="tournaments/*" element={<TournamentRoutes />} />
             {/* <Route path="playing/*" element={<PlayingRoutes />} /> */}
           </Routes>
         </UserPreferenceProvider>

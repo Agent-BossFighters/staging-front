@@ -12,22 +12,29 @@ export default function DesktopNav() {
 
   return (
     <div className="hidden lg:flex h-full items-center justify-between py-4 px-10 lg:px-0 lg:w-5/6 mx-auto">
-      <div className="flex items-center gap-20 h-full">
+      <div className="flex items-center gap-10 h-full">
         {user ? (
-          <Link to="/dashboard" className="flex items-center h-full">
-            <img src={A} alt="A logo" className="lg:block xl:hidden w-10 h-10 object-contain" />
-            <img src={AgentLogo} alt="Agent logo" className="hidden xl:block h-full" />
-          </Link>
+          <div className="flex flex-col h-full">
+            <Link to="/dashboard" className="flex items-center h-full">
+              <img src={A} alt="A logo" className="lg:block xl:hidden w-10 h-10 object-contain" />
+              <img src={AgentLogo} alt="Agent logo" className="hidden xl:block h-full min-w-[175px]" />
+            </Link>
+              {user.isPremium ? (
+                <p className="text-sm font-bold italic text-primary flex justify-end -translate-y-1/2">PREMIUM</p>
+              ) : (
+                <p className="text-sm font-bold italic text-secondary flex justify-end -translate-y-1/2">FREEMIUM</p>
+              )}
+          </div>
         ) : (
           <Link to="/" className="flex items-center h-full mr-4">
             <img src={A} alt="A logo" className="lg:block xl:hidden w-10 h-10 object-contain" />
-            <img src={AgentLogo} alt="Agent logo" className="hidden xl:block h-full" />
+            <img src={AgentLogo} alt="Agent logo" className="hidden xl:block h-full min-w-[175px]" />
           </Link>
         )}
         <DesktopLink />
       </div>
       <div className="flex items-center gap-4">
-        <div className="hidden xl:block">
+        <div className="hidden xl:block min-w-[295px]">
           <CurrencyDisplay />
         </div>
         <AdminUpdateCurrencies />

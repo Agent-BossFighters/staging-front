@@ -12,7 +12,8 @@ import data from "@shared/data/rarities.json";
 import { getValue } from "../hook/value";
 import { useUserPreference } from "@context/userPreference.context";
 import { getRarityOrder } from "@shared/hook/rarity";
-import { formatNumber, formatPrice, formatPercent } from "@utils/formatters";
+import { formatNumber, formatPrice } from "@utils/formatters";
+import BadgesSkeleton from "@features/dashboard/datalab/skeletons/BadgesSkeleton";
 
 export default function Badges({ badges, loading }) {
   const { maxRarity } = useUserPreference();
@@ -20,7 +21,7 @@ export default function Badges({ badges, loading }) {
     (rarity) => getRarityOrder(rarity.rarity) <= getRarityOrder(maxRarity)
   );
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <BadgesSkeleton />;
 
   if (!badges?.badges_metrics) {
     return <div>No data available</div>;

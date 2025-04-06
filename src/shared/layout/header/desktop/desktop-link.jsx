@@ -11,19 +11,21 @@ import {
 
 const menuItems = [
   {
-    path: "/dashboard",
-    label: "Dashboard",
+    label: "MENU",
     requiresAuth: true,
     children: [
+      { path: "/economy", label: "Economy map" },
+      { path: "/dashboard", label: "Dashboard" },
       { path: "/dashboard/locker", label: "Locker" },
       { path: "/dashboard/datalab", label: "Datalab" },
+      { path: "/dashboard/missions", label: "Missions" },
       { path: "/dashboard/schedule/daily", label: "Daily" },
       { path: "/dashboard/schedule/monthly", label: "Monthly" },
       //   { path: "/dashboard/schedule", label: "Schedule" },
       //   { path: "/dashboard/playing", label: "Playing" },
     ],
   },
-  { path: "/economy", label: "Economy map" },
+  // { path: "/economy", label: "Economy map" },
 ];
 
 export default function DesktopLink() {
@@ -33,8 +35,8 @@ export default function DesktopLink() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {filteredMenu.map((item) => (
-          <NavigationMenuItem key={item.path} className="">
+        {filteredMenu.map((item, index) => (
+          <NavigationMenuItem key={item.label || index} className="">
             {item.children ? (
               <>
                 <NavigationMenuTrigger className="gap-10">

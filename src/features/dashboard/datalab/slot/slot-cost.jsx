@@ -9,9 +9,10 @@ import {
 } from "@ui/table";
 import { getValue } from "../hook/value";
 import { formatNumber, formatPrice, formatPercent } from "@utils/formatters";
+import SlotCostSkeleton from "@features/dashboard/datalab/skeletons/SlotCostSkeleton";
 
 export default function SlotCost({ slots, loading, selectedRarity }) {
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <SlotCostSkeleton />;
 
   const selectedRarityMetrics =
     slots.unlocked_slots_by_rarity[selectedRarity] || [];

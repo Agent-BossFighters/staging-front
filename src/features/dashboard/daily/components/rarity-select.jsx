@@ -45,28 +45,27 @@ const RaritySelect = memo(
       [badges, onChange]
     );
 
-    // Filtrer les badges déjà sélectionnés
     const availableBadges = badges.filter((badge) => {
-      // Si c'est le badge actuellement sélectionné dans ce slot, on le garde
+      const badgeId = String(badge.id);
+      
+      for (const selectedBadge of selectedBadges) {
+        if (selectedBadge === "none") continue;
+        
+        const [, selectedId] = selectedBadge.split("#");
+        
+        if (selectedId === badgeId) {
+          return false;
+        }
+      }
+      
       if (value && value !== "none") {
-        const [currentRarity, currentId] = value.split("#");
-        if (
-          String(badge.id) === currentId &&
-          (typeof badge.rarity === "object"
-            ? badge.rarity.name
-            : badge.rarity
-          ).toLowerCase() === currentRarity.toLowerCase()
-        ) {
+        const [, currentId] = value.split("#");
+        if (currentId === badgeId) {
           return true;
         }
       }
-
-      // Vérifier si le badge est déjà utilisé dans un autre slot
-      return !selectedBadges.some((selectedBadge) => {
-        if (selectedBadge === "none") return false;
-        const [, selectedId] = selectedBadge.split("#");
-        return selectedId === String(badge.id);
-      });
+      
+      return true;
     });
 
     // Trier les badges par rareté
