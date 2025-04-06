@@ -6,12 +6,12 @@
  * Couleurs utilisées pour les équipes
  */
 export const TEAM_COLORS = [
-  'bg-red-600',
-  'bg-blue-600',
-  'bg-green-600',
-  'bg-purple-600',
-  'bg-orange-600',
-  'bg-pink-600'
+  '#C0392B', // rouge
+  '#2980B9', // bleu
+  '#27AE60', // vert
+  '#9A85FF', // violet
+  '#DD6B20', // orange
+  '#D53F8C'  // rose
 ];
 
 /**
