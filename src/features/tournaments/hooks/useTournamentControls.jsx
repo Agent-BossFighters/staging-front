@@ -137,8 +137,9 @@ const useTournamentControls = (
       
       toast.success("Le tournoi a été supprimé avec succès !");
       
-      // Rediriger vers la liste des tournois
-      navigate('/dashboard/tournaments');
+      // Rediriger vers la liste des tournois sans query parameter
+      // après suppression pour éviter d'essayer de charger le tournoi supprimé
+      navigate('/dashboard/fighting', { replace: true });
       
     } catch (error) {
       console.error("Erreur lors de la suppression du tournoi:", error);
@@ -151,8 +152,8 @@ const useTournamentControls = (
   // Fonction pour rediriger vers la page de modification du tournoi
   const editTournament = () => {
     if (!tournament || !isCreator) return;
-    // Redirection vers le formulaire d'édition
-    navigate(`/dashboard/tournaments/${tournament.id}/edit`);
+    // Redirection vers le formulaire d'édition avec le path standard
+    navigate(`/dashboard/fighting/${tournament.id}/edit`);
   };
 
   return {

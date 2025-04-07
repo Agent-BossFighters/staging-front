@@ -45,3 +45,7 @@ export { default as matchesQuest } from "./quest/matchesQuest.svg";
 export {default as xQuest } from "./quest/xQuest.svg";
 export {default as chevronQuest } from "./quest/chevronQuest.svg";
 export {default as bracketIcon } from "./tournaments/bracketIcon.svg";
+export {default as headBoss } from "./tournaments/headBoss.png";
+export {default as stopwatch } from "./tournaments/stopwatch.svg";
+export {default as updateArrow } from "./tournaments/updateArrow.svg";
+export {default as registerTournament } from "./tournaments/registerTournament.svg";

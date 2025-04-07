@@ -17,7 +17,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
   // Form state
   const [formData, setFormData] = useState({
     name: "",
-    tournament_type: "0", // 0 = Survival (Showtime)
+    tournament_type: "0", // 0 = Showtime (Survival)
     rounds: "1", // 1 round par défaut
     rules: "",
     agent_level_required: 0,
@@ -40,12 +40,12 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
     let matches = 0;
     let timeInMinutes = 0;
     
-    if (tournamentType === 0 || tournamentType === 1) { // Survival
-      matches = teamsCount * roundsCount; // Chaque équipe fait un match par round
-      timeInMinutes = matches * 10; // ~10 minutes par match
+    if (tournamentType === 0 || tournamentType === 1) { // Showtime
+      matches = teamsCount * roundsCount; // Each team plays one match per round
+      timeInMinutes = matches * 10; // ~10 minutes per match
     } else if (tournamentType === 2) { // Arena
-      matches = Math.ceil((teamsCount * (teamsCount - 1)) / 2); // Formule pour tous les matchs possibles
-      timeInMinutes = matches * 10; // ~10 minutes par match
+      matches = Math.ceil((teamsCount * (teamsCount - 1)) / 2); // Formula for all possible matches
+      timeInMinutes = matches * 10; // ~10 minutes per match
     }
     
     setEstimatedMatches(matches);
@@ -63,7 +63,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
 
   const validateForm = () => {
     if (!formData.name) {
-      toast.error("Veuillez renseigner un nom de tournoi");
+      toast.error("Please enter a tournament name");
       return false;
     }
     
@@ -72,18 +72,18 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
     const playersCount = parseInt(formData.players_per_team);
     
     if (isNaN(teamsCount) || teamsCount < 2) {
-      toast.error("Le nombre d'équipes doit être d'au moins 2");
+      toast.error("The team number must be at least 2");
       return false;
     }
     
     if (isNaN(playersCount) || playersCount < 1) {
-      toast.error("Le nombre de joueurs par équipe doit être d'au moins 1");
+      toast.error("The number of players per team must be at least 1");
       return false;
     }
     
     // Validation spécifique pour Arena
     if (tournamentType === 2 && playersCount !== 5) {
-      toast.error("Les tournois Arena doivent avoir exactement 5 joueurs par équipe");
+      toast.error("Arena tournaments must have exactly 5 players per team");
       return false;
     }
     
@@ -106,10 +106,10 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
         name: formData.name,
         tournament_type: parseInt(formData.tournament_type),
         rounds: parseInt(formData.rounds),
-        rules: formData.rules || "Règles standard",
+        rules: formData.rules || "Standard rules",
         agent_level_required: parseInt(formData.agent_level_required),
         players_per_team: parseInt(formData.players_per_team),
-        min_players_per_team: parseInt(formData.players_per_team), // Simplifié
+        min_players_per_team: parseInt(formData.players_per_team), // Simplified
         max_teams: parseInt(formData.max_teams),
         status: 1 // 1 = open (au lieu de "pending")
       };
@@ -129,7 +129,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
       
       console.log("Tournament creation response:", response);
       
-      toast.success("Tournoi créé avec succès !");
+      toast.success("Tournament created successfully!");
       
       // Notifier que la création est réussie
       if (onSuccess) {
@@ -147,7 +147,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
       }
     } catch (err) {
       console.error("Error creating tournament:", err);
-      let errorMessage = "Échec de la création du tournoi. Veuillez réessayer.";
+      let errorMessage = "Failed to create tournament. Please try again.";
       
       if (err.responseData?.error) {
         errorMessage = err.responseData.error;

@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@shared/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@shared/ui/table";
 import { Badge } from "@shared/ui/badge";
 import { TYPE_LABELS, STATUS_COLORS, STATUS_LABELS } from "../constants/uiConfigs";
 
@@ -137,12 +130,12 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
               <TableHead className="w-[7%] py-3">MODE</TableHead>
               <TableHead className="w-[12%] py-3">RULES</TableHead>
               <TableHead className="w-[10%] py-3">STATUS</TableHead>
-              <TableHead className="w-[8%] text-center py-3">TEAM SLOTS</TableHead>
-              <TableHead className="w-[9%] text-center py-3">PLAYER(S) /TEAM</TableHead>
-              <TableHead className="w-[7%] text-center py-3">ROUND(S)</TableHead>
-              <TableHead className="w-[10%] text-center py-3">AGENT LVL REQUIRED</TableHead>
-              <TableHead className="w-[6%] text-center py-3">CODE</TableHead>
-              <TableHead className="w-[8%] text-center py-3">ACTION</TableHead>
+              <TableHead className="w-[8%] py-3">TEAM <br /> SLOTS</TableHead>
+              <TableHead className="w-[9%] py-3">PLAYER(S) <br /> /TEAM</TableHead>
+              <TableHead className="w-[7%] py-3">ROUND(S)</TableHead>
+              <TableHead className="w-[10%] py-3">AGENT LVL <br /> REQUIRED</TableHead>
+              <TableHead className="w-[6%] py-3">CODE</TableHead>
+              <TableHead className="w-[8%] py-3">ACTION</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -180,32 +173,29 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
                       {status.label}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-center py-3">
+                  <TableCell className="py-3">
                     {teamsCount}/{tournament.max_teams}
                   </TableCell>
-                  <TableCell className="text-center py-3">
+                  <TableCell className="py-3">
                     {tournament.players_per_team}
                   </TableCell>
-                  <TableCell className="text-center py-3">
+                  <TableCell className="py-3">
                     {tournament.rounds || 1}
                   </TableCell>
-                  <TableCell className="text-center py-3">
+                  <TableCell className="py-3">
                     {tournament.agent_level_required || 0}
                   </TableCell>
-                  <TableCell className="text-center py-3">
+                  <TableCell className="py-3">
                     {tournament.entry_code ? "Yes" : "No"}
                   </TableCell>
-                  <TableCell className="py-3 text-center">
+                  <TableCell className="py-3">
                     <button 
-                      className="inline-flex justify-center"
+                      className="inline-flex"
                       onClick={(e) => {
                         e.stopPropagation(); // Empêcher la propagation pour éviter le double clic
                         if (isClickable) handleTournamentClick(tournament);
                       }}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-400 hover:text-yellow-300">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
                     </button>
                   </TableCell>
                 </TableRow>

@@ -4,6 +4,7 @@ import { PlayCircle } from 'lucide-react';
 import { formatTimeOrScore } from '../../utils/timeFormatters';
 import { getTeamColor } from '../../constants/uiConfigs';
 import { getBossName } from '../../utils/tournamentUtils';
+import { headBoss, stopwatch } from '@img';
 
 const RoundsList = ({
   tournament,
@@ -29,14 +30,14 @@ const RoundsList = ({
         const roundMatches = groupedMatches[round] || [];
         
         return (
-          <div key={round} className="flex mb-3 gap-2">
+          <div key={round} className="flex mb-3 gap-2 border border-primary">
             {/* Round label */}
             <div className="bg-primary text-black font-bold p-3 w-28 flex justify-center items-center gap-2">
               <span>ROUND {round}</span>
             </div>
             
             {/* Matches */}
-            <div className="flex-1 flex gap-3  border-2 border-primary rounded-lg">
+            <div className="flex-1 flex gap-3">
               {roundMatches.length > 0 ? (
                 teams?.slice(0, 4).map((team, index) => {
                   const match = roundMatches.find(m => m.team_a_id === team.id);
@@ -50,13 +51,16 @@ const RoundsList = ({
                   return (
                     <div key={`${round}-${team.id}`} className=" flex-1 p-2 flex flex-col items-center justify-center">
                       <div className="flex items-center mb-3 gap-2">
+                        <div className="flex items-center gap-2 w-8 h-8">
+                          <img src={headBoss} alt="headBoss" className="w-8 h-8" />
+                        </div>
+                        <span className="text-white text-sm">VS</span>
                         <div 
                           style={{ backgroundColor: teamColor }}
                           className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold mr-2 text-xs"
                         >
                           {String.fromCharCode(65 + index)}
                         </div>
-                        <span className="text-white text-sm">VS BOSS</span>
                       </div>
                       
                       {isEditingAllScores ? (
@@ -103,11 +107,11 @@ const RoundsList = ({
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
-                          <div className="text-white font-bold text-lg">
-                            {isShowtimeSurvival ? formatTimeOrScore(scoreA, "time") : scoreA}
-                          </div>
-                          <div className="text-red-400 text-sm mt-1">
-                            Boss: {scoreB}
+                          <div className="flex items-center gap-4">
+                            <img src={stopwatch} alt="stopwatch" className="w-6 h-6" />
+                            <div className="text-white font-bold text-lg">
+                              {isShowtimeSurvival ? formatTimeOrScore(scoreA, "time") : scoreA}
+                            </div>
                           </div>
                         </div>
                       )}

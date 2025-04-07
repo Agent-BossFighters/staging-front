@@ -28,7 +28,7 @@ export default function DashboardRoutes() {
               element={<Navigate to="schedule/monthly" replace />}
             />
             <Route path="schedule/*" element={<ScheduleRoutes />} />
-            <Route path="tournaments/*" element={<TournamentRoutes />} />
+            <Route path="fighting/*" element={<TournamentRoutes />} />
             {/* <Route path="playing/*" element={<PlayingRoutes />} /> */}
           </Routes>
         </UserPreferenceProvider>
