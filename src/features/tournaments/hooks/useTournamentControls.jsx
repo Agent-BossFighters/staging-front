@@ -17,6 +17,7 @@ import generateTournamentMatches from "../utils/generateMatchesTournament";
  * @param {Function} refetchTeams - Fonction pour rafraîchir les données des équipes
  * @param {Function} refetchMatches - Fonction pour rafraîchir les données des matchs
  * @param {boolean} isCreator - Si l'utilisateur est le créateur du tournoi
+ * @param {Function} onTournamentDeleted - Callback pour gérer la suppression côté UI
  * @returns {Object} Fonctions et états pour gérer le tournoi
  */
 const useTournamentControls = (
@@ -26,7 +27,8 @@ const useTournamentControls = (
   refetchTournament,
   refetchTeams,
   refetchMatches,
-  isCreator
+  isCreator,
+  onTournamentDeleted
 ) => {
   const navigate = useNavigate();
   const [startingTournament, setStartingTournament] = useState(false);
@@ -137,8 +139,14 @@ const useTournamentControls = (
       
       toast.success("Le tournoi a été supprimé avec succès !");
       
-      // Rediriger vers la liste des tournois
-      navigate('/dashboard/tournaments');
+      // Appeler le callback pour réinitialiser l'UI si fourni
+      if (typeof onTournamentDeleted === 'function') {
+        onTournamentDeleted();
+      }
+      
+      // Rediriger vers la liste des tournois sans query parameter
+      // après suppression pour éviter d'essayer de charger le tournoi supprimé
+      navigate('/dashboard/fighting', { replace: true });
       
     } catch (error) {
       console.error("Erreur lors de la suppression du tournoi:", error);
@@ -151,8 +159,8 @@ const useTournamentControls = (
   // Fonction pour rediriger vers la page de modification du tournoi
   const editTournament = () => {
     if (!tournament || !isCreator) return;
-    // Redirection vers le formulaire d'édition
-    navigate(`/dashboard/tournaments/${tournament.id}/edit`);
+    // Redirection vers le formulaire d'édition avec le path standard
+    navigate(`/dashboard/fighting/${tournament.id}/edit`);
   };
 
   return {

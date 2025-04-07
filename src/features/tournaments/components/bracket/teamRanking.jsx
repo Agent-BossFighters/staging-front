@@ -9,10 +9,10 @@ const TeamRanking = ({
 }) => {
   return (
     <div className="flex flex-col">
-      <div className="bg-yellow-500 text-black font-bold p-3">
+      <div className="bg-primary text-black font-bold p-3">
         RANKING
       </div>
-      <div className="bg-gray-900 p-4">
+      <div className="bg-gray-900 p-4 mt-1">
         <table className="w-full text-white">
           <thead>
             <tr className="border-b border-gray-700">

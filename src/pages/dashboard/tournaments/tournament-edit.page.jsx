@@ -35,7 +35,8 @@ export default function TournamentEditPage() {
     min_players_per_team: 4,
     max_teams: 8,
     entry_code: "",
-    status: 1
+    status: 1,
+    boss_id: user?.id || null
   });
   
   // Estimation du temps de matchs
@@ -66,7 +67,8 @@ export default function TournamentEditPage() {
         min_players_per_team: tournament.min_players_per_team || tournament.players_per_team || 4,
         max_teams: tournament.max_teams || 8,
         entry_code: tournament.entry_code || "",
-        status: status
+        status: status,
+        boss_id: tournament.creator_id || user?.id || null
       });
     }
   }, [tournament]);
@@ -96,7 +98,7 @@ export default function TournamentEditPage() {
   useEffect(() => {
     if (tournament && user && tournament.creator_id !== user.id) {
       toast.error("Vous n'êtes pas autorisé à modifier ce tournoi.");
-      navigate(`/dashboard/tournaments/${tournamentId}`);
+      navigate(`/dashboard/fighting?tournament=${tournamentId}`, { replace: true });
     }
   }, [tournament, user, tournamentId, navigate]);
 
@@ -111,28 +113,89 @@ export default function TournamentEditPage() {
 
   const validateForm = () => {
     if (!formData.name) {
-      toast.error("Veuillez renseigner un nom de tournoi");
+      toast.error("Thank to enter a tournament name");
+      return false;
+    }
+    
+    if (formData.tournament_type === undefined || formData.tournament_type === null) {
+      toast.error("Thank to select a valid tournament format");
+      return false;
+    }
+    
+    if (![0, 1, 2, "0", "1", "2"].includes(formData.tournament_type)) {
+      toast.error("Thank to select a valid tournament format");
+      return false;
+    }
+    
+    if (formData.status === undefined || formData.status === null) {
+      toast.error("Thank to select a valid status");
+      return false;
+    }
+    
+    if (![0, 1, 2, 3, 4, "0", "1", "2", "3", "4"].includes(formData.status)) {
+      toast.error("Thank to select a valid status");
       return false;
     }
     
     const tournamentType = parseInt(formData.tournament_type);
     const teamsCount = parseInt(formData.max_teams);
     const playersCount = parseInt(formData.players_per_team);
+    const minPlayersCount = parseInt(formData.min_players_per_team);
+    const agentLevel = parseInt(formData.agent_level_required);
     
-    if (isNaN(teamsCount) || teamsCount < 2) {
-      toast.error("Le nombre d'équipes doit être d'au moins 2");
+    if (isNaN(teamsCount) || teamsCount <= 1) {
+      toast.error("The team number must be greater than 1");
       return false;
     }
     
     if (isNaN(playersCount) || playersCount < 1) {
-      toast.error("Le nombre de joueurs par équipe doit être d'au moins 1");
+      toast.error("The number of players per team must be a positive integer");
       return false;
     }
     
-    // Validation spécifique pour Arena
-    if (tournamentType === 2 && playersCount !== 5) {
-      toast.error("Les tournois Arena doivent avoir exactement 5 joueurs par équipe");
+    if (playersCount > 5) {
+      toast.error("The number of players per team cannot exceed 5");
       return false;
+    }
+    
+    if (isNaN(agentLevel) || agentLevel < 0) {
+      toast.error("The agent level required must be a positive integer or 0");
+      return false;
+    }
+    
+    // Validation pour Showtime (type 0 ou 1)
+    if (tournamentType === 0 || tournamentType === 1) {
+      if (!formData.boss_id) {
+        toast.error("For Showtime tournaments, a boss_id is required");
+        return false;
+      }
+      
+      if (playersCount < 1 || playersCount > 4) {
+        toast.error("For Showtime tournaments, the number of players per team must be between 1 and 4");
+        return false;
+      }
+    }
+    
+    // Validation spécifique pour Arena (type 2)
+    if (tournamentType === 2) {
+      if (playersCount !== 5) {
+        toast.error("Arena tournaments must have exactly 5 players per team");
+        return false;
+      }
+      
+      if (isNaN(minPlayersCount) || minPlayersCount <= 2) {
+        toast.error("For Arena tournaments, the minimum number of players per team must be greater than 2");
+        return false;
+      }
+    }
+    
+    // Validation du champ rounds (si présent dans le formulaire)
+    if (formData.rounds !== undefined) {
+      const rounds = parseInt(formData.rounds);
+      if (isNaN(rounds) || rounds <= 0) {
+        toast.error("The number of rounds must be a positive integer");
+        return false;
+      }
     }
     
     return true;
@@ -158,7 +221,8 @@ export default function TournamentEditPage() {
         players_per_team: parseInt(formData.players_per_team),
         min_players_per_team: parseInt(formData.min_players_per_team),
         max_teams: parseInt(formData.max_teams),
-        status: parseInt(formData.status)
+        status: parseInt(formData.status),
+        boss_id: formData.boss_id
       };
       
       // Ajouter le code d'entrée si fourni
@@ -178,8 +242,8 @@ export default function TournamentEditPage() {
       
       toast.success("Tournoi mis à jour avec succès !");
       
-      // Rediriger vers la page de détails du tournoi
-      navigate(`/dashboard/tournaments/${tournamentId}`);
+      // Rediriger vers la page de détails du tournoi avec query parameter
+      navigate(`/dashboard/fighting?tournament=${tournamentId}`, { replace: true });
     } catch (err) {
       console.error("Error updating tournament:", err);
       let errorMessage = "Échec de la mise à jour du tournoi. Veuillez réessayer.";
@@ -196,7 +260,8 @@ export default function TournamentEditPage() {
   };
 
   const handleCancel = () => {
-    navigate(`/dashboard/tournaments/${tournamentId}`);
+    // Rediriger vers la page de détails du tournoi avec query parameter
+    navigate(`/dashboard/fighting?tournament=${tournamentId}`, { replace: true });
   };
 
   if (tournamentLoading) {
@@ -228,8 +293,8 @@ export default function TournamentEditPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <Link to={`/dashboard/tournaments/${tournamentId}`} className="text-yellow-400 hover:underline mb-4 inline-block">
-        &larr; Back to Tournament Details
+      <Link to={`/dashboard/fighting?tournament=${tournamentId}`} className="text-yellow-400 hover:underline mb-4 inline-block">
+        &larr; Back to Fighting
       </Link>
       
       <Card className="bg-gray-900 border-gray-700 text-white">
@@ -256,8 +321,8 @@ export default function TournamentEditPage() {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    <SelectItem value="0">Survival (Showtime)</SelectItem>
-                    <SelectItem value="1">Survival (Score)</SelectItem>
+                    <SelectItem value="0">Showtime (Survival)</SelectItem>
+                    <SelectItem value="1">Showtime (Score Counter)</SelectItem>
                     <SelectItem value="2">Arena</SelectItem>
                   </SelectContent>
                 </Select>

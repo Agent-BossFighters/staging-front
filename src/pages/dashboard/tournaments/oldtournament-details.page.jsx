@@ -4,17 +4,17 @@ import { useTournament, useTournamentTeams, useTournamentMatches } from "@featur
 import { useAuth } from "@context/auth.context";
 import { Button } from "@shared/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/tabs";
-import TeamsList from "@features/tournaments/components/TeamsList";
-import MatchesList from "@features/tournaments/components/MatchesList";
+// import TeamsList from "@features/tournaments/components/TeamsList";
+//import MatchesList from "@features/tournaments/components/MatchesList";
 import JoinTournamentModal from "@features/tournaments/components/JoinTournamentModal";
 import TournamentBracketArena from "@features/tournaments/components/TournamentBracketArena";
 import TournamentBracketShowtime from "@features/tournaments/components/TournamentBracketShowtime";
-import TournamentRules from '@features/tournaments/components/TournamentRules';
+//import TournamentRules from '@features/tournaments/components/TournamentRules';
 
 // Composants layout
-import TournamentHeader from '@features/tournaments/components/layout/TournamentHeader';
-import TournamentDetails from '@features/tournaments/components/layout/TournamentDetails';
-import TournamentRulesSummary from '@features/tournaments/components/layout/TournamentRulesSummary';
+// import TournamentHeader from '@features/tournaments/components/layout/TournamentHeader';
+// import TournamentDetails from '@features/tournaments/components/layout/TournamentDetails';
+// import TournamentRulesSummary from '@features/tournaments/components/layout/TournamentRulesSummary';
 
 // Utilitaires
 import { isCreatorOfTournament } from "@features/tournaments/utils/tournamentUtils";

@@ -1,28 +1,66 @@
 import React, { useState } from 'react';
 import { useAuth } from "@context/auth.context";
+import { useNavigate } from "react-router-dom";
 import generateTournamentMatches from "../utils/generateMatchesTournament";
 import calculateTeamScores from "../utils/teamScoring";
 import { formatTimeOrScore } from "../utils/timeFormatters";
 import { initializeAllScores, updateAllScoreValue, saveAllScores } from "../utils/scoreHandlers";
 import { groupMatchesByRound, updateMatchStatus } from "../utils/matchUtils";
 import { isCreatorOfTournament } from "../utils/tournamentUtils";
+import { findUserTeam, isTeamsFull } from "../utils/teamUtils";
+import { canJoinTournament, isTournamentInProgress, canStartTournament as canStartTournamentCheck, canCompleteTournament as canCompleteTournamentCheck } from "../utils/tournamentStatus";
+import useTournamentControls from "../hooks/useTournamentControls";
 import TeamsList from './bracket/teamsList';
 import TeamRanking from './bracket/teamRanking';
 import RoundsList from './bracket/roundsList';
 import EmptyTournamentMessage from './bracket/emptyTournamentMessage';
+import JoinTournamentModal from './JoinTournamentModal';
 import { Button } from "@shared/ui/button";
-import { Share, Save, X } from 'lucide-react';
+import { updateArrow } from '@img';
+import { Share, Save, X, UserPlus, Play, CheckCircle, Edit, Trash2 } from 'lucide-react';
+import toast from "react-hot-toast";
 
-const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated }) => {
+const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated, onTournamentDeleted }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [generatingMatches, setGeneratingMatches] = useState(false);
   const [editingMatch, setEditingMatch] = useState(null);
   const [scores, setScores] = useState({ team_a_points: 0, team_b_points: 0, team_a_time: "00:00" });
   const [saving, setSaving] = useState(false);
   const [isEditingAllScores, setIsEditingAllScores] = useState(false);
   const [allScores, setAllScores] = useState({});
+  const [joinModalOpen, setJoinModalOpen] = useState(false);
   
   const isCreator = isCreatorOfTournament(user, tournament);
+  const userTeam = findUserTeam(teams);
+  const tournamentIsFull = isTeamsFull(teams, tournament);
+  const canJoinThisTournament = canJoinTournament(tournament, userTeam, tournamentIsFull, isCreator);
+  
+  // Vérifier si l'utilisateur peut démarrer ou terminer le tournoi
+  const canStartTournament = canStartTournamentCheck(tournament, isCreator);
+  const canCompleteTournament = canCompleteTournamentCheck(tournament, isCreator);
+  
+  // Utiliser le hook de contrôle de tournoi
+  const {
+    startingTournament,
+    deletingTournament,
+    startTournament,
+    completeTournament,
+    deleteTournament,
+    editTournament
+  } = useTournamentControls(
+    tournament,
+    teams,
+    matches,
+    () => {
+      onMatchUpdated();
+      toast.success("Tournament updated successfully!");
+    },
+    () => {},
+    onMatchUpdated,
+    isCreator,
+    onTournamentDeleted
+  );
   
   const groupedMatches = groupMatchesByRound(matches);
   
@@ -67,6 +105,7 @@ const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated 
   };
   
   const handleSaveAllScores = async () => {
+    // Utiliser la fonction utilitaire pour sauvegarder tous les scores
     await saveAllScores(
       allScores,
       matches,
@@ -83,25 +122,79 @@ const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated 
   };
   
   const handleShare = () => {
-    console.log('Partage des résultats');
-  };
-  
-  const handleValidate = () => {
-    console.log('Validation des résultats');
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    toast.success("Link copied to clipboard!");
   };
 
   return (
     <div className="tournament-bracket">
       {/* En-tête du tournoi */}
       <div className="bg-gray-800 p-4 mb-4 rounded flex items-center justify-between">
-        <h1 className="text-xl font-bold text-white">{tournament?.name}</h1>
-        
-        <div className="flex items-center gap-4">
+        <h1 className="text-2xl font-bold text-primary">{tournament?.name}</h1>
+        <div className="flex items-center gap-2">
+          {/* Bouton pour rejoindre le tournoi si l'utilisateur peut le faire */}
+          {canJoinThisTournament && (
+            <Button 
+              onClick={() => setJoinModalOpen(true)}
+              className="bg-primary hover:bg-primary/90 text-black"
+            >
+              <UserPlus className="mr-2 h-4 w-4" />
+              JOIN TOURNAMENT
+            </Button>
+          )}
+          
+          {/* Boutons d'administration pour le créateur du tournoi */}
+          {isCreator && (
+            <>
+              {canStartTournament && (
+                <Button 
+                  onClick={startTournament}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  disabled={startingTournament}
+                >
+                  <Play className="mr-2 h-4 w-4" />
+                  {startingTournament ? "STARTING..." : "START TOURNAMENT"}
+                </Button>
+              )}
+              
+              {canCompleteTournament && (
+                <Button 
+                  onClick={completeTournament}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  END TOURNAMENT
+                </Button>
+              )}
+              
+              <Button 
+                onClick={editTournament}
+                className="bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                EDIT
+              </Button>
+              
+              <Button 
+                onClick={deleteTournament}
+                className="bg-red-600 hover:bg-red-700 text-white"
+                disabled={deletingTournament}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                {deletingTournament ? "DELETING..." : "DELETE"}
+              </Button>
+            </>
+            )}
+          </div>
+      </div>
+      <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center gap-4">
           <div className="flex items-center">
             <div className="text-gray-400 mr-2">TYPE</div>
             <div className="text-white">{isShowtimeSurvival ? "SURVIVAL" : "SCORE"}</div>
-          </div>
-          
+        </div>
+
           <div className="flex items-center">
             <div className="text-gray-400 mr-2">MODE</div>
             <div className="text-white">SHOWTIME</div>
@@ -111,7 +204,7 @@ const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated 
             <div className="text-gray-400 mr-2">RÈGLES</div>
             <div className="text-white">
               Obtenez le meilleur {isShowtimeSurvival ? "temps" : "score"} possible
-            </div>
+                        </div>
           </div>
         </div>
       </div>
@@ -122,8 +215,8 @@ const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated 
           {/* Teams list first */}
           <div className="mb-4">
             <TeamsList teams={teams} />
-          </div>
-
+                </div>
+                
           {/* Rounds list below */}
           <div>
             {matches?.length > 0 ? (
@@ -153,9 +246,9 @@ const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated 
                 onGenerateMatches={handleGenerateMatches}
               />
             )}
-          </div>
-        </div>
-
+                            </div>
+                          </div>
+                          
         {/* Ranking */}
         <div className="col-span-3">
           <TeamRanking 
@@ -163,60 +256,60 @@ const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated 
             teamScores={teamScores}
             isShowtimeSurvival={isShowtimeSurvival}
           />
-        </div>
-      </div>
-
+                            </div>
+                          </div>
+                          
       {/* Boutons d'action */}
       <div className="flex justify-between mt-6">
         {isEditingAllScores ? (
           <div className="flex gap-3">
-            <Button 
+                              <Button 
               onClick={handleCancelAllScoresEdit}
               className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3"
-              disabled={saving}
-            >
+                                disabled={saving}
+                              >
               <X size={16} className="mr-2" />
               CANCEL
-            </Button>
-            <Button 
+                              </Button>
+                              <Button 
               onClick={handleSaveAllScores}
               className="bg-green-500 hover:bg-green-600 text-white px-6 py-3"
-              disabled={saving}
-            >
+                                disabled={saving}
+                              >
               <Save size={16} className="mr-2" />
               {saving ? "SAVING..." : "SAVE ALL SCORES"}
-            </Button>
+                              </Button>
           </div>
         ) : (
           <Button 
             onClick={handleUpdateResult}
-            className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3"
+            className="bg-primary hover:bg-primary/90 text-black px-6 py-3"
           >
+            <img src={updateArrow} alt="updateArrow" className="w-8 h-8 mr-2" />
             UPDATE RESULT
           </Button>
         )}
         
         <div className="flex gap-3">
-          <Button 
+              <Button
             onClick={handleShare} 
-            className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3"
+            className="bg-primary hover:bg-primary/90 text-black px-6 py-3"
             disabled={isEditingAllScores}
           >
             <Share size={16} className="mr-2" />
             SHARE
-          </Button>
-          
-          {isCreator && (
-            <Button 
-              onClick={handleValidate} 
-              className="bg-primary text-black px-6 py-3"
-              disabled={isEditingAllScores}
-            >
-              VALIDATE RESULTS
-            </Button>
-          )}
+              </Button>
         </div>
       </div>
+      
+      {/* Modal pour rejoindre le tournoi */}
+      {joinModalOpen && (
+        <JoinTournamentModal
+          tournament={tournament}
+          isOpen={joinModalOpen}
+          onClose={() => setJoinModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
