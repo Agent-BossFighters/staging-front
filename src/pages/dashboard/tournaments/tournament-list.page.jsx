@@ -10,6 +10,7 @@ import { bracketIcon } from "@img";
 import { useAuth } from "@context/auth.context";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function TournamentListPage() {
   const { user } = useAuth();
@@ -43,25 +44,45 @@ export default function TournamentListPage() {
   // États pour la gestion des onglets
   const [activeTab, setActiveTab] = useState("all");
 
-  // Vérifier si un tournoi est spécifié dans l'URL
+  // Vérifier si un tournoi est spécifié dans l'URL et s'il existe
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tournamentIdFromUrl = searchParams.get('tournament');
     
     if (tournamentIdFromUrl) {
-      setSelectedTournamentId(tournamentIdFromUrl);
-      setShowTournamentDetails(true);
+      // Si un ID de tournoi est dans l'URL, vérifier d'abord s'il existe dans les listes chargées
+      const allTournaments = [
+        ...(tournaments || []),
+        ...(myTournaments || []),
+        ...(registeredTournaments || [])
+      ];
       
-      // Déterminer l'onglet actif en fonction du tournoi
-      if (myTournaments && myTournaments.some(t => t.id.toString() === tournamentIdFromUrl.toString())) {
-        setActiveTab('my');
-      } else if (registeredTournaments && registeredTournaments.some(t => t.id.toString() === tournamentIdFromUrl.toString())) {
-        setActiveTab('registered');
+      const tournamentExists = allTournaments.some(t => t.id.toString() === tournamentIdFromUrl.toString());
+      
+      if (tournamentExists) {
+        setSelectedTournamentId(tournamentIdFromUrl);
+        setShowTournamentDetails(true);
+        
+        // Déterminer l'onglet actif en fonction du tournoi
+        if (myTournaments && myTournaments.some(t => t.id.toString() === tournamentIdFromUrl.toString())) {
+          setActiveTab('my');
+        } else if (registeredTournaments && registeredTournaments.some(t => t.id.toString() === tournamentIdFromUrl.toString())) {
+          setActiveTab('registered');
+        } else {
+          setActiveTab('all');
+        }
       } else {
-        setActiveTab('all');
+        // Si le tournoi n'existe pas dans les listes chargées mais que nous avons déjà fait la requête
+        if (!isLoading && !loadingMyTournaments && !loadingRegisteredTournaments) {
+          // Réinitialiser l'URL et afficher un message d'erreur
+          navigate('/dashboard/fighting', { replace: true });
+          setSelectedTournamentId(null);
+          setShowTournamentDetails(false);
+          toast.error(`Le tournoi avec l'ID ${tournamentIdFromUrl} n'a pas été trouvé ou a été supprimé.`);
+        }
       }
     }
-  }, [location.search, myTournaments, registeredTournaments]);
+  }, [location.search, tournaments, myTournaments, registeredTournaments, isLoading, loadingMyTournaments, loadingRegisteredTournaments, navigate]);
 
   // Fonction pour filtrer les tournois en fonction de la recherche
   const filterTournamentsByQuery = (tournamentsArray) => {
@@ -121,6 +142,12 @@ export default function TournamentListPage() {
     const { teams } = useTournamentTeams(tournamentId);
     const { matches, refetch: refetchMatches } = useTournamentMatches(tournamentId);
     
+    // Callback pour gérer la suppression du tournoi
+    const handleTournamentDeleted = () => {
+      setShowTournamentDetails(false);
+      setSelectedTournamentId(null);
+    };
+    
     if (isLoading) {
       return (
         <div className="flex justify-center py-10">
@@ -133,6 +160,16 @@ export default function TournamentListPage() {
       return (
         <div className="text-red-500 p-4 text-center">
           Error loading tournament: {error?.message || "Tournament not found"}
+          <div className="mt-4">
+            <Button 
+              variant="default" 
+              className="flex items-center gap-2"
+              onClick={handleBackToList}
+            >
+              <ArrowLeft size={16} />
+              Back to List
+            </Button>
+          </div>
         </div>
       );
     }
@@ -154,6 +191,7 @@ export default function TournamentListPage() {
           teams={teams || []} 
           matches={matches || []}
           onMatchUpdated={refetchMatches}
+          onTournamentDeleted={handleTournamentDeleted}
         />
       </div>
     );

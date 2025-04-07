@@ -17,6 +17,7 @@ import generateTournamentMatches from "../utils/generateMatchesTournament";
  * @param {Function} refetchTeams - Fonction pour rafraîchir les données des équipes
  * @param {Function} refetchMatches - Fonction pour rafraîchir les données des matchs
  * @param {boolean} isCreator - Si l'utilisateur est le créateur du tournoi
+ * @param {Function} onTournamentDeleted - Callback pour gérer la suppression côté UI
  * @returns {Object} Fonctions et états pour gérer le tournoi
  */
 const useTournamentControls = (
@@ -26,7 +27,8 @@ const useTournamentControls = (
   refetchTournament,
   refetchTeams,
   refetchMatches,
-  isCreator
+  isCreator,
+  onTournamentDeleted
 ) => {
   const navigate = useNavigate();
   const [startingTournament, setStartingTournament] = useState(false);
@@ -136,6 +138,11 @@ const useTournamentControls = (
       await kyInstance.delete(`v1/tournaments/${tournament.id}`).json();
       
       toast.success("Le tournoi a été supprimé avec succès !");
+      
+      // Appeler le callback pour réinitialiser l'UI si fourni
+      if (typeof onTournamentDeleted === 'function') {
+        onTournamentDeleted();
+      }
       
       // Rediriger vers la liste des tournois sans query parameter
       // après suppression pour éviter d'essayer de charger le tournoi supprimé

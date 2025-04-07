@@ -20,7 +20,7 @@ import { updateArrow } from '@img';
 import { Share, Save, X, UserPlus, Play, CheckCircle, Edit, Trash2 } from 'lucide-react';
 import toast from "react-hot-toast";
 
-const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated }) => {
+const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated, onTournamentDeleted }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [generatingMatches, setGeneratingMatches] = useState(false);
@@ -58,7 +58,8 @@ const TournamentBracketShowtime = ({ tournament, teams, matches, onMatchUpdated 
     },
     () => {},
     onMatchUpdated,
-    isCreator
+    isCreator,
+    onTournamentDeleted
   );
   
   const groupedMatches = groupMatchesByRound(matches);
