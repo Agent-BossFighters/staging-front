@@ -119,7 +119,6 @@ export default function TournamentListPage() {
   
   // Fonction pour afficher les détails d'un tournoi
   const handleOpenTournament = (tournament) => {
-    console.log("Opening tournament:", tournament.name, tournament.id);
     setSelectedTournamentId(tournament.id);
     setShowTournamentDetails(true);
     

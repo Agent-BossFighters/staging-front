@@ -36,10 +36,8 @@ export function useTournamentsList(filters = {}) {
         tournamentList = response.tournaments;
       } 
       
-      
       // Appliquer le filtrage côté client pour l'état d'inscription basé sur les dates
       if (filters.registration && filters.registration !== "all") {
-        console.log("Applying client-side registration filtering:", filters.registration);
         const now = new Date();
         
         tournamentList = tournamentList.filter(tournament => {
@@ -216,79 +214,65 @@ export function useMatch(tournamentId, matchId) {
   return { match, isLoading, error };
 }
 
+
+// TODO: à supprimer ????? after testing
+// TODO: à supprimer ????? after testing
+// TODO: à supprimer ????? after testing
+// TODO: à supprimer ????? after testing
+// TODO: à supprimer ????? after testing
+// TODO: à supprimer ????? after testing
+// TODO: à supprimer ????? after testing
+
 // Hook for fetching a specific team in a tournament
-export function useTeam(tournamentId, teamId) {
-  const [team, setTeam] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+// export function useTeam(tournamentId, teamId) {
+//   const [team, setTeam] = useState(null);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (!tournamentId || !teamId) return;
+//   useEffect(() => {
+//     if (!tournamentId || !teamId) return;
 
-    const fetchTeam = async () => {
-      console.log(`[useTeam] Fetching team ID: ${teamId} in tournament: ${tournamentId}`);
-      setIsLoading(true);
+//     const fetchTeam = async () => {
+//       setIsLoading(true);
       
-      try {
-        console.log(`[useTeam] Making API call to: v1/tournaments/${tournamentId}/teams/${teamId}`);
-        const response = await kyInstance.get(`v1/tournaments/${tournamentId}/teams/${teamId}`).json();
-        console.log(`[useTeam] Raw API response:`, response);
-        console.log(`[useTeam] Response type:`, typeof response);
-        console.log(`[useTeam] Response structure:`, JSON.stringify(response, null, 2));
+//       try {
+//         const response = await kyInstance.get(`v1/tournaments/${tournamentId}/teams/${teamId}`).json();
         
-        let teamData = null;
+//         let teamData = null;
         
-        // Handle different response formats
-        if (response && response.team) {
-          console.log(`[useTeam] Team from response.team:`, response.team);
-          teamData = response.team;
-        } else if (response && response.data) {
-          console.log(`[useTeam] Team from response.data:`, response.data);
-          teamData = response.data;
-        } else if (response && !response.data && !response.team) {
-          // If response itself contains the team data
-          console.log(`[useTeam] Team from direct response:`, response);
-          teamData = response;
-        } else {
-          console.warn("[useTeam] Unexpected team response format:", response);
-          teamData = null;
-        }
+//         // Handle different response formats
+//         if (response && response.team) {
+//           console.log(`[useTeam] Team from response.team:`, response.team);
+//           teamData = response.team;
+//         } else if (response && response.data) {
+//           console.log(`[useTeam] Team from response.data:`, response.data);
+//           teamData = response.data;
+//         } else if (response && !response.data && !response.team) {
+//           // If response itself contains the team data
+//           console.log(`[useTeam] Team from direct response:`, response);
+//           teamData = response;
+//         } else {
+//           console.warn("[useTeam] Unexpected team response format:", response);
+//           teamData = null;
+//         }
         
-        // Log team members and captain information for debugging
-        if (teamData) {
-          console.log(`[useTeam] Team members:`, teamData.team_members);
-          console.log(`[useTeam] Captain ID:`, teamData.captain_id);
-          console.log(`[useTeam] Is current user captain:`, teamData.is_captain);
-          
-          // Log each team member structure
-          if (teamData.team_members && teamData.team_members.length > 0) {
-            teamData.team_members.forEach((member, index) => {
-              console.log(`[useTeam] Member ${index + 1} structure:`, JSON.stringify(member, null, 2));
-              console.log(`[useTeam] Member ${index + 1} user:`, member.user);
-              console.log(`[useTeam] Member ${index + 1} slot number:`, member.slot_number);
-              console.log(`[useTeam] Is member ${index + 1} captain:`, member.user?.id === teamData.captain_id);
-            });
-          }
-        }
-        
-        setTeam(teamData);
-        setError(null);
-      } catch (err) {
-        console.error(`[useTeam] Error fetching team ${teamId} for tournament ${tournamentId}:`, err);
-        console.error(`[useTeam] Error details:`, err.message, err.stack);
-        setError(err);
-        setTeam(null);
-      } finally {
-        setIsLoading(false);
-        console.log(`[useTeam] Finished loading team`);
-      }
-    };
+//         setTeam(teamData);
+//         setError(null);
+//       } catch (err) {
+//         console.error(`[useTeam] Error fetching team ${teamId} for tournament ${tournamentId}:`, err);
+//         console.error(`[useTeam] Error details:`, err.message, err.stack);
+//         setError(err);
+//         setTeam(null);
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
 
-    fetchTeam();
-  }, [tournamentId, teamId]);
+//     fetchTeam();
+//   }, [tournamentId, teamId]);
 
-  return { team, isLoading, error };
-}
+//   return { team, isLoading, error };
+// }
 
 // Hook pour récupérer les tournois créés par l'utilisateur actuel
 export function useMyTournaments(userId) {
@@ -348,8 +332,6 @@ export function useRegisteredTournaments() {
       // Utiliser l'endpoint spécifique pour les tournois de l'utilisateur
       const response = await kyInstance.get('v1/tournaments/my_tournaments').json();
       
-      console.log('[useRegisteredTournaments] Réponse API my_tournaments:', response);
-      
       let tournamentList = [];
       if (response.tournaments && Array.isArray(response.tournaments)) {
         tournamentList = response.tournaments;
@@ -358,7 +340,6 @@ export function useRegisteredTournaments() {
         tournamentList = response;
       }
       
-      console.log('[useRegisteredTournaments] Tournois récupérés:', tournamentList);
       setRegisteredTournaments(tournamentList);
       setError(null);
     } catch (err) {

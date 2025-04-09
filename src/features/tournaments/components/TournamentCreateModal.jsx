@@ -90,18 +90,13 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleCreateTournament = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-    
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      // Transformer les données pour l'API
+      // Créer le tournoi
       const tournamentData = {
         name: formData.name,
         tournament_type: parseInt(formData.tournament_type),
@@ -109,52 +104,39 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
         rules: formData.rules || "Standard rules",
         agent_level_required: parseInt(formData.agent_level_required),
         players_per_team: parseInt(formData.players_per_team),
-        min_players_per_team: parseInt(formData.players_per_team), // Simplified
+        min_players_per_team: parseInt(formData.players_per_team),
         max_teams: parseInt(formData.max_teams),
-        status: 1 // 1 = open (au lieu de "pending")
+        status: 1,
+        auto_create_teams: true // Utiliser la nouvelle fonctionnalité du backend
       };
-      
+
       // Ajouter le code d'entrée si fourni
-      if (formData.entry_code && formData.entry_code.trim() !== "") {
+      if (formData.entry_code) {
         tournamentData.entry_code = formData.entry_code;
       }
-      
-      console.log("Sending tournament data:", tournamentData);
-      
-      const response = await kyInstance.post('v1/tournaments', {
-        json: {
-          tournament: tournamentData
-        }
+
+      const tournamentResponse = await kyInstance.post('v1/tournaments', {
+        json: tournamentData
       }).json();
       
-      console.log("Tournament creation response:", response);
-      
-      toast.success("Tournament created successfully!");
-      
-      // Notifier que la création est réussie
+      const tournamentId = tournamentResponse.id || tournamentResponse.tournament?.id;
+
+      if (!tournamentId) {
+        throw new Error("Failed to get tournament ID from response");
+      }
+
+      toast.success("Tournament created successfully with empty teams!");
       if (onSuccess) {
-        let tournamentId = null;
-        
-        if (response.tournament && response.tournament.id) {
-          tournamentId = response.tournament.id;
-        } else if (response.data && response.data.id) {
-          tournamentId = response.data.id;
-        } else if (response.id) {
-          tournamentId = response.id;
-        }
-        
         onSuccess(tournamentId);
       }
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (err) {
-      console.error("Error creating tournament:", err);
-      let errorMessage = "Failed to create tournament. Please try again.";
-      
-      if (err.responseData?.error) {
-        errorMessage = err.responseData.error;
-      }
-      
-      toast.error(errorMessage);
+      console.error("Error in tournament creation process:", err);
+      const errorMessage = err.message || err.response?.data?.error || "Failed to create tournament";
       setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -176,7 +158,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-8 mt-4">
+          <form onSubmit={handleCreateTournament} className="space-y-8 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -200,7 +182,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                 {(parseInt(formData.tournament_type) === 0 || parseInt(formData.tournament_type) === 1) && (
                   <>
                     <div className="flex items-center justify-between mt-6">
-                      <label className="text-white font-medium">Nombre de rounds</label>
+                      <label className="text-white font-medium">Number of rounds</label>
                       <Info className="h-5 w-5 text-gray-400" />
                     </div>
                     <Select 
@@ -230,7 +212,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     <SelectValue placeholder="Select slots" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {[2, 4, 8, 16, 32].map(num => (
+                    {[2, 4, 8].map(num => (
                       <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
                     ))}
                   </SelectContent>
@@ -328,7 +310,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
               <div className="grid grid-cols-1 gap-2 mt-4">
                 <div className="text-2xl font-bold text-white">{estimatedMatches} Matches</div>
                 <div className="text-2xl font-bold text-yellow-400">
-                  {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""}00)
+                  {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""})
                 </div>
               </div>
             </div>

@@ -55,7 +55,6 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
   // Fonction pour gérer le clic sur un tournoi
   const handleTournamentClick = (tournament) => {
     if (isClickable) {
-      console.log("Tournament clicked:", tournament.name, tournament.id);
       onTournamentClick(tournament);
     }
   };

@@ -6,6 +6,29 @@
    * @returns {Array} Liste des équipes triées par scores
    */
   export default function calculateTeamScores(teams, matches, isShowtimeSurvival) {
+    console.log("===== CALCULATE TEAM SCORES DEBUG =====");
+    console.log(`Teams count: ${teams?.length || 0}, Matches count: ${matches?.length || 0}, isShowtimeSurvival: ${isShowtimeSurvival}`);
+    
+    if (teams) {
+      console.log("Teams in scoring calculation:", teams.map(team => ({
+        id: team.id,
+        name: team.name,
+        team_index: team.team_index,
+        is_empty: team.is_empty
+      })));
+    }
+    
+    if (matches) {
+      console.log("Matches in scoring calculation:", matches.map(match => ({
+        id: match.id,
+        team_a_id: match.team_a_id,
+        team_a_points: match.team_a_points,
+        team_b_id: match.team_b_id,
+        team_b_points: match.team_b_points,
+        round_number: match.round_number
+      })));
+    }
+    
     const scores = {};
     
     teams?.forEach(team => {
@@ -52,7 +75,7 @@
     });
     
     // Trier selon le type de tournoi
-    return Object.values(scores).sort((a, b) => {
+    const sortedScores = Object.values(scores).sort((a, b) => {
       if (isShowtimeSurvival) {
         // Pour Survival: trier par temps de survie (décroissant)
         if (a.mainPoints !== b.mainPoints) return b.mainPoints - a.mainPoints;
@@ -66,4 +89,14 @@
         return 0;
       }
     });
+    
+    console.log("Sorted scores:", sortedScores.map(score => ({
+      team_id: score.team.id,
+      team_name: score.team.name,
+      mainPoints: score.mainPoints,
+      bossPoints: score.bossPoints,
+      matches: score.matches
+    })));
+    
+    return sortedScores;
   };

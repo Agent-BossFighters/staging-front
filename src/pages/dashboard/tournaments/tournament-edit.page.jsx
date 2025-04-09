@@ -11,8 +11,8 @@ import { Info, X, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "@context/auth.context";
 
-export default function TournamentEditPage() {
-  const { tournamentId } = useParams();
+// Transformer en composant modal avec des props
+export default function TournamentEditModal({ tournament: initialTournament, isOpen, onClose, onTournamentUpdated }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ export default function TournamentEditPage() {
     tournament, 
     isLoading: tournamentLoading, 
     error: tournamentError 
-  } = useTournament(tournamentId);
+  } = useTournament(initialTournament.id);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -98,9 +98,9 @@ export default function TournamentEditPage() {
   useEffect(() => {
     if (tournament && user && tournament.creator_id !== user.id) {
       toast.error("Vous n'êtes pas autorisé à modifier ce tournoi.");
-      navigate(`/dashboard/fighting?tournament=${tournamentId}`, { replace: true });
+      navigate(`/dashboard/fighting?tournament=${initialTournament.id}`, { replace: true });
     }
-  }, [tournament, user, tournamentId, navigate]);
+  }, [tournament, user, initialTournament.id, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -232,7 +232,7 @@ export default function TournamentEditPage() {
       
       console.log("Sending updated tournament data:", tournamentData);
       
-      const response = await kyInstance.put(`v1/tournaments/${tournamentId}`, {
+      const response = await kyInstance.put(`v1/tournaments/${initialTournament.id}`, {
         json: {
           tournament: tournamentData
         }
@@ -242,8 +242,9 @@ export default function TournamentEditPage() {
       
       toast.success("Tournoi mis à jour avec succès !");
       
-      // Rediriger vers la page de détails du tournoi avec query parameter
-      navigate(`/dashboard/fighting?tournament=${tournamentId}`, { replace: true });
+      // Appeler le callback de mise à jour et fermer le modal
+      onTournamentUpdated && onTournamentUpdated(response);
+      onClose();
     } catch (err) {
       console.error("Error updating tournament:", err);
       let errorMessage = "Échec de la mise à jour du tournoi. Veuillez réessayer.";
@@ -260,28 +261,10 @@ export default function TournamentEditPage() {
   };
 
   const handleCancel = () => {
-    // Rediriger vers la page de détails du tournoi avec query parameter
-    navigate(`/dashboard/fighting?tournament=${tournamentId}`, { replace: true });
+    onClose();
   };
 
-  if (tournamentLoading) {
-    return (
-      <div className="container mx-auto py-8 flex justify-center">
-        <div className="loader">Loading tournament details...</div>
-      </div>
-    );
-  }
-
-  if (tournamentError || !tournament) {
-    return (
-      <div className="container mx-auto py-8 text-center">
-        <div className="text-red-500 mb-4">Error loading tournament: {tournamentError?.message || "Tournament not found"}</div>
-        <Link to="/dashboard/tournaments">
-          <Button variant="outline">Back to Tournaments</Button>
-        </Link>
-      </div>
-    );
-  }
+  if (!isOpen) return null;
 
   const statusOptions = [
     { value: "0", label: "Draft" },
@@ -292,215 +275,220 @@ export default function TournamentEditPage() {
   ];
 
   return (
-    <div className="container mx-auto py-8">
-      <Link to={`/dashboard/fighting?tournament=${tournamentId}`} className="text-yellow-400 hover:underline mb-4 inline-block">
-        &larr; Back to Fighting
-      </Link>
-      
-      <Card className="bg-gray-900 border-gray-700 text-white">
-        <CardHeader>
-          <CardTitle className="text-3xl text-yellow-400 text-center font-bold">
-            EDIT TOURNAMENT
-          </CardTitle>
-        </CardHeader>
-        
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-8 mt-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="text-white font-medium">Tournament format</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="relative w-full max-w-6xl">
+        <Card className="bg-gray-900 border-gray-700 text-white">
+          <CardHeader className="flex justify-between items-center">
+            <CardTitle className="text-3xl primary text-center font-bold">
+              EDIT TOURNAMENT
+            </CardTitle>
+            <Button
+              variant="ghost"
+              className="text-gray-400 hover:text-white"
+              onClick={onClose}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </CardHeader>
+          
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-8 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-white font-medium">Tournament format</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Select 
+                    value={formData.tournament_type} 
+                    onValueChange={(value) => handleSelectChange("tournament_type", value)}
+                    disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                      <SelectItem value="0">Showtime (Survival)</SelectItem>
+                      <SelectItem value="1">Showtime (Score Counter)</SelectItem>
+                      <SelectItem value="2">Arena</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <div className="flex items-center justify-between mt-6">
+                    <label className="text-white font-medium">Team slots</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Select 
+                    value={formData.max_teams.toString()} 
+                    onValueChange={(value) => handleSelectChange("max_teams", value)}
+                    disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="Select slots" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                      {[2, 4, 8, 16, 32].map(num => (
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <div className="flex items-center justify-between mt-6">
+                    <label className="text-white font-medium">Player(s) per team</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Select 
+                    value={formData.players_per_team.toString()} 
+                    onValueChange={(value) => handleSelectChange("players_per_team", value)}
+                    disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="Select players" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                      {Array.from({length: parseInt(formData.tournament_type) === 2 ? 1 : 4}, (_, i) => i + (parseInt(formData.tournament_type) === 2 ? 5 : 1)).map(num => (
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <div className="flex items-center justify-between mt-6">
+                    <label className="text-white font-medium">Min players per team</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Select 
+                    value={formData.min_players_per_team.toString()} 
+                    onValueChange={(value) => handleSelectChange("min_players_per_team", value)}
+                    disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="Select min players" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                      {Array.from({length: parseInt(formData.players_per_team)}, (_, i) => i + 1).map(num => (
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <div className="flex items-center justify-between mt-6">
+                    <label className="text-white font-medium">Tournament status</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Select 
+                    value={formData.status.toString()} 
+                    onValueChange={(value) => handleSelectChange("status", value)}
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                      {statusOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select 
-                  value={formData.tournament_type} 
-                  onValueChange={(value) => handleSelectChange("tournament_type", value)}
-                  disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    <SelectItem value="0">Showtime (Survival)</SelectItem>
-                    <SelectItem value="1">Showtime (Score Counter)</SelectItem>
-                    <SelectItem value="2">Arena</SelectItem>
-                  </SelectContent>
-                </Select>
                 
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Team slots</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                <div className="space-y-4 md:col-span-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-white font-medium">Tournament name</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="Enter tournament name"
+                  />
+                  
+                  <div className="flex items-center justify-between mt-6">
+                    <label className="text-white font-medium">Tournament rules</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Textarea
+                    name="rules"
+                    value={formData.rules}
+                    onChange={handleInputChange}
+                    className="bg-gray-800 border-gray-700 text-white h-28"
+                    placeholder="Enter tournament details/rules"
+                  />
+                  
+                  <div className="flex items-center justify-between mt-6">
+                    <label className="text-white font-medium">Agent Level required</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Select 
+                    value={formData.agent_level_required.toString()} 
+                    onValueChange={(value) => handleSelectChange("agent_level_required", value)}
+                    disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="Select level" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                      {[0, 1, 2, 3, 4, 5].map(num => (
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <div className="flex items-center justify-between mt-6">
+                    <label className="text-white font-medium">Tournament entry code</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Input
+                    name="entry_code"
+                    value={formData.entry_code}
+                    onChange={handleInputChange}
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="Laissez vide pour ne pas utiliser de code"
+                    disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
+                  />
                 </div>
-                <Select 
-                  value={formData.max_teams.toString()} 
-                  onValueChange={(value) => handleSelectChange("max_teams", value)}
-                  disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Select slots" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {[2, 4, 8, 16, 32].map(num => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Player(s) per team</label>
-                  <Info className="h-5 w-5 text-gray-400" />
-                </div>
-                <Select 
-                  value={formData.players_per_team.toString()} 
-                  onValueChange={(value) => handleSelectChange("players_per_team", value)}
-                  disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Select players" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {Array.from({length: parseInt(formData.tournament_type) === 2 ? 1 : 4}, (_, i) => i + (parseInt(formData.tournament_type) === 2 ? 5 : 1)).map(num => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Min players per team</label>
-                  <Info className="h-5 w-5 text-gray-400" />
-                </div>
-                <Select 
-                  value={formData.min_players_per_team.toString()} 
-                  onValueChange={(value) => handleSelectChange("min_players_per_team", value)}
-                  disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Select min players" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {Array.from({length: parseInt(formData.players_per_team)}, (_, i) => i + 1).map(num => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Tournament status</label>
-                  <Info className="h-5 w-5 text-gray-400" />
-                </div>
-                <Select 
-                  value={formData.status.toString()} 
-                  onValueChange={(value) => handleSelectChange("status", value)}
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {statusOptions.map(option => (
-                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
               
-              <div className="space-y-4 md:col-span-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-white font-medium">Tournament name</label>
-                  <Info className="h-5 w-5 text-gray-400" />
-                </div>
-                <Input
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="bg-gray-800 border-gray-700 text-white"
-                  placeholder="Enter tournament name"
-                />
-                
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Tournament rules</label>
-                  <Info className="h-5 w-5 text-gray-400" />
-                </div>
-                <Textarea
-                  name="rules"
-                  value={formData.rules}
-                  onChange={handleInputChange}
-                  className="bg-gray-800 border-gray-700 text-white h-28"
-                  placeholder="Enter tournament details/rules"
-                />
-                
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Agent Level required</label>
-                  <Info className="h-5 w-5 text-gray-400" />
-                </div>
-                <Select 
-                  value={formData.agent_level_required.toString()} 
-                  onValueChange={(value) => handleSelectChange("agent_level_required", value)}
-                  disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Select level" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {[0, 1, 2, 3, 4, 5].map(num => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Tournament entry code</label>
-                  <Info className="h-5 w-5 text-gray-400" />
-                </div>
-                <Input
-                  name="entry_code"
-                  value={formData.entry_code}
-                  onChange={handleInputChange}
-                  className="bg-gray-800 border-gray-700 text-white"
-                  placeholder="Laissez vide pour ne pas utiliser de code"
-                  disabled={formData.status > 1} // Désactiver si le tournoi est en cours ou terminé
-                />
-              </div>
-            </div>
-            
-            <div className="py-4 border-t border-gray-700">
-              <h3 className="text-lg text-white">Estimated tournament matches time :</h3>
-              <div className="grid grid-cols-1 gap-2 mt-4">
-                <div className="text-2xl font-bold text-white">{estimatedMatches} Matches</div>
-                <div className="text-2xl font-bold text-yellow-400">
-                  {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""}00)
+              <div className="py-4 border-t border-gray-700">
+                <h3 className="text-lg text-white">Estimated tournament matches time :</h3>
+                <div className="grid grid-cols-1 gap-2 mt-4">
+                  <div className="text-2xl font-bold text-white">{estimatedMatches} Matches</div>
+                  <div className="text-2xl font-bold primary">
+                    {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""})
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex justify-center gap-4 mt-6">
-              <Button 
-                type="button"
-                className="bg-gray-700 hover:bg-gray-600 text-white px-8 py-2 text-lg"
-                onClick={handleCancel}
-                disabled={isLoading}
-              >
-                Cancel
-              </Button>
               
-              <Button 
-                type="submit" 
-                className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-2 text-lg"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <span className="flex items-center">
-                    <span className="animate-spin mr-2">⟳</span> Updating...
-                  </span>
-                ) : (
-                  <span className="flex items-center">
-                    <CheckCircle size={18} className="mr-2" /> Save Changes
-                  </span>
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+              <div className="flex justify-center gap-4 mt-6">
+                <Button 
+                  type="button"
+                  className="bg-gray-700 hover:bg-gray-600 text-white px-8 py-2 text-lg"
+                  onClick={handleCancel}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+                
+                <Button 
+                  type="submit" 
+                  className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-2 text-lg"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center">
+                      <span className="animate-spin mr-2">⟳</span> Updating...
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      <CheckCircle size={18} className="mr-2" /> Save Changes
+                    </span>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 } 

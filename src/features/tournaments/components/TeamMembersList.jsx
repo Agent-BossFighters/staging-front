@@ -13,16 +13,8 @@ export default function TeamMembersList({
   isTeamCaptain,
   onKickPlayer
 }) {
-  console.log('TeamMembersList - Rendu avec:', { 
-    nbMembers: members?.length, 
-    maxPlayers
-  });
-
   // S'assurer que members est un tableau
   const teamMembers = Array.isArray(members) ? members : [];
-  
-  // Log des données pour déboguer
-  console.log('Membres de l\'équipe:', teamMembers);
 
   return (
     <div className="space-y-2">
@@ -88,7 +80,7 @@ export default function TeamMembersList({
               {slotNumber}
             </div>
             <div className="text-gray-500">
-              Slot Vide
+              Empty slot
             </div>
           </div>
         );

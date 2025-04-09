@@ -16,7 +16,7 @@ const disabledCards = {
   schedule: true,
   monthly: false,
   tvtools: true,
-  fighting: true,
+  fighting: false,
   playermap: true,
   xp: false,
 };

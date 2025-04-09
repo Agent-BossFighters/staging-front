@@ -30,7 +30,7 @@ export function groupMatchesByRound(matches) {
 export async function updateMatchStatus(match, tournament, newStatus, onMatchUpdated) {
   // Vérifier si le tournoi est complété
   if (tournament.status === 3) {
-    toast.error("Impossible de modifier un tournoi déjà complété");
+    toast.error("Impossible to modify a completed tournament");
     return;
   }
   
@@ -41,8 +41,8 @@ export async function updateMatchStatus(match, tournament, newStatus, onMatchUpd
       }
     }).json();
     
-    const actionName = newStatus === 'in_progress' ? 'démarré' : 
-                       newStatus === 'completed' ? 'terminé' : 'mis à jour';
+    const actionName = newStatus === 'in_progress' ? 'started' : 
+                       newStatus === 'completed' ? 'completed' : 'updated';
     
     toast.success(`Match ${actionName}!`);
     
@@ -51,7 +51,7 @@ export async function updateMatchStatus(match, tournament, newStatus, onMatchUpd
       onMatchUpdated();
     }
   } catch (error) {
-    console.error(`Erreur lors de la mise à jour du match:`, error);
-    toast.error(`Erreur lors de la mise à jour du match. Veuillez réessayer.`);
+    console.error(`Error updating the match:`, error);
+    toast.error(`Error updating the match. Please try again.`);
   }
 }

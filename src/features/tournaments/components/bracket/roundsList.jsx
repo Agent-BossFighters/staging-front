@@ -30,9 +30,9 @@ const RoundsList = ({
         const roundMatches = groupedMatches[round] || [];
         
         return (
-          <div key={round} className="flex mb-3 gap-2 border border-primary">
+          <div key={round} className="flex mb-3 gap-2">
             {/* Round label */}
-            <div className="bg-primary text-black font-bold p-3 w-28 flex justify-center items-center gap-2">
+            <div className="bg-primary text-black font-bold p-3 w-[120px] flex justify-center items-center gap-2">
               <span>ROUND {round}</span>
             </div>
             
@@ -64,7 +64,7 @@ const RoundsList = ({
                       </div>
                       
                       {isEditingAllScores ? (
-                        <div className="w-full p-2 bg-gray-700 rounded">
+                        <div className="w-full p-2">
                           <div className="flex flex-col gap-2">
                             {/* Team A Score */}
                             <div className="flex flex-col items-center">
