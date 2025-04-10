@@ -28,9 +28,14 @@ const premiumCards = {
   schedule: false,
   monthly: true,
   tvtools: true,
-  fighting: true,
+  fighting: false, // TODO: Add admin only, remove after testing revert to true
   playermap: true,
-  xp: false,
+  xp: true,
+};
+
+// TODO: Add admin only, remove after testing (3 lignes)
+const adminOnlyCards = {
+  fighting: true,
 };
 
 const disabledStyle =
@@ -40,7 +45,13 @@ export function CardsGrid() {
   const { user } = useAuth();
   const isPremium = user?.isPremium === true;
 
+  // TODO: Add admin only, remove after testing (1 ligne)
+  const isAdmin = user?.is_admin === true;
+
   const isCardDisabled = (cardKey) => {
+    // TODO: Add admin only, remove after testing (1 ligne)
+    if (adminOnlyCards[cardKey] && !isAdmin) return true;
+
     if (premiumCards[cardKey] && !isPremium) return true;
     return disabledCards[cardKey];
   };

@@ -51,19 +51,21 @@ export async function updateQuestProgress(questId, progress) {
     return response;
   } catch (error) {
     console.error("Error updating quest progress:", error);
-    // Récupérer et retourner les détails de l'erreur si disponibles
+    
+    // Récupérer et logger les détails de l'erreur si disponibles pour le débogage
     if (error.response) {
       try {
         const errorData = await error.response.json();
         console.error("Error details:", errorData);
-        toast.error(errorData.error || "Erreur lors de la mise à jour de la progression");
+        
+        // Ne plus afficher de toast d'erreur, mais propager l'erreur pour la gestion dans le composant
         throw { ...error, responseData: errorData };
       } catch (jsonError) {
-        toast.error("Erreur lors de la mise à jour de la progression");
+        // Ne plus afficher de toast d'erreur ici non plus
         throw error;
       }
     } else {
-      toast.error("Erreur lors de la mise à jour de la progression");
+      // Ne plus afficher de toast d'erreur
       throw error;
     }
   }
