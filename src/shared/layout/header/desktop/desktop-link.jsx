@@ -14,7 +14,7 @@ const menuItems = [
     label: "MENU",
     requiresAuth: true,
     children: [
-      { path: "/economy", label: "Economy" },
+      { path: "/economy", label: "Economy map" },
       { path: "/dashboard", label: "Dashboard" },
       { path: "/dashboard/locker", label: "Locker" },
       { path: "/dashboard/datalab", label: "Datalab" },
@@ -35,8 +35,8 @@ export default function DesktopLink() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {filteredMenu.map((item) => (
-          <NavigationMenuItem key={item.path} className="">
+        {filteredMenu.map((item, index) => (
+          <NavigationMenuItem key={item.label || index} className="">
             {item.children ? (
               <>
                 <NavigationMenuTrigger className="gap-10">

@@ -23,7 +23,6 @@ export const kyInstance = ky.create({
         if (token) {
           request.headers.set("Authorization", `Bearer ${token}`);
         }
-        console.log("Request URL:", request.url);
       },
     ],
     beforeError: [

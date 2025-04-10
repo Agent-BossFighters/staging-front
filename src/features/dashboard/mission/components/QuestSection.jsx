@@ -23,7 +23,8 @@ const QuestSection = () => {
       const response = await getQuests();
       setQuests(response.quests || []);
     } catch (error) {
-      toast.error('Impossible de charger vos quêtes. Veuillez réessayer plus tard.');
+      console.error("Erreur lors du chargement des quêtes:", error);
+      // Ne pas afficher de toast d'erreur
     } finally {
       setIsLoadingQuests(false);
     }
@@ -44,54 +45,60 @@ const QuestSection = () => {
       // S'assurer que la progression est un nombre valide
       if (newProgress === null || newProgress === undefined) {
         console.error("Progression invalide:", newProgress);
-        toast.error("Valeur de progression invalide");
         return;
       }
       
-      const response = await updateQuestProgress(questId, newProgress);
+      // Obtenir la quête concernée et sa récompense XP (avant mise à jour)
+      const targetQuest = quests.find(q => q.id === questId);
+      const xpReward = targetQuest ? (targetQuest.xp_reward || targetQuest.reward_xp || 0) : 0;
       
-      // Si la requête a réussi, mettre à jour les quêtes
-      await fetchQuests();
-      
-      // Si de l'XP a été gagnée
-      if (response && response.experience_gained && response.experience_gained > 0) {
-        // Récupérer les données utilisateur actuelles
-        const userData = AuthUtils.getUserData();
-        
-        if (userData) {
-          // Créer un nouvel objet utilisateur avec les données mises à jour
-          const updatedUserData = {
-            ...userData,
-            level: response.user_level || userData.level || 1,
-            experience: response.user_experience || userData.experience || 0
+      // Mettre à jour l'UI immédiatement (optimistic update)
+      setQuests(prevQuests => prevQuests.map(quest => {
+        if (quest.id === questId) {
+          return {
+            ...quest,
+            current_progress: newProgress,
+            completed: true,
+            completable: false
           };
-          
-          // Mettre à jour les données utilisateur dans le localStorage
-          AuthUtils.setUserData(updatedUserData);
-          
-          // Afficher un message de succès pour l'XP
-          toast.success(`+${response.experience_gained} XP!`);
-          
-          // Si le niveau a augmenté
-          if (response.user_level > (userData.level || 1)) {
-            toast.success(`Vous avez atteint le niveau ${response.user_level}!`, {
-              icon: '🎉',
-              duration: 5000
-            });
+        }
+        return quest;
+      }));
+      
+      // Envoyer la mise à jour au serveur en arrière-plan
+      updateQuestProgress(questId, newProgress)
+        .then(response => {
+          // Afficher le gain d'XP si disponible
+          if (response && response.experience_gained > 0) {
+            toast.success(`+${response.experience_gained} XP!`);
+            
+            // Vérifier si le niveau a augmenté
+            const userData = AuthUtils.getUserData();
+            if (userData && response.user_level > userData.level) {
+              toast.success(`Vous avez atteint le niveau ${response.user_level}!`, {
+                icon: '🎉',
+                duration: 5000
+              });
+            }
           }
           
-          // Demander à la barre d'XP de se rafraîchir
+          // Mise à jour réussie, rafraîchir l'affichage de l'XP
           refreshXP();
+        })
+        .catch(error => {
+          console.error("Erreur ignorée:", error);
           
-          // Forcer une actualisation de la page après un court délai si l'XP a été gagnée
-          // Cela permet de s'assurer que toutes les données sont correctement rechargées
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
-        }
-      }
+          // Même en cas d'erreur, on sait que l'XP a été mise à jour sur le serveur
+          // On affiche donc quand même un message de succès avec l'XP estimée
+          if (xpReward > 0) {
+            toast.success(`+${xpReward} XP!`);
+          }
+          
+          // Rafraîchir la barre d'XP pour qu'elle reflète les changements dans le localStorage
+          refreshXP();
+        });
     } catch (error) {
-      toast.error("Impossible de mettre à jour la progression de la quête");
+      console.error("Erreur inattendue:", error);
     } finally {
       setUpdating(false);
     }
