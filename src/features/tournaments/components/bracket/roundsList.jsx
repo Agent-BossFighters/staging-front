@@ -17,7 +17,8 @@ const RoundsList = ({
   isEditingAllScores,
   allScores,
   onGenerateMatches,
-  onAllScoreChange
+  onAllScoreChange,
+  editingMatch = null
 }) => {
   // Utiliser le nombre de rounds configuré (avec fallback sur le nombre détecté)
   const configuredRounds = parseInt(tournament?.rounds) || 1;
@@ -39,7 +40,8 @@ const RoundsList = ({
             {/* Matches */}
             <div className="flex-1 flex gap-3">
               {roundMatches.length > 0 ? (
-                teams?.slice(0, 4).map((team, index) => {
+                // Trier les équipes par ID pour assurer la stabilité de l'affichage
+                (teams ? [...teams].sort((a, b) => a.id - b.id) : []).slice(0, 4).map((team, index) => {
                   const match = roundMatches.find(m => m.team_a_id === team.id);
                   if (!match) return null;
                   
@@ -68,7 +70,7 @@ const RoundsList = ({
                           <div className="flex flex-col gap-2">
                             {/* Team A Score */}
                             <div className="flex flex-col items-center">
-                              <div className="text-white text-xs mb-1">Équipe</div>
+                              <div className="text-white text-xs mb-1">Damage</div>
                               {isShowtimeSurvival ? (
                                 <div className="flex flex-col items-center">
                                   <input 
@@ -94,13 +96,23 @@ const RoundsList = ({
                             
                             {/* Team B / Boss Score */}
                             <div className="flex flex-col items-center">
-                              <div className="text-red-400 text-xs mb-1">{bossName}</div>
+                              <div className="text-red-400 text-xs mb-1">
+                                {isShowtimeSurvival 
+                                  ? "Boss damage" 
+                                  : "Lives left"}
+                              </div>
                               <input
                                 type="number"
                                 min="0"
                                 className="w-16 text-center bg-gray-600 text-white border border-gray-500 rounded p-1"
-                                value={allScores[match.id]?.team_b_points || 0}
-                                onChange={(e) => onAllScoreChange(match.id, 'team_b_points', e.target.value)}
+                                value={isShowtimeSurvival 
+                                  ? (allScores[match.id]?.boss_damage || 0)
+                                  : (allScores[match.id]?.lives_left || 0)}
+                                onChange={(e) => onAllScoreChange(
+                                  match.id, 
+                                  isShowtimeSurvival ? 'boss_damage' : 'lives_left', 
+                                  e.target.value
+                                )}
                               />
                             </div>
                           </div>
@@ -113,6 +125,13 @@ const RoundsList = ({
                               {isShowtimeSurvival ? formatTimeOrScore(scoreA, "time") : scoreA}
                             </div>
                           </div>
+                          {scoreA > 0 && (
+                            <div className="text-xs text-gray-400 mt-1">
+                              {isShowtimeSurvival 
+                                ? `Boss damage: ${match.team_b_points || 0}` 
+                                : `lives left: ${match.team_b_points || 0}`}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -120,7 +139,7 @@ const RoundsList = ({
                 })
               ) : (
                 <div className="flex-1 p-4 text-center">
-                  <p className="text-gray-400">Aucun match pour ce round</p>
+                  <p className="text-gray-400">No match for this round</p>
                   {isCreator && tournament.status !== 3 && (
                     <Button 
                       onClick={onGenerateMatches}

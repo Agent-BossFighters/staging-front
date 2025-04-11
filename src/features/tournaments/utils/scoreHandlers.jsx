@@ -18,13 +18,13 @@ export function initializeAllScores(groupedMatches, isShowtimeSurvival, formatTi
         const formattedTime = formatTimeOrScore(match.team_a_points || 0, "time") || "00:00";
         initialScores[match.id] = {
           team_a_time: formattedTime,
-          team_b_points: match.team_b_points || 0,
-          team_a_points: match.team_a_points || 0
+          team_a_points: match.team_a_points || 0,
+          boss_damage: match.team_b_points || 0
         };
       } else {
         initialScores[match.id] = {
           team_a_points: match.team_a_points || 0,
-          team_b_points: match.team_b_points || 0
+          lives_left: match.team_b_points || 0
         };
       }
     });
@@ -41,13 +41,16 @@ export function initializeAllScores(groupedMatches, isShowtimeSurvival, formatTi
  * @param {Function} setAllScores - Fonction pour mettre à jour l'état
  */
 export function updateAllScoreValue(matchId, team, value, setAllScores) {
-  setAllScores(prev => ({
-    ...prev,
-    [matchId]: {
-      ...prev[matchId],
-      [team]: team === 'team_a_time' ? value : (parseInt(value) || 0)
-    }
-  }));
+  setAllScores(prev => {
+    const newScores = {
+      ...prev,
+      [matchId]: {
+        ...prev[matchId],
+        [team]: team === 'team_a_time' ? value : (parseInt(value) || 0)
+      }
+    };
+    return newScores;
+  });
 }
 
 /**
@@ -78,22 +81,29 @@ export async function saveAllScores(
       const match = matches.find(m => m.id === parseInt(matchId));
       if (!match) return;
       
-      // Créer l'objet pour la mise à jour
-      const updateData = {
-        team_b_points: matchScores.team_b_points
-      };
+      // Créer l'objet pour la mise à jour selon le type de tournoi
+      const updateData = {};
       
-      // Pour le mode survival, convertir le temps en points (secondes)
-      if (isShowtimeSurvival && matchScores.team_a_time) {
-        // Utiliser la fonction parseTimeToSeconds pour convertir correctement le temps
-        updateData.team_a_points = parseTimeToSeconds(matchScores.team_a_time);
+      if (isShowtimeSurvival) {
+        // Pour le mode Survival
+        // Convertir le temps en points (secondes)
+        if (matchScores.team_a_time) {
+          updateData.team_a_points = parseTimeToSeconds(matchScores.team_a_time);
+        } else {
+          updateData.team_a_points = matchScores.team_a_points;
+        }
+        // Ajouter les dégâts du boss pour le départage
+        updateData.boss_damage = matchScores.boss_damage || 0;
       } else {
+        // Pour le mode Score Counter
         updateData.team_a_points = matchScores.team_a_points;
+        // Ajouter les vies restantes pour le départage
+        updateData.lives_left = matchScores.lives_left || 0;
       }
       
       // Déterminer le vainqueur
       let winner_id = null;
-      if (updateData.team_a_points > updateData.team_b_points) {
+      if (updateData.team_a_points > 0) {
         winner_id = match.team_a_id;
       }
       
@@ -103,7 +113,6 @@ export async function saveAllScores(
         status: 'completed'
       };
       
-      // Utiliser kyInstance pour garantir une cohérence avec le reste de l'application
       await kyInstance.put(`v1/tournaments/${tournament.id}/tournament_matches/${matchId}`, {
         json: {
           match: updatedMatch
