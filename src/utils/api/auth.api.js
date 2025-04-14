@@ -1,9 +1,10 @@
 import Cookies from "js-cookie";
 import { kyInstance } from "@api/ky-config";
+import { AuthUtils } from "./auth.utils";
 
-export async function authSignInUp(object, data) {
+export async function authSignInUp(object, data, method = "POST") {
   try {
-    const response = await kyInstance.post(object, {
+    const response = await kyInstance[method.toLowerCase()](object, {
       json: data,
     });
     const userData = await response.json();
@@ -15,7 +16,12 @@ export async function authSignInUp(object, data) {
   } catch (error) {
     let errorData =
       (await error?.responseData?.status?.message) || error?.responseData.error;
-    if (errorData === 'Invalid session. Please reconnect.') {
+
+    // Ne pas effacer les données d'authentification pour la réinitialisation de mot de passe
+    if (
+      errorData === "Invalid session. Please reconnect." &&
+      !object.includes("password")
+    ) {
       AuthUtils.clearAuth();
     }
     throw new Error(errorData);
@@ -28,7 +34,7 @@ export async function authSignOut() {
     if (!accessToken) {
       throw new Error("No access token found");
     }
-    let response = await kyInstance.post('signout', {});
+    let response = await kyInstance.post("signout", {});
     Cookies.remove("agent-auth");
     return response;
   } catch (error) {

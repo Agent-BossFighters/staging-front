@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { kyInstance } from "@utils/api/ky-config";
+import { useAuth } from "@context/auth.context";
 
 // Constantes du jeu
 export const GAME_MAPS = ["Toxic river", "Award", "Radiation rift"];
@@ -55,19 +56,24 @@ export function useGameConstants() {
 export function GameConstantsProvider({ children }) {
   const [currencyRates, setCurrencyRates] = useState(CURRENCY_RATES);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   // Fonction pour récupérer les taux de devises du backend
   const fetchCurrencyRates = async () => {
+    if (!user) return; // Ne pas faire la requête si l'utilisateur n'est pas connecté
+
     try {
       setIsLoading(true);
-      
+
       // Récupérer les devises depuis l'API
-      const response = await kyInstance.get('v1/currencies').json();
-      
+      const response = await kyInstance.get("v1/currencies").json();
+
       // Trouver les devises spécifiques
-      const bftCurrency = response.find(c => c.name === '$BFT');
-      const flexCurrency = response.find(c => c.name === 'FLEX');
-      const sponsorMarksCurrency = response.find(c => c.name === 'Sponsor Marks');
+      const bftCurrency = response.find((c) => c.name === "$BFT");
+      const flexCurrency = response.find((c) => c.name === "FLEX");
+      const sponsorMarksCurrency = response.find(
+        (c) => c.name === "Sponsor Marks"
+      );
 
       if (bftCurrency && flexCurrency && sponsorMarksCurrency) {
         // Mettre à jour les taux
@@ -77,17 +83,17 @@ export function GameConstantsProvider({ children }) {
           SPONSOR_MARKS: sponsorMarksCurrency.price,
           // Autres taux si nécessaire
         };
-      
+
         setCurrencyRates(newRates);
-        
+
         // Important: mettre à jour également la variable exportée
         CURRENCY_RATES.BFT = bftCurrency.price;
         CURRENCY_RATES.FLEX = flexCurrency.price;
         CURRENCY_RATES.SPONSOR_MARKS = sponsorMarksCurrency.price;
-        
+
         return newRates;
       }
-      
+
       return currencyRates;
     } catch (error) {
       return null;
@@ -96,10 +102,10 @@ export function GameConstantsProvider({ children }) {
     }
   };
 
-  // Charger les taux au démarrage
+  // Charger les taux au démarrage et quand l'utilisateur change
   useEffect(() => {
     fetchCurrencyRates();
-  }, []);
+  }, [user]);
 
   return (
     <GameConstantsContext.Provider
