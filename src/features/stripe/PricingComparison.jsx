@@ -19,8 +19,15 @@ const PRICING_PLANS = {
     name: "PREMIUM",
     price: 11.99,
     priceId: STRIPE_PRICE_ID,
-    features: ["Locker", "Data Lab", "Daily", "Monthly", "Fighting"],
-    comingSoonFeatures: ["Missions", "Schedule", "TV Tools", "Player Map"],
+    features: [
+      "Locker",
+      "Data Lab",
+      "Daily",
+      "Monthly",
+      "Fighting",
+      "Missions",
+    ],
+    comingSoonFeatures: ["Schedule", "TV Tools", "Player Map"],
   },
 };
 
