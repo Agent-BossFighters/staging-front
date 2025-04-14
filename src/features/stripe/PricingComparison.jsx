@@ -12,21 +12,15 @@ const PRICING_PLANS = {
   freemium: {
     name: "FREEMIUM",
     price: 0,
-    features: ["Locker", "Data Lab (Basic Filters)", "Daily"],
+    features: ["Locker", "Data Lab (Basic Filters)", "Daily", "Fighting"],
     comingSoonFeatures: ["Schedule", "TV Tools", "Player Map"],
   },
   pro: {
     name: "PREMIUM",
     price: 11.99,
     priceId: STRIPE_PRICE_ID,
-    features: ["Locker", "Data Lab", "Daily", "Monthly"],
-    comingSoonFeatures: [
-      "Missions",
-      "Schedule",
-      "TV Tools",
-      "Fighting",
-      "Player Map",
-    ],
+    features: ["Locker", "Data Lab", "Daily", "Monthly", "Fighting"],
+    comingSoonFeatures: ["Missions", "Schedule", "TV Tools", "Player Map"],
   },
 };
 
