@@ -103,24 +103,42 @@ const TeamManageModal = ({ isOpen, onClose, team, members, onMemberKicked }) => 
         </div>
 
         <div className="space-y-6">
-          {/* Code d'invitation - Only show if team has an invitation code */}
-          {team.invitation_code && (
-            <div>
-              <h4 className="text-sm font-medium text-gray-400 mb-2">Invitation Code</h4>
-              <div className="flex items-center gap-2 p-2 bg-gray-700 rounded">
-                <span className="text-white font-mono">{team.invitation_code}</span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => {
-                    navigator.clipboard.writeText(team.invitation_code);
-                    toast.success("Code copied!");
-                  }}
-                  className="text-gray-400 hover:text-white"
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
+          {/* Code d'invitation - uniquement visible pour le capitaine */}
+          {team.captain_id && (
+            <div className={`p-4 rounded-lg ${team.invitation_code ? 'bg-gray-700 border border-yellow-500' : 'bg-gray-700'}`}>
+              <h4 className="text-yellow-400 font-bold mb-2">Team Access</h4>
+              
+              {team.invitation_code ? (
+                <>
+                  <div className="flex items-center justify-between gap-2 p-2 bg-gray-800 rounded mb-2">
+                    <span className="text-yellow-300 font-mono font-bold text-lg">{team.invitation_code}</span>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(team.invitation_code);
+                        toast.success("Code copied to clipboard!");
+                      }}
+                      className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                    >
+                      <Copy className="h-4 w-4 mr-1" />
+                      Copy
+                    </Button>
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    This code is required for other players to join your team as it's private.
+                    Share it with your teammates.
+                  </p>
+                </>
+              ) : (
+                <div>
+                  <p className="text-gray-300 mb-2">
+                    This team is <span className="text-green-400 font-semibold">public</span>. Anyone can join without an invitation code.
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Note: Only the first player to join a team can make it private.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

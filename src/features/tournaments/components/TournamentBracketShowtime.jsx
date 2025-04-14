@@ -10,7 +10,7 @@ import {
   saveAllScores,
 } from "../utils/scoreHandlers";
 import { groupMatchesByRound, updateMatchStatus } from "../utils/matchUtils";
-import { isCreatorOfTournament } from "../utils/tournamentUtils";
+import { isCreatorOfTournament, calculatePlayerSlots, formatRemainingSlots } from "../utils/tournamentUtils";
 import { findUserTeam, isTeamsFull } from "../utils/teamUtils";
 import {
   canJoinTournament,
@@ -62,6 +62,8 @@ const TournamentBracketShowtime = ({
   const [allScores, setAllScores] = useState({});
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [entryCodeCopied, setEntryCodeCopied] = useState(false);
+  const [showEntryCode, setShowEntryCode] = useState(false);
 
   const isCreator = user && tournament?.creator_id === user.id;
   const userTeam = findUserTeam(teams, user);
@@ -73,23 +75,15 @@ const TournamentBracketShowtime = ({
     }) || [];
   const tournamentIsFull = isTeamsFull(actualTeams, tournament);
 
-  // Vérification manuelle des conditions
-  const isTournamentOpenStatus = isTournamentOpen(tournament);
-  const isRegistrationOpenStatus = isRegistrationOpen(tournament);
-  const userTeamStatus = !userTeam;
-  const tournamentFullStatus = !tournamentIsFull;
-  const creatorStatus = !isCreator;
-
-  // Vérification manuelle combinée
-  const manualCanJoin =
-    isTournamentOpenStatus &&
-    isRegistrationOpenStatus &&
-    userTeamStatus &&
-    tournamentFullStatus &&
-    creatorStatus;
-
-  // Utiliser la vérification manuelle au lieu de la fonction
-  const canJoinThisTournament = manualCanJoin;
+  // Calcul des slots disponibles
+  const { availableSlots } = calculatePlayerSlots(tournament, teams);
+  const hasAvailableSlots = availableSlots > 0;
+  
+  // Vérification si l'utilisateur peut rejoindre le tournoi
+  const canJoinThisTournament = canJoinTournament(tournament, userTeam, tournamentIsFull, isCreator) && hasAvailableSlots;
+  
+  // Vérifier si le tournoi est en cours (status in_progress)
+  const isTournamentActive = isTournamentInProgress(tournament);
 
   // Vérifier si l'utilisateur peut démarrer ou terminer le tournoi
   const canStartTournament =
@@ -191,6 +185,25 @@ const TournamentBracketShowtime = ({
     toast.success("Link copied to clipboard!");
   };
 
+  const handleCopyEntryCode = () => {
+    if (!tournament?.entry_code) return;
+    
+    navigator.clipboard.writeText(tournament.entry_code)
+      .then(() => {
+        setEntryCodeCopied(true);
+        toast.success("Entry code copied to clipboard!");
+        setTimeout(() => setEntryCodeCopied(false), 2000);
+      })
+      .catch(err => {
+        console.error('Error copying entry code:', err);
+        toast.error("Failed to copy entry code");
+      });
+  };
+
+  const toggleShowEntryCode = () => {
+    setShowEntryCode(prev => !prev);
+  };
+
   const handleEditTournament = () => {
     if (!isCreator) {
       toast.error("You are not authorized to modify this tournament.");
@@ -213,7 +226,7 @@ const TournamentBracketShowtime = ({
           </h1>
           <div className="flex items-center gap-2">
             {/* Bouton pour rejoindre le tournoi si l'utilisateur peut le faire */}
-            {canJoinThisTournament && (
+            {user && canJoinThisTournament ? (
               <Button
                 onClick={() => setJoinModalOpen(true)}
                 className="bg-primary hover:bg-primary/90 text-black"
@@ -221,7 +234,7 @@ const TournamentBracketShowtime = ({
                 <UserPlus className="mr-2 h-4 w-4" />
                 JOIN TOURNAMENT
               </Button>
-            )}
+            ) : null}
 
             {/* Boutons d'administration uniquement pour le créateur */}
             {isCreator && (
@@ -295,12 +308,40 @@ const TournamentBracketShowtime = ({
           <div className="flex items-center gap-4">
             {/* Info slots */}
             <div className="text-sm text-gray-300">
-              REMAINING SLOTS : {tournament.max_teams - (teams?.length || 0)}/
-              {tournament.max_teams}
+              REMAINING SLOTS : {formatRemainingSlots(tournament, teams)}
             </div>
             <div className="text-sm text-gray-300">
               PLAYER(S) PER TEAM : {tournament.players_per_team || 4}
             </div>
+            
+            {/* Entry Code (visible only for the creator) */}
+            {isCreator && tournament?.entry_code && (
+              <div className="relative text-sm text-gray-300 flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs px-2 py-1 h-auto"
+                  onClick={toggleShowEntryCode}
+                >
+                  {showEntryCode ? "HIDE CODE" : "SHOW ENTRY CODE"}
+                </Button>
+                
+                {showEntryCode && (
+                  <div className="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded px-2 py-1">
+                    <span className="font-mono font-bold text-yellow-400">
+                      {tournament.entry_code}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`${entryCodeCopied ? 'text-green-500' : 'text-gray-400 hover:text-white'} p-1 h-auto`}
+                      onClick={handleCopyEntryCode}
+                    >
+                      {entryCodeCopied ? "COPIED!" : "COPY"}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -376,7 +417,7 @@ const TournamentBracketShowtime = ({
               {saving ? "SAVING..." : "SAVE ALL SCORES"}
             </Button>
           </div>
-        ) : (
+        ) : isCreator && isTournamentActive ? (
           <Button
             onClick={handleUpdateResult}
             className="bg-primary hover:bg-primary/90 text-black px-6 py-3"
@@ -384,6 +425,14 @@ const TournamentBracketShowtime = ({
             <img src={updateArrow} alt="updateArrow" className="w-8 h-8 mr-2" />
             UPDATE RESULT
           </Button>
+        ) : isCreator && !isTournamentActive ? (
+          <div className="text-gray-400 flex items-center">
+            {isTournamentOpen(tournament) ? 
+              "Results can be updated once the tournament is in progress" : 
+              "Results can no longer be updated"}
+          </div>
+        ) : (
+          <div></div> /* Espace vide pour maintenir la mise en page lorsque le bouton n'est pas affiché */
         )}
 
         <div className="flex gap-3">
