@@ -109,8 +109,7 @@ export async function saveAllScores(
       
       const updatedMatch = {
         ...updateData,
-        winner_id,
-        status: 'completed'
+        winner_id
       };
       
       await kyInstance.put(`v1/tournaments/${tournament.id}/tournament_matches/${matchId}`, {
@@ -127,11 +126,11 @@ export async function saveAllScores(
       onMatchUpdated();
     }
     
-    toast.success('Tous les scores ont été enregistrés avec succès!');
+    toast.success('All scores have been saved successfully!');
     setIsEditingAllScores(false);
   } catch (error) {
-    console.error("Erreur lors de la sauvegarde des scores:", error);
-    toast.error('Erreur lors de l\'enregistrement des scores. Veuillez réessayer.');
+    console.error("Error saving scores:", error);
+    toast.error('Error saving scores. Please try again.');
   } finally {
     setSaving(false);
   }

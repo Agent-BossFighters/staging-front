@@ -206,8 +206,8 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
           setTimeout(() => setEntryCodeCopied(false), 2000);
         })
         .catch(err => {
-          console.error('Erreur lors de la copie du code:', err);
-          toast.error("Impossible de copier le code");
+          console.error('Error when copying the code:', err);
+          toast.error("Impossible to copy the code");
         });
     }
   };
@@ -385,7 +385,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                 {formData.entry_code && (
                   <div className="mt-2">
                     <p className="text-gray-400 text-sm">
-                      Un code d'entrée sera généré pour ce tournoi. Vous pourrez le visualiser et le copier après la création du tournoi.
+                      An entry code will be generated for this tournament. You will be able to view and copy it after tournament creation.
                     </p>
                   </div>
                 )}

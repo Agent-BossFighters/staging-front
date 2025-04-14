@@ -131,7 +131,7 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
   // Vérifier si l'utilisateur est autorisé à modifier le tournoi
   useEffect(() => {
     if (tournament && user && tournament.creator_id !== user.id) {
-      toast.error("Vous n'êtes pas autorisé à modifier ce tournoi.");
+      toast.error("You are not authorized to modify this tournament.");
       navigate(`/dashboard/fighting?tournament=${initialTournament.id}`, { replace: true });
     }
   }, [tournament, user, initialTournament.id, navigate]);

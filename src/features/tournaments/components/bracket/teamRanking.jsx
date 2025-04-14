@@ -18,7 +18,7 @@ const TeamRanking = ({
             <tr className="border-b border-gray-700">
               <th className="py-2 text-center">#</th>
               <th className="py-2 text-left">TEAM</th>
-              <th className="py-2 text-right">TOTAL {isShowtimeSurvival ? "TEMPS" : "DAMAGE"}</th>
+              <th className="py-2 text-right">TOTAL {isShowtimeSurvival ? "TIME" : "DAMAGE"}</th>
               <th className="py-2 text-right">
                 {isShowtimeSurvival ? "BOSS DAMAGE" : "LIVES LEFT"}
               </th>
