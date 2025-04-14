@@ -14,9 +14,9 @@ import { UserPreferenceProvider } from "@context/userPreference.context";
 export default function App() {
   return (
     <Router>
-      <UserPreferenceProvider>
-        <GameConstantsProvider>
-          <AuthProvider>
+      <AuthProvider>
+        <UserPreferenceProvider>
+          <GameConstantsProvider>
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route index element={<HomePage />} />
@@ -26,9 +26,9 @@ export default function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
             </Routes>
-          </AuthProvider>
-        </GameConstantsProvider>
-      </UserPreferenceProvider>
+          </GameConstantsProvider>
+        </UserPreferenceProvider>
+      </AuthProvider>
     </Router>
   );
 }

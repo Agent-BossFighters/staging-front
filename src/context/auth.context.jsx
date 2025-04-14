@@ -3,6 +3,7 @@ import { AuthUtils, cleanUserData } from "@utils/api/auth.utils";
 import { useNavigate } from "react-router-dom";
 import { kyInstance } from "@utils/api/ky-config";
 import { toast } from "react-hot-toast";
+
 const AuthContext = createContext(null);
 export let isPremiumContext = createContext(null);
 
@@ -11,15 +12,15 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const initializeUser = async () => {
       const userData = AuthUtils.getUserData();
       const token = AuthUtils.getAuthToken();
-      
+
       if (userData && token) {
         try {
-          await kyInstance.get(`v1/users/${userData.id}`);
+          const response = await kyInstance.get(`v1/users/${userData.id}`);
           const cleanedData = cleanUserData(userData);
           if (userData.is_admin !== undefined) {
             cleanedData.is_admin = userData.is_admin;
@@ -27,8 +28,10 @@ export const AuthProvider = ({ children }) => {
           setUser(cleanedData);
           setIsPremium(cleanedData.isPremium || false);
         } catch (error) {
-          if (error.responseData?.error === 'Invalid session. Please reconnect.') {
-            toast.error('Your session has expired, please reconnect', {
+          if (
+            error.responseData?.error === "Invalid session. Please reconnect."
+          ) {
+            toast.error("Your session has expired, please reconnect", {
               autoClose: 5000,
             });
             await logout();
@@ -37,10 +40,10 @@ export const AuthProvider = ({ children }) => {
       }
       setIsLoading(false);
     };
-    
+
     initializeUser();
   }, []);
-  
+
   useEffect(() => {
     const fetchPremiumStatus = async () => {
       if (!user) return;
@@ -50,16 +53,18 @@ export const AuthProvider = ({ children }) => {
         const userData = respObject.user;
         setIsPremium(userData.isPremium);
       } catch (error) {
-        console.error("Erreur lors de la récupération du statut premium:", error);
+        // Gérer l'erreur silencieusement
       }
     };
-    
+
     fetchPremiumStatus();
   }, [user]);
 
   const updateUserAndToken = (userData, token) => {
     const cleanedUserData = cleanUserData(userData);
-    cleanedUserData.is_admin = userData.is_admin ? userData.is_admin : undefined;
+    cleanedUserData.is_admin = userData.is_admin
+      ? userData.is_admin
+      : undefined;
     AuthUtils.setAuthToken(token);
     AuthUtils.setUserData(cleanedUserData);
     setUser(cleanedUserData);
@@ -67,11 +72,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = (userData, token) => {
-    const cleanedUserData = cleanUserData(userData);
-    cleanedUserData.is_admin = userData.is_admin ? userData.is_admin : undefined;
-    AuthUtils.setAuthToken(token);
-    AuthUtils.setUserData(cleanedUserData);
-    setUser(cleanedUserData);
+    if (!userData || !token) {
+      return;
+    }
+
+    try {
+      const cleanedUserData = cleanUserData(userData);
+      cleanedUserData.is_admin = userData.is_admin
+        ? userData.is_admin
+        : undefined;
+      AuthUtils.setAuthToken(token);
+      AuthUtils.setUserData(cleanedUserData);
+      setUser(cleanedUserData);
+    } catch (error) {
+      toast.error("Failed to complete login process");
+    }
   };
 
   const updateToken = (newToken) => {
@@ -89,12 +104,20 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsPremium(false);
       navigate("/users/login");
-      console.error("Logout error:", error);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUserAndToken, updateToken }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        login,
+        logout,
+        updateUserAndToken,
+        updateToken,
+      }}
+    >
       <isPremiumContext.Provider value={{ isPremium, setIsPremium }}>
         {!isLoading && children}
       </isPremiumContext.Provider>

@@ -2,10 +2,15 @@ import Cookies from "js-cookie";
 
 export const AuthUtils = {
   setAuthToken: (token) => {
-    Cookies.set("agent-auth", token, {
-      secure: false,
-      sameSite: "strict",
-    });
+    try {
+      Cookies.set("agent-auth", token, {
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+    } catch (error) {
+      throw error;
+    }
   },
 
   getAuthToken: () => {
@@ -13,28 +18,48 @@ export const AuthUtils = {
   },
 
   setUserData: (userData) => {
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        ...userData,
-      })
-    );
+    try {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...userData,
+        })
+      );
+    } catch (error) {
+      throw error;
+    }
   },
 
   getUserData: () => {
-    const userData = localStorage.getItem("user");
-    return userData ? JSON.parse(userData) : null;
+    try {
+      const userData = localStorage.getItem("user");
+      return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+      return null;
+    }
   },
 
   clearAuth: () => {
-    Cookies.remove("agent-auth");
-    localStorage.removeItem("user");
+    try {
+      Cookies.remove("agent-auth", { path: "/" });
+      localStorage.removeItem("user");
+    } catch (error) {
+      throw error;
+    }
   },
 };
 
 export const cleanUserData = (userData) => {
-  const { id, username, email, isPremium, slotUnlockedId, level, experience, is_admin } =
-    userData;
+  const {
+    id,
+    username,
+    email,
+    isPremium,
+    slotUnlockedId,
+    level,
+    experience,
+    is_admin,
+  } = userData;
   return {
     id,
     username,
