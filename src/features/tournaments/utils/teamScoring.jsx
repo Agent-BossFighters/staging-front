@@ -9,8 +9,11 @@
     console.log("===== CALCULATE TEAM SCORES DEBUG =====");
     console.log(`Teams count: ${teams?.length || 0}, Matches count: ${matches?.length || 0}, isShowtimeSurvival: ${isShowtimeSurvival}`);
     
-    if (teams) {
-      console.log("Teams in scoring calculation:", teams.map(team => ({
+    // S'assurer que les équipes sont triées par ID pour garantir l'ordre correct
+    const sortedTeamsByID = teams ? [...teams].sort((a, b) => a.id - b.id) : [];
+    
+    if (sortedTeamsByID) {
+      console.log("Teams in scoring calculation (sorted by ID):", sortedTeamsByID.map(team => ({
         id: team.id,
         name: team.name,
         team_index: team.team_index,
@@ -31,7 +34,7 @@
     
     const scores = {};
     
-    teams?.forEach(team => {
+    sortedTeamsByID?.forEach(team => {
       scores[team.id] = { 
         team, 
         mainPoints: 0,      // Points principaux (temps ou dégâts selon le type)
@@ -63,7 +66,7 @@
         // Points principaux pour ce round
         scores[match.team_a_id].roundScores[roundNum].mainPoints += match.team_a_points || 0;
         
-        // Points du boss pour ce round
+        // Points du boss pour ce round (dégâts du boss ou vies restantes selon le type)
         scores[match.team_a_id].roundScores[roundNum].bossPoints += match.team_b_points || 0;
         
         // Accumulation de tous les points
@@ -79,14 +82,13 @@
       if (isShowtimeSurvival) {
         // Pour Survival: trier par temps de survie (décroissant)
         if (a.mainPoints !== b.mainPoints) return b.mainPoints - a.mainPoints;
-        // En cas d'égalité, trier par points du boss (croissant)
+        // En cas d'égalité, celui qui a pris le moins de dégâts du boss gagne (trier croissant)
         return a.bossPoints - b.bossPoints;
       } else {
-        // Pour Score Counter: trier par dégâts (décroissant)
+        // Pour Score Counter: trier par score (décroissant)
         if (a.mainPoints !== b.mainPoints) return b.mainPoints - a.mainPoints;
-        // En cas d'égalité, trier par points du boss (croissant)
-        if (a.bossPoints !== b.bossPoints) return a.bossPoints - b.bossPoints;
-        return 0;
+        // En cas d'égalité, celui qui a le plus de vies restantes gagne (trier décroissant)
+        return b.bossPoints - a.bossPoints;
       }
     });
     

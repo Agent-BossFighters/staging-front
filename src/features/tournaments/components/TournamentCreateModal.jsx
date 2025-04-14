@@ -129,9 +129,6 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
       if (onSuccess) {
         onSuccess(tournamentId);
       }
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
     } catch (err) {
       console.error("Error in tournament creation process:", err);
       const errorMessage = err.message || err.response?.data?.error || "Failed to create tournament";

@@ -54,7 +54,7 @@ const useTournamentControls = (
       // Générer les matchs automatiquement selon le type de tournoi
       await generateMatches();
       
-      toast.success("Le tournoi a démarré avec succès !");
+      toast.success("Tournament started successfully!");
       
       // Rafraîchir les données
       await refetchTournament();
@@ -62,8 +62,8 @@ const useTournamentControls = (
       await refetchMatches();
       
     } catch (error) {
-      console.error("Erreur lors du démarrage du tournoi:", error);
-      toast.error("Échec du démarrage du tournoi. Veuillez réessayer.");
+      console.error("Error starting tournament:", error);
+      toast.error("Failed to start tournament. Please try again.");
     } finally {
       setStartingTournament(false);
     }
@@ -85,8 +85,8 @@ const useTournamentControls = (
         setGeneratingMatches
       );
     } catch (error) {
-      console.error("Erreur lors de la génération des matchs:", error);
-      toast.error("Échec de la génération des matchs. Veuillez réessayer.");
+      console.error("Error generating matches:", error);
+      toast.error("Failed to generate matches. Please try again.");
     } finally {
       setGeneratingMatches(false);
     }
@@ -96,7 +96,7 @@ const useTournamentControls = (
   const completeTournament = async () => {
     if (!isCreator || tournament.status !== 2) return;
     
-    if (!window.confirm("Êtes-vous sûr de vouloir terminer ce tournoi ? Cela calculera les résultats finaux et affichera le classement définitif.")) {
+    if (!window.confirm("Are you sure you want to complete this tournament? This will calculate the final results and display the final ranking.")) {
       return;
     }
     
@@ -110,7 +110,7 @@ const useTournamentControls = (
         }
       }).json();
       
-      toast.success("Le tournoi a été terminé avec succès !");
+      toast.success("Tournament completed successfully!");
       
       // Rafraîchir les données
       await refetchTournament();
@@ -118,8 +118,8 @@ const useTournamentControls = (
       await refetchMatches();
       
     } catch (error) {
-      console.error("Erreur lors de la terminaison du tournoi:", error);
-      toast.error("Échec de la terminaison du tournoi. Veuillez réessayer.");
+      console.error("Error completing tournament:", error);
+      toast.error("Failed to complete tournament. Please try again.");
     }
   };
   
@@ -127,7 +127,7 @@ const useTournamentControls = (
   const deleteTournament = async () => {
     if (!tournament || !isCreator) return;
     
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce tournoi ? Cette action est irréversible.")) {
+    if (!window.confirm("Are you sure you want to delete this tournament? This action is irreversible.")) {
       return;
     }
     
@@ -137,7 +137,7 @@ const useTournamentControls = (
       // Envoyer une requête pour supprimer le tournoi
       await kyInstance.delete(`v1/tournaments/${tournament.id}`).json();
       
-      toast.success("Le tournoi a été supprimé avec succès !");
+      toast.success("Tournament deleted successfully!");
       
       // Appeler le callback pour réinitialiser l'UI si fourni
       if (typeof onTournamentDeleted === 'function') {
@@ -149,8 +149,8 @@ const useTournamentControls = (
       navigate('/dashboard/fighting', { replace: true });
       
     } catch (error) {
-      console.error("Erreur lors de la suppression du tournoi:", error);
-      toast.error("Échec de la suppression du tournoi. Veuillez réessayer.");
+      console.error("Error deleting tournament:", error);
+      toast.error("Failed to delete tournament. Please try again.");
     } finally {
       setDeletingTournament(false);
     }

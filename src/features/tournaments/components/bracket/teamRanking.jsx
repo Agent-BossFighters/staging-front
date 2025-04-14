@@ -12,7 +12,7 @@ const TeamRanking = ({
     console.log("===== TEAM RANKING DEBUG =====");
     if (teamScores && teamScores.length > 0) {
       teamScores.forEach((scoreData, index) => {
-        console.log(`Rank ${index + 1}: Team ID: ${scoreData.team.id}, Name: ${scoreData.team.name}, Points: ${scoreData.mainPoints}`);
+        console.log(`Rank ${index + 1}: Team ID: ${scoreData.team.id}, Name: ${scoreData.team.name}, Points: ${scoreData.mainPoints}, Boss Points: ${scoreData.bossPoints}`);
       });
     }
   }, [teamScores]);
@@ -29,6 +29,9 @@ const TeamRanking = ({
               <th className="py-2 text-center">#</th>
               <th className="py-2 text-left">TEAM</th>
               <th className="py-2 text-right">TOTAL {isShowtimeSurvival ? "TEMPS" : "DAMAGE"}</th>
+              <th className="py-2 text-right">
+                {isShowtimeSurvival ? "BOSS DAMAGE" : "LIVES LEFT"}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -43,6 +46,11 @@ const TeamRanking = ({
                 </td>
                 <td className="py-2 text-right font-bold">
                   {formatTimeOrScore(scoreData.mainPoints, isShowtimeSurvival ? "time" : "score")}
+                </td>
+                <td className="py-2 text-right">
+                  {isShowtimeSurvival 
+                    ? scoreData.bossPoints 
+                    : scoreData.bossPoints}
                 </td>
               </tr>
             ))}

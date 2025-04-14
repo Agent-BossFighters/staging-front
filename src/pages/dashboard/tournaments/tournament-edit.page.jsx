@@ -240,14 +240,14 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
       
       console.log("Tournament update response:", response);
       
-      toast.success("Tournoi mis à jour avec succès !");
+      toast.success("Tournament updated successfully!");
       
       // Appeler le callback de mise à jour et fermer le modal
       onTournamentUpdated && onTournamentUpdated(response);
       onClose();
     } catch (err) {
       console.error("Error updating tournament:", err);
-      let errorMessage = "Échec de la mise à jour du tournoi. Veuillez réessayer.";
+      let errorMessage = "Failed to update tournament. Please try again.";
       
       if (err.responseData?.error) {
         errorMessage = err.responseData.error;
