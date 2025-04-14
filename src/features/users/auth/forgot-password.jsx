@@ -16,18 +16,19 @@ export default function ForgotPassword() {
 
   const handleForgotPassword = async (data) => {
     const payload = {
-      user: {
-        email: data.email,
-      },
+      email: data.email,
     };
 
-    toast.promise(authSignInUp("v1/password/forgot", payload), {
+    toast.promise(authSignInUp("v1/password", payload), {
       loading: "Sending reset instructions...",
       success: (res) => {
-        return res.userData.status.message;
+        return (
+          res.userData.message ||
+          "Reset instructions have been sent to your email"
+        );
       },
       error: (err) => {
-        return err.message;
+        return err.message || "Failed to send reset instructions";
       },
     });
   };
