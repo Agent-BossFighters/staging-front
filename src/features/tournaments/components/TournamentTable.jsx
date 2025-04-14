@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@shared/ui/table";
 import { Badge } from "@shared/ui/badge";
-import { TYPE_LABELS, STATUS_COLORS, STATUS_LABELS } from "../constants/uiConfigs";
+import { TYPE_LABELS, STATUS_COLORS, STATUS_LABELS } from "@features/tournaments/constants/uiConfigs";
+import { calculatePlayerSlots } from "@features/tournaments/utils/tournamentUtils";
+import { registerTournament } from "@img";
 
 const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
   const [showScrollMessage, setShowScrollMessage] = useState(false);
@@ -129,8 +131,9 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
               <TableHead className="w-[7%] py-3">MODE</TableHead>
               <TableHead className="w-[12%] py-3">RULES</TableHead>
               <TableHead className="w-[10%] py-3">STATUS</TableHead>
-              <TableHead className="w-[8%] py-3">TEAM <br /> SLOTS</TableHead>
-              <TableHead className="w-[9%] py-3">PLAYER(S) <br /> /TEAM</TableHead>
+              <TableHead className="w-[8%] py-3">TEAM</TableHead>
+              <TableHead className="w-[9%] py-3">PLAYER(S) <br /> PER TEAM</TableHead>
+              <TableHead className="w-[8%] py-3">PLAYER(S) <br /> /SLOTS</TableHead>
               <TableHead className="w-[7%] py-3">ROUND(S)</TableHead>
               <TableHead className="w-[10%] py-3">AGENT LVL <br /> REQUIRED</TableHead>
               <TableHead className="w-[6%] py-3">CODE</TableHead>
@@ -142,6 +145,7 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
               const status = getTournamentStatus(tournament);
               const teamsCount = getTeamsCount(tournament);
               const mode = getTournamentMode(tournament);
+              const slots = calculatePlayerSlots(tournament);
               
               return (
                 <TableRow 
@@ -173,10 +177,13 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
                     </Badge>
                   </TableCell>
                   <TableCell className="py-3">
-                    {teamsCount}/{tournament.max_teams}
+                    {tournament.max_teams}
                   </TableCell>
                   <TableCell className="py-3">
                     {tournament.players_per_team}
+                  </TableCell>
+                  <TableCell className="py-3">
+                    {slots.formatted}
                   </TableCell>
                   <TableCell className="py-3">
                     {tournament.rounds || 1}
@@ -189,12 +196,13 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
                   </TableCell>
                   <TableCell className="py-3">
                     <button 
-                      className="inline-flex"
+                      className="flex items-center justify-center w-full"
                       onClick={(e) => {
                         e.stopPropagation(); // Empêcher la propagation pour éviter le double clic
                         if (isClickable) handleTournamentClick(tournament);
                       }}
                     >
+                      <img src={registerTournament} alt="enterTournament" className="w-8 h-8 p-1" />
                     </button>
                   </TableCell>
                 </TableRow>

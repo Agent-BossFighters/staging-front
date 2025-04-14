@@ -7,12 +7,25 @@ import { Textarea } from "@shared/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/card";
 import { Info, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuth } from "@context/auth.context";
 
 export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
   if (!isOpen) return null;
 
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [entryCodeCopied, setEntryCodeCopied] = useState(false);
+  
+  // Générer un code aléatoire de 6 caractères
+  const generateRandomCode = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Exclus des caractères qui peuvent prêter à confusion
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
   
   // Form state
   const [formData, setFormData] = useState({
@@ -29,6 +42,31 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
   // Estimation du temps de matchs
   const [estimatedMatches, setEstimatedMatches] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState("0");
+  
+  // Générer les règles en fonction du type de tournoi et des paramètres
+  useEffect(() => {
+    const tournamentType = parseInt(formData.tournament_type);
+    const teamsCount = parseInt(formData.max_teams) || 0;
+    const playersCount = parseInt(formData.players_per_team) || 0;
+    const roundsCount = parseInt(formData.rounds) || 1;
+    const roundWord = roundsCount === 1 ? "Round" : "Rounds";
+    const creatorName = user?.username || "Tournament Host";
+
+    let rulesText = "";
+    
+    if (tournamentType === 0) { // Showtime Survival
+      rulesText = `${creatorName} Boss against ${playersCount} players per team in a tournament with ${teamsCount} Teams, where players will try to survive as long as possible during ${roundsCount} ${roundWord}.\nOne rule survive without killing the boss!`;
+    } else if (tournamentType === 1) { // Showtime Score Counter
+      rulesText = `${creatorName} Boss against ${playersCount} players per team in a tournament with ${teamsCount} Teams, where players will try to do as much Score as possible against the boss during ${roundsCount} ${roundWord} for a total Score Team.\nOne rule survive and kill the Boss!`;
+    } else if (tournamentType === 2) { // Arena
+      const boFormat = roundsCount === 1 ? "BO1" : "BO3";
+      rulesText = `"Team vs Team" with ${teamsCount} teams of ${playersCount} players in ${roundsCount} ${roundWord} (${boFormat}) format. May the best team win!`;
+    }
+    
+    if (rulesText) {
+      setFormData(prev => ({ ...prev, rules: rulesText }));
+    }
+  }, [formData.tournament_type, formData.max_teams, formData.players_per_team, formData.rounds, user?.username]);
   
   // Calculer le nombre de matchs et le temps estimé
   useEffect(() => {
@@ -87,6 +125,12 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
       return false;
     }
     
+    // Vérifier que le code d'entrée est valide s'il est fourni
+    if (formData.entry_code && formData.entry_code.length < 4) {
+      toast.error("Entry code must be at least 4 characters long");
+      return false;
+    }
+    
     return true;
   };
 
@@ -96,6 +140,20 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
     setError(null);
 
     try {
+      // Validation supplémentaire
+      if (!validateForm()) {
+        setIsLoading(false);
+        return;
+      }
+
+      // Générer le code aléatoire côté client si nécessaire
+      if (formData.entry_code) {
+        // On génère un code aléatoire de 6 caractères
+        const entryCode = generateRandomCode();
+        // On le stocke pour l'utiliser dans la requête
+        formData.generated_code = entryCode;
+      }
+
       // Créer le tournoi
       const tournamentData = {
         name: formData.name,
@@ -107,12 +165,12 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
         min_players_per_team: parseInt(formData.players_per_team),
         max_teams: parseInt(formData.max_teams),
         status: 1,
-        auto_create_teams: true // Utiliser la nouvelle fonctionnalité du backend
+        auto_create_teams: true 
       };
 
-      // Ajouter le code d'entrée si fourni
+      // Ajouter le code d'entrée uniquement si demandé
       if (formData.entry_code) {
-        tournamentData.entry_code = formData.entry_code;
+        tournamentData.entry_code = formData.generated_code;
       }
 
       const tournamentResponse = await kyInstance.post('v1/tournaments', {
@@ -136,6 +194,21 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Copier le code dans le presse-papier
+  const copyEntryCodeToClipboard = () => {
+    if (formData.entry_code) {
+      navigator.clipboard.writeText(formData.entry_code)
+        .then(() => {
+          setEntryCodeCopied(true);
+          setTimeout(() => setEntryCodeCopied(false), 2000);
+        })
+        .catch(err => {
+          console.error('Erreur lors de la copie du code:', err);
+          toast.error("Impossible de copier le code");
+        });
     }
   };
 
@@ -209,9 +282,14 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     <SelectValue placeholder="Select slots" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {[2, 4, 8].map(num => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
+                    {parseInt(formData.tournament_type) === 2 
+                      ? [2, 4, 8].map(num => (
+                          <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                        ))
+                      : [2, 3, 4, 5, 6, 7, 8].map(num => (
+                          <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                        ))
+                    }
                   </SelectContent>
                 </Select>
                 
@@ -263,19 +341,22 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                   <label className="text-white font-medium">Agent Level required</label>
                   <Info className="h-5 w-5 text-gray-400" />
                 </div>
-                <Select 
-                  value={formData.agent_level_required.toString()} 
-                  onValueChange={(value) => handleSelectChange("agent_level_required", value)}
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Select level" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {[0, 1, 2, 3, 4, 5].map(num => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  type="number"
+                  name="agent_level_required"
+                  value={formData.agent_level_required}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    if (!isNaN(value) && value >= 0) {
+                      handleInputChange(e);
+                    } else if (e.target.value === "") {
+                      setFormData(prev => ({ ...prev, agent_level_required: 0 }));
+                    }
+                  }}
+                  min="0"
+                  className="bg-gray-800 border-gray-700 text-white"
+                  placeholder="Enter agent level"
+                />
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Tournament entry code</label>
@@ -287,7 +368,8 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     if (value === "No") {
                       setFormData(prev => ({ ...prev, entry_code: "" }));
                     } else {
-                      setFormData(prev => ({ ...prev, entry_code: "random" }));
+                      // On marque simplement qu'un code est requis, sans le générer ni l'afficher
+                      setFormData(prev => ({ ...prev, entry_code: "REQUIRED" }));
                     }
                   }}
                 >
@@ -299,6 +381,14 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     <SelectItem value="Yes">Yes</SelectItem>
                   </SelectContent>
                 </Select>
+                
+                {formData.entry_code && (
+                  <div className="mt-2">
+                    <p className="text-gray-400 text-sm">
+                      Un code d'entrée sera généré pour ce tournoi. Vous pourrez le visualiser et le copier après la création du tournoi.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
             

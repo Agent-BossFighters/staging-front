@@ -7,16 +7,6 @@ const TeamRanking = ({
   teamScores, 
   isShowtimeSurvival 
 }) => {
-  // Ajout des logs pour déboguer les données de classement
-  useEffect(() => {
-    console.log("===== TEAM RANKING DEBUG =====");
-    if (teamScores && teamScores.length > 0) {
-      teamScores.forEach((scoreData, index) => {
-        console.log(`Rank ${index + 1}: Team ID: ${scoreData.team.id}, Name: ${scoreData.team.name}, Points: ${scoreData.mainPoints}, Boss Points: ${scoreData.bossPoints}`);
-      });
-    }
-  }, [teamScores]);
-  
   return (
     <div className="flex flex-col">
       <div className="bg-primary text-black font-bold p-3">
