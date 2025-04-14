@@ -48,6 +48,7 @@ jobs:
           VITE_BACKEND_PROD_URL: ${{ vars.VITE_BACKEND_PROD_URL }}
           VITE_FRONTEND_PROD_URL: ${{ vars.VITE_FRONTEND_PROD_URL }}
           VITE_STRIPE_PRICE_ID: ${{ vars.VITE_STRIPE_PRICE_ID }}
+          VITE_STRIPE_DONATION_PRODUCT_ID: ${{ vars.VITE_STRIPE_DONATION_PRODUCT_ID }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

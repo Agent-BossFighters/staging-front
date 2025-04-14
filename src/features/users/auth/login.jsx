@@ -1,11 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Button } from "@ui/button";
 import { Input } from "@ui/input";
 import { authSignInUp } from "@api/auth.api";
 import useForm from "@features/users/hook/useForm";
 import { useAuth } from "@context/auth.context";
-import { cleanUserData } from "@utils/api/auth.utils";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -25,18 +24,27 @@ export default function Login() {
         password: data.password,
       },
     };
-    toast.promise(authSignInUp("v1/login", payload), {
-      loading: "Signing in...",
-      success: (res) => {
-        login(cleanUserData(res.userData.user), res.userData.token);
-        navigate("/dashboard");
-        return res.userData.message;
-      },
-      error: (err) => {
-        return err.message;
-      },
-    });
+
+    try {
+      const response = await authSignInUp("v1/login", payload);
+
+      if (
+        !response.userData ||
+        !response.userData.user ||
+        !response.userData.token
+      ) {
+        throw new Error("Invalid response from server");
+      }
+
+      login(response.userData.user, response.userData.token);
+      navigate("/dashboard");
+
+      return response.userData.message;
+    } catch (error) {
+      throw error;
+    }
   };
+
   return (
     <form
       onSubmit={(e) => {
@@ -63,13 +71,15 @@ export default function Login() {
       />
       {errors.password && <p className="text-red-500">{errors.password}</p>}
 
-      <Button
-        type="submit"
-        disabled={loading}
-        className="w-full h-12"
-      >
+      <Button type="submit" disabled={loading} className="w-full h-12">
         {loading ? "Loading..." : "Login"}
       </Button>
+
+      <div className="w-full text-xs flex justify-end">
+        <Link to="/users/password/forgot" className="text-primary">
+          Forgot your password?
+        </Link>
+      </div>
     </form>
   );
 }
