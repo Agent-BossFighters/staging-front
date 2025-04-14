@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { kyInstance } from "@utils/api/ky-config";
 import toast from "react-hot-toast";
 import generateTournamentMatches from "../utils/generateMatchesTournament";
+import { isTournamentInProgress } from "../utils/tournamentStatus";
 
 /**
  * Hook pour gérer les contrôles d'un tournoi
@@ -33,6 +34,7 @@ const useTournamentControls = (
   const navigate = useNavigate();
   const [startingTournament, setStartingTournament] = useState(false);
   const [deletingTournament, setDeletingTournament] = useState(false);
+  const [cancelingTournament, setCancelingTournament] = useState(false);
   const [generatingMatches, setGeneratingMatches] = useState(false);
 
   // Fonction pour démarrer le tournoi
@@ -94,7 +96,7 @@ const useTournamentControls = (
   
   // Fonction pour terminer le tournoi
   const completeTournament = async () => {
-    if (!isCreator || tournament.status !== 2) return;
+    if (!isCreator || !isTournamentInProgress(tournament)) return;
     
     if (!window.confirm("Are you sure you want to complete this tournament? This will calculate the final results and display the final ranking.")) {
       return;
@@ -123,9 +125,50 @@ const useTournamentControls = (
     }
   };
   
+  // Fonction pour annuler le tournoi
+  const cancelTournament = async () => {
+    if (!tournament || !isCreator) return;
+    
+    if (!window.confirm("Are you sure you want to cancel this tournament? This action cannot be undone.")) {
+      return;
+    }
+    
+    setCancelingTournament(true);
+    
+    try {
+      // Mettre à jour le statut du tournoi à "cancelled" (4)
+      await kyInstance.put(`v1/tournaments/${tournament.id}`, {
+        json: {
+          tournament: {
+            status: 4 // cancelled
+          }
+        }
+      }).json();
+      
+      toast.success("Tournament cancelled successfully!");
+      
+      // Rafraîchir les données
+      await refetchTournament();
+      await refetchTeams();
+      await refetchMatches();
+      
+    } catch (error) {
+      console.error("Error cancelling tournament:", error);
+      toast.error("Failed to cancel tournament. Please try again.");
+    } finally {
+      setCancelingTournament(false);
+    }
+  };
+  
   // Fonction pour supprimer le tournoi
   const deleteTournament = async () => {
     if (!tournament || !isCreator) return;
+    
+    // Empêcher la suppression si le tournoi est démarré ou terminé
+    if (tournament.status === 2 || tournament.status === 3) {
+      toast.error("Cannot delete a tournament that has started. You can cancel it instead.");
+      return;
+    }
     
     if (!window.confirm("Are you sure you want to delete this tournament? This action is irreversible.")) {
       return;
@@ -166,10 +209,12 @@ const useTournamentControls = (
   return {
     startingTournament,
     deletingTournament,
+    cancelingTournament,
     generatingMatches,
     startTournament,
     completeTournament,
     deleteTournament,
+    cancelTournament,
     editTournament,
     generateMatches
   };

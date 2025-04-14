@@ -78,7 +78,7 @@ export default function TournamentListPage() {
           navigate('/dashboard/fighting', { replace: true });
           setSelectedTournamentId(null);
           setShowTournamentDetails(false);
-          toast.error(`Le tournoi avec l'ID ${tournamentIdFromUrl} n'a pas été trouvé ou a été supprimé.`);
+          toast.error(`The tournament with the ID ${tournamentIdFromUrl} was not found or has been deleted.`);
         }
       }
     }

@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import TournamentEditModal from "../../../pages/dashboard/tournaments/tournament-edit.page";
+import { Badge } from "@shared/ui/badge";
 
 const TournamentBracketShowtime = ({
   tournament,
@@ -62,8 +63,9 @@ const TournamentBracketShowtime = ({
   const [allScores, setAllScores] = useState({});
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [entryCodeCopied, setEntryCodeCopied] = useState(false);
   const [showEntryCode, setShowEntryCode] = useState(false);
+  const [revealCode, setRevealCode] = useState(false);
+  const [entryCodeCopied, setEntryCodeCopied] = useState(false);
 
   const isCreator = user && tournament?.creator_id === user.id;
   const userTeam = findUserTeam(teams, user);
@@ -95,9 +97,11 @@ const TournamentBracketShowtime = ({
   const {
     startingTournament,
     deletingTournament,
+    cancelingTournament,
     startTournament,
     completeTournament,
     deleteTournament,
+    cancelTournament,
     editTournament,
   } = useTournamentControls(
     tournament,
@@ -200,10 +204,6 @@ const TournamentBracketShowtime = ({
       });
   };
 
-  const toggleShowEntryCode = () => {
-    setShowEntryCode(prev => !prev);
-  };
-
   const handleEditTournament = () => {
     if (!isCreator) {
       toast.error("You are not authorized to modify this tournament.");
@@ -268,14 +268,25 @@ const TournamentBracketShowtime = ({
                   EDIT
                 </Button>
 
-                <Button
-                  onClick={deleteTournament}
-                  className="bg-red-600 hover:bg-red-700 text-white"
-                  disabled={deletingTournament}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {deletingTournament ? "DELETING..." : "DELETE"}
-                </Button>
+                {tournament.status === 1 ? (
+                  <Button
+                    onClick={deleteTournament}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    disabled={deletingTournament}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    {deletingTournament ? "DELETING..." : "DELETE"}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={cancelTournament}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    disabled={cancelingTournament}
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    {cancelingTournament ? "CANCELING..." : "CANCEL"}
+                  </Button>
+                )}
               </>
             )}
           </div>
@@ -320,20 +331,25 @@ const TournamentBracketShowtime = ({
                 <Button 
                   variant="outline" 
                   className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs px-2 py-1 h-auto"
-                  onClick={toggleShowEntryCode}
+                  onClick={() => setShowEntryCode(!showEntryCode)}
                 >
                   {showEntryCode ? "HIDE CODE" : "SHOW ENTRY CODE"}
                 </Button>
-                
-                {showEntryCode && (
-                  <div className="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded px-2 py-1">
-                    <span className="font-mono font-bold text-yellow-400">
-                      {tournament.entry_code}
+                {showEntryCode && tournament?.entry_code && (
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono">
+                      {revealCode ? tournament.entry_code : "•".repeat(tournament.entry_code.length)}
                     </span>
                     <Button
                       variant="ghost"
-                      size="sm"
-                      className={`${entryCodeCopied ? 'text-green-500' : 'text-gray-400 hover:text-white'} p-1 h-auto`}
+                      className="text-xs px-2 py-1 h-auto"
+                      onClick={() => setRevealCode(!revealCode)}
+                    >
+                      {revealCode ? "HIDE" : "REVEAL"}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="text-xs px-2 py-1 h-auto"
                       onClick={handleCopyEntryCode}
                     >
                       {entryCodeCopied ? "COPIED!" : "COPY"}

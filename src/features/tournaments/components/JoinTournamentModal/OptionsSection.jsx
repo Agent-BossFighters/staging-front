@@ -105,7 +105,9 @@ export function OptionsSection({
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Privacy:</span>
-                <span className="font-bold">{isPrivateTeam ? "Private" : "Public"}</span>
+                <span className="font-bold">
+                  {(isPrivateTeam || selectedTeam.invitation_code) ? "Private" : "Public"}
+                </span>
               </div>
             </div>
           </div>
