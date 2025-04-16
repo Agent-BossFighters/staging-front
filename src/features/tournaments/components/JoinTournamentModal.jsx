@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useJoinTournament, useTournamentTeamsData, useTeamSelection } from "../hooks";
 import { CreatorView, SuccessView, JoinFormView } from "./JoinTournamentModal/index";
+import toast from "react-hot-toast";
 
 export default function JoinTournamentModal({ tournament, isOpen, onClose }) {
   // State pour les erreurs
@@ -61,7 +62,38 @@ export default function JoinTournamentModal({ tournament, isOpen, onClose }) {
   }
 
   const handleJoinTeam = async (e) => {
-    if (e) e.preventDefault();
+    e.preventDefault();
+
+    // Vérification de la sélection d'une équipe
+    if (!selectedTeam) {
+      toast.error("Please select a team");
+      return;
+    }
+
+    // Vérification du code d'entrée du tournoi
+    if (tournament.entry_code && !entryCode) {
+      toast.error("Please enter the tournament entry code");
+      return;
+    }
+
+    // Vérification du code d'invitation de l'équipe
+    if (selectedTeam.invitation_code && !invitationCode) {
+      toast.error("Please enter the team invitation code");
+      return;
+    }
+
+    // Vérification de la validité des codes
+    if (tournament.entry_code && entryCode !== tournament.entry_code) {
+      toast.error("Invalid tournament entry code");
+      return;
+    }
+
+    if (selectedTeam.invitation_code && invitationCode !== selectedTeam.invitation_code) {
+      toast.error("Invalid team invitation code");
+      return;
+    }
+
+    // Si tout est valide, on peut procéder
     joinTournament(selectedTeam, selectedSlot, entryCode, invitationCode, isPrivateTeam);
   };
 

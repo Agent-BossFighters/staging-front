@@ -21,11 +21,13 @@ import {
   canCompleteTournament as canCompleteTournamentCheck,
 } from "../utils/tournamentStatus";
 import useTournamentControls from "../hooks/useTournamentControls";
+import { useTournamentActions } from "../hooks/useTournamentActions";
 import TeamsList from "./bracket/teamsList";
 import TeamRanking from "./bracket/teamRanking";
 import RoundsList from "./bracket/roundsList";
 import EmptyTournamentMessage from "./bracket/emptyTournamentMessage";
 import JoinTournamentModal from "./JoinTournamentModal";
+import TournamentHeader from "./TournamentHeader";
 import { Button } from "@shared/ui/button";
 import { updateArrow } from "@img";
 import {
@@ -48,6 +50,7 @@ const TournamentBracketShowtime = ({
   matches,
   onMatchUpdated,
   onTournamentDeleted,
+  onBackToList
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -66,6 +69,7 @@ const TournamentBracketShowtime = ({
   const [showEntryCode, setShowEntryCode] = useState(false);
   const [revealCode, setRevealCode] = useState(false);
   const [entryCodeCopied, setEntryCodeCopied] = useState(false);
+  const { joinRandomTeam, isJoining } = useTournamentActions();
 
   const isCreator = user && tournament?.creator_id === user.id;
   const userTeam = findUserTeam(teams, user);
@@ -216,151 +220,40 @@ const TournamentBracketShowtime = ({
     onMatchUpdated();
   };
 
+  const handleJoinRandomTeam = async () => {
+    const result = await joinRandomTeam(tournament, teams, user);
+    if (result) {
+      // Rafraîchir les données du tournoi après avoir rejoint une équipe
+      onMatchUpdated?.();
+    }
+  };
+
   return (
     <div className="tournament-bracket">
-      {/* En-tête du tournoi */}
-      <div className="bg-gray-800 px-4 pt-4 pb-2 mb-2 rounded flex flex-col items-center justify-between">
-        <div className="rounded w-full flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-primary">
-            {tournament?.name}
-          </h1>
-          <div className="flex items-center gap-2">
-            {/* Bouton pour rejoindre le tournoi si l'utilisateur peut le faire */}
-            {user && canJoinThisTournament ? (
-              <Button
-                onClick={() => setJoinModalOpen(true)}
-                className="bg-primary hover:bg-primary/90 text-black"
-              >
-                <UserPlus className="mr-2 h-4 w-4" />
-                JOIN TOURNAMENT
-              </Button>
-            ) : null}
+      {/* Nouveau header */}
+      <TournamentHeader
+        tournament={tournament}
+        isCreator={isCreator}
+        canJoinThisTournament={canJoinThisTournament}
+        user={user}
+        onJoinClick={() => setJoinModalOpen(true)}
+        onJoinRandomTeam={handleJoinRandomTeam}
+        startingTournament={startingTournament}
+        canStartTournament={canStartTournament}
+        startTournament={startTournament}
+        canCompleteTournament={canCompleteTournament}
+        completeTournament={completeTournament}
+        handleEditTournament={handleEditTournament}
+        deletingTournament={deletingTournament}
+        deleteTournament={deleteTournament}
+        cancelingTournament={cancelingTournament}
+        cancelTournament={cancelTournament}
+        teams={teams}
+        onBackToList={onBackToList}
+      />
 
-            {/* Boutons d'administration uniquement pour le créateur */}
-            {isCreator && (
-              <>
-                {canStartTournament && (
-                  <Button
-                    onClick={startTournament}
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                    disabled={startingTournament}
-                  >
-                    <Play className="mr-2 h-4 w-4" />
-                    {startingTournament ? "STARTING..." : "START TOURNAMENT"}
-                  </Button>
-                )}
+      {/* Ancien header (à supprimer manuellement plus tard) */}
 
-                {canCompleteTournament && (
-                  <Button
-                    onClick={completeTournament}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                    END TOURNAMENT
-                  </Button>
-                )}
-
-                <Button
-                  onClick={handleEditTournament}
-                  className="bg-amber-600 hover:bg-amber-700 text-white"
-                >
-                  <Edit className="mr-2 h-4 w-4" />
-                  EDIT
-                </Button>
-
-                {tournament.status === 1 ? (
-                  <Button
-                    onClick={deleteTournament}
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                    disabled={deletingTournament}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    {deletingTournament ? "DELETING..." : "DELETE"}
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={cancelTournament}
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                    disabled={cancelingTournament}
-                  >
-                    <X className="mr-2 h-4 w-4" />
-                    {cancelingTournament ? "CANCELING..." : "CANCEL"}
-                  </Button>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-        <div className="w-full mt-2 rounded flex items-center justify-between">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center">
-                <div className="text-gray-400 mr-2">TYPE</div>
-                <div className="text-white">
-                  <div className="text-white">SHOWTIME</div>
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <div className="text-gray-400 mr-2">MODE</div>
-                <div className="text-white">
-                  {isShowtimeSurvival ? "SURVIVAL" : "SCORE"}
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <div className="text-gray-400 mr-2">RULES</div>
-                <div className="text-white">
-                  Get the best {isShowtimeSurvival ? "time" : "score"} possible
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* Info slots */}
-            <div className="text-sm text-gray-300">
-              REMAINING SLOTS : {formatRemainingSlots(tournament, teams)}
-            </div>
-            <div className="text-sm text-gray-300">
-              PLAYER(S) PER TEAM : {tournament.players_per_team || 4}
-            </div>
-            
-            {/* Entry Code (visible only for the creator) */}
-            {isCreator && tournament?.entry_code && (
-              <div className="relative text-sm text-gray-300 flex items-center gap-2">
-                <Button 
-                  variant="outline" 
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs px-2 py-1 h-auto"
-                  onClick={() => setShowEntryCode(!showEntryCode)}
-                >
-                  {showEntryCode ? "HIDE CODE" : "SHOW ENTRY CODE"}
-                </Button>
-                {showEntryCode && tournament?.entry_code && (
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono">
-                      {revealCode ? tournament.entry_code : "•".repeat(tournament.entry_code.length)}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      className="text-xs px-2 py-1 h-auto"
-                      onClick={() => setRevealCode(!revealCode)}
-                    >
-                      {revealCode ? "HIDE" : "REVEAL"}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="text-xs px-2 py-1 h-auto"
-                      onClick={handleCopyEntryCode}
-                    >
-                      {entryCodeCopied ? "COPIED!" : "COPY"}
-                    </Button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
 
       <div className="grid grid-cols-12 gap-4">
         {/* Teams and Rounds in the same column */}

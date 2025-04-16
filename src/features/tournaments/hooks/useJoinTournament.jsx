@@ -39,13 +39,6 @@ export function useJoinTournament(tournament, teams, onClose) {
       return;
     }
     
-    // Vérifier le code d'entrée si le tournoi en a un
-    if (tournament.entry_code && (!entryCode || entryCode.trim() === "")) {
-      setError("This tournament requires an entry code");
-      setIsLoading(false);
-      return;
-    }
-    
     try {
       // Vérifier que nous avons un ID d'équipe valide
       if (!selectedTeam.id) {

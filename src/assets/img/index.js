@@ -49,3 +49,4 @@ export {default as headBoss } from "./tournaments/headBoss.png";
 export {default as stopwatch } from "./tournaments/stopwatch.svg";
 export {default as updateArrow } from "./tournaments/updateArrow.svg";
 export {default as registerTournament } from "./tournaments/registerTournament.svg";
+export {default as rulesBubble } from "./tournaments/rulesBubble.svg";

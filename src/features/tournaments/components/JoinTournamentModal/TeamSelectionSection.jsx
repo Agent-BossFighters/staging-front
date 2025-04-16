@@ -30,11 +30,8 @@ export function TeamSelectionSection({
           const teamColor = getTeamColor(teamIndex);
           const isSelected = selectedTeam && selectedTeam.id === team.id;
           const canJoin = canJoinTeam(team, tournament, teams, userTeams);
-          
           const teamLetter = String.fromCharCode(65 + teamIndex);
-          
           const displayName = team.isEmpty ? `Team ${teamLetter}` : team.name;
-          
           const isPrivate = team.invitation_code !== undefined && team.invitation_code !== null;
           
           return (
@@ -49,8 +46,6 @@ export function TeamSelectionSection({
               onClick={() => {
                 if (canJoin) {
                   setSelectedTeam({...team, letter: teamLetter});
-                } else {
-                  toast.error("You cannot join this team");
                 }
               }}
               disabled={!canJoin}
