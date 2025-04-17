@@ -175,22 +175,13 @@ export default function TournamentListPage() {
     
     return (
       <div className="w-full h-full mt-4">
-        <div className="mb-4 flex justify-end">
-          <Button 
-            variant="default" 
-            className="flex items-center gap-2"
-            onClick={handleBackToList}
-          >
-            <ArrowLeft size={16} />
-            Back to List
-          </Button>
-        </div>
         <TournamentBracketShowtime 
           tournament={tournament} 
           teams={teams || []} 
           matches={matches || []}
           onMatchUpdated={refetchMatches}
           onTournamentDeleted={handleTournamentDeleted}
+          onBackToList={handleBackToList}
         />
       </div>
     );
