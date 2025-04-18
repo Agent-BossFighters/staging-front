@@ -162,7 +162,7 @@ const RoundsList = ({
                     const teamColor = getTeamColor(index);
                     
                     return (
-                      <div key={`${round}-${team.id}`} className="min-w-[200px] flex-shrink-0 mx-9 last:mr-0 p-2 flex flex-col items-center justify-center">
+                      <div key={`${round}-${team.id}`} className="min-w-[200px] flex-shrink-0 mx-5 last:mr-0 p-2 flex flex-col items-center justify-center">
                         <div className="flex items-center mb-3 gap-2">
                           <div className="flex items-center gap-2 w-8 h-8">
                             <img src={headBoss} alt="headBoss" className="w-8 h-8" />
@@ -181,7 +181,7 @@ const RoundsList = ({
                             <div className="flex flex-col gap-2">
                               {/* Team A Score */}
                               <div className="flex flex-col items-center">
-                                <div className="text-white text-xs mb-1">{isShowtimeSurvival ? "Time" : "Damage"}</div>
+                                <div className="text-white text-xs mb-1">{isShowtimeSurvival ? "Time" : "Score"}</div>
                                 {isShowtimeSurvival ? (
                                   <div className="flex flex-col items-center">
                                     <input 
@@ -209,7 +209,7 @@ const RoundsList = ({
                               <div className="flex flex-col items-center">
                                 <div className="text-red-400 text-xs mb-1">
                                   {isShowtimeSurvival 
-                                    ? "Boss damage" 
+                                    ? "Boss score" 
                                     : "Lives left"}
                                 </div>
                                 <input
@@ -239,7 +239,7 @@ const RoundsList = ({
                             {scoreA > 0 && (
                               <div className="text-xs text-gray-400 mt-1">
                                 {isShowtimeSurvival 
-                                  ? `Boss damage: ${match.team_b_points || 0}` 
+                                  ? `Boss score: ${match.team_b_points || 0}` 
                                   : `lives left: ${match.team_b_points || 0}`}
                               </div>
                             )}

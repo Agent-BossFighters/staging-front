@@ -166,7 +166,7 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
                   <TableCell className="py-3">
                     {mode}
                   </TableCell>
-                  <TableCell className="truncate py-3">
+                  <TableCell className="truncate py-3" title={tournament.rules}>
                     {tournament.rules 
                       ? tournament.rules.substring(0, 50) + (tournament.rules.length > 50 ? "..." : "") 
                       : "No rules specified"}

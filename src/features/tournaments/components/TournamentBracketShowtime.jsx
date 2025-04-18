@@ -257,7 +257,7 @@ const TournamentBracketShowtime = ({
 
       <div className="grid grid-cols-12 gap-4">
         {/* Teams and Rounds in the same column */}
-        <div className="col-span-9">
+        <div className="col-span-8">
           {/* Teams list first */}
           <div className="mb-4">
             <TeamsList teams={teams} user={user} tournament={tournament} />
@@ -296,7 +296,7 @@ const TournamentBracketShowtime = ({
         </div>
 
         {/* Ranking */}
-        <div className="col-span-3 mt-4 ml-4">
+        <div className="col-span-4 mt-4 ml-4">
           <TeamRanking
             tournament={tournament}
             teamScores={teamScores}

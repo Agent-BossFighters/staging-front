@@ -304,7 +304,7 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="relative w-full max-w-6xl">
-        <Card className="bg-gray-900 border-gray-700 text-white">
+        <Card className="bg-gray-900 border-gray-700 text-white w-[1000px] min-w-[1000px] max-w-[1000px] relative">
             <Button
               variant="ghost"
               className="absolute top-0 right-0 text-gray-400 hover:text-white"
@@ -335,33 +335,12 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                       <SelectValue placeholder="Select format" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                      <SelectItem value="0">Showtime-Survival</SelectItem>
-                      <SelectItem value="1">Showtime-Score Counter</SelectItem>
+                      <SelectItem value="0">Showtime - Survival</SelectItem>
+                      <SelectItem value="1">Showtime - Score Counter</SelectItem>
                       <SelectItem value="2">Arena</SelectItem>
                     </SelectContent>
                   </Select>
                   
-                  <div className="flex items-center justify-between mt-6">
-                    <label className="text-white font-medium">Number of rounds</label>
-                    <Info className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <Select 
-                    value={formData.rounds} 
-                    onValueChange={(value) => handleSelectChange("rounds", value)}
-                    defaultValue={formData.rounds}
-                    disabled={true}
-                  >
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                      <SelectValue>
-                        {formData.rounds === "1" && "1 Round"}
-                        {formData.rounds === "3" && "3 Rounds"}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                      <SelectItem value="1">1 Round</SelectItem>
-                      <SelectItem value="3">3 Rounds</SelectItem>
-                    </SelectContent>
-                  </Select>
                   
                   <div className="flex items-center justify-between mt-6">
                     <label className="text-white font-medium">Team slots</label>
@@ -403,6 +382,28 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                       {[1, 2, 3, 4, 5].map(num => (
                         <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <div className="flex items-center justify-between mt-6">
+                    <label className="text-white font-medium">Number of rounds</label>
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <Select 
+                    value={formData.rounds} 
+                    onValueChange={(value) => handleSelectChange("rounds", value)}
+                    defaultValue={formData.rounds}
+                    disabled={true}
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue>
+                        {formData.rounds === "1" && "1 Round"}
+                        {formData.rounds === "3" && "3 Rounds"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                      <SelectItem value="1">1 Round</SelectItem>
+                      <SelectItem value="3">3 Rounds</SelectItem>
                     </SelectContent>
                   </Select>
                   
