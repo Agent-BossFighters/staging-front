@@ -22,7 +22,7 @@ const EmptyTournamentMessage = ({
             disabled={generatingMatches}
           >
             <PlayCircle size={16} className="mr-2" />
-            {generatingMatches ? "Generating matches..." : "GENERATE ALL MATCHES FOR ALL ROUNDS"}
+            {generatingMatches ? "Generating matches..." : "GENERATE MATCHES"}
           </Button>
         </div>
       )}

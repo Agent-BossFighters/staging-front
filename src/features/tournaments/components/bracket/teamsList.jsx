@@ -306,18 +306,18 @@ const TeamsList = ({ teams, user, tournament }) => {
                 return (
                   <div 
                     key={team.id} 
-                    className="min-w-[220px] flex-shrink-0 mr-12 last:mr-0"
+                    className="min-w-[220px] flex-shrink-0 mr-4 last:mr-0"
                   >
                     <div 
                       style={{ backgroundColor: teamColor }} 
                       className=" flex items-center justify-between"
                     >
-                      <div className="flex items-center gap-2 pl-3">
+                      <div className="flex items-center gap-2 pl-1">
                         <div className="rounded-full w-7 h-7 flex items-center justify-center text-white font-bold bg-black/20">
                           {String.fromCharCode(65 + index)}
                         </div>
-                        <span className="text-white flex items-center justify-center font-bold min-h-[42px]">
-                          {team.isEmpty ? `TEAM ${String.fromCharCode(65 + index)}` : team.name}
+                        <span className="text-white flex items-center justify-center font-bold min-h-[42px]" title={team.name}>
+                          {team.isEmpty ? `TEAM ${String.fromCharCode(65 + index)}` : team.name.length < 11 ? team.name : team.name.slice(0, 11) + "..."}
                         </span>
                       </div>
                       {isCaptain && !team.isEmpty && (
@@ -332,7 +332,7 @@ const TeamsList = ({ teams, user, tournament }) => {
                     </div>
                     
                     {/* Player slots in a darker background */}
-                    <div className="bg-gray-900 px-3 py-2">
+                    <div className="bg-gray-900 pl-1 py-2">
                       {playerSlots.map((player, playerIndex) => {
                         const playerNum = playerIndex + 1;
                         const hasRealPlayer = !player.isEmpty;

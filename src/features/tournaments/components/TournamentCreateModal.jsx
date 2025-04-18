@@ -55,9 +55,11 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
     let rulesText = "";
     
     if (tournamentType === 0) { // Showtime Survival
-      rulesText = `${creatorName} Boss against ${playersCount} players per team in a tournament with ${teamsCount} Teams, where players will try to survive as long as possible during ${roundsCount} ${roundWord}.\nOne rule survive without killing the boss!`;
+      rulesText = `Take on Boss ${creatorName} in a tournament of ${teamsCount} teams of ${playersCount} player(s), where players will try to survive as long as possible over ${roundsCount} ${roundWord}.\n
+One rule survive without killing the boss !`;
     } else if (tournamentType === 1) { // Showtime Score Counter
-      rulesText = `${creatorName} Boss against ${playersCount} players per team in a tournament with ${teamsCount} Teams, where players will try to do as much Score as possible against the boss during ${roundsCount} ${roundWord} for a total Score Team.\nOne rule survive and kill the Boss!`;
+      rulesText = `Take on Boss ${creatorName} in a tournament of ${teamsCount} teams of ${playersCount} player(s), where players will try to score as many points score as possible against the boss over ${roundsCount} ${roundWord} for a total team score.\n
+One rule survive and kill the Boss!`;
     } else if (tournamentType === 2) { // Arena
       const boFormat = roundsCount === 1 ? "BO1" : "BO3";
       rulesText = `"Team vs Team" with ${teamsCount} teams of ${playersCount} players in ${roundsCount} ${roundWord} (${boFormat}) format. May the best team win!`;
@@ -214,9 +216,9 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80">
-      <Card className="bg-gray-900 border-gray-700 text-white max-w-4xl relative">
+      <Card className="bg-gray-900 border-gray-700 text-white w-[1000px] min-w-[1000px] max-w-[1000px] relative">
         <CardHeader>
-          <CardTitle className="text-3xl text-yellow-400 text-center font-bold">
+          <CardTitle className="text-3xl text-primary text-center font-bold">
             CREATE A TOURNAMENT
           </CardTitle>
           <button 
@@ -243,32 +245,12 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    <SelectItem value="0">Showtime (Survival)</SelectItem>
-                    <SelectItem value="1">Showtime (Score Counter)</SelectItem>
+                    <SelectItem value="0">Showtime - Survival</SelectItem>
+                    <SelectItem value="1">Showtime - Score Counter</SelectItem>
                     <SelectItem value="2">Arena</SelectItem>
                   </SelectContent>
                 </Select>
                 
-                {(parseInt(formData.tournament_type) === 0 || parseInt(formData.tournament_type) === 1) && (
-                  <>
-                    <div className="flex items-center justify-between mt-6">
-                      <label className="text-white font-medium">Number of rounds</label>
-                      <Info className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <Select 
-                      value={formData.rounds} 
-                      onValueChange={(value) => handleSelectChange("rounds", value)}
-                    >
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                        <SelectValue placeholder="Select rounds" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                        <SelectItem value="1">1 Round</SelectItem>
-                        <SelectItem value="3">3 Rounds</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </>
-                )}
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Team slots</label>
@@ -277,18 +259,18 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                 <Select 
                   value={formData.max_teams.toString()} 
                   onValueChange={(value) => handleSelectChange("max_teams", value)}
-                >
+                  >
                   <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Select slots" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700 text-white">
                     {parseInt(formData.tournament_type) === 2 
                       ? [2, 4, 8].map(num => (
-                          <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                        ))
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))
                       : [2, 3, 4, 5, 6, 7, 8].map(num => (
-                          <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                        ))
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))
                     }
                   </SelectContent>
                 </Select>
@@ -300,7 +282,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                 <Select 
                   value={formData.players_per_team.toString()} 
                   onValueChange={(value) => handleSelectChange("players_per_team", value)}
-                >
+                  >
                   <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Select players" />
                   </SelectTrigger>
@@ -310,6 +292,26 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     ))}
                   </SelectContent>
                 </Select>
+                    {(parseInt(formData.tournament_type) === 0 || parseInt(formData.tournament_type) === 1) && (
+                      <>
+                        <div className="flex items-center justify-between mt-6">
+                          <label className="text-white font-medium">Number of rounds</label>
+                          <Info className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <Select 
+                          value={formData.rounds} 
+                          onValueChange={(value) => handleSelectChange("rounds", value)}
+                        >
+                          <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                            <SelectValue placeholder="Select rounds" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectItem value="1">1 Round</SelectItem>
+                            <SelectItem value="3">3 Rounds</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </>
+                    )}
               </div>
               
               <div className="space-y-4 md:col-span-2">
@@ -396,7 +398,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
               <h3 className="text-lg text-white">Estimated tournament matches time :</h3>
               <div className="grid grid-cols-1 gap-2 mt-4">
                 <div className="text-2xl font-bold text-white">{estimatedMatches} Matches</div>
-                <div className="text-2xl font-bold text-yellow-400">
+                <div className="text-2xl font-bold text-primary">
                   {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""})
                 </div>
               </div>
@@ -405,7 +407,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
             <div className="flex justify-center mt-6">
               <Button 
                 type="submit" 
-                className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-2 text-lg"
+                className="bg-primary hover:bg-primary/90 text-black px-8 py-2 text-lg"
                 disabled={isLoading}
               >
                 {isLoading ? "Creating..." : "VALIDATE"}
