@@ -324,7 +324,13 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <label className="text-white font-medium">Tournament Format</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
+
+'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
+
+'Arena' is a knockout tournament team versus team where you will have to win round(s) with Home/Away match(es).">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <Select 
                     value={formData.tournament_type} 
@@ -344,7 +350,9 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                   
                   <div className="flex items-center justify-between mt-6">
                     <label className="text-white font-medium">Team slots</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="Total number of teams in the tournament.">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <Select 
                     value={formData.max_teams.toString()} 
@@ -368,7 +376,9 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                   
                   <div className="flex items-center justify-between mt-6">
                     <label className="text-white font-medium">Player(s) per team</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="Total number of player(s) per team in the tournament.">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <Select 
                     value={formData.players_per_team.toString()} 
@@ -387,7 +397,9 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                   
                   <div className="flex items-center justify-between mt-6">
                     <label className="text-white font-medium">Number of rounds</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="Total number of round(s) in the tournament.">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <Select 
                     value={formData.rounds} 
@@ -409,7 +421,9 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                   
                   <div className="flex items-center justify-between mt-6">
                     <label className="text-white font-medium">Tournament status</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="Modify status if tournament is not started / ended / cancelled.">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <Select 
                     value={formData.status.toString()} 
@@ -435,7 +449,9 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                 <div className="space-y-4 md:col-span-2">
                   <div className="flex items-center justify-between">
                     <label className="text-white font-medium">Tournament name</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="Tournament name is limited by 40 characters.">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <Input
                     name="name"
@@ -443,11 +459,14 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                     onChange={handleInputChange}
                     className="bg-gray-800 border-gray-700 text-white"
                     placeholder="Enter tournament name"
+                    maxLength={40}
                   />
                   
                   <div className="flex items-center justify-between mt-6">
                     <label className="text-white font-medium">Tournament rules</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="Rules of the tournament.">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <Textarea
                     name="rules"
@@ -459,7 +478,9 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                   
                   <div className="flex items-center justify-between mt-6">
                     <label className="text-white font-medium">Agent Level required</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="User level required to join the tournament.">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <Input
                     value={formData.agent_level_required}
@@ -469,7 +490,9 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                   
                   <div className="flex items-center justify-between mt-6">
                     <label className="text-white font-medium">Tournament entry code</label>
-                    <Info className="h-5 w-5 text-gray-400" />
+                    <span title="Code required to join the tournament.">
+                      <Info className="h-5 w-5 text-gray-400" />
+                    </span>
                   </div>
                   <div className="bg-gray-800 border border-gray-700 text-white p-3 rounded-md">
                     {formData.entry_code ? "Yes" : "No"}

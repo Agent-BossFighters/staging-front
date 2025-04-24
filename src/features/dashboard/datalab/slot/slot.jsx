@@ -36,17 +36,17 @@ export default function Slot({ slots, loading }) {
               COST
             </TableHead>
             <TableHead>
-              BONUS BFT
+              BONUS $BFT
               <br />
               /SLOT
             </TableHead>
             <TableHead>
-              NORMAL BFT
+              NORMAL $BFT
               <br />
               /BADGE
             </TableHead>
             <TableHead>
-              BONUS BFT
+              BONUS $BFT
               <br />
               /BADGE
             </TableHead>

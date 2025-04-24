@@ -58,6 +58,7 @@ export default function DailyContainer() {
           onAdd={addMatch}
           onUpdate={updateMatch}
           onDelete={deleteMatch}
+          selectedDate={selectedDate}
         />
       )}
     </div>

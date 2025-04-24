@@ -76,7 +76,7 @@ export function MatchDialogs({
         title={t.editTimeout.title}
         message={t.editTimeout.message}
         confirmText={t.editTimeout.confirm}
-        cancelText=""
+        cancelText={t.editTimeout.confirm}
       />
     </>
   );

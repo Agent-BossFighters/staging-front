@@ -126,12 +126,11 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
         <Table className="w-full min-w-[900px]">
           <TableHeader>
             <TableRow className="text-sm bg-gray-800 text-white border-b border-gray-700">
-              <TableHead className="w-[16%] py-3">NAME</TableHead>
+              <TableHead className="w-[18%] py-3">NAME</TableHead>
               <TableHead className="w-[7%] py-3">TYPE</TableHead>
-              <TableHead className="w-[7%] py-3">MODE</TableHead>
-              <TableHead className="w-[12%] py-3">RULES</TableHead>
+              <TableHead className="w-[10%] py-3">MODE</TableHead>
               <TableHead className="w-[10%] py-3">STATUS</TableHead>
-              <TableHead className="w-[8%] py-3">TEAM</TableHead>
+              <TableHead className="w-[8%] py-3">TEAMS</TableHead>
               <TableHead className="w-[9%] py-3">PLAYER(S) <br /> PER TEAM</TableHead>
               <TableHead className="w-[8%] py-3">PLAYER(S) <br /> /SLOTS</TableHead>
               <TableHead className="w-[7%] py-3">ROUND(S)</TableHead>
@@ -165,11 +164,6 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
                   </TableCell>
                   <TableCell className="py-3">
                     {mode}
-                  </TableCell>
-                  <TableCell className="truncate py-3" title={tournament.rules}>
-                    {tournament.rules 
-                      ? tournament.rules.substring(0, 50) + (tournament.rules.length > 50 ? "..." : "") 
-                      : "No rules specified"}
                   </TableCell>
                   <TableCell className="py-3">
                     <Badge className={status.colorClass}>

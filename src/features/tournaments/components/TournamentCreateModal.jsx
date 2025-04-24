@@ -235,7 +235,13 @@ One rule survive and kill the Boss!`;
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <label className="text-white font-medium">Tournament format</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
+
+'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
+
+'Arena' is a knockout tournament team versus team where you will have to win round(s) with Home/Away match(es).">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Select 
                   value={formData.tournament_type} 
@@ -254,7 +260,9 @@ One rule survive and kill the Boss!`;
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Team slots</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Total number of teams in the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Select 
                   value={formData.max_teams.toString()} 
@@ -277,7 +285,9 @@ One rule survive and kill the Boss!`;
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Player(s) per team</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Total number of player(s) per team in the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Select 
                   value={formData.players_per_team.toString()} 
@@ -296,7 +306,9 @@ One rule survive and kill the Boss!`;
                       <>
                         <div className="flex items-center justify-between mt-6">
                           <label className="text-white font-medium">Number of rounds</label>
-                          <Info className="h-5 w-5 text-gray-400" />
+                          <span title="Total number of round(s) in the tournament.">
+                            <Info className="h-5 w-5 text-gray-400" />
+                          </span>
                         </div>
                         <Select 
                           value={formData.rounds} 
@@ -317,7 +329,9 @@ One rule survive and kill the Boss!`;
               <div className="space-y-4 md:col-span-2">
                 <div className="flex items-center justify-between">
                   <label className="text-white font-medium">Tournament name</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Tournament name is limited by 40 characters.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Input
                   name="name"
@@ -325,11 +339,14 @@ One rule survive and kill the Boss!`;
                   onChange={handleInputChange}
                   className="bg-gray-800 border-gray-700 text-white"
                   placeholder="Enter tournament name"
+                  maxLength={40}
                 />
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Tournament rules</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Rules of the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Textarea
                   name="rules"
@@ -341,7 +358,9 @@ One rule survive and kill the Boss!`;
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Agent Level required</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="User level required to join the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Input
                   type="number"
@@ -362,7 +381,9 @@ One rule survive and kill the Boss!`;
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Tournament entry code</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Code required to join the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Select 
                   value={formData.entry_code ? "Yes" : "No"} 
