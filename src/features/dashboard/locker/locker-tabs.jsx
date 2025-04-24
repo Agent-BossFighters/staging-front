@@ -12,7 +12,7 @@ const tabs = [
   { name: "CONTRACT(S)", value: "Contract" },
   { name: "BADGE(S)", value: "Badges" },
   { name: "BUILD(S)", value: "Builds" },
-  { name: "RECHARGE DISCOUNT(S)", value: "Recharge" },
+  { name: "RECHARGE DISCOUNT(S)", value: "Recharge", disabled: "true" },
 ];
 
 export default function LockerTabs() {

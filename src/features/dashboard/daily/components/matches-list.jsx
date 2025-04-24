@@ -23,6 +23,8 @@ export default function MatchesList({
   onEdit,
   onEditField,
   onCancel,
+  selectedDate,
+  initialMatchData
 }) {
   const { streamerMode } = useUserPreference();
   const [showScrollMessage, setShowScrollMessage] = useState(false);
@@ -174,6 +176,8 @@ export default function MatchesList({
               builds={builds}
               unlockedSlots={unlockedSlots}
               onSubmit={onAdd}
+              selectedDate={selectedDate}
+              initialMatchData={initialMatchData}
             />
             {visibleMatches.map((match) => (
               <MatchEntry
@@ -188,6 +192,7 @@ export default function MatchesList({
                 onEditField={onEditField}
                 onCancel={onCancel}
                 unlockedSlots={unlockedSlots}
+                selectedDate={selectedDate}
               />
             ))}
           </TableBody>

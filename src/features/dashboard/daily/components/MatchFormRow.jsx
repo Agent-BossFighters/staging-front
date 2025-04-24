@@ -12,6 +12,7 @@ import MapIcon, { GAME_MAPS, MapSelectItem } from "./MapIcon";
 import ResultIcon, { GAME_RESULTS, ResultSelectItem } from "./ResultIcon";
 import ActionButtons from "./ActionButtons";
 import { useUserPreference } from "@context/userPreference.context";
+import DateSelector from "./DateSelector";
 
 const MAX_SLOTS = 5;
 
@@ -25,19 +26,38 @@ export default function MatchFormRow({
   onCancel,
   onChange,
   onRarityChange,
+  selectedDate,
+  initialMatchData
 }) {
   const { streamerMode } = useUserPreference();
   
+  // Utiliser les données initiales si on crée un nouveau match
+  const currentData = isCreating ? { ...initialMatchData, ...data } : data;
+  
+  // Vérifier si la date sélectionnée est aujourd'hui
+  const today = new Date();
+  const isToday = selectedDate ? 
+    selectedDate.getFullYear() === today.getFullYear() &&
+    selectedDate.getMonth() === today.getMonth() &&
+    selectedDate.getDate() === today.getDate()
+    : false;
+
+  // Si ce n'est pas aujourd'hui, on ne rend rien
+  if (!isToday) {
+    return null;
+  }
+
+  // Si c'est aujourd'hui, on rend le formulaire
   return (
     <tr>
       <td className="min-w-[6%] pl-4">
         <Select
-          value={data.buildId}
+          value={currentData.buildId}
           onValueChange={(value) => onChange("buildId", value)}
         >
-          <SelectTrigger className="w-full h-8 rounded-full bg-[#212121] " title={builds.find((b) => b.id === data.buildId)?.buildName}>
+          <SelectTrigger className="w-full h-8 rounded-full bg-[#212121] " title={builds.find((b) => b.id === currentData.buildId)?.buildName}>
             <SelectValue placeholder='Select' >
-             {builds.find((b) => b.id === data.buildId)?.buildName.length < 10 ? builds.find((b) => b.id === data.buildId)?.buildName : builds.find((b) => b.id === data.buildId)?.buildName.slice(0, 10)+ '...' || 'Select'}
+             {builds.find((b) => b.id === currentData.buildId)?.buildName.length < 10 ? builds.find((b) => b.id === currentData.buildId)?.buildName : builds.find((b) => b.id === currentData.buildId)?.buildName.slice(0, 10)+ '...' || 'Select'}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -50,9 +70,9 @@ export default function MatchFormRow({
         </Select>
       </td>
       <td className="px-4 text-left min-w-[4%]">
-        {data.buildId ? (
+        {currentData.buildId ? (
           <div className="flex flex-col">
-            <span>{`${builds.find((b) => b.id === data.buildId)?.bftBonus || 0}%`}</span>
+            <span>{`${builds.find((b) => b.id === currentData.buildId)?.bftBonus || 0}%`}</span>
           </div>
         ) : (
           "-"
@@ -61,15 +81,15 @@ export default function MatchFormRow({
       {Array(MAX_SLOTS)
         .fill(null)
         .map((_, index) => (
-          <td key={index} className="px-6 min-w-[4%] pl-4 first:pl-4" title={data.rarities[index]?.split("#")[0] || ''}>
+          <td key={index} className="px-6 min-w-[4%] pl-4 first:pl-4" title={currentData.rarities[index]?.split("#")[0] || ''}>
             {!isEditing && index >= unlockedSlots ? (
               <RarityBadge rarity="none"/>
             ) : (
               <RaritySelect
-                value={data.rarities[index]}
+                value={currentData.rarities[index]}
                 onChange={(value) => onRarityChange(index, value)}
                 disabled={!isEditing && index >= unlockedSlots}
-                selectedBadges={data.rarities
+                selectedBadges={currentData.rarities
                   .filter((r, i) => i !== index && r !== "none")
                   .map((r) => {
                     const [rarity, id] = r.split("#");
@@ -85,7 +105,7 @@ export default function MatchFormRow({
           type="number"
           className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
-          value={data.time}
+          value={currentData.time}
           onChange={(e) => onChange("time", e.target.value)}
         />
       </td>
@@ -96,17 +116,17 @@ export default function MatchFormRow({
         <td className="px-4 text-left min-w-[4%] text-destructive">-</td>
       )}
       
-      <td className="min-w-[4%]" title={data.map}>
+      <td className="min-w-[4%]" title={currentData.map}>
         <Select
-          value={data.map}
+          value={currentData.map}
           onValueChange={(value) => onChange("map", value)}
         >
           <SelectTrigger className="ml-3 w-14 h-8 px-2 rounded-full bg-[#212121] ">
             <SelectValue placeholder="">
-              {data.map ? (
+              {currentData.map ? (
                 <div className="flex items-center gap-1">
-                  <MapIcon map={data.map} />
-                  <span>{GAME_MAPS[data.map]?.slice}</span>
+                  <MapIcon map={currentData.map} />
+                  <span>{GAME_MAPS[currentData.map]?.slice}</span>
                 </div>
               ) : (
                 "Select"
@@ -122,17 +142,17 @@ export default function MatchFormRow({
           </SelectContent>
         </Select>
       </td>
-      <td className="min-w-[4%]" title={data.result}>
+      <td className="min-w-[4%]" title={currentData.result}>
         <Select
-          value={data.result}
+          value={currentData.result}
           onValueChange={(value) => onChange("result", value)}
         >
           <SelectTrigger className="ml-3 w-14 h-8 px-2 rounded-full bg-[#212121] ">
             <SelectValue placeholder="">
-              {data.result ? (
+              {currentData.result ? (
                 <div className="flex items-center gap-1">
-                  <ResultIcon result={data.result} />
-                  <span>{GAME_RESULTS[data.result]?.slice}</span>
+                  <ResultIcon result={currentData.result} />
+                  <span>{GAME_RESULTS[currentData.result]?.slice}</span>
                 </div>
               ) : (
                 "Select"
@@ -153,7 +173,7 @@ export default function MatchFormRow({
           type="number"
           className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
-          value={data.bft}
+          value={currentData.bft}
           onChange={(e) => onChange("bft", e.target.value)}
         />
       </td>
@@ -174,7 +194,7 @@ export default function MatchFormRow({
         <Input
           type="number"
           className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
-          value={data.flex || "0"}
+          value={currentData.flex || "0"}
           onChange={(e) => onChange("flex", e.target.value)}
         />
       </td>

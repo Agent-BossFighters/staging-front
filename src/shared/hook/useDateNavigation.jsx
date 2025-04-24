@@ -11,7 +11,6 @@ export const useDateNavigation = (initialDate = new Date()) => {
       
       // Calculer la limite de jours dans le passé
       const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0);
       const limitDate = new Date(currentDate);
       limitDate.setDate(currentDate.getDate() - maxDaysBack);
       
@@ -25,16 +24,11 @@ export const useDateNavigation = (initialDate = new Date()) => {
       const newDate = new Date(selectedDate);
       newDate.setDate(newDate.getDate() + 1);
       
-      // Normaliser l'heure de la nouvelle date
-      newDate.setHours(0, 0, 0, 0);
-      
       // Empêcher de naviguer vers des dates futures
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
       
       if (newDate <= today) {
         setSelectedDate(newDate);
-      } else {
       }
     };
     
