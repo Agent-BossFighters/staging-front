@@ -6,6 +6,7 @@ import { useAuth } from '@context/auth.context';
 import toast from 'react-hot-toast';
 import { AuthUtils } from '@utils/api/auth.utils';
 import { XPUpdateContext } from '@/features/dashboard/main/xp/xp-progress';
+import XPDisplay from './XPDisplay';
 
 const QuestSection = () => {
   const { user } = useAuth();
@@ -84,6 +85,8 @@ const QuestSection = () => {
           
           // Mise à jour réussie, rafraîchir l'affichage de l'XP
           refreshXP();
+          // Déclencher un événement pour mettre à jour l'affichage XP
+          document.dispatchEvent(new Event('xp-updated'));
         })
         .catch(error => {
           console.error("Erreur ignorée:", error);
@@ -96,6 +99,8 @@ const QuestSection = () => {
           
           // Rafraîchir la barre d'XP pour qu'elle reflète les changements dans le localStorage
           refreshXP();
+          // Déclencher un événement pour mettre à jour l'affichage XP
+          document.dispatchEvent(new Event('xp-updated'));
         });
     } catch (error) {
       console.error("Erreur inattendue:", error);
@@ -121,68 +126,81 @@ const QuestSection = () => {
   const socialQuests = quests.filter(quest => quest.quest_type === 'social' || quest.id.includes('social'));
 
   return (
-    <div className="w-full">
-      {/* Quêtes quotidiennes */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-5 uppercase">Daily Quests</h2>
+    <div className="grid grid-cols-12 gap-4">
+      {/* Colonne gauche - XP et niveau */}
+      <div className="col-span-3">
+        <XPDisplay />
+      </div>
+
+      {/* Colonne centrale - contenu principal */}
+      <div className="col-span-6">
+        {/* Quêtes quotidiennes */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white mb-5 uppercase">Daily Quests</h2>
+          <div>
+            {dailyQuests.map((quest) => (
+              <div 
+                key={quest.id}
+                onClick={() => quest.completable ? handleQuestProgress(quest.id, quest.progress_required) : null}
+                className={quest.completable && !quest.completed ? "cursor-pointer" : quest.completed ? "opacity-50" : "opacity-50 cursor-not-allowed"}
+                title={!quest.completable && !quest.completed ? "Complétez d'abord 5 matchs aujourd'hui" : ""}
+              >
+                {quest.title === "Daily Login" ? (
+                  <Quest 
+                    icon={<img src={quest.icon_url || loginQuest} alt={quest.title} className="w-full h-full object-contain" />}
+                    title={quest.title}
+                    status={quest.completed ? "FINISHED" : ""}
+                    progress={quest.progress_required > 1 ? `${quest.current_progress}/${quest.progress_required}` : undefined}
+                    xp={quest.xp_reward}
+                  />
+                ) : quest.id === "daily_matches" ? (
+                  <Quest 
+                    icon={<img src={quest.icon || matchesQuest} alt={quest.title} className="w-full h-full object-contain" />}
+                    title={quest.title}
+                    status={quest.completed ? "FINISHED" : (quest.current_progress >= quest.progress_required && !quest.completed) ? "" : ""}
+                    progress={quest.current_progress < quest.progress_required ? `${quest.current_progress}/${quest.progress_required}` : null}
+                    xp={quest.xp_reward}
+                  />
+                ) : (
+                  <Quest 
+                    icon={<img src={quest.icon || matchesQuest} alt={quest.title} className="w-full h-full object-contain" />}
+                    title={quest.title}
+                    status={quest.completed ? "FINISHED" : (quest.current_progress >= quest.progress_required && !quest.completed) ? "" : ""}
+                    progress={quest.progress_required > 1 && quest.current_progress < quest.progress_required ? `${quest.current_progress}/${quest.progress_required}` : null}
+                    xp={quest.xp_reward}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Quêtes sociales */}
         <div>
-          {dailyQuests.map((quest) => (
-            <div 
-              key={quest.id}
-              onClick={() => quest.completable ? handleQuestProgress(quest.id, quest.progress_required) : null}
-              className={quest.completable && !quest.completed ? "cursor-pointer" : quest.completed ? "opacity-50" : "opacity-50 cursor-not-allowed"}
-              title={!quest.completable && !quest.completed ? "Complétez d'abord 5 matchs aujourd'hui" : ""}
-            >
-              {quest.title === "Daily Login" ? (
+          <h2 className="text-2xl font-bold text-white mb-5 uppercase">Social Quests</h2>
+          <div>
+            {socialQuests.map((quest) => (
+              <div 
+                key={quest.id}
+                onClick={() => quest.completable ? handleQuestProgress(quest.id, quest.progress_required) : null}
+                className={quest.completable && !quest.completed ? "cursor-pointer" : quest.completed ? "opacity-50" : "opacity-50 cursor-not-allowed"}
+              >
                 <Quest 
-                  icon={<img src={quest.icon_url || loginQuest} alt={quest.title} className="w-full h-full object-contain" />}
-                  title={quest.title}
+                  icon={<img src={quest.icon || xQuest} alt={quest.name} className="w-full h-full object-contain" />}
+                  title={quest.name}
                   status={quest.completed ? "FINISHED" : ""}
                   progress={quest.progress_required > 1 ? `${quest.current_progress}/${quest.progress_required}` : undefined}
-                  xp={quest.xp_reward}
+                  xp={quest.reward_xp}
                 />
-              ) : quest.id === "daily_matches" ? (
-                <Quest 
-                  icon={<img src={quest.icon || matchesQuest} alt={quest.title} className="w-full h-full object-contain" />}
-                  title={quest.title}
-                  status={quest.completed ? "FINISHED" : (quest.current_progress >= quest.progress_required && !quest.completed) ? "" : ""}
-                  progress={quest.current_progress < quest.progress_required ? `${quest.current_progress}/${quest.progress_required}` : null}
-                  xp={quest.xp_reward}
-                />
-              ) : (
-                <Quest 
-                  icon={<img src={quest.icon || matchesQuest} alt={quest.title} className="w-full h-full object-contain" />}
-                  title={quest.title}
-                  status={quest.completed ? "FINISHED" : (quest.current_progress >= quest.progress_required && !quest.completed) ? "" : ""}
-                  progress={quest.progress_required > 1 && quest.current_progress < quest.progress_required ? `${quest.current_progress}/${quest.progress_required}` : null}
-                  xp={quest.xp_reward}
-                />
-              )}
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      
-      {/* Quêtes sociales */}
-      <div>
-        <h2 className="text-2xl font-bold text-white mb-5 uppercase">Social Quests</h2>
-        <div>
-          {socialQuests.map((quest) => (
-            <div 
-              key={quest.id}
-              onClick={() => quest.completable ? handleQuestProgress(quest.id, quest.progress_required) : null}
-              className={quest.completable && !quest.completed ? "cursor-pointer" : quest.completed ? "opacity-50" : "opacity-50 cursor-not-allowed"}
-            >
-              <Quest 
-                icon={<img src={quest.icon || xQuest} alt={quest.name} className="w-full h-full object-contain" />}
-                title={quest.name}
-                status={quest.completed ? "FINISHED" : ""}
-                progress={quest.progress_required > 1 ? `${quest.current_progress}/${quest.progress_required}` : undefined}
-                xp={quest.reward_xp}
-              />
-            </div>
-          ))}
-        </div>
+
+      {/* Colonne droite (vide pour l'équilibre) */}
+      <div className="col-span-3">
+        {/* Espace réservé à droite */}
       </div>
     </div>
   );
