@@ -12,14 +12,12 @@ const MissionPageContent = () => {
       <div className="flex-1 rounded-lg border border-border p-6 relative overflow-hidden">
         <h1 className="text-5xl font-extrabold pb-2 text-primary">MISSIONS</h1>
         <p className="text-primary flex justify-center mt-2 mb-6">
-          Increase your level to 10 each month and take part in the Boss Fighters NFT raffle!
+          Increase your level to 10 each month and take part in the Boss Fighters NFT raffle !
         </p>
         
-        {/* Intégration du composant QuestSection avec largeur réduite et centré */}
-        <div className="mt-8 flex justify-center">
-          <div className="w-full max-w-xl">
-            <QuestSection />
-          </div>
+        {/* Intégration du composant QuestSection sur toute la largeur */}
+        <div className="mt-8">
+          <QuestSection />
         </div>
         
         {/* Background */}

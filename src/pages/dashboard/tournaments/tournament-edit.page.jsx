@@ -293,14 +293,6 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
 
   if (!isOpen) return null;
 
-  const statusOptions = [
-    { value: "0", label: "Draft" },
-    { value: "1", label: "Open" },
-    { value: "2", label: "In Progress" },
-    { value: "3", label: "Completed" },
-    { value: "4", label: "Cancelled" },
-  ];
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="relative w-full max-w-6xl">
@@ -416,32 +408,6 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                     <SelectContent className="bg-gray-800 border-gray-700 text-white">
                       <SelectItem value="1">1 Round</SelectItem>
                       <SelectItem value="3">3 Rounds</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <div className="flex items-center justify-between mt-6">
-                    <label className="text-white font-medium">Tournament status</label>
-                    <span title="Modify status if tournament is not started / ended / cancelled.">
-                      <Info className="h-5 w-5 text-gray-400" />
-                    </span>
-                  </div>
-                  <Select 
-                    value={formData.status.toString()} 
-                    onValueChange={(value) => handleSelectChange("status", value)}
-                  >
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                      <SelectValue>
-                        {formData.status === 0 || formData.status === "0" ? "Draft" : ""}
-                        {formData.status === 1 || formData.status === "1" ? "Open" : ""}
-                        {formData.status === 2 || formData.status === "2" ? "In Progress" : ""}
-                        {formData.status === 3 || formData.status === "3" ? "Completed" : ""}
-                        {formData.status === 4 || formData.status === "4" ? "Cancelled" : ""}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                      {statusOptions.map(option => (
-                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                      ))}
                     </SelectContent>
                   </Select>
                 </div>
