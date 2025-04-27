@@ -23,17 +23,17 @@ export const WINNER_ICON = '👑';
  * Correspondance des couleurs pour les différents statuts de tournoi
  */
 export const STATUS_COLORS = {
-  draft: "bg-gray-500 text-white",
-  open: "bg-yellow-400 text-black",
-  pending: "bg-yellow-400 text-black",
-  in_progress: "bg-green-500 text-black",
-  completed: "bg-blue-500 text-black",
-  cancelled: "bg-red-500 text-white",
-  0: "bg-gray-500 text-white", // draft
-  1: "bg-yellow-400 text-black", // open
-  2: "bg-green-500 text-black", // in_progress
-  3: "bg-blue-500 text-black", // completed
-  4: "bg-red-500 text-white", // cancelled
+  draft: "bg-gray-500/70 text-[#F1F1F1]",
+  open: "bg-primary/70 text-[#F1F1F1]",
+  pending: "bg-primary/70 text-[#F1F1F1]",
+  in_progress: "bg-green-500/70 text-[#F1F1F1]",
+  completed: "bg-blue-500/70 text-[#F1F1F1]",
+  cancelled: "bg-red-500/70 text-[#F1F1F1]",
+  0: "bg-gray-500 text-[#F1F1F1]", // draft
+  1: "bg-primary70 text-[#F1F1F1]", // open
+  2: "bg-green-500 text-[#F1F1F1]", // in_progress
+  3: "bg-blue-500 text-[#F1F1F1]", // completed
+  4: "bg-red-500 text-[#F1F1F1]", // cancelled
 };
 
 /**

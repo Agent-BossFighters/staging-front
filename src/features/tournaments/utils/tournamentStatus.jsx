@@ -95,10 +95,6 @@ export const isRegistrationOpen = (tournament) => {
   if (!tournament) return false;
   const now = new Date();
   const startTime = tournament.scheduled_start_time ? new Date(tournament.scheduled_start_time) : null;
-  
-  // Le tournoi est ouvert à l'inscription si:
-  // 1. Il n'a pas de date de début définie, OU
-  // 2. La date de début est dans le futur
   return !startTime || now < startTime;
 };
 
@@ -182,11 +178,7 @@ export const getStatusColor = (tournament) => {
  */
 export const canJoinTournament = (tournament, userTeam, isTeamsFull, isCreator) => {
   if (!tournament) return false;
-  return isTournamentOpen(tournament) && 
-         isRegistrationOpen(tournament) &&
-         !userTeam && 
-         !isTeamsFull &&
-         !isCreator;
+  return isTournamentOpen(tournament) && !userTeam && !isCreator;
 };
 
 /**

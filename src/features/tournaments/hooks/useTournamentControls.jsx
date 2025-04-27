@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { kyInstance } from "@utils/api/ky-config";
 import toast from "react-hot-toast";
 import generateTournamentMatches from "../utils/generateMatchesTournament";
+import { isTournamentInProgress } from "../utils/tournamentStatus";
 
 /**
  * Hook pour gérer les contrôles d'un tournoi
@@ -33,6 +34,7 @@ const useTournamentControls = (
   const navigate = useNavigate();
   const [startingTournament, setStartingTournament] = useState(false);
   const [deletingTournament, setDeletingTournament] = useState(false);
+  const [cancelingTournament, setCancelingTournament] = useState(false);
   const [generatingMatches, setGeneratingMatches] = useState(false);
 
   // Fonction pour démarrer le tournoi
@@ -54,7 +56,7 @@ const useTournamentControls = (
       // Générer les matchs automatiquement selon le type de tournoi
       await generateMatches();
       
-      toast.success("Le tournoi a démarré avec succès !");
+      toast.success("Tournament started successfully!");
       
       // Rafraîchir les données
       await refetchTournament();
@@ -62,8 +64,8 @@ const useTournamentControls = (
       await refetchMatches();
       
     } catch (error) {
-      console.error("Erreur lors du démarrage du tournoi:", error);
-      toast.error("Échec du démarrage du tournoi. Veuillez réessayer.");
+      console.error("Error starting tournament:", error);
+      toast.error("Failed to start tournament. Please try again.");
     } finally {
       setStartingTournament(false);
     }
@@ -85,8 +87,8 @@ const useTournamentControls = (
         setGeneratingMatches
       );
     } catch (error) {
-      console.error("Erreur lors de la génération des matchs:", error);
-      toast.error("Échec de la génération des matchs. Veuillez réessayer.");
+      console.error("Error generating matches:", error);
+      toast.error("Failed to generate matches. Please try again.");
     } finally {
       setGeneratingMatches(false);
     }
@@ -94,9 +96,9 @@ const useTournamentControls = (
   
   // Fonction pour terminer le tournoi
   const completeTournament = async () => {
-    if (!isCreator || tournament.status !== 2) return;
+    if (!isCreator || !isTournamentInProgress(tournament)) return;
     
-    if (!window.confirm("Êtes-vous sûr de vouloir terminer ce tournoi ? Cela calculera les résultats finaux et affichera le classement définitif.")) {
+    if (!window.confirm("Are you sure you want to complete this tournament? This will calculate the final results and display the final ranking.")) {
       return;
     }
     
@@ -110,7 +112,7 @@ const useTournamentControls = (
         }
       }).json();
       
-      toast.success("Le tournoi a été terminé avec succès !");
+      toast.success("Tournament completed successfully!");
       
       // Rafraîchir les données
       await refetchTournament();
@@ -118,8 +120,43 @@ const useTournamentControls = (
       await refetchMatches();
       
     } catch (error) {
-      console.error("Erreur lors de la terminaison du tournoi:", error);
-      toast.error("Échec de la terminaison du tournoi. Veuillez réessayer.");
+      console.error("Error completing tournament:", error);
+      toast.error("Failed to complete tournament. Please try again.");
+    }
+  };
+  
+  // Fonction pour annuler le tournoi
+  const cancelTournament = async () => {
+    if (!tournament || !isCreator) return;
+    
+    if (!window.confirm("Are you sure you want to cancel this tournament? This action cannot be undone.")) {
+      return;
+    }
+    
+    setCancelingTournament(true);
+    
+    try {
+      // Mettre à jour le statut du tournoi à "cancelled" (4)
+      await kyInstance.put(`v1/tournaments/${tournament.id}`, {
+        json: {
+          tournament: {
+            status: 4 // cancelled
+          }
+        }
+      }).json();
+      
+      toast.success("Tournament cancelled successfully!");
+      
+      // Rafraîchir les données
+      await refetchTournament();
+      await refetchTeams();
+      await refetchMatches();
+      
+    } catch (error) {
+      console.error("Error cancelling tournament:", error);
+      toast.error("Failed to cancel tournament. Please try again.");
+    } finally {
+      setCancelingTournament(false);
     }
   };
   
@@ -127,7 +164,13 @@ const useTournamentControls = (
   const deleteTournament = async () => {
     if (!tournament || !isCreator) return;
     
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce tournoi ? Cette action est irréversible.")) {
+    // Empêcher la suppression si le tournoi est démarré ou terminé
+    if (tournament.status === 2 || tournament.status === 3) {
+      toast.error("Cannot delete a tournament that has started. You can cancel it instead.");
+      return;
+    }
+    
+    if (!window.confirm("Are you sure you want to delete this tournament? This action is irreversible.")) {
       return;
     }
     
@@ -137,7 +180,7 @@ const useTournamentControls = (
       // Envoyer une requête pour supprimer le tournoi
       await kyInstance.delete(`v1/tournaments/${tournament.id}`).json();
       
-      toast.success("Le tournoi a été supprimé avec succès !");
+      toast.success("Tournament deleted successfully!");
       
       // Appeler le callback pour réinitialiser l'UI si fourni
       if (typeof onTournamentDeleted === 'function') {
@@ -149,8 +192,8 @@ const useTournamentControls = (
       navigate('/dashboard/fighting', { replace: true });
       
     } catch (error) {
-      console.error("Erreur lors de la suppression du tournoi:", error);
-      toast.error("Échec de la suppression du tournoi. Veuillez réessayer.");
+      console.error("Error deleting tournament:", error);
+      toast.error("Failed to delete tournament. Please try again.");
     } finally {
       setDeletingTournament(false);
     }
@@ -166,10 +209,12 @@ const useTournamentControls = (
   return {
     startingTournament,
     deletingTournament,
+    cancelingTournament,
     generatingMatches,
     startTournament,
     completeTournament,
     deleteTournament,
+    cancelTournament,
     editTournament,
     generateMatches
   };

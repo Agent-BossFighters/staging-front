@@ -37,6 +37,7 @@ export const ConfirmDialog = ({
           <Button
             variant="secondary"
             onClick={onClose}
+            className="font-bold uppercase"
           >
               {cancelText}
             </Button>

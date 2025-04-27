@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { formatTimeOrScore } from '../../utils/timeFormatters';
 import { WINNER_ICON } from '../../constants/uiConfigs';
 
@@ -15,24 +15,32 @@ const TeamRanking = ({
       <div className="bg-gray-900 p-4 mt-1">
         <table className="w-full text-white">
           <thead>
-            <tr className="border-b border-gray-700">
-              <th className="py-2 text-center">#</th>
-              <th className="py-2 text-left">TEAM</th>
-              <th className="py-2 text-right">TOTAL {isShowtimeSurvival ? "TEMPS" : "DAMAGE"}</th>
+            <tr className="border-b border-gray-700 gap-4">
+              <th className="py-2 text-left">#</th>
+              <th className="py-2 text-left min-w-[120px]">TEAM</th>
+              <th className="py-2 text-left">TOTAL {isShowtimeSurvival ? "TIME" : "SCORE"}</th>
+              <th className="py-2 text-left">
+                {isShowtimeSurvival ? "BOSS SCORE" : "LIVES LEFT"}
+              </th>
             </tr>
           </thead>
           <tbody>
             {teamScores.map((scoreData, index) => (
-              <tr key={scoreData.team.id} className="border-b border-gray-700">
-                <td className="py-2 text-center">{index + 1}</td>
-                <td className="py-2 truncate">
-                  {scoreData.team.name}
-                  {tournament.status === 3 && index === 0 && (
-                    <span className="ml-2 text-yellow-400">{WINNER_ICON}</span>
+              <tr key={scoreData.team.id} className="border-b border-gray-700 gap-4">
+                <td className="py-2 text-left">{index + 1}</td>
+                <td className="py-2 truncate min-w-[120px]" title={scoreData.team.name}>
+                  {scoreData.team.name.length < 15 ? scoreData.team.name : scoreData.team.name.slice(0, 15) + "..."}
+                  {tournament.status === "completed" && index === 0 && (
+                    <span className="ml-2 text-primary">{WINNER_ICON}</span>
                   )}
                 </td>
-                <td className="py-2 text-right font-bold">
+                <td className="py-2 text-left font-bold">
                   {formatTimeOrScore(scoreData.mainPoints, isShowtimeSurvival ? "time" : "score")}
+                </td>
+                <td className="py-2 text-left">
+                  {isShowtimeSurvival 
+                    ? scoreData.bossPoints 
+                    : scoreData.bossPoints}
                 </td>
               </tr>
             ))}

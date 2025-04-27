@@ -18,24 +18,24 @@ const Quest = ({ icon, status, progress, xp, title }) => {
   // Styles en fonction du statut
   const statusStyles = {
     badge: isFinished 
-      ? 'bg-gray-600 text-white' 
+      ? 'bg-white text-black bg-opacity-50' 
       : isLocked
-        ? 'bg-red-500/50 text-white'
-        : 'bg-yellow-400 text-black',
+        ? 'bg-white text-black bg-opacity-50'
+        : 'bg-primary text-black',
     icon: isFinished
       ? 'bg-none text-white'
       : isLocked
         ? 'bg-none text-white/50'
         : 'bg-none text-white',
     container: isFinished
-      ? 'opacity-50'  // Augmenté de 40% à 70%
+      ? 'bg-[rgba(231,230,251,0.2)] border-2 border-solid border-[rgba(231,230,251,0.3)] shadow-[4px_4px_4px_2px_rgba(0,0,0,0.4)]'
       : isLocked
-        ? 'opacity-80'  // Augmenté de 30% à 60% 
-        : 'opacity-80'  // Augmenté de 60% à 90%
+        ? 'bg-[rgba(231,230,200,0.1)] border-2 border-solid border-[rgba(231,230,200,0.2)] shadow-[4px_4px_4px_2px_rgba(0,0,0,0.4)]'
+        : 'bg-[rgba(231,230,251,0.2)] border-2 border-solid border-[rgba(231,230,251,0.3)] shadow-[4px_4px_4px_2px_rgba(0,0,0,0.4)]'
   };
   
   return (
-    <div className={`bg-[#737578] py-5 px-6 flex items-center justify-between mb-1 rounded-lg ${statusStyles.container}`}>
+    <div className={`bg-[#737578] py-5 px-6 flex items-center justify-between mb-3 rounded-2xl ${statusStyles.container}`}>
       <div className="flex items-center gap-4">
         <div className={`${statusStyles.icon} rounded-full p-2 flex items-center justify-center w-12 h-12`}>
           <div className="w-10 h-10 flex items-center justify-center">
@@ -43,17 +43,17 @@ const Quest = ({ icon, status, progress, xp, title }) => {
           </div>
         </div>
         {/* Affiche le titre seulement s'il est fourni */}
-        <span className="text-white">{title || ''}</span>
+        <span className="text-white text-xl font-semibold">{title || ''}</span>
       </div>
       <div className="flex items-center gap-2">
-        <span className={`${statusStyles.badge} text-xs py-1 px-2 rounded`}>
+        <span className={`${statusStyles.badge} py-2 text-xl min-w-[120px] text-center font-semibold px-4 rounded-2xl mr-4`}>
           {isFinished 
             ? 'CLAIMED' 
             : progress 
               ? progress 
               : 'CLAIM'}
         </span>
-        <span className="text-yellow-400 text-sm font-medium">+{xp} XP</span>
+        <span className="text-primary text-xl min-w-[85px] font-medium">+{xp} XP</span>
       </div>
     </div>
   );

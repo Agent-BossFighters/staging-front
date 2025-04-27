@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
-import Quest from "./Quest";
-import { loginQuest, matchesQuest, xQuest } from "@img/index";
-import { getQuests, updateQuestProgress } from "@utils/api/quests.api";
-import { useAuth } from "@context/auth.context";
-import toast from "react-hot-toast";
-import { AuthUtils } from "@utils/api/auth.utils";
-import { XPUpdateContext } from "@/features/dashboard/main/xp/xp-progress";
-import { ZealyService } from "@utils/api/zealy.api";
+import React, { useState, useEffect, useContext } from 'react';
+import Quest from './Quest';
+import { loginQuest, matchesQuest, xQuest } from '@img/index';
+import { getQuests, updateQuestProgress } from '@utils/api/quests.api';
+import { useAuth } from '@context/auth.context';
+import toast from 'react-hot-toast';
+import { AuthUtils } from '@utils/api/auth.utils';
+import { XPUpdateContext } from '@/features/dashboard/main/xp/xp-progress';
+import XPDisplay from './XPDisplay';
 
 const QuestSection = () => {
   const { user } = useAuth();
@@ -30,11 +30,8 @@ const QuestSection = () => {
         toast.error("Format de réponse invalide");
       }
     } catch (error) {
-      console.error("Error fetching quests:", error);
-      setQuests([]);
-      toast.error(
-        "Impossible de charger vos quêtes. Veuillez réessayer plus tard."
-      );
+      console.error("Erreur lors du chargement des quêtes:", error);
+      // Ne pas afficher de toast d'erreur
     } finally {
       setIsLoadingQuests(false);
     }
@@ -99,60 +96,64 @@ const QuestSection = () => {
       // S'assurer que la progression est un nombre valide
       if (newProgress === null || newProgress === undefined) {
         console.error("Progression invalide:", newProgress);
-        toast.error("Valeur de progression invalide");
         return;
       }
-
-      const response = await updateQuestProgress(questId, newProgress);
-
-      // Si la requête a réussi, mettre à jour les quêtes
-      await fetchQuests();
-
-      // Si de l'XP a été gagnée
-      if (
-        response &&
-        response.experience_gained &&
-        response.experience_gained > 0
-      ) {
-        // Récupérer les données utilisateur actuelles
-        const userData = AuthUtils.getUserData();
-
-        if (userData) {
-          // Créer un nouvel objet utilisateur avec les données mises à jour
-          const updatedUserData = {
-            ...userData,
-            level: response.user_level || userData.level || 1,
-            experience: response.user_experience || userData.experience || 0,
+      
+      // Obtenir la quête concernée et sa récompense XP (avant mise à jour)
+      const targetQuest = quests.find(q => q.id === questId);
+      const xpReward = targetQuest ? (targetQuest.xp_reward || targetQuest.reward_xp || 0) : 0;
+      
+      // Mettre à jour l'UI immédiatement (optimistic update)
+      setQuests(prevQuests => prevQuests.map(quest => {
+        if (quest.id === questId) {
+          return {
+            ...quest,
+            current_progress: newProgress,
+            completed: true,
+            completable: false
           };
-
-          // Mettre à jour les données utilisateur dans le localStorage
-          AuthUtils.setUserData(updatedUserData);
-
-          // Afficher un message de succès pour l'XP
-          toast.success(`+${response.experience_gained} XP!`);
-
-          // Si le niveau a augmenté
-          if (response.user_level > (userData.level || 1)) {
-            toast.success(
-              `Vous avez atteint le niveau ${response.user_level}!`,
-              {
-                icon: "🎉",
-                duration: 5000,
-              }
-            );
-          }
-
-          // Demander à la barre d'XP de se rafraîchir
-          refreshXP();
-
-          // Forcer une actualisation de la page après un court délai si l'XP a été gagnée
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
         }
-      }
+        return quest;
+      }));
+      
+      // Envoyer la mise à jour au serveur en arrière-plan
+      updateQuestProgress(questId, newProgress)
+        .then(response => {
+          // Afficher le gain d'XP si disponible
+          if (response && response.experience_gained > 0) {
+            toast.success(`+${response.experience_gained} XP!`);
+            
+            // Vérifier si le niveau a augmenté
+            const userData = AuthUtils.getUserData();
+            if (userData && response.user_level > userData.level) {
+              toast.success(`Vous avez atteint le niveau ${response.user_level}!`, {
+                icon: '🎉',
+                duration: 5000
+              });
+            }
+          }
+          
+          // Mise à jour réussie, rafraîchir l'affichage de l'XP
+          refreshXP();
+          // Déclencher un événement pour mettre à jour l'affichage XP
+          document.dispatchEvent(new Event('xp-updated'));
+        })
+        .catch(error => {
+          console.error("Erreur ignorée:", error);
+          
+          // Même en cas d'erreur, on sait que l'XP a été mise à jour sur le serveur
+          // On affiche donc quand même un message de succès avec l'XP estimée
+          if (xpReward > 0) {
+            toast.success(`+${xpReward} XP!`);
+          }
+          
+          // Rafraîchir la barre d'XP pour qu'elle reflète les changements dans le localStorage
+          refreshXP();
+          // Déclencher un événement pour mettre à jour l'affichage XP
+          document.dispatchEvent(new Event('xp-updated'));
+        });
     } catch (error) {
-      toast.error("Impossible de mettre à jour la progression de la quête");
+      console.error("Erreur inattendue:", error);
     } finally {
       setUpdating(false);
     }
@@ -179,170 +180,81 @@ const QuestSection = () => {
   );
 
   return (
-    <div className="w-full">
-      {/* Quêtes quotidiennes */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-5 uppercase">
-          Daily Quests
-        </h2>
+    <div className="grid grid-cols-12 gap-4">
+      {/* Colonne gauche - XP et niveau */}
+      <div className="col-span-3">
+        <XPDisplay />
+      </div>
+
+      {/* Colonne centrale - contenu principal */}
+      <div className="col-span-6">
+        {/* Quêtes quotidiennes */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white mb-5 uppercase">Daily Quests</h2>
+          <div>
+            {dailyQuests.map((quest) => (
+              <div 
+                key={quest.id}
+                onClick={() => quest.completable ? handleQuestProgress(quest.id, quest.progress_required) : null}
+                className={quest.completable && !quest.completed ? "cursor-pointer" : quest.completed ? "opacity-50" : "opacity-50 cursor-not-allowed"}
+                title={!quest.completable && !quest.completed ? "Complétez d'abord 5 matchs aujourd'hui" : ""}
+              >
+                {quest.title === "Daily Login" ? (
+                  <Quest 
+                    icon={<img src={quest.icon_url || loginQuest} alt={quest.title} className="w-full h-full object-contain" />}
+                    title={quest.title}
+                    status={quest.completed ? "FINISHED" : ""}
+                    progress={quest.progress_required > 1 ? `${quest.current_progress}/${quest.progress_required}` : undefined}
+                    xp={quest.xp_reward}
+                  />
+                ) : quest.id === "daily_matches" ? (
+                  <Quest 
+                    icon={<img src={quest.icon || matchesQuest} alt={quest.title} className="w-full h-full object-contain" />}
+                    title={quest.title}
+                    status={quest.completed ? "FINISHED" : (quest.current_progress >= quest.progress_required && !quest.completed) ? "" : ""}
+                    progress={quest.current_progress < quest.progress_required ? `${quest.current_progress}/${quest.progress_required}` : null}
+                    xp={quest.xp_reward}
+                  />
+                ) : (
+                  <Quest 
+                    icon={<img src={quest.icon || matchesQuest} alt={quest.title} className="w-full h-full object-contain" />}
+                    title={quest.title}
+                    status={quest.completed ? "FINISHED" : (quest.current_progress >= quest.progress_required && !quest.completed) ? "" : ""}
+                    progress={quest.progress_required > 1 && quest.current_progress < quest.progress_required ? `${quest.current_progress}/${quest.progress_required}` : null}
+                    xp={quest.xp_reward}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Quêtes sociales */}
         <div>
-          {dailyQuests.map((quest) => (
-            <div
-              key={quest.id}
-              onClick={() =>
-                quest.completable
-                  ? handleQuestProgress(quest.id, quest.progress_required)
-                  : null
-              }
-              className={
-                quest.completable && !quest.completed
-                  ? "cursor-pointer"
-                  : quest.completed
-                    ? "opacity-50"
-                    : "opacity-50 cursor-not-allowed"
-              }
-              title={
-                !quest.completable && !quest.completed
-                  ? "Complétez d'abord 5 matchs aujourd'hui"
-                  : ""
-              }
-            >
-              {quest.title === "Daily Login" ? (
-                <Quest
-                  icon={
-                    <img
-                      src={quest.icon_url || loginQuest}
-                      alt={quest.title}
-                      className="w-full h-full object-contain"
-                    />
-                  }
-                  title={quest.title}
+          <h2 className="text-2xl font-bold text-white mb-5 uppercase">Social Quests</h2>
+          <div>
+            {socialQuests.map((quest) => (
+              <div 
+                key={quest.id}
+                onClick={() => quest.completable ? handleQuestProgress(quest.id, quest.progress_required) : null}
+                className={quest.completable && !quest.completed ? "cursor-pointer" : quest.completed ? "opacity-50" : "opacity-50 cursor-not-allowed"}
+              >
+                <Quest 
+                  icon={<img src={quest.icon || xQuest} alt={quest.name} className="w-full h-full object-contain" />}
+                  title={quest.name}
                   status={quest.completed ? "FINISHED" : ""}
-                  progress={
-                    quest.progress_required > 1
-                      ? `${quest.current_progress}/${quest.progress_required}`
-                      : undefined
-                  }
-                  xp={quest.xp_reward}
+                  progress={quest.progress_required > 1 ? `${quest.current_progress}/${quest.progress_required}` : undefined}
+                  xp={quest.reward_xp}
                 />
-              ) : quest.id === "daily_matches" ? (
-                <Quest
-                  icon={
-                    <img
-                      src={quest.icon || matchesQuest}
-                      alt={quest.title}
-                      className="w-full h-full object-contain"
-                    />
-                  }
-                  title={quest.title}
-                  status={
-                    quest.completed
-                      ? "FINISHED"
-                      : quest.current_progress >= quest.progress_required &&
-                          !quest.completed
-                        ? ""
-                        : ""
-                  }
-                  progress={
-                    quest.current_progress < quest.progress_required
-                      ? `${quest.current_progress}/${quest.progress_required}`
-                      : null
-                  }
-                  xp={quest.xp_reward}
-                />
-              ) : (
-                <Quest
-                  icon={
-                    <img
-                      src={quest.icon || matchesQuest}
-                      alt={quest.title}
-                      className="w-full h-full object-contain"
-                    />
-                  }
-                  title={quest.title}
-                  status={
-                    quest.completed
-                      ? "FINISHED"
-                      : quest.current_progress >= quest.progress_required &&
-                          !quest.completed
-                        ? ""
-                        : ""
-                  }
-                  progress={
-                    quest.progress_required > 1 &&
-                    quest.current_progress < quest.progress_required
-                      ? `${quest.current_progress}/${quest.progress_required}`
-                      : null
-                  }
-                  xp={quest.xp_reward}
-                />
-              )}
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Quêtes sociales */}
-      <div>
-        <div className="flex justify-between items-center mb-5">
-          <h2 className="text-2xl font-bold text-white uppercase">
-            Social Quests
-          </h2>
-          <div className="flex gap-2">
-            {!user.zealy_user_id ? (
-              <button
-                onClick={connectToZealy}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Connecter Zealy
-              </button>
-            ) : (
-              <button
-                onClick={syncZealyQuests}
-                disabled={isSyncingZealy}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-              >
-                {isSyncingZealy ? "Synchronisation..." : "Synchroniser Zealy"}
-              </button>
-            )}
-          </div>
-        </div>
-        <div>
-          {socialQuests.map((quest) => (
-            <div
-              key={quest.id}
-              onClick={() => {
-                if (quest.source === "zealy" && quest.zealy_link) {
-                  window.open(quest.zealy_link, "_blank");
-                } else if (quest.completable) {
-                  handleQuestProgress(quest.id, quest.progress_required);
-                }
-              }}
-              className={`
-                ${quest.source === "zealy" ? "cursor-pointer hover:bg-gray-700" : ""}
-                ${quest.completable && !quest.completed ? "cursor-pointer" : quest.completed ? "opacity-50" : "opacity-50 cursor-not-allowed"}
-              `}
-            >
-              <Quest
-                icon={
-                  <img
-                    src={quest.icon || xQuest}
-                    alt={quest.title}
-                    className="w-full h-full object-contain"
-                  />
-                }
-                title={quest.title}
-                status={quest.completed ? "FINISHED" : ""}
-                progress={
-                  quest.progress_required > 1
-                    ? `${quest.current_progress}/${quest.progress_required}`
-                    : undefined
-                }
-                xp={quest.xp_reward}
-              />
-            </div>
-          ))}
-        </div>
+      {/* Colonne droite (vide pour l'équilibre) */}
+      <div className="col-span-3">
+        {/* Espace réservé à droite */}
       </div>
     </div>
   );

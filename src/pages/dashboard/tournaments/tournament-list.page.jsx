@@ -78,7 +78,7 @@ export default function TournamentListPage() {
           navigate('/dashboard/fighting', { replace: true });
           setSelectedTournamentId(null);
           setShowTournamentDetails(false);
-          toast.error(`Le tournoi avec l'ID ${tournamentIdFromUrl} n'a pas été trouvé ou a été supprimé.`);
+          toast.error(`The tournament with the ID ${tournamentIdFromUrl} was not found or has been deleted.`);
         }
       }
     }
@@ -119,7 +119,6 @@ export default function TournamentListPage() {
   
   // Fonction pour afficher les détails d'un tournoi
   const handleOpenTournament = (tournament) => {
-    console.log("Opening tournament:", tournament.name, tournament.id);
     setSelectedTournamentId(tournament.id);
     setShowTournamentDetails(true);
     
@@ -176,22 +175,13 @@ export default function TournamentListPage() {
     
     return (
       <div className="w-full h-full mt-4">
-        <div className="mb-4 flex justify-end">
-          <Button 
-            variant="default" 
-            className="flex items-center gap-2"
-            onClick={handleBackToList}
-          >
-            <ArrowLeft size={16} />
-            Back to List
-          </Button>
-        </div>
         <TournamentBracketShowtime 
           tournament={tournament} 
           teams={teams || []} 
           matches={matches || []}
           onMatchUpdated={refetchMatches}
           onTournamentDeleted={handleTournamentDeleted}
+          onBackToList={handleBackToList}
         />
       </div>
     );

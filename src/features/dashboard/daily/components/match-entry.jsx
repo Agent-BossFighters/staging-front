@@ -27,11 +27,23 @@ export default function MatchEntry({
   onEditField,
   onCancel,
   unlockedSlots,
+  selectedDate,
+  initialMatchData
 }) {
-  const [formData, setFormData] = useState(() => ({
-    ...INITIAL_FORM_STATE,
-    rarities: Array(MAX_SLOTS).fill("none"),
-  }));
+  console.log("MatchEntry - Initial match data:", initialMatchData);
+  console.log("MatchEntry - Is creating:", isCreating);
+
+  const [formData, setFormData] = useState(() => {
+    const initialData = {
+      ...INITIAL_FORM_STATE,
+      ...(isCreating && initialMatchData ? initialMatchData : {}),
+      rarities: isCreating && initialMatchData?.rarities 
+        ? initialMatchData.rarities 
+        : Array(MAX_SLOTS).fill("none"),
+    };
+    console.log("MatchEntry - Form data initialized with:", initialData);
+    return initialData;
+  });
   const [showMissingFieldsDialog, setShowMissingFieldsDialog] = useState(false);
   const [missingFieldsList, setMissingFieldsList] = useState([]);
   const [showCreateWarningDialog, setShowCreateWarningDialog] = useState(false);
@@ -258,25 +270,22 @@ export default function MatchEntry({
 
   if (!isEditing && !isCreating) {
     return (
-      <>
-        <MatchDisplayRow
-          match={match}
-          builds={builds}
-          isEditing={isEditing}
-          isCreating={isCreating}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onSubmit={handleSubmit}
-          onCancel={onCancel}
-        />
-      </>
+      <MatchDisplayRow
+        match={match}
+        builds={builds}
+        isEditing={isEditing}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+      />
     );
   }
 
   return (
     <>
       <MatchFormRow
-        data={isCreating ? formData : editedData}
+        data={isEditing ? editedData : formData}
         builds={builds}
         isEditing={isEditing}
         isCreating={isCreating}
@@ -285,8 +294,8 @@ export default function MatchEntry({
         onCancel={onCancel}
         onChange={handleChange}
         onRarityChange={handleRarityChange}
+        selectedDate={selectedDate}
       />
-
       <MatchDialogs
         showMissingFieldsDialog={showMissingFieldsDialog}
         setShowMissingFieldsDialog={setShowMissingFieldsDialog}

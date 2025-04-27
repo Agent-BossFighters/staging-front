@@ -11,7 +11,7 @@ const EmptyTournamentMessage = ({
   return (
     <div className="mt-8 bg-gray-900 rounded-md text-center py-10">
       <div className="text-gray-400 mb-6">
-        Aucun match n'a encore été créé pour ce tournoi.
+        No matches have been created for this tournament yet.
       </div>
       
       {isCreator && tournament?.status !== 'pending' && (
@@ -22,7 +22,7 @@ const EmptyTournamentMessage = ({
             disabled={generatingMatches}
           >
             <PlayCircle size={16} className="mr-2" />
-            {generatingMatches ? "Génération en cours..." : "GÉNÉRER TOUS LES MATCHS POUR TOUS LES ROUNDS"}
+            {generatingMatches ? "Generating matches..." : "GENERATE MATCHES"}
           </Button>
         </div>
       )}

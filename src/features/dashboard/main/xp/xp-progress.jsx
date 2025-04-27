@@ -4,14 +4,19 @@ import { Progress } from "@ui/progress";
 import { BackgroundUser, chevronQuest } from "@img/index";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { getUserXP } from "@utils/api/quests.api";
+import { getUserXP, setUserXP } from "@utils/api/quests.api";
 import { useAuth } from "@context/auth.context";
 import { AuthUtils } from "@utils/api/auth.utils";
+import toast from "react-hot-toast";
 
 // Créer un contexte pour gérer les mises à jour d'XP
 export const XPUpdateContext = React.createContext({
   refreshXP: () => {},
 });
+
+// Niveau maximum
+const MAX_LEVEL = 10;
+const XP_PER_LEVEL = 1000;
 
 export function XPProgress() {
   const navigate = useNavigate();
@@ -21,6 +26,50 @@ export function XPProgress() {
   const [nextLevelXP, setNextLevelXP] = useState(1000);
   const [isLoading, setIsLoading] = useState(true);
   const [updateCounter, setUpdateCounter] = useState(0);
+
+  const refreshXP = useCallback(() => {
+    const userData = AuthUtils.getUserData();
+    if (userData) {
+      setCurrentExperience(userData.experience || 0);
+      setCurrentLevel(Math.min(userData.level || 1, MAX_LEVEL));
+      setNextLevelXP((userData.level || 1) * XP_PER_LEVEL);
+    }
+    
+    // Puis déclencher le chargement depuis l'API
+    setUpdateCounter(prev => prev + 1);
+  }, []);
+
+  // Vérifier si l'utilisateur doit level up
+  useEffect(() => {
+    const checkLevelUp = async () => {
+      if (isLoading || !user || currentLevel >= MAX_LEVEL) return;
+
+      // Calculer le XP requis pour le niveau suivant
+      const requiredXP = currentLevel * XP_PER_LEVEL;
+
+      // Si l'expérience actuelle est suffisante pour level up
+      if (currentExperience >= requiredXP) {
+        // Ne pas dépasser le niveau maximum
+        const newLevel = Math.min(currentLevel + 1, MAX_LEVEL);
+        
+        try {
+          // Mettre à jour le niveau en BDD (on garde l'expérience actuelle)
+          await setUserXP(newLevel, currentExperience);
+          
+          
+          // Mettre à jour l'état local
+          setCurrentLevel(newLevel);
+          
+          // Forcer le rechargement des données
+          refreshXP();
+        } catch (error) {
+          console.error("Erreur lors de la mise à jour du niveau:", error);
+        }
+      }
+    };
+
+    checkLevelUp();
+  }, [currentExperience, currentLevel, isLoading, user, refreshXP]);
 
   // Fonction pour charger les données XP depuis l'API
   const loadUserXP = useCallback(async () => {
@@ -33,8 +82,8 @@ export function XPProgress() {
       const localUserData = AuthUtils.getUserData();
       if (localUserData && localUserData.experience !== undefined && localUserData.level !== undefined) {
         setCurrentExperience(localUserData.experience || 0);
-        setCurrentLevel(localUserData.level || 1);
-        const calculatedNextLevelXP = (localUserData.level || 1) * 1000;
+        setCurrentLevel(Math.min(localUserData.level || 1, MAX_LEVEL));
+        const calculatedNextLevelXP = (localUserData.level || 1) * XP_PER_LEVEL;
         setNextLevelXP(calculatedNextLevelXP);
       }
       
@@ -43,10 +92,10 @@ export function XPProgress() {
       
       if (xpData && xpData.user) {
         setCurrentExperience(xpData.user.experience || 0);
-        setCurrentLevel(xpData.user.level || 1);
+        setCurrentLevel(Math.min(xpData.user.level || 1, MAX_LEVEL));
         
         // Utiliser next_level_experience s'il est disponible, sinon calculer
-        const serverNextLevelXP = xpData.level_stats?.next_level_experience || (xpData.user.level || 1) * 1000;
+        const serverNextLevelXP = xpData.level_stats?.next_level_experience || (xpData.user.level || 1) * XP_PER_LEVEL;
         setNextLevelXP(serverNextLevelXP);
         
         // Mettre à jour les données dans le localStorage si elles diffèrent
@@ -68,28 +117,13 @@ export function XPProgress() {
       const localData = AuthUtils.getUserData();
       if (localData) {
         setCurrentExperience(localData.experience || 0);
-        setCurrentLevel(localData.level || 1);
-        setNextLevelXP((localData.level || 1) * 1000);
+        setCurrentLevel(Math.min(localData.level || 1, MAX_LEVEL));
+        setNextLevelXP((localData.level || 1) * XP_PER_LEVEL);
       }
     } finally {
       setIsLoading(false);
     }
   }, [user]);
-
-  // Fonction pour forcer le rechargement des données XP
-  const refreshXP = useCallback(() => {
-    
-    // Forcer le rechargement depuis le localStorage d'abord (pour une réponse immédiate)
-    const userData = AuthUtils.getUserData();
-    if (userData) {
-      setCurrentExperience(userData.experience || 0);
-      setCurrentLevel(userData.level || 1);
-      setNextLevelXP((userData.level || 1) * 1000);
-    }
-    
-    // Puis déclencher le chargement depuis l'API
-    setUpdateCounter(prev => prev + 1);
-  }, []);
 
   // Charger les données XP depuis l'API
   useEffect(() => {
@@ -102,17 +136,36 @@ export function XPProgress() {
 
   // Calculer le pourcentage de progression vers le niveau suivant
   const xpProgressPercentage = () => {
-    // Si on est au niveau 1, on commence à 0 XP
-    if (currentLevel === 1) {
-      return (currentExperience / nextLevelXP) * 100;
+    // Si on est au niveau maximum (10), calculer différemment
+    if (currentLevel >= MAX_LEVEL) {
+      return 100; // Toujours 100% au niveau maximum
     }
     
-    // Pour les niveaux supérieurs, calculer la progression depuis le dernier niveau
-    const previousLevelXP = (currentLevel - 1) * 1000;
-    const xpSinceLastLevel = currentExperience - previousLevelXP;
-    const xpRequiredForNextLevel = nextLevelXP - previousLevelXP;
+    // Calculer le XP de départ pour le niveau actuel
+    const baseXP = (currentLevel - 1) * XP_PER_LEVEL;
     
-    return (xpSinceLastLevel / xpRequiredForNextLevel) * 100;
+    // Calculer le XP acquis depuis le dernier niveau
+    const earnedXP = currentExperience - baseXP;
+    
+    // Calculer le XP total nécessaire pour passer du niveau actuel au suivant
+    const totalXPForLevel = XP_PER_LEVEL;
+    
+    // Calculer le pourcentage (en s'assurant qu'il ne dépasse pas 100%)
+    const percentage = Math.min((earnedXP / totalXPForLevel) * 100, 100);
+    
+    return percentage;
+  };
+
+  // Calculer le XP restant depuis le dernier niveau
+  const getDisplayXP = () => {
+    if (currentLevel >= MAX_LEVEL) {
+      return `MAX`; // Au niveau maximum
+    }
+    
+    const baseXP = (currentLevel - 1) * XP_PER_LEVEL;
+    const earnedXP = currentExperience - baseXP;
+    
+    return `${earnedXP} / ${XP_PER_LEVEL} XP`;
   };
 
   return (
@@ -129,7 +182,7 @@ export function XPProgress() {
                 className="absolute inset-0 bg-contain bg-center bg-no-repeat"
                 style={{ backgroundImage: `url(${BackgroundUser})` }}
               />
-              <span className="text-white font-bold text-3xl relative z-10">
+              <span className="text-white font-bold text-3xl relative z-10 pb-1">
                 {isLoading ? "..." : currentLevel}
               </span>
             </div>
@@ -139,14 +192,18 @@ export function XPProgress() {
           <div className="flex-1 flex flex-col justify-center py-2 pr-4">
             <div className="flex justify-between items-center gap-3">
               {isLoading ? (
-                <div className="w-full bg-gray-700 rounded-full h-3">
+                <div className="w-full bg-gray-700 rounded-full h-">
                   <div className="bg-gray-600 h-3 rounded-full animate-pulse" style={{ width: '50%' }} />
                 </div>
               ) : (
-                <Progress value={xpProgressPercentage()} title={`${currentExperience} / ${nextLevelXP} XP`} className="h-3" /> 
+                <Progress 
+                  value={xpProgressPercentage()} 
+                  title={getDisplayXP()} 
+                  className="h-5" 
+                /> 
               )}
               <span className="text-[#FFD32A] whitespace-nowrap font-bold text-lg">
-                LVL {Math.min(currentLevel + 1, 10)}
+                LVL {currentLevel >= MAX_LEVEL ? "MAX" : currentLevel + 1}
               </span>
             </div>
 

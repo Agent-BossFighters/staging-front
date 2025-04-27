@@ -7,12 +7,25 @@ import { Textarea } from "@shared/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/card";
 import { Info, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuth } from "@context/auth.context";
 
 export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
   if (!isOpen) return null;
 
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [entryCodeCopied, setEntryCodeCopied] = useState(false);
+  
+  // Générer un code aléatoire de 6 caractères
+  const generateRandomCode = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Exclus des caractères qui peuvent prêter à confusion
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
   
   // Form state
   const [formData, setFormData] = useState({
@@ -29,6 +42,33 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
   // Estimation du temps de matchs
   const [estimatedMatches, setEstimatedMatches] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState("0");
+  
+  // Générer les règles en fonction du type de tournoi et des paramètres
+  useEffect(() => {
+    const tournamentType = parseInt(formData.tournament_type);
+    const teamsCount = parseInt(formData.max_teams) || 0;
+    const playersCount = parseInt(formData.players_per_team) || 0;
+    const roundsCount = parseInt(formData.rounds) || 1;
+    const roundWord = roundsCount === 1 ? "Round" : "Rounds";
+    const creatorName = user?.username || "Tournament Host";
+
+    let rulesText = "";
+    
+    if (tournamentType === 0) { // Showtime Survival
+      rulesText = `Take on Boss ${creatorName} in a tournament of ${teamsCount} teams of ${playersCount} player(s), where players will try to survive as long as possible over ${roundsCount} ${roundWord}.\n
+One rule survive without killing the boss !`;
+    } else if (tournamentType === 1) { // Showtime Score Counter
+      rulesText = `Take on Boss ${creatorName} in a tournament of ${teamsCount} teams of ${playersCount} player(s), where players will try to score as many points score as possible against the boss over ${roundsCount} ${roundWord} for a total team score.\n
+One rule survive and kill the Boss!`;
+    } else if (tournamentType === 2) { // Arena
+      const boFormat = roundsCount === 1 ? "BO1" : "BO3";
+      rulesText = `"Team vs Team" with ${teamsCount} teams of ${playersCount} players in ${roundsCount} ${roundWord} (${boFormat}) format. May the best team win!`;
+    }
+    
+    if (rulesText) {
+      setFormData(prev => ({ ...prev, rules: rulesText }));
+    }
+  }, [formData.tournament_type, formData.max_teams, formData.players_per_team, formData.rounds, user?.username]);
   
   // Calculer le nombre de matchs et le temps estimé
   useEffect(() => {
@@ -87,21 +127,36 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
       return false;
     }
     
+    // Vérifier que le code d'entrée est valide s'il est fourni
+    if (formData.entry_code && formData.entry_code.length < 4) {
+      toast.error("Entry code must be at least 4 characters long");
+      return false;
+    }
+    
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleCreateTournament = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-    
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      // Transformer les données pour l'API
+      // Validation supplémentaire
+      if (!validateForm()) {
+        setIsLoading(false);
+        return;
+      }
+
+      // Générer le code aléatoire côté client si nécessaire
+      if (formData.entry_code) {
+        // On génère un code aléatoire de 6 caractères
+        const entryCode = generateRandomCode();
+        // On le stocke pour l'utiliser dans la requête
+        formData.generated_code = entryCode;
+      }
+
+      // Créer le tournoi
       const tournamentData = {
         name: formData.name,
         tournament_type: parseInt(formData.tournament_type),
@@ -109,62 +164,61 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
         rules: formData.rules || "Standard rules",
         agent_level_required: parseInt(formData.agent_level_required),
         players_per_team: parseInt(formData.players_per_team),
-        min_players_per_team: parseInt(formData.players_per_team), // Simplified
+        min_players_per_team: parseInt(formData.players_per_team),
         max_teams: parseInt(formData.max_teams),
-        status: 1 // 1 = open (au lieu de "pending")
+        status: 1,
+        auto_create_teams: true 
       };
-      
-      // Ajouter le code d'entrée si fourni
-      if (formData.entry_code && formData.entry_code.trim() !== "") {
-        tournamentData.entry_code = formData.entry_code;
+
+      // Ajouter le code d'entrée uniquement si demandé
+      if (formData.entry_code) {
+        tournamentData.entry_code = formData.generated_code;
       }
-      
-      console.log("Sending tournament data:", tournamentData);
-      
-      const response = await kyInstance.post('v1/tournaments', {
-        json: {
-          tournament: tournamentData
-        }
+
+      const tournamentResponse = await kyInstance.post('v1/tournaments', {
+        json: tournamentData
       }).json();
       
-      console.log("Tournament creation response:", response);
-      
-      toast.success("Tournament created successfully!");
-      
-      // Notifier que la création est réussie
+      const tournamentId = tournamentResponse.id || tournamentResponse.tournament?.id;
+
+      if (!tournamentId) {
+        throw new Error("Failed to get tournament ID from response");
+      }
+
+      toast.success("Tournament created successfully with empty teams!");
       if (onSuccess) {
-        let tournamentId = null;
-        
-        if (response.tournament && response.tournament.id) {
-          tournamentId = response.tournament.id;
-        } else if (response.data && response.data.id) {
-          tournamentId = response.data.id;
-        } else if (response.id) {
-          tournamentId = response.id;
-        }
-        
         onSuccess(tournamentId);
       }
     } catch (err) {
-      console.error("Error creating tournament:", err);
-      let errorMessage = "Failed to create tournament. Please try again.";
-      
-      if (err.responseData?.error) {
-        errorMessage = err.responseData.error;
-      }
-      
-      toast.error(errorMessage);
+      console.error("Error in tournament creation process:", err);
+      const errorMessage = err.message || err.response?.data?.error || "Failed to create tournament";
       setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Copier le code dans le presse-papier
+  const copyEntryCodeToClipboard = () => {
+    if (formData.entry_code) {
+      navigator.clipboard.writeText(formData.entry_code)
+        .then(() => {
+          setEntryCodeCopied(true);
+          setTimeout(() => setEntryCodeCopied(false), 2000);
+        })
+        .catch(err => {
+          console.error('Error when copying the code:', err);
+          toast.error("Impossible to copy the code");
+        });
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80">
-      <Card className="bg-gray-900 border-gray-700 text-white max-w-4xl relative">
+      <Card className="bg-gray-900 border-gray-700 text-white w-[1000px] min-w-[1000px] max-w-[1000px] relative">
         <CardHeader>
-          <CardTitle className="text-3xl text-yellow-400 text-center font-bold">
+          <CardTitle className="text-3xl text-primary text-center font-bold">
             CREATE A TOURNAMENT
           </CardTitle>
           <button 
@@ -176,12 +230,18 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-8 mt-4">
+          <form onSubmit={handleCreateTournament} className="space-y-8 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <label className="text-white font-medium">Tournament format</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
+
+'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
+
+'Arena' is a knockout tournament team versus team where you will have to win round(s) with Home/Away match(es).">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Select 
                   value={formData.tournament_type} 
@@ -191,59 +251,48 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    <SelectItem value="0">Showtime (Survival)</SelectItem>
-                    <SelectItem value="1">Showtime (Score Counter)</SelectItem>
+                    <SelectItem value="0">Showtime - Survival</SelectItem>
+                    <SelectItem value="1">Showtime - Score Counter</SelectItem>
                     <SelectItem value="2">Arena</SelectItem>
                   </SelectContent>
                 </Select>
                 
-                {(parseInt(formData.tournament_type) === 0 || parseInt(formData.tournament_type) === 1) && (
-                  <>
-                    <div className="flex items-center justify-between mt-6">
-                      <label className="text-white font-medium">Nombre de rounds</label>
-                      <Info className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <Select 
-                      value={formData.rounds} 
-                      onValueChange={(value) => handleSelectChange("rounds", value)}
-                    >
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                        <SelectValue placeholder="Select rounds" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                        <SelectItem value="1">1 Round</SelectItem>
-                        <SelectItem value="3">3 Rounds</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </>
-                )}
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Team slots</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Total number of teams in the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Select 
                   value={formData.max_teams.toString()} 
                   onValueChange={(value) => handleSelectChange("max_teams", value)}
-                >
+                  >
                   <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Select slots" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {[2, 4, 8, 16, 32].map(num => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
+                    {parseInt(formData.tournament_type) === 2 
+                      ? [2, 4, 8].map(num => (
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))
+                      : [2, 3, 4, 5, 6, 7, 8].map(num => (
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))
+                    }
                   </SelectContent>
                 </Select>
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Player(s) per team</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Total number of player(s) per team in the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Select 
                   value={formData.players_per_team.toString()} 
                   onValueChange={(value) => handleSelectChange("players_per_team", value)}
-                >
+                  >
                   <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Select players" />
                   </SelectTrigger>
@@ -253,12 +302,36 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     ))}
                   </SelectContent>
                 </Select>
+                    {(parseInt(formData.tournament_type) === 0 || parseInt(formData.tournament_type) === 1) && (
+                      <>
+                        <div className="flex items-center justify-between mt-6">
+                          <label className="text-white font-medium">Number of rounds</label>
+                          <span title="Total number of round(s) in the tournament.">
+                            <Info className="h-5 w-5 text-gray-400" />
+                          </span>
+                        </div>
+                        <Select 
+                          value={formData.rounds} 
+                          onValueChange={(value) => handleSelectChange("rounds", value)}
+                        >
+                          <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                            <SelectValue placeholder="Select rounds" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectItem value="1">1 Round</SelectItem>
+                            <SelectItem value="3">3 Rounds</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </>
+                    )}
               </div>
               
               <div className="space-y-4 md:col-span-2">
                 <div className="flex items-center justify-between">
                   <label className="text-white font-medium">Tournament name</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Tournament name is limited by 40 characters.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Input
                   name="name"
@@ -266,11 +339,14 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                   onChange={handleInputChange}
                   className="bg-gray-800 border-gray-700 text-white"
                   placeholder="Enter tournament name"
+                  maxLength={40}
                 />
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Tournament rules</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Rules of the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Textarea
                   name="rules"
@@ -282,25 +358,32 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Agent Level required</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="User level required to join the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
-                <Select 
-                  value={formData.agent_level_required.toString()} 
-                  onValueChange={(value) => handleSelectChange("agent_level_required", value)}
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Select level" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    {[0, 1, 2, 3, 4, 5].map(num => (
-                      <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  type="number"
+                  name="agent_level_required"
+                  value={formData.agent_level_required}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    if (!isNaN(value) && value >= 0) {
+                      handleInputChange(e);
+                    } else if (e.target.value === "") {
+                      setFormData(prev => ({ ...prev, agent_level_required: 0 }));
+                    }
+                  }}
+                  min="0"
+                  className="bg-gray-800 border-gray-700 text-white"
+                  placeholder="Enter agent level"
+                />
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Tournament entry code</label>
-                  <Info className="h-5 w-5 text-gray-400" />
+                  <span title="Code required to join the tournament.">
+                    <Info className="h-5 w-5 text-gray-400" />
+                  </span>
                 </div>
                 <Select 
                   value={formData.entry_code ? "Yes" : "No"} 
@@ -308,7 +391,8 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     if (value === "No") {
                       setFormData(prev => ({ ...prev, entry_code: "" }));
                     } else {
-                      setFormData(prev => ({ ...prev, entry_code: "random" }));
+                      // On marque simplement qu'un code est requis, sans le générer ni l'afficher
+                      setFormData(prev => ({ ...prev, entry_code: "REQUIRED" }));
                     }
                   }}
                 >
@@ -320,6 +404,14 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
                     <SelectItem value="Yes">Yes</SelectItem>
                   </SelectContent>
                 </Select>
+                
+                {formData.entry_code && (
+                  <div className="mt-2">
+                    <p className="text-gray-400 text-sm">
+                      An entry code will be generated for this tournament. You will be able to view and copy it after tournament creation.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -327,8 +419,8 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
               <h3 className="text-lg text-white">Estimated tournament matches time :</h3>
               <div className="grid grid-cols-1 gap-2 mt-4">
                 <div className="text-2xl font-bold text-white">{estimatedMatches} Matches</div>
-                <div className="text-2xl font-bold text-yellow-400">
-                  {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""}00)
+                <div className="text-2xl font-bold text-primary">
+                  {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""})
                 </div>
               </div>
             </div>
@@ -336,7 +428,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
             <div className="flex justify-center mt-6">
               <Button 
                 type="submit" 
-                className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-2 text-lg"
+                className="bg-primary hover:bg-primary/90 text-black px-8 py-2 text-lg"
                 disabled={isLoading}
               >
                 {isLoading ? "Creating..." : "VALIDATE"}

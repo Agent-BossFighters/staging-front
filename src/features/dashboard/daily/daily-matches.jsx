@@ -2,6 +2,7 @@ import { useState } from "react";
 import MatchesList from "./components/matches-list";
 import { useUserPreference } from "@context/userPreference.context";
 import { MatchDialogs } from "./components/MatchDialogs";
+import { useLastMatchData } from "@shared/hook/useLastMatchData";
 
 export default function DailyMatches({
   matches,
@@ -10,14 +11,29 @@ export default function DailyMatches({
   onAdd,
   onUpdate,
   onDelete,
+  selectedDate
 }) {
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [editedData, setEditedData] = useState(null);
   const { unlockedSlots } = useUserPreference();
   const [showEditTimeoutDialog, setShowEditTimeoutDialog] = useState(false);
   const [currentMatch, setCurrentMatch] = useState(null);
+  const { lastMatchData, saveLastMatchData } = useLastMatchData();
 
   const availableSlots = unlockedSlots;
+
+  // Fonction pour sauvegarder le dernier match
+  const handleMatchAdd = (matchData) => {
+    const buildId = builds.find(b => b.buildName === matchData.match.build)?.id || "";
+    const rarities = Array(5).fill("none").map((_, index) => {
+      const badge = matchData.match.badge_used_attributes.find(b => b.slot === index + 1 && !b._destroy);
+      return badge ? badge.rarity : "none";
+    });
+    
+    console.log("Saving match data:", { buildId, rarities });
+    saveLastMatchData({ buildId, rarities });
+    onAdd(matchData);
+  };
 
   const handleEdit = (match) => {
     const creationTime = new Date(match.created_at || match.date);
@@ -56,6 +72,31 @@ export default function DailyMatches({
     setEditedData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Fonction pour obtenir les données initiales d'un nouveau match
+  const getInitialMatchData = () => {
+    console.log("Getting initial match data, last match data:", lastMatchData);
+    if (lastMatchData) {
+      return {
+        buildId: lastMatchData.buildId,
+        map: "",
+        time: "",
+        result: "",
+        bft: "",
+        flex: "",
+        rarities: lastMatchData.rarities,
+      };
+    }
+    return {
+      buildId: "",
+      map: "",
+      time: "",
+      result: "",
+      bft: "",
+      flex: "",
+      rarities: Array(5).fill("none"),
+    };
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-10">
@@ -75,12 +116,14 @@ export default function DailyMatches({
         unlockedSlots={availableSlots}
         editingMatchId={editingMatchId}
         editedData={editedData}
-        onAdd={onAdd}
+        onAdd={handleMatchAdd}
         onUpdate={onUpdate}
         onDelete={onDelete}
         onEdit={handleEdit}
         onEditField={handleEditField}
         onCancel={handleCancel}
+        selectedDate={selectedDate}
+        initialMatchData={getInitialMatchData()}
       />
       
       {/* Dialog for edit timeout */}

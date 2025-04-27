@@ -5,17 +5,28 @@
 /**
  * Recherche l'équipe de l'utilisateur courant dans une liste d'équipes
  * @param {Array} teams - Liste des équipes à examiner
+ * @param {Object} user - Utilisateur actuel
  * @returns {Object|null} L'équipe de l'utilisateur ou null si non trouvée
  */
-export const findUserTeam = (teams) => {
-  if (!teams || !Array.isArray(teams)) return null;
+export const findUserTeam = (teams, user) => {
+  if (!teams || !Array.isArray(teams) || !user) return null;
   
   // Option 1: Marquage explicite is_user_team
   const explicitUserTeam = teams.find(team => team.is_user_team === true);
   if (explicitUserTeam) return explicitUserTeam;
   
   // Option 2: En vérifiant is_captain
-  return teams.find(team => team.is_captain === true);
+  const captainTeam = teams.find(team => team.is_captain === true);
+  if (captainTeam) return captainTeam;
+  
+  // Option 3: Vérifier si l'utilisateur est un membre de l'équipe
+  return teams.find(team => {
+    const members = team.team_members || team.players || [];
+    return members.some(member => {
+      const memberId = member.user_id || (member.user && member.user.id);
+      return memberId === user.id;
+    });
+  });
 };
 
 /**
@@ -28,7 +39,16 @@ export const isTeamsFull = (teams, tournament) => {
   // Vérifier que tournament existe et a la propriété max_teams
   if (!tournament || typeof tournament.max_teams === 'undefined') return false;
   
-  return Array.isArray(teams) && teams.length >= tournament.max_teams;
+  // Compter uniquement les équipes qui ont des membres
+  if (!Array.isArray(teams)) return false;
+  
+  // Une équipe est considérée réelle si elle a des membres
+  const realTeams = teams.filter(team => {
+    const members = team.team_members || team.players || [];
+    return members.length > 0;
+  });
+  
+  return realTeams.length >= tournament.max_teams;
 };
 
 /**

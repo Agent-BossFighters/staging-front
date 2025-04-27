@@ -22,7 +22,7 @@ export default async function generateTournamentMatches(
   
   // Vérifier si des matchs existent déjà
   if (matches && matches.length > 0) {
-    toast("Des matchs existent déjà pour ce tournoi. Rafraîchissez la page pour les voir.");
+    toast("Matches already exist for this tournament. Refresh the page to see them.");
     if (onMatchUpdated) {
       onMatchUpdated();
     }
@@ -49,7 +49,7 @@ export default async function generateTournamentMatches(
     let numberOfRounds = configuredRounds;
     
     // Message simple indiquant le nombre de rounds à générer
-    toast(`${numberOfRounds} round(s) sera/seront généré(s) pour chaque équipe`);
+    toast(`${numberOfRounds} round(s) will be generated for the tournament`);
     
     // Créer un tableau de promesses pour toutes les créations de matchs
     const matchPromises = [];
@@ -84,16 +84,16 @@ export default async function generateTournamentMatches(
     const nbMatchsParRound = nbEquipes;
     const nbTotalMatchs = nbMatchsParRound * numberOfRounds;
     
-    toast.success(`${nbTotalMatchs} matchs ont été générés avec succès (${numberOfRounds} round(s) × ${nbEquipes} équipes)!`);
-    toast("Veuillez rafraîchir la page si les matchs n'apparaissent pas");
+    toast.success(`${nbTotalMatchs} matches have been generated successfully (${numberOfRounds} round(s) × ${nbEquipes} teams)!`);
+    toast("Please refresh the page if the matches do not appear");
     
     // Rafraîchir les données
     if (onMatchUpdated) {
       onMatchUpdated();
     }
   } catch (error) {
-    console.error("Erreur lors de la génération des matchs:", error);
-    toast.error("Échec de la génération des matchs. Veuillez réessayer.");
+    console.error("Error generating matches:", error);
+    toast.error("Failed to generate matches. Please try again.");
   } finally {
     if (setGeneratingMatches) {
       setGeneratingMatches(false);
