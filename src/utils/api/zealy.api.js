@@ -16,6 +16,23 @@ export const ZealyService = {
     }
   },
 
+  // Vérifier si l'utilisateur a rejoint la communauté
+  async checkCommunityStatus() {
+    try {
+      const response = await kyInstance
+        .get("v1/zealy/community_status", {
+          searchParams: {
+            community: ZEALY_COMMUNITY,
+          },
+        })
+        .json();
+      return response;
+    } catch (error) {
+      console.error("Error checking Zealy community status:", error);
+      return { joined: false };
+    }
+  },
+
   // Synchroniser les quêtes Zealy
   async syncQuests() {
     try {
@@ -52,3 +69,6 @@ export const ZealyService = {
     }
   },
 };
+
+// Exporter les constantes
+export { ZEALY_URL, ZEALY_COMMUNITY };
