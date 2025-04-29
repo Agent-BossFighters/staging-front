@@ -3,7 +3,7 @@ import React from "react";
 import { Card } from "@ui/card";
 import { RewardsPattern1, TvTools } from "@img/index";
 
-export default function TvToolsCard() {
+export default function TvToolsCard({ onClick }) {
   return (
     <Card
       title="TV TOOLS"
@@ -12,6 +12,7 @@ export default function TvToolsCard() {
       pattern={RewardsPattern1}
       patternClassName="opacity-40"
       icon={TvTools}
+      onClick={onClick}
     />
   );
 }

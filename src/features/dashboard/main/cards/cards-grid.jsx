@@ -8,6 +8,7 @@ import DailyCard from "./daily-card";
 import MonthlyCard from "./monthly-card";
 import PlayerMapCard from "./player-map-card";
 import { useAuth } from "@context/auth.context";
+import useUmamiTracking from "@utils/hooks/useUmamiTracking";
 
 const disabledCards = {
   locker: false,
@@ -44,6 +45,12 @@ const disabledStyle =
 export function CardsGrid() {
   const { user } = useAuth();
   const isPremium = user?.isPremium === true;
+  const { track } = useUmamiTracking();
+
+  const handleCardClick = (cardName, path) => {
+    console.log(`Clicked on: ${cardName}`);
+    track(`${cardName}_card_click`, path, { section: cardName }); // Suivre le clic
+  };
 
   // TODO: Add admin only, remove after testing (1 ligne)
   const isAdmin = user?.is_admin === true;
@@ -63,47 +70,47 @@ export function CardsGrid() {
           <div
             className={`row-span-6 ${isCardDisabled("locker") ? disabledStyle : ""}`}
           >
-            <LockerCard />
+            <LockerCard onClick={() => handleCardClick("locker", "/dashboard/locker")} />
           </div>
           <div
             className={`row-span-4 ${isCardDisabled("datalab") ? disabledStyle : ""}`}
           >
-            <DataLabCard />
+            <DataLabCard onClick={() => handleCardClick("datalab", "/dashboard/datalab")} />
           </div>
           <div
             className={`row-span-3 col-start-3 row-start-2 ${isCardDisabled("daily") ? disabledStyle : ""}`}
           >
-            <DailyCard />
+            <DailyCard onClick={() => handleCardClick("daily", "/dashboard/schedule/daily")} />
           </div>
           <div
             className={`row-span-2 col-start-2 row-start-5 ${isCardDisabled("schedule") ? disabledStyle : ""}`}
           >
-            <ScheduleCard />
+            <ScheduleCard onClick={() => handleCardClick("schedule", "/dashboard/schedule")} />
           </div>
           <div
             className={`row-span-2 col-start-3 row-start-5 ${isCardDisabled("monthly") ? disabledStyle : ""}`}
           >
-            <MonthlyCard />
+            <MonthlyCard onClick={() => handleCardClick("monthly", "/dashboard/schedule/monthly")} />
           </div>
           <div
             className={`row-span-2 col-start-1 row-start-7 ${isCardDisabled("tvtools") ? disabledStyle : ""}`}
           >
-            <TvToolsCard />
+            <TvToolsCard onClick={() => handleCardClick("tvtools", "/dashboard/tv-tools")} />
           </div>
           <div
             className={`row-span-2 col-start-2 row-start-7 ${isCardDisabled("fighting") ? disabledStyle : ""}`}
           >
-            <FightingCard />
+            <FightingCard onClick={() => handleCardClick("fighting", "/dashboard/fighting")} />
           </div>
           <div
             className={`row-span-2 col-start-3 row-start-7 ${isCardDisabled("playermap") ? disabledStyle : ""}`}
           >
-            <PlayerMapCard />
+            <PlayerMapCard onClick={() => handleCardClick("playermap", "/dashboard/player-map")} />
           </div>
           <div
             className={`col-start-3 row-start-1 ${isCardDisabled("xp") ? disabledStyle : ""}`}
           >
-            <XPProgress />
+            <XPProgress onClick={() => handleCardClick("xp", "/dashboard/xp")} />
           </div>
         </div>
       </div>
