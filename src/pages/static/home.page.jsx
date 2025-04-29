@@ -4,8 +4,8 @@ export default function HomePage() {
     <div className="w-5/6 mx-auto">
       <div className="flex flex-col text-center items-center justify-center my-24">
         <img src={AgentLogo} alt="Agent Logo" className="md:w-1/5" />
-        <p className="text-sm font-extrabold">
-          Boss Figthers community&#39;s Open Source Platform
+        <p className="text-s font-extrabold">
+          Boss Fighters community&#39;s Open Source Platform
         </p>
       </div>
       <div className="w-3/5 mx-auto">

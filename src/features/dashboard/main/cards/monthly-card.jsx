@@ -2,7 +2,7 @@
 import { Card } from "@ui/card";
 import { RewardsPattern2, Monthly } from "@img/index";
 
-export default function MonthlyCard() {
+export default function MonthlyCard({ onClick }) {
   return (
     <Card
       title="MONTHLY"
@@ -11,6 +11,7 @@ export default function MonthlyCard() {
       pattern={RewardsPattern2}
       patternClassName="opacity-40"
       icon={Monthly}
+      onClick={onClick}
     />
   );
 }

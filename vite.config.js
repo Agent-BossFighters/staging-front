@@ -30,4 +30,13 @@ export default defineConfig({
       "@shared": path.resolve(_dirname, "./src/shared/"),
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://cloud.umami.is', // L'URL de votre API Umami
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // Réécrit l'URL
+      },
+    },
+  },
 });
