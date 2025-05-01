@@ -57,9 +57,9 @@ export default function Showrunner() {
             </TableHead>
             <TableHead className="p-2 text-left">MAX <br/> ENERGY</TableHead>
             <TableHead className="p-2 text-left">
-              CRAFT
+              BADGE
               <br />
-              TIME
+              CRAFT TIME
             </TableHead>
             <TableHead className="p-2 text-left text-destructive">
               NB BADGES
@@ -82,9 +82,9 @@ export default function Showrunner() {
               COST
             </TableHead>
             <TableHead className="p-2 text-left">
-              CHARGE
+              ENERGY
               <br />
-              TIME
+              CHARGE TIME
             </TableHead>
             <TableHead className="p-2 text-left text-destructive">
               FLEX

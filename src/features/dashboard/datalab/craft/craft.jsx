@@ -47,9 +47,9 @@ export default function Badges() {
               <br />
               RARITY ITEM
             </TableHead>
-            <TableHead>BFT</TableHead>
+            <TableHead>$BFT</TableHead>
             <TableHead>
-              BFT
+              $BFT
               <br />
               COST
             </TableHead>

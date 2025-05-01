@@ -8,7 +8,7 @@ export default function PlayerMapCard({ onClick }) {
     <Card
       title="PLAYER MAP"
       description="INTUITION RP COMMUNITY MAP EXPLORER"
-      path="/dashboard/player-map"
+      path="/dashboard/playermap"
       pattern={RewardsPattern2}
       patternClassName="absolute inset-0 w-full h-full opacity-40"
       icon={Playermap}
