@@ -15,7 +15,7 @@ export default function Footer() {
         </div>
         {/* Icon de discord */}
         <a
-          href="https://discord.gg/KbpURpdH"
+          href="https://discord.gg/TjgJ9x6B8g"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-primary transition-colors"
