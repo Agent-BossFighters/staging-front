@@ -8,6 +8,7 @@ import {
   NavigationMenuContent,
   NavigationMenuLink,
 } from "@ui/navigation-menu";
+import useUmamiTracking from "@utils/hooks/useUmamiTracking";
 
 const menuItems = [
   {
@@ -30,6 +31,12 @@ const menuItems = [
 
 export default function DesktopLink() {
   const { user } = useAuth();
+  const { track } = useUmamiTracking();
+
+  const handleLinkClick = (label, path) => {
+    track(`${label}_section_view`, path, { section: label });
+  };
+
   const filteredMenu = menuItems.filter((item) => !item.requiresAuth || user);
 
   return (
@@ -40,7 +47,9 @@ export default function DesktopLink() {
             {item.children ? (
               <>
                 <NavigationMenuTrigger className="gap-10">
-                  <Link to={item.path}>{item.label}</Link>
+                  <Link to={item.path} onClick={() => handleLinkClick(item.label, item.path)}>
+                    {item.label}
+                  </Link>
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="p-4 bg-background text-foreground border border-border rounded-md shadow-md">
                   {item.children.map((child) => (
@@ -52,6 +61,7 @@ export default function DesktopLink() {
                       <Link
                         to={child.path}
                         className="block hover:bg-primary hover:text-background rounded"
+                        onClick={() => handleLinkClick(child.label, child.path)}
                       >
                         {child.label}
                       </Link>
@@ -61,7 +71,7 @@ export default function DesktopLink() {
               </>
             ) : (
               <NavigationMenuLink asChild className="">
-                <Link to={item.path} className="px-4 py-2 hover:text-primary">
+                <Link to={item.path} className="px-4 py-2 hover:text-primary" onClick={() => handleLinkClick(item.label, item.path)}>
                   {item.label}
                 </Link>
               </NavigationMenuLink>

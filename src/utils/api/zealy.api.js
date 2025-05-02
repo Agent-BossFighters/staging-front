@@ -17,55 +17,86 @@ export const ZealyService = {
   },
 
   // Vérifier si l'utilisateur a rejoint la communauté
-  async checkCommunityStatus() {
-    try {
-      const response = await kyInstance
-        .get("v1/zealy/community_status", {
-          searchParams: {
-            community: ZEALY_COMMUNITY,
-          },
-        })
-        .json();
-      return response;
-    } catch (error) {
-      console.error("Error checking Zealy community status:", error);
-      return { joined: false };
+  async checkCommunityStatus(retries = 3) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const response = await kyInstance
+          .get("v1/zealy/community_status", {
+            searchParams: {
+              community: ZEALY_COMMUNITY,
+            },
+          })
+          .json();
+        return response;
+      } catch (error) {
+        console.error(
+          `Error checking Zealy community status (attempt ${i + 1}/${retries}):`,
+          error
+        );
+        if (i === retries - 1) {
+          toast.error(
+            "Impossible de vérifier le statut de la communauté Zealy"
+          );
+          return { joined: false, error: true };
+        }
+        // Attendre avant de réessayer
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+      }
     }
+    return { joined: false, error: true };
   },
 
   // Synchroniser les quêtes Zealy
-  async syncQuests() {
-    try {
-      const response = await kyInstance
-        .post("v1/zealy/sync_quests", {
-          json: {
-            community: ZEALY_COMMUNITY,
-          },
-        })
-        .json();
-      toast.success("Quêtes Zealy synchronisées avec succès");
-      return response;
-    } catch (error) {
-      console.error("Error syncing Zealy quests:", error);
-      toast.error("Erreur lors de la synchronisation des quêtes Zealy");
-      throw error;
+  async syncQuests(retries = 3) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const response = await kyInstance
+          .post("v1/zealy/sync_quests", {
+            json: {
+              community: ZEALY_COMMUNITY,
+            },
+          })
+          .json();
+        toast.success("Quêtes Zealy synchronisées avec succès");
+        return response;
+      } catch (error) {
+        console.error(
+          `Error syncing Zealy quests (attempt ${i + 1}/${retries}):`,
+          error
+        );
+        if (i === retries - 1) {
+          toast.error("Erreur lors de la synchronisation des quêtes Zealy");
+          throw error;
+        }
+        // Attendre avant de réessayer
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+      }
     }
   },
 
   // Vérifier le statut d'une quête Zealy
-  async checkQuestStatus(questId) {
-    try {
-      const response = await kyInstance
-        .get(`v1/quests/${questId}/zealy/status`, {
-          searchParams: {
-            community: ZEALY_COMMUNITY,
-          },
-        })
-        .json();
-      return response;
-    } catch (error) {
-      console.error("Error checking Zealy quest status:", error);
-      throw error;
+  async checkQuestStatus(questId, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const response = await kyInstance
+          .get(`v1/quests/${questId}/zealy/status`, {
+            searchParams: {
+              community: ZEALY_COMMUNITY,
+            },
+          })
+          .json();
+        return response;
+      } catch (error) {
+        console.error(
+          `Error checking Zealy quest status (attempt ${i + 1}/${retries}):`,
+          error
+        );
+        if (i === retries - 1) {
+          throw error;
+        }
+        // Attendre avant de réessayer
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+      }
     }
   },
 };

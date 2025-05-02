@@ -18,7 +18,7 @@ export const XPUpdateContext = React.createContext({
 const MAX_LEVEL = 10;
 const XP_PER_LEVEL = 1000;
 
-export function XPProgress() {
+export function XPProgress({ onClick }) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [currentExperience, setCurrentExperience] = useState(0);
@@ -170,6 +170,7 @@ export function XPProgress() {
 
   return (
     <XPUpdateContext.Provider value={{ refreshXP }}>
+      <div onClick={onClick} className="cursor-pointer">
       <div 
         className="bg-[#1A1B1E] rounded-2xl border-2 border-gray-800/50 cursor-pointer hover:scale-[1.01] hover:border-gray-700/50 transition-all duration-300 h-full p-2"
         onClick={handleClick}
@@ -217,6 +218,7 @@ export function XPProgress() {
             <img src={chevronQuest} alt={"chevron right"} className="w-full h-full object-contain" />
           </div>
         </div>
+      </div>
       </div>
     </XPUpdateContext.Provider>
   );

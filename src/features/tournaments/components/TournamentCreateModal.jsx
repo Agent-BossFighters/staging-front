@@ -16,6 +16,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [entryCodeCopied, setEntryCodeCopied] = useState(false);
+  const [hoveredTooltip, setHoveredTooltip] = useState(null)
   
   // Générer un code aléatoire de 6 caractères
   const generateRandomCode = () => {
@@ -214,7 +215,7 @@ One rule survive and kill the Boss!`;
     }
   };
 
-  return (
+return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80">
       <Card className="bg-gray-900 border-gray-700 text-white w-[1000px] min-w-[1000px] max-w-[1000px] relative">
         <CardHeader>
@@ -235,13 +236,24 @@ One rule survive and kill the Boss!`;
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <label className="text-white font-medium">Tournament format</label>
-                  <span title="'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
-
-'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
-
-'Arena' is a knockout tournament team versus team where you will have to win round(s) with Home/Away match(es).">
+                  <div 
+                    className="relative inline-block" 
+                    onMouseEnter={() => setHoveredTooltip('tournamentFormat')} 
+                    onMouseLeave={() => setHoveredTooltip(null)}
+                  >
                     <Info className="h-5 w-5 text-gray-400" />
-                  </span>
+                    {hoveredTooltip === 'tournamentFormat' && (
+                      <span className="tooltip pointer-events-none absolute top-full left-1/2 -translate-x-1/4 mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                        'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more 
+                        <br/>matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
+                        <br />
+                        'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more
+                        <br/> matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
+                        <br />
+                        'Arena' is a knockout tournament team versus team where you will have to win round(s) with Home/Away match(es).
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Select 
                   value={formData.tournament_type} 
@@ -257,17 +269,25 @@ One rule survive and kill the Boss!`;
                   </SelectContent>
                 </Select>
                 
-                
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Team slots</label>
-                  <span title="Total number of teams in the tournament.">
+                  <div 
+                    className="relative inline-block" 
+                    onMouseEnter={() => setHoveredTooltip('teamSlots')} 
+                    onMouseLeave={() => setHoveredTooltip(null)}
+                  >
                     <Info className="h-5 w-5 text-gray-400" />
-                  </span>
+                    {hoveredTooltip === 'teamSlots' && (
+                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                        Total number of teams in the tournament.
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Select 
                   value={formData.max_teams.toString()} 
                   onValueChange={(value) => handleSelectChange("max_teams", value)}
-                  >
+                >
                   <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Select slots" />
                   </SelectTrigger>
@@ -285,14 +305,23 @@ One rule survive and kill the Boss!`;
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Player(s) per team</label>
-                  <span title="Total number of player(s) per team in the tournament.">
+                  <div 
+                    className="relative inline-block" 
+                    onMouseEnter={() => setHoveredTooltip('playersPerTeam')} 
+                    onMouseLeave={() => setHoveredTooltip(null)}
+                  >
                     <Info className="h-5 w-5 text-gray-400" />
-                  </span>
+                    {hoveredTooltip === 'playersPerTeam' && (
+                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                        Total number of player(s) per team in the tournament.
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Select 
                   value={formData.players_per_team.toString()} 
                   onValueChange={(value) => handleSelectChange("players_per_team", value)}
-                  >
+                >
                   <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Select players" />
                   </SelectTrigger>
@@ -302,36 +331,54 @@ One rule survive and kill the Boss!`;
                     ))}
                   </SelectContent>
                 </Select>
-                    {(parseInt(formData.tournament_type) === 0 || parseInt(formData.tournament_type) === 1) && (
-                      <>
-                        <div className="flex items-center justify-between mt-6">
-                          <label className="text-white font-medium">Number of rounds</label>
-                          <span title="Total number of round(s) in the tournament.">
-                            <Info className="h-5 w-5 text-gray-400" />
+                {(parseInt(formData.tournament_type) === 0 || parseInt(formData.tournament_type) === 1) && (
+                  <>
+                    <div className="flex items-center justify-between mt-6">
+                      <label className="text-white font-medium">Number of rounds</label>
+                      <div 
+                        className="relative inline-block" 
+                        onMouseEnter={() => setHoveredTooltip('numberOfRounds')} 
+                        onMouseLeave={() => setHoveredTooltip(null)}
+                      >
+                        <Info className="h-5 w-5 text-gray-400" />
+                        {hoveredTooltip === 'numberOfRounds' && (
+                          <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                            Total number of round(s) in the tournament.
                           </span>
-                        </div>
-                        <Select 
-                          value={formData.rounds} 
-                          onValueChange={(value) => handleSelectChange("rounds", value)}
-                        >
-                          <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                            <SelectValue placeholder="Select rounds" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                            <SelectItem value="1">1 Round</SelectItem>
-                            <SelectItem value="3">3 Rounds</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </>
-                    )}
+                        )}
+                      </div>
+                    </div>
+                    <Select 
+                      value={formData.rounds} 
+                      onValueChange={(value) => handleSelectChange("rounds", value)}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                        <SelectValue placeholder="Select rounds" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                        <SelectItem value="1">1 Round</SelectItem>
+                        <SelectItem value="3">3 Rounds</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </>
+                )}
               </div>
               
               <div className="space-y-4 md:col-span-2">
                 <div className="flex items-center justify-between">
                   <label className="text-white font-medium">Tournament name</label>
-                  <span title="Tournament name is limited by 40 characters.">
+                  <div 
+                    className="relative inline-block" 
+                    onMouseEnter={() => setHoveredTooltip('tournamentName')} 
+                    onMouseLeave={() => setHoveredTooltip(null)}
+                  >
                     <Info className="h-5 w-5 text-gray-400" />
-                  </span>
+                    {hoveredTooltip === 'tournamentName' && (
+                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                        Tournament name is limited by 40 characters.
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Input
                   name="name"
@@ -344,9 +391,18 @@ One rule survive and kill the Boss!`;
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Tournament rules</label>
-                  <span title="Rules of the tournament.">
+                  <div 
+                    className="relative inline-block" 
+                    onMouseEnter={() => setHoveredTooltip('tournamentRules')} 
+                    onMouseLeave={() => setHoveredTooltip(null)}
+                  >
                     <Info className="h-5 w-5 text-gray-400" />
-                  </span>
+                    {hoveredTooltip === 'tournamentRules' && (
+                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                        Rules of the tournament.
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Textarea
                   name="rules"
@@ -358,9 +414,18 @@ One rule survive and kill the Boss!`;
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Agent Level required</label>
-                  <span title="User level required to join the tournament.">
+                  <div 
+                    className="relative inline-block" 
+                    onMouseEnter={() => setHoveredTooltip('agentLevelRequired')} 
+                    onMouseLeave={() => setHoveredTooltip(null)}
+                  >
                     <Info className="h-5 w-5 text-gray-400" />
-                  </span>
+                    {hoveredTooltip === 'agentLevelRequired' && (
+                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                        User level required to join the tournament.
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Input
                   type="number"
@@ -381,9 +446,18 @@ One rule survive and kill the Boss!`;
                 
                 <div className="flex items-center justify-between mt-6">
                   <label className="text-white font-medium">Tournament entry code</label>
-                  <span title="Code required to join the tournament.">
+                  <div 
+                    className="relative inline-block" 
+                    onMouseEnter={() => setHoveredTooltip('tournamentEntryCode')} 
+                    onMouseLeave={() => setHoveredTooltip(null)}
+                  >
                     <Info className="h-5 w-5 text-gray-400" />
-                  </span>
+                    {hoveredTooltip === 'tournamentEntryCode' && (
+                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                        Code required to join the tournament.
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Select 
                   value={formData.entry_code ? "Yes" : "No"} 
@@ -439,4 +513,4 @@ One rule survive and kill the Boss!`;
       </Card>
     </div>
   );
-} 
+}
