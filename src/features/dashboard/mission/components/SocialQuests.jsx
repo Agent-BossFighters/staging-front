@@ -7,67 +7,149 @@ import toast from "react-hot-toast";
 
 const SocialQuests = ({ quests, onQuestProgress, onRefreshQuests }) => {
   const [localQuests, setLocalQuests] = useState([]);
+  const [claimingQuests, setClaimingQuests] = useState({}); // Pour gérer l'état de claim
 
   // Mettre à jour les quêtes locales quand les props changent
   useEffect(() => {
     setLocalQuests(quests);
   }, [quests]);
 
+  // Polling pour les mises à jour des quêtes (en attendant les webhooks)
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      onRefreshQuests();
+    }, 15000); // Toutes les 15 secondes
+
+    return () => clearInterval(pollInterval);
+  }, [onRefreshQuests]);
+
   // Filtrer les quêtes sociales
-  const socialQuests = localQuests.filter(
-    (quest) =>
-      (quest.quest_type === "social" || quest.id.includes("social")) &&
-      quest.id !== "zealy_connect"
+  const socialQuests = quests.filter(
+    (quest) => quest.quest_type === "social" || quest.id.includes("social")
   );
 
-  // Ajouter la quête Zealy aux quêtes sociales
-  const zealyQuestData = {
-    id: "zealy_connect",
-    name: "Join the Agent's community on Zealy",
-    description: "Connect to Zealy and follow our community to earn rewards",
-    reward_xp: 100,
-    completed: false,
-    completable: true,
-    icon: zealyQuest,
-    link: {
-      text: "Zealy",
-      url: ZEALY_URL,
-    },
+  // Gérer le clic sur une quête
+  const handleQuestClaim = async (quest) => {
+    try {
+      // Vérifier si la quête est déjà en cours de claim
+      if (claimingQuests[quest.id]) {
+        toast.error("Cette quête est déjà en cours de traitement");
+        return;
+      }
+
+      // Marquer la quête comme en cours de claim
+      setClaimingQuests((prev) => ({ ...prev, [quest.id]: true }));
+
+      // Vérifier le statut de la communauté
+      const communityStatus = await ZealyService.checkCommunityStatus();
+
+      if (!communityStatus.joined) {
+        window.open(ZEALY_URL, "_blank");
+        toast("Vous devez d'abord rejoindre la communauté Zealy", {
+          icon: "ℹ️",
+        });
+        return;
+      }
+
+      if (!communityStatus.user?.id) {
+        window.open(ZEALY_URL, "_blank");
+        toast.success("Redirection vers Zealy...");
+        return;
+      }
+
+      // Vérifier si la quête est déjà complétée
+      if (quest.completed) {
+        toast.error("Cette quête est déjà complétée");
+        return;
+      }
+
+      // Vérifier si la quête est complétable
+      if (!quest.completable) {
+        toast.error("Cette quête n'est pas encore complétable");
+        return;
+      }
+
+      // Vérifier le statut de la quête sur Zealy si c'est une quête sociale
+      if (quest.quest_type === "social" || quest.id.includes("social")) {
+        try {
+          const questStatus = await ZealyService.checkQuestStatus(quest.id);
+
+          if (!questStatus.completed) {
+            toast.error(
+              "Vous devez d'abord compléter les actions requises sur Twitter"
+            );
+            return;
+          }
+        } catch (error) {
+          console.error("Error checking quest status:", error);
+          toast.error("Erreur lors de la vérification du statut de la quête");
+          return;
+        }
+      }
+
+      // Mettre à jour la progression
+      await onQuestProgress(quest.id, quest.progress_required);
+
+      // Attendre un court délai pour laisser le temps au webhook d'être traité
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Rafraîchir les quêtes
+      await onRefreshQuests();
+
+      toast.success("Quête validée !");
+    } catch (error) {
+      console.error("Error claiming quest:", error);
+      toast.error("Erreur lors de la validation de la quête");
+    } finally {
+      // Réinitialiser l'état de claim
+      setClaimingQuests((prev) => ({ ...prev, [quest.id]: false }));
+    }
   };
 
-  // Mettre la quête Zealy en première position
-  const allSocialQuests = [zealyQuestData, ...socialQuests];
+  // Fonction pour rendre le texte avec des liens cliquables
+  const renderDescriptionWithLinks = (quest) => {
+    if (quest.id === "zealy_connect") {
+      const text = "Connect to Zealy and follow our community to earn rewards";
+      const parts = text.split("Zealy");
+
+      return (
+        <span className="text-white/70">
+          {parts[0]}
+          <a
+            href={ZEALY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.open(ZEALY_URL, "_blank");
+            }}
+          >
+            Zealy
+          </a>
+          {parts[1]}
+        </span>
+      );
+    }
+
+    return quest.description;
+  };
 
   // Gérer le clic sur la quête Zealy
   const handleZealyQuestClick = async () => {
     try {
-      // Vérifier si l'utilisateur a déjà un Zealy ID
       const communityStatus = await ZealyService.checkCommunityStatus();
-
       if (communityStatus.joined && communityStatus.user?.id) {
-        // Si l'utilisateur est déjà inscrit et a un ID Zealy, on peut réclamer les points
-        const targetQuest = localQuests.find((q) => q.id === "zealy_connect");
+        const targetQuest = quests.find((q) => q.id === "zealy_connect");
         if (targetQuest && !targetQuest.completed) {
-          // Mettre à jour la progression avec la valeur requise
           await onQuestProgress(
             "zealy_connect",
             targetQuest.progress_required || 1
           );
-
-          // Mettre à jour l'état local immédiatement
-          setLocalQuests((prevQuests) =>
-            prevQuests.map((quest) =>
-              quest.id === "zealy_connect"
-                ? { ...quest, completed: true, completable: false }
-                : quest
-            )
-          );
-
-          // Rafraîchir les quêtes après la mise à jour
           await onRefreshQuests();
         }
       } else {
-        // Sinon, on redirige vers Zealy
         window.open(ZEALY_URL, "_blank");
         toast.success("Redirection vers Zealy...");
       }
@@ -77,89 +159,44 @@ const SocialQuests = ({ quests, onQuestProgress, onRefreshQuests }) => {
     }
   };
 
-  // Fonction pour rendre le texte avec des liens cliquables
-  const renderDescriptionWithLinks = (quest) => {
-    if (!quest.link) return quest.description;
-
-    const parts = quest.description.split(quest.link.text);
-    return (
-      <>
-        {parts[0]}
-        <a
-          href={quest.link.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary hover:underline"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (quest.id === "zealy_connect") {
-              handleZealyQuestClick();
-            }
-          }}
-        >
-          {quest.link.text}
-        </a>
-        {parts[1]}
-      </>
-    );
-  };
-
   return (
     <div>
       <h2 className="text-2xl font-bold text-white mb-5 uppercase">
         Social Quests
       </h2>
       <div>
-        {allSocialQuests.map((quest) => {
-          // Trouver la quête correspondante dans les quêtes locales
-          const localQuest =
-            localQuests.find((q) => q.id === quest.id) || quest;
-
-          // Déterminer si la quête est cliquable
-          const isClickable =
-            quest.id === "zealy_connect"
-              ? true // La quête Zealy est toujours cliquable
-              : localQuest.completable && !localQuest.completed; // Les autres quêtes suivent la logique normale
-
-          return (
-            <div
-              key={quest.id}
-              onClick={() => {
-                if (quest.id === "zealy_connect") {
-                  handleZealyQuestClick();
-                } else if (localQuest.completable) {
-                  onQuestProgress(localQuest.id, localQuest.progress_required);
-                }
-              }}
-              className={
-                isClickable
-                  ? "cursor-pointer"
-                  : localQuest.completed
-                    ? "opacity-50"
-                    : "opacity-50 cursor-not-allowed"
+        {socialQuests.map((quest) => (
+          <div key={quest.id} className={quest.completed ? "opacity-50" : ""}>
+            <Quest
+              icon={
+                <img
+                  src={quest.icon || xQuest}
+                  alt={quest.title}
+                  className="w-full h-full object-contain"
+                />
               }
-            >
-              <Quest
-                icon={
-                  <img
-                    src={localQuest.icon || xQuest}
-                    alt={localQuest.name}
-                    className="w-full h-full object-contain"
-                  />
-                }
-                title={localQuest.name}
-                description={renderDescriptionWithLinks(localQuest)}
-                status={localQuest.completed ? "FINISHED" : ""}
-                progress={
-                  localQuest.progress_required > 1
-                    ? `${localQuest.current_progress}/${localQuest.progress_required}`
-                    : undefined
-                }
-                xp={localQuest.reward_xp}
-              />
-            </div>
-          );
-        })}
+              title={quest.name}
+              description={renderDescriptionWithLinks(quest)}
+              status={quest.completed ? "FINISHED" : ""}
+              progress={
+                quest.completed ? (
+                  "CLAIMED"
+                ) : (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleQuestClaim(quest);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    CLAIM
+                  </div>
+                )
+              }
+              xp={quest.xp_reward}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
