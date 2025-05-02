@@ -33,7 +33,7 @@ const SocialQuests = ({ quests, onQuestProgress, onRefreshQuests }) => {
     try {
       // Vérifier si la quête est déjà en cours de claim
       if (claimingQuests[quest.id]) {
-        toast.error("Cette quête est déjà en cours de traitement");
+        toast.error("This quest is already being processed");
         return;
       }
 
@@ -42,10 +42,11 @@ const SocialQuests = ({ quests, onQuestProgress, onRefreshQuests }) => {
 
       // Vérifier le statut de la communauté
       const communityStatus = await ZealyService.checkCommunityStatus();
+      console.log("Community status:", communityStatus);
 
       if (!communityStatus.joined) {
         window.open(ZEALY_URL, "_blank");
-        toast("Vous devez d'abord rejoindre la communauté Zealy", {
+        toast("You must first join the Zealy community", {
           icon: "ℹ️",
         });
         return;
@@ -53,53 +54,58 @@ const SocialQuests = ({ quests, onQuestProgress, onRefreshQuests }) => {
 
       if (!communityStatus.user?.id) {
         window.open(ZEALY_URL, "_blank");
-        toast.success("Redirection vers Zealy...");
+        toast.success("Redirecting to Zealy...");
         return;
       }
 
       // Vérifier si la quête est déjà complétée
       if (quest.completed) {
-        toast.error("Cette quête est déjà complétée");
+        toast.error("This quest is already completed");
         return;
       }
 
       // Vérifier si la quête est complétable
       if (!quest.completable) {
-        toast.error("Cette quête n'est pas encore complétable");
+        toast.error("This quest is not yet completable");
         return;
       }
 
       // Vérifier le statut de la quête sur Zealy si c'est une quête sociale
       if (quest.quest_type === "social" || quest.id.includes("social")) {
         try {
+          console.log("Checking quest status for:", quest.id);
           const questStatus = await ZealyService.checkQuestStatus(quest.id);
+          console.log("Quest status:", questStatus);
 
           if (!questStatus.completed) {
             toast.error(
-              "Vous devez d'abord compléter les actions requises sur Twitter"
+              "You must first complete the required actions on Twitter"
             );
             return;
           }
         } catch (error) {
           console.error("Error checking quest status:", error);
-          toast.error("Erreur lors de la vérification du statut de la quête");
+          toast.error("Error checking quest status");
           return;
         }
       }
 
       // Mettre à jour la progression
+      console.log("Updating quest progress for:", quest.id);
       await onQuestProgress(quest.id, quest.progress_required);
 
       // Attendre un court délai pour laisser le temps au webhook d'être traité
+      console.log("Waiting for webhook processing...");
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Rafraîchir les quêtes
+      console.log("Refreshing quests...");
       await onRefreshQuests();
 
-      toast.success("Quête validée !");
+      toast.success("Quest validated!");
     } catch (error) {
       console.error("Error claiming quest:", error);
-      toast.error("Erreur lors de la validation de la quête");
+      toast.error("Error validating quest");
     } finally {
       // Réinitialiser l'état de claim
       setClaimingQuests((prev) => ({ ...prev, [quest.id]: false }));
@@ -151,11 +157,11 @@ const SocialQuests = ({ quests, onQuestProgress, onRefreshQuests }) => {
         }
       } else {
         window.open(ZEALY_URL, "_blank");
-        toast.success("Redirection vers Zealy...");
+        toast.success("Redirecting to Zealy...");
       }
     } catch (error) {
       console.error("Error handling Zealy quest click:", error);
-      toast.error("Erreur lors de la vérification du statut Zealy");
+      toast.error("Error checking Zealy status");
     }
   };
 
