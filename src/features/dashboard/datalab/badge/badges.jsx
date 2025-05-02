@@ -52,9 +52,9 @@ export default function Badges({ badges, loading }) {
               ENERGY
             </TableHead>
             <TableHead>
-              TIME TO
+              FULL CHARGE
               <br />
-              CHARGE
+              TIME
             </TableHead>
             <TableHead>
               IN GAME

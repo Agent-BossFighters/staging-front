@@ -18,7 +18,7 @@ const disabledCards = {
   monthly: false,
   tvtools: true,
   fighting: false,
-  playermap: true,
+  playermap: false,
   xp: false,
 };
 
@@ -30,13 +30,14 @@ const premiumCards = {
   monthly: true,
   tvtools: true,
   fighting: false, // TODO: Add admin only, remove after testing revert to true
-  playermap: true,
+  playermap: false, // TODO: Add admin only, remove after testing revert to true
   xp: true,
 };
 
-// TODO: Add admin only, remove after testing (3 lignes)
+// TODO: Add admin only, remove after testing (4 lignes)
 const adminOnlyCards = {
   fighting: true,
+  playermap: true,
 };
 
 const disabledStyle =
@@ -48,7 +49,6 @@ export function CardsGrid() {
   const { track } = useUmamiTracking();
 
   const handleCardClick = (cardName, path) => {
-    console.log(`Clicked on: ${cardName}`);
     track(`${cardName}_card_click`, path, { section: cardName }); // Suivre le clic
   };
 
@@ -105,7 +105,7 @@ export function CardsGrid() {
           <div
             className={`row-span-2 col-start-3 row-start-7 ${isCardDisabled("playermap") ? disabledStyle : ""}`}
           >
-            <PlayerMapCard onClick={() => handleCardClick("playermap", "/dashboard/player-map")} />
+            <PlayerMapCard onClick={() => handleCardClick("playermap", "/dashboard/playermap")} />
           </div>
           <div
             className={`col-start-3 row-start-1 ${isCardDisabled("xp") ? disabledStyle : ""}`}
