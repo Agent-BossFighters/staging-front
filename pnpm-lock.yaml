@@ -59,6 +59,9 @@ importers:
       lucide-react:
         specifier: ^0.473.0
         version: 0.473.0(react@18.3.1)
+      player-map:
+        specifier: ^1.0.1
+        version: 1.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1943,6 +1946,12 @@ packages:
   pirates@4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
+
+  player-map@1.0.1:
+    resolution: {integrity: sha512-APH6qsWsJLDPA8YaLthnR/lDDQmZcWirFpkjFvqiFmCv7b6RCBvxJegmxhXeAOeYL8H/UfHqawP02lRRhP3yWg==}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -4329,6 +4338,11 @@ snapshots:
   pify@2.3.0: {}
 
   pirates@4.0.6: {}
+
+  player-map@1.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   possible-typed-array-names@1.1.0: {}
 
