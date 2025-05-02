@@ -3,7 +3,7 @@ import React from "react";
 import { Card } from "@ui/card";
 import { Locker } from "@img/index";
 
-export default function LockerCard() {
+export default function LockerCard({ onClick }) {
   return (
     <Card
       title="LOCKER"
@@ -13,6 +13,7 @@ export default function LockerCard() {
       patternClassName="w-[95%] h-[95%] object-contain mx-auto"
       backgroundClassName="opacity-10"
       className="bg-gradient-to-b from-[#212121] via-[#000000] to-[#212121]"
+      onClick={onClick}
     />
   );
 }

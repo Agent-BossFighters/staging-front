@@ -3,7 +3,7 @@ import React from "react";
 import { Card } from "@ui/card";
 import { Schedule, CustomLeague } from "@img/index";
 
-export default function ScheduleCard() {
+export default function ScheduleCard({ onClick }) {
   return (
     <Card
       title="SCHEDULE"
@@ -12,6 +12,7 @@ export default function ScheduleCard() {
       pattern={CustomLeague}
       patternClassName="absolute inset-0 w-full h-full object-cover opacity-40"
       icon={Schedule}
+      onClick={onClick}
     />
   );
 }
