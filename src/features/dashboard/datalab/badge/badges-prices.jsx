@@ -33,7 +33,7 @@ export default function BadgesPrices({ badges, loading }) {
 
   const rows = [
     { label: "FLOOR\nPRICE", key: "2. badge_price", type: "price" },
-    { label: "FULL RECHARGE\nPRICE", key: "3. full_recharge_price", type: "price" },
+    { label: "FULL CHARGE\nCOST", key: "3. full_recharge_price", type: "price" },
     {
       label: "TOTAL\nCOST",
       key: "4. total_cost",

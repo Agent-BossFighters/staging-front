@@ -167,7 +167,7 @@ const SocialQuests = ({ quests, onQuestProgress, onRefreshQuests }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white mb-5 uppercase">
+      <h2 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-5 uppercase text-center md:text-left">
         Social Quests
       </h2>
       <div>
