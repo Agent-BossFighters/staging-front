@@ -37,32 +37,34 @@ const Quest = ({ icon, status, progress, xp, title, description }) => {
 
   return (
     <div
-      className={`bg-[#737578] py-5 px-6 flex items-center justify-between mb-3 rounded-2xl ${statusStyles.container}`}
+      className={`bg-[#737578] py-3 lg:py-5 px-3 lg:px-6 flex flex-col lg:flex-row items-center mb-3 rounded-2xl ${statusStyles.container}`}
     >
-      <div className="flex items-center gap-4">
-        <div
-          className={`${statusStyles.icon} rounded-full p-2 flex items-center justify-center w-12 h-12`}
-        >
-          <div className="w-10 h-10 flex items-center justify-center">
-            {icon}
+      <div className="w-full flex flex-col lg:flex-row lg:items-center justify-between">
+        <div className="flex items-center gap-2 lg:gap-4 mb-2 lg:mb-0">
+          <div
+            className={`${statusStyles.icon} rounded-full p-1 lg:p-2 flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12`}
+          >
+            <div className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
+              {icon}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-white text-base lg:text-xl font-semibold">{title}</span>
+            {description && (
+              <span className="text-white/70 text-xs lg:text-sm mt-1">{description}</span>
+            )}
           </div>
         </div>
-        <div className="flex flex-col">
-          <span className="text-white text-xl font-semibold">{title}</span>
-          {description && (
-            <span className="text-white/70 text-sm mt-1">{description}</span>
-          )}
+        <div className="flex items-center gap-2 w-full lg:w-auto justify-between lg:justify-end">
+          <span
+            className={`${statusStyles.badge} py-1 lg:py-2 text-base lg:text-xl min-w-[80px] lg:min-w-[120px] text-center font-semibold px-2 lg:px-4 rounded-2xl mr-2 lg:mr-4`}
+          >
+            {isFinished ? "CLAIMED" : progress ? progress : "CLAIM"}
+          </span>
+          <span className="text-primary text-base lg:text-xl min-w-[60px] lg:min-w-[85px] font-medium">
+            +{xp} XP
+          </span>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <span
-          className={`${statusStyles.badge} py-2 text-xl min-w-[120px] text-center font-semibold px-4 rounded-2xl mr-4`}
-        >
-          {isFinished ? "CLAIMED" : progress ? progress : "CLAIM"}
-        </span>
-        <span className="text-primary text-xl min-w-[85px] font-medium">
-          +{xp} XP
-        </span>
       </div>
     </div>
   );
