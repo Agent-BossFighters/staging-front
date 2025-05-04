@@ -13,18 +13,29 @@ export default function Footer() {
             <span className="">Terms of Service</span>
           </Link>
         </div>
-        {/* Icon de discord */}
-        <a
-          href="https://discord.gg/TjgJ9x6B8g"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-primary transition-colors"
-        >
-          <span className="hidden md:inline">
-            Join our community on Discord
-          </span>
-          <span className="md:hidden">Discord</span>
-        </a>
+        {/* Icon de discord + support */}
+        <div className="flex items-center gap-2">
+          <a
+            href="https://discord.gg/TjgJ9x6B8g"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary transition-colors"
+          >
+            <span className="hidden md:inline">
+              Join our community on Discord
+            </span>
+            <span className="md:hidden">Discord</span>
+          </a>
+          <span className="mx-2">|</span>
+          <a
+            href="https://discord.gg/52mKT9g8NB"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary transition-colors"
+          >
+            Support
+          </a>
+        </div>
       </div>
     </footer>
   );
