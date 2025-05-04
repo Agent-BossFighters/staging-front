@@ -13,6 +13,7 @@ export default function ScheduleCard({ onClick }) {
       patternClassName="absolute inset-0 w-full h-full object-cover opacity-40"
       icon={Schedule}
       onClick={onClick}
+      soon={true}
     />
   );
 }

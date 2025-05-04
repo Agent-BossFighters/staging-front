@@ -61,7 +61,7 @@ export default function Badges() {
             <TableHead className="text-accent">
               SP.MARKS
               <br />
-              /VALUE
+              VALUE
             </TableHead>
           </TableRow>
         </TableHeader>

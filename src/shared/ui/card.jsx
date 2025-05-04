@@ -17,6 +17,7 @@ const Card = React.forwardRef(
       icon,
       iconClassName = "w-28 h-28 object-contain",
       children,
+      soon = false,
       ...props
     },
     ref
@@ -35,6 +36,11 @@ const Card = React.forwardRef(
           )}
           {...props}
         >
+          {soon && (
+            <span className="absolute top-4 left-4 z-20 bg-[#444] text-white text-sm font-medium px-4 py-1 rounded-md shadow-sm">
+              Soon
+            </span>
+          )}
           {pattern && (
             <img
               src={pattern}

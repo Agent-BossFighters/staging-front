@@ -13,6 +13,7 @@ export default function TvToolsCard({ onClick }) {
       patternClassName="opacity-40"
       icon={TvTools}
       onClick={onClick}
+      soon={true}
     />
   );
 }
