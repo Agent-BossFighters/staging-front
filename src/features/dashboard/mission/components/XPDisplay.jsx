@@ -104,40 +104,40 @@ const XPDisplay = () => {
   const { percentage, displayXP, displayLevel, nextLevel } = getUserProgressData();
   
   return (
-    <div className="flex items-start gap-8 p-4">
+    <div className="flex flex-col 2xl:flex-row items-center gap-4 md:gap-8 p-2 md:p-4">
       {/* Badge de niveau avec fond - à gauche */}
-      <div className="relative w-40 h-40 flex-shrink-0 flex items-center justify-center">
+      <div className="relative w-32 h-32 md:w-40 md:h-40 flex-shrink-0 flex items-center justify-center">
         <div
           className="absolute inset-0 bg-contain bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${BackgroundUser})` }}
         />
-        <span className="text-white font-bold text-7xl relative z-10 pb-2">
+        <span className="text-white font-bold text-5xl md:text-7xl relative z-10 pb-2">
           {xpData.isLoading ? "..." : displayLevel}
         </span>
       </div>
       
-      {/* Section de droite avec pseudo et barre de progression */}
-      <div className="flex-1">
+      {/* Section avec pseudo et barre de progression */}
+      <div className="flex-1 w-full">
         {/* Pseudo de l'utilisateur */}
-        <h2 className="text-white text-3xl flex justify-center font-bold mb-4">
+        <h2 className="text-white text-2xl md:text-3xl flex justify-center font-bold mb-2 md:mb-4">
           {user?.username || "User"}
         </h2>
         
         {/* Barre de progression XP */}
         <div className="w-full">
-          <div className="flex justify-between items-center gap-3 mb-2]">
+          <div className="flex justify-between items-center gap-3 mb-2">
             {xpData.isLoading ? (
-              <div className="w-full bg-gray-700 rounded-full h-5">
-                <div className="bg-gray-600 h-5 rounded-full animate-pulse" style={{ width: '50%' }} />
+              <div className="w-full bg-gray-700 rounded-full h-4 md:h-5">
+                <div className="bg-gray-600 h-4 md:h-5 rounded-full animate-pulse" style={{ width: '50%' }} />
               </div>
             ) : (
               <Progress 
                 value={percentage} 
-                className="h-5" 
+                className="h-4 md:h-5" 
               /> 
             )}
           </div>
-          <p className="text-white flex justify-center">
+          <p className="text-white text-sm md:text-base flex justify-center">
             {displayXP}
           </p>
         </div>

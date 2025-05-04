@@ -136,7 +136,7 @@ export default function Showrunner() {
                   {formatNumber(getValue(contract, "8. nb_badges_required"))}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
-                  {formatNumber(getValue(contract, "9. flex_craft"), 2)}
+                  {formatNumber(getValue(contract, "9. flex_craft"))}
                 </TableCell>
                 <TableCell className="p-2 text-left text-destructive">
                   {formatNumber(getValue(contract, "10. sp_marks_craft"))}
