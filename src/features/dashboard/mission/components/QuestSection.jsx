@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 import { AuthUtils } from "@utils/api/auth.utils";
 import { XPUpdateContext } from "@/features/dashboard/main/xp/xp-progress";
 import XPDisplay from "./XPDisplay";
-import SocialQuests from "./SocialQuests";
 
 const QuestSection = () => {
   const { user } = useAuth();
@@ -237,13 +236,6 @@ const QuestSection = () => {
             ))}
           </div>
         </div>
-
-        {/* Quêtes sociales */}
-        <SocialQuests
-          quests={quests}
-          onQuestProgress={handleQuestProgress}
-          onRefreshQuests={fetchQuests}
-        />
       </div>
 
       {/* Colonne droite (vide pour l'équilibre) */}
