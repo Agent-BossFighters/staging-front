@@ -7,16 +7,16 @@ import { Navigate } from "react-router-dom";
 // Composant protégé qui vérifie si l'utilisateur est premium
 const MissionPageContent = () => {
   return (
-    <div className="w-5/6 mx-auto pt-2 flex flex-col h-full relative">
+    <div className="w-full md:w-5/6 mx-auto pt-2 flex flex-col h-full relative px-2 md:px-0">
       {/* Container principal avec fond sombre - hauteur réduite pour mieux adapter l'image */}
-      <div className="flex-1 rounded-lg border border-border p-6 relative overflow-hidden">
-        <h1 className="text-5xl font-extrabold pb-2 text-primary">MISSIONS</h1>
-        <p className="text-primary flex justify-center mt-2 mb-6">
+      <div className="flex-1 rounded-lg border border-border p-3 md:p-6 relative overflow-hidden">
+        <h1 className="text-3xl md:text-5xl font-extrabold pb-2 text-primary text-center md:text-left">MISSIONS</h1>
+        <p className="text-primary text-sm md:text-base flex justify-center mt-2 mb-4 md:mb-6 text-center">
           Increase your level to 10 each month and take part in the Boss Fighters NFT raffle !
         </p>
         
         {/* Intégration du composant QuestSection sur toute la largeur */}
-        <div className="mt-8">
+        <div className="mt-4 md:mt-8">
           <QuestSection />
         </div>
         

@@ -9,7 +9,8 @@ export default function PlayerMapView() {
 
     <PlayerMapHome />
     <GraphComponent />
-    <RegistrationForm /> 
+    <RegistrationForm />
+    {/* <PlayerMapGraph /> */}
   </div>
   );
 }

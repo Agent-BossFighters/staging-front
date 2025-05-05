@@ -13,6 +13,7 @@ export default function PlayerMapCard({ onClick }) {
       patternClassName="absolute inset-0 w-full h-full opacity-40"
       icon={Playermap}
       onClick={onClick}
+      soon={true}
     />
   );
 }

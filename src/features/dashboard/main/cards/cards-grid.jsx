@@ -70,47 +70,71 @@ export function CardsGrid() {
           <div
             className={`row-span-6 ${isCardDisabled("locker") ? disabledStyle : ""}`}
           >
-            <LockerCard onClick={() => handleCardClick("locker", "/dashboard/locker")} />
+            <LockerCard
+              onClick={() => handleCardClick("locker", "/dashboard/locker")}
+            />
           </div>
           <div
             className={`row-span-4 ${isCardDisabled("datalab") ? disabledStyle : ""}`}
           >
-            <DataLabCard onClick={() => handleCardClick("datalab", "/dashboard/datalab")} />
+            <DataLabCard
+              onClick={() => handleCardClick("datalab", "/dashboard/datalab")}
+            />
           </div>
           <div
             className={`row-span-3 col-start-3 row-start-2 ${isCardDisabled("daily") ? disabledStyle : ""}`}
           >
-            <DailyCard onClick={() => handleCardClick("daily", "/dashboard/schedule/daily")} />
+            <DailyCard
+              onClick={() =>
+                handleCardClick("daily", "/dashboard/schedule/daily")
+              }
+            />
           </div>
           <div
-            className={`row-span-2 col-start-2 row-start-5 ${isCardDisabled("schedule") ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-2 row-start-5 ${isCardDisabled("fighting") ? disabledStyle : ""}`}
           >
-            <ScheduleCard onClick={() => handleCardClick("schedule", "/dashboard/schedule")} />
+            <FightingCard
+              onClick={() => handleCardClick("fighting", "/dashboard/fighting")}
+            />
+          </div>
+          <div
+            className={`row-span-2 col-start-2 row-start-7 ${isCardDisabled("playermap") ? disabledStyle : ""}`}
+          >
+            <PlayerMapCard
+              onClick={() =>
+                handleCardClick("playermap", "/dashboard/playermap")
+              }
+            />
           </div>
           <div
             className={`row-span-2 col-start-3 row-start-5 ${isCardDisabled("monthly") ? disabledStyle : ""}`}
           >
-            <MonthlyCard onClick={() => handleCardClick("monthly", "/dashboard/schedule/monthly")} />
+            <MonthlyCard
+              onClick={() =>
+                handleCardClick("monthly", "/dashboard/schedule/monthly")
+              }
+            />
           </div>
           <div
             className={`row-span-2 col-start-1 row-start-7 ${isCardDisabled("tvtools") ? disabledStyle : ""}`}
           >
-            <TvToolsCard onClick={() => handleCardClick("tvtools", "/dashboard/tv-tools")} />
+            <TvToolsCard
+              onClick={() => handleCardClick("tvtools", "/dashboard/tv-tools")}
+            />
           </div>
           <div
-            className={`row-span-2 col-start-2 row-start-7 ${isCardDisabled("fighting") ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-3 row-start-7 ${isCardDisabled("schedule") ? disabledStyle : ""}`}
           >
-            <FightingCard onClick={() => handleCardClick("fighting", "/dashboard/fighting")} />
-          </div>
-          <div
-            className={`row-span-2 col-start-3 row-start-7 ${isCardDisabled("playermap") ? disabledStyle : ""}`}
-          >
-            <PlayerMapCard onClick={() => handleCardClick("playermap", "/dashboard/playermap")} />
+            <ScheduleCard
+              onClick={() => handleCardClick("schedule", "/dashboard/schedule")}
+            />
           </div>
           <div
             className={`col-start-3 row-start-1 ${isCardDisabled("xp") ? disabledStyle : ""}`}
           >
-            <XPProgress onClick={() => handleCardClick("xp", "/dashboard/xp")} />
+            <XPProgress
+              onClick={() => handleCardClick("xp", "/dashboard/xp")}
+            />
           </div>
         </div>
       </div>

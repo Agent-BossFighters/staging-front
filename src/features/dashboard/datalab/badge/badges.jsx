@@ -62,7 +62,7 @@ export default function Badges({ badges, loading }) {
               TIME
             </TableHead>
             <TableHead className="text-destructive">
-              MAX CHARGE
+              FULL CHARGE
               <br />
               COST
             </TableHead>
