@@ -1,4 +1,6 @@
 import { AgentLogo, Thp, IntuitionLogo, Alchemists, A } from "@img/index";
+import WalletConnector from "@features/wallet/WalletConnector";
+
 export default function HomePage() {
   return (
     <div className="w-5/6 mx-auto">
@@ -7,6 +9,8 @@ export default function HomePage() {
         <p className="text-s font-extrabold">
           Boss Fighters community&#39;s Open Source Platform
         </p>
+        
+        <WalletConnector />
       </div>
       <div className="w-3/5 mx-auto">
         <p>
@@ -31,7 +35,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center mb-16 mx-2 gap-4">
             <img src={Thp} alt="Thp" className="w-13 h-13" />
             <p className="mt-8 text-justify">
-              “THP Lab” is a decentralized open collective, bootstrapped by "The Hacking 
+              "THP Lab" is a decentralized open collective, bootstrapped by "The Hacking 
               Project" students of the development bootcamp, experimenting on innovative 
               product development.
             </p>
@@ -47,7 +51,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center gap-4 mx-2">
             <img src={Alchemists} alt="Alchemists" className="w-13 h-13" />
             <p className="text-justify">
-              “The Alchemists” guild, present since Boss Fighters inception, is focusing on 
+              "The Alchemists" guild, present since Boss Fighters inception, is focusing on 
               improving the user experience of web3 games by proposing improvements 
               and creating content. 
             </p>
