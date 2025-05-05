@@ -1,4 +1,4 @@
-import { PlayerMapHome, RegistrationForm, GraphComponent} from 'player-map';
+import { PlayerMapHome, RegistrationForm, GraphComponent, PlayerMapGraph} from 'player-map';
 
 export default function PlayerMapView() {
   return (
@@ -9,7 +9,8 @@ export default function PlayerMapView() {
 
     <PlayerMapHome />
     <GraphComponent />
-    <RegistrationForm /> 
+    <RegistrationForm />
+    <PlayerMapGraph />
   </div>
   );
 }
