@@ -98,10 +98,12 @@ export function CardsGrid() {
             />
           </div>
           <div
-            className={`row-span-2 col-start-2 row-start-7 ${isCardDisabled("schedule") ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-2 row-start-7 ${isCardDisabled("playermap") ? disabledStyle : ""}`}
           >
-            <ScheduleCard
-              onClick={() => handleCardClick("schedule", "/dashboard/schedule")}
+            <PlayerMapCard
+              onClick={() =>
+                handleCardClick("playermap", "/dashboard/playermap")
+              }
             />
           </div>
           <div
@@ -121,12 +123,10 @@ export function CardsGrid() {
             />
           </div>
           <div
-            className={`row-span-2 col-start-3 row-start-7 ${isCardDisabled("playermap") ? disabledStyle : ""}`}
+            className={`row-span-2 col-start-3 row-start-7 ${isCardDisabled("schedule") ? disabledStyle : ""}`}
           >
-            <PlayerMapCard
-              onClick={() =>
-                handleCardClick("playermap", "/dashboard/playermap")
-              }
+            <ScheduleCard
+              onClick={() => handleCardClick("schedule", "/dashboard/schedule")}
             />
           </div>
           <div
