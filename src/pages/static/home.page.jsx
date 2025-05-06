@@ -1,5 +1,5 @@
 import { AgentLogo, Thp, IntuitionLogo, Alchemists, A } from "@img/index";
-import WalletConnector from "@features/wallet/WalletConnector";
+
 
 export default function HomePage() {
   return (
@@ -8,8 +8,7 @@ export default function HomePage() {
         <img src={AgentLogo} alt="Agent Logo" className="w-[400px]" />
         <p className="text-s font-extrabold">
           Boss Fighters community&#39;s Open Source Platform
-        </p>
-        
+        </p>      
       </div>
       <div className="w-4/5 mx-auto max-lg:w-2/3">
         <p>
@@ -56,7 +55,7 @@ export default function HomePage() {
               <img src={Alchemists} alt="Alchemists" className="w-13 h-13" />
             </div>
             <p className="text-justify">
-              "The Alchemists" guild, present since Boss Fighters inception, is focusing on 
+              "The Alchemists" guild, present since Boss Fighters inception, is focusing on  
               improving the user experience of web3 games by proposing improvements 
               and creating content. 
             </p>
