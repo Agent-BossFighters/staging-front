@@ -119,7 +119,7 @@ export const useItems = (user) => {
       for (const crafting of itemCraftings) {
         const values = craftingValues[crafting.id];
         for (const [key, value] of Object.entries(values)) {
-          if (isNaN(value) || value < 0) {
+          if (value !== '' && (isNaN(value) || value < 0)) {
             invalidValues.push(`${crafting.item.name} - ${key}`);
           }
         }
@@ -133,20 +133,44 @@ export const useItems = (user) => {
       // Mettre à jour chaque crafting
       for (const crafting of itemCraftings) {
         const values = craftingValues[crafting.id];
-        const newValues = {
-          unit_to_craft: values.unit_to_craft === '' ? null : Number(values.unit_to_craft),
-          flex_craft: values.flex_charge === '' ? null : Number(values.flex_charge),
-          sponsor_mark_craft: values.sponsor_mark_charge === '' ? null : Number(values.sponsor_mark_charge),
-          nb_lower_badge_to_craft: values.nb_lower_badge_to_craft === '' ? null : Number(values.nb_lower_badge_to_craft),
-          craft_time: values.craft_time === '' ? null : Number(values.craft_time),
-          max_level: values.max_level === '' ? null : Number(values.max_level)
+        const originalValues = {
+          unit_to_craft: crafting.unit_to_craft,
+          flex_craft: crafting.flex_craft,
+          sponsor_mark_craft: crafting.sponsor_mark_craft,
+          nb_lower_badge_to_craft: crafting.nb_lower_badge_to_craft,
+          craft_time: crafting.craft_time,
+          max_level: crafting.max_level
         };
-        
-        await kyInstance.patch(`v1/admin/item_crafting/${crafting.id}`, {
-          json: {
-            item_crafting: newValues
-          }
-        });
+
+        // Ne créer l'objet de mise à jour que pour les champs modifiés
+        const updateValues = {};
+        if (values.unit_to_craft !== '' && values.unit_to_craft !== originalValues.unit_to_craft) {
+          updateValues.unit_to_craft = values.unit_to_craft === '' ? null : Number(values.unit_to_craft);
+        }
+        if (values.flex_craft !== '' && values.flex_craft !== originalValues.flex_craft) {
+          updateValues.flex_craft = values.flex_craft === '' ? null : Number(values.flex_craft);
+        }
+        if (values.sponsor_mark_craft !== '' && values.sponsor_mark_craft !== originalValues.sponsor_mark_craft) {
+          updateValues.sponsor_mark_craft = values.sponsor_mark_craft === '' ? null : Number(values.sponsor_mark_craft);
+        }
+        if (values.nb_lower_badge_to_craft !== '' && values.nb_lower_badge_to_craft !== originalValues.nb_lower_badge_to_craft) {
+          updateValues.nb_lower_badge_to_craft = values.nb_lower_badge_to_craft === '' ? null : Number(values.nb_lower_badge_to_craft);
+        }
+        if (values.craft_time !== '' && values.craft_time !== originalValues.craft_time) {
+          updateValues.craft_time = values.craft_time === '' ? null : Number(values.craft_time);
+        }
+        if (values.max_level !== '' && values.max_level !== originalValues.max_level) {
+          updateValues.max_level = values.max_level === '' ? null : Number(values.max_level);
+        }
+
+        // Ne faire la mise à jour que si des champs ont été modifiés
+        if (Object.keys(updateValues).length > 0) {
+          await kyInstance.patch(`v1/admin/item_crafting/${crafting.id}`, {
+            json: {
+              item_crafting: updateValues
+            }
+          });
+        }
       }
       
       // Rafraîchir les données
@@ -158,8 +182,8 @@ export const useItems = (user) => {
       updatedCraftings.forEach(crafting => {
         initialCraftingValues[crafting.id] = {
           unit_to_craft: crafting.unit_to_craft === null ? '' : crafting.unit_to_craft,
-          flex_charge: crafting.flex_craft === null ? '' : crafting.flex_craft,
-          sponsor_mark_charge: crafting.sponsor_mark_craft === null ? '' : crafting.sponsor_mark_craft,
+          flex_craft: crafting.flex_craft === null ? '' : crafting.flex_craft,
+          sponsor_mark_craft: crafting.sponsor_mark_craft === null ? '' : crafting.sponsor_mark_craft,
           nb_lower_badge_to_craft: crafting.nb_lower_badge_to_craft === null ? '' : crafting.nb_lower_badge_to_craft,
           craft_time: crafting.craft_time === null ? '' : crafting.craft_time,
           max_level: crafting.max_level === null ? '' : crafting.max_level
@@ -193,7 +217,7 @@ export const useItems = (user) => {
       for (const recharge of itemRecharges) {
         const values = rechargeValues[recharge.id];
         for (const [key, value] of Object.entries(values)) {
-          if (isNaN(value) || value < 0) {
+          if (value !== '' && (isNaN(value) || value < 0)) {
             invalidValues.push(`${recharge.item.name} - ${key}`);
           }
         }
@@ -207,20 +231,44 @@ export const useItems = (user) => {
       // Mettre à jour chaque recharge
       for (const recharge of itemRecharges) {
         const values = rechargeValues[recharge.id];
-        const newValues = {
-          max_energy_recharge: values.max_energy_recharge === '' ? null : Number(values.max_energy_recharge),
-          time_to_charge: values.time_to_charge === '' ? null : Number(values.time_to_charge),
-          flex_charge: values.flex_charge === '' ? null : Number(values.flex_charge),
-          sponsor_mark_charge: values.sponsor_mark_charge === '' ? null : Number(values.sponsor_mark_charge),
-          unit_charge_cost: values.unit_charge === '' ? null : Number(values.unit_charge),
-          max_charge_cost: values.max_charge === '' ? null : Number(values.max_charge)
+        const originalValues = {
+          max_energy_recharge: recharge.max_energy_recharge,
+          time_to_charge: recharge.time_to_charge,
+          flex_charge: recharge.flex_charge,
+          sponsor_mark_charge: recharge.sponsor_mark_charge,
+          unit_charge_cost: recharge.unit_charge_cost,
+          max_charge_cost: recharge.max_charge_cost
         };
-        
-        await kyInstance.patch(`v1/admin/item_recharge/${recharge.id}`, {
-          json: {
-            item_recharge: newValues
-          }
-        });
+
+        // Ne créer l'objet de mise à jour que pour les champs modifiés
+        const updateValues = {};
+        if (values.max_energy_recharge !== '' && values.max_energy_recharge !== originalValues.max_energy_recharge) {
+          updateValues.max_energy_recharge = values.max_energy_recharge === '' ? null : Number(values.max_energy_recharge);
+        }
+        if (values.time_to_charge !== '' && values.time_to_charge !== originalValues.time_to_charge) {
+          updateValues.time_to_charge = values.time_to_charge === '' ? null : Number(values.time_to_charge);
+        }
+        if (values.flex_charge !== '' && values.flex_charge !== originalValues.flex_charge) {
+          updateValues.flex_charge = values.flex_charge === '' ? null : Number(values.flex_charge);
+        }
+        if (values.sponsor_mark_charge !== '' && values.sponsor_mark_charge !== originalValues.sponsor_mark_charge) {
+          updateValues.sponsor_mark_charge = values.sponsor_mark_charge === '' ? null : Number(values.sponsor_mark_charge);
+        }
+        if (values.unit_charge !== '' && values.unit_charge !== originalValues.unit_charge_cost) {
+          updateValues.unit_charge_cost = values.unit_charge === '' ? null : Number(values.unit_charge);
+        }
+        if (values.max_charge !== '' && values.max_charge !== originalValues.max_charge_cost) {
+          updateValues.max_charge_cost = values.max_charge === '' ? null : Number(values.max_charge);
+        }
+
+        // Ne faire la mise à jour que si des champs ont été modifiés
+        if (Object.keys(updateValues).length > 0) {
+          await kyInstance.patch(`v1/admin/item_recharge/${recharge.id}`, {
+            json: {
+              item_recharge: updateValues
+            }
+          });
+        }
       }
       
       // Rafraîchir les données
