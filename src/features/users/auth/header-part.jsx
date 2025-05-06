@@ -12,6 +12,7 @@ import {
   NavigationMenuContent,
   NavigationMenuLink,
 } from "@ui/navigation-menu";
+import WalletConnector from "@features/wallet/WalletConnector";
 
 export default function HeaderPart() {
   const { user, isLoading, logout } = useAuth();
@@ -56,8 +57,10 @@ export default function HeaderPart() {
                         Subscription
                       </Link>
                     ) : ( '' )}
+                    <WalletConnector />
                     </>
                   </NavigationMenuLink>
+                  
                   <Button
                     variant="ghost"
                     className="text-xs py-2 px-2 h-auto text-muted-foreground hover:bg-transparent hover:text-destructive/70 w-full justify-start"

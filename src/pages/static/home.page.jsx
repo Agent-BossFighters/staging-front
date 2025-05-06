@@ -10,7 +10,6 @@ export default function HomePage() {
           Boss Fighters community&#39;s Open Source Platform
         </p>
         
-        <WalletConnector />
       </div>
       <div className="w-4/5 mx-auto max-lg:w-2/3">
         <p>

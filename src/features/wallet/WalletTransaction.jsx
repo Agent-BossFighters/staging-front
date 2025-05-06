@@ -23,7 +23,6 @@ export default function WalletTransaction() {
     setTransactionHash("");
 
     try {
-      // Utiliser le provider Ethereum pour envoyer la transaction
       const provider = await user.wallet.getEthereumProvider();
       const signer = provider.getSigner();
       
