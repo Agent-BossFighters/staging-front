@@ -16,7 +16,7 @@ export const useItems = (user) => {
       try {
         // Fetch items
         const itemsResponse = await kyInstance.get('v1/admin/items').json();
-        console.log('Items data:', itemsResponse);
+
         const sortedItems = [...itemsResponse].sort((a, b) => a.id - b.id);
         setItems(sortedItems);
 
@@ -29,7 +29,7 @@ export const useItems = (user) => {
 
         // Fetch item craftings
         const craftingsResponse = await kyInstance.get('v1/admin/item_crafting').json();
-        console.log('Item craftings data:', craftingsResponse);
+
         setItemCraftings(craftingsResponse);
 
         // Initialize crafting values
@@ -39,17 +39,17 @@ export const useItems = (user) => {
             unit_to_craft: crafting.unit_to_craft === null ? '' : crafting.unit_to_craft,
             flex_craft: crafting.flex_craft === null ? '' : crafting.flex_craft,
             sponsor_mark_craft: crafting.sponsor_mark_craft === null ? '' : crafting.sponsor_mark_craft,
+            sponsor_marks_reward: crafting.sponsor_marks_reward === null ? '' : crafting.sponsor_marks_reward,
+            craft_tokens: crafting.craft_tokens === null ? '' : crafting.craft_tokens,
             nb_lower_badge_to_craft: crafting.nb_lower_badge_to_craft === null ? '' : crafting.nb_lower_badge_to_craft,
             craft_time: crafting.craft_time === null ? '' : crafting.craft_time,
             max_level: crafting.max_level === null ? '' : crafting.max_level
           };
-          console.log('Crafting values for ID', crafting.id, ':', initialCraftingValues[crafting.id]);
         });
         setCraftingValues(initialCraftingValues);
 
         // Fetch item recharges
         const rechargesResponse = await kyInstance.get('v1/admin/item_recharge').json();
-        console.log('Item recharges data:', rechargesResponse);
         setItemRecharges(rechargesResponse);
 
         // Initialize recharge values
@@ -63,7 +63,6 @@ export const useItems = (user) => {
             unit_charge: recharge.unit_charge_cost === null ? '' : recharge.unit_charge_cost,
             max_charge: recharge.max_charge_cost === null ? '' : recharge.max_charge_cost
           };
-          console.log('Recharge values for ID', recharge.id, ':', initialRechargeValues[recharge.id]);
         });
         setRechargeValues(initialRechargeValues);
 
@@ -88,12 +87,11 @@ export const useItems = (user) => {
   };
 
   const handleCraftingValueChange = (craftingId, field, value) => {
-    const numericValue = parseFloat(value);
     setCraftingValues(prev => ({
       ...prev,
       [craftingId]: {
         ...prev[craftingId],
-        [field]: isNaN(numericValue) ? 0 : numericValue
+        [field]: value === '' ? '' : isNaN(value) ? 0 : Number(value)
       }
     }));
   };
@@ -137,6 +135,8 @@ export const useItems = (user) => {
           unit_to_craft: crafting.unit_to_craft,
           flex_craft: crafting.flex_craft,
           sponsor_mark_craft: crafting.sponsor_mark_craft,
+          sponsor_marks_reward: crafting.sponsor_marks_reward,
+          craft_tokens: crafting.craft_tokens,
           nb_lower_badge_to_craft: crafting.nb_lower_badge_to_craft,
           craft_time: crafting.craft_time,
           max_level: crafting.max_level
@@ -152,6 +152,12 @@ export const useItems = (user) => {
         }
         if (values.sponsor_mark_craft !== '' && values.sponsor_mark_craft !== originalValues.sponsor_mark_craft) {
           updateValues.sponsor_mark_craft = values.sponsor_mark_craft === '' ? null : Number(values.sponsor_mark_craft);
+        }
+        if (values.sponsor_marks_reward !== '' && values.sponsor_marks_reward !== originalValues.sponsor_marks_reward) {
+          updateValues.sponsor_marks_reward = values.sponsor_marks_reward === '' ? null : Number(values.sponsor_marks_reward);
+        }
+        if (values.craft_tokens !== '' && values.craft_tokens !== originalValues.craft_tokens) {
+          updateValues.craft_tokens = values.craft_tokens === '' ? null : Number(values.craft_tokens);
         }
         if (values.nb_lower_badge_to_craft !== '' && values.nb_lower_badge_to_craft !== originalValues.nb_lower_badge_to_craft) {
           updateValues.nb_lower_badge_to_craft = values.nb_lower_badge_to_craft === '' ? null : Number(values.nb_lower_badge_to_craft);
@@ -184,6 +190,8 @@ export const useItems = (user) => {
           unit_to_craft: crafting.unit_to_craft === null ? '' : crafting.unit_to_craft,
           flex_craft: crafting.flex_craft === null ? '' : crafting.flex_craft,
           sponsor_mark_craft: crafting.sponsor_mark_craft === null ? '' : crafting.sponsor_mark_craft,
+          sponsor_marks_reward: crafting.sponsor_marks_reward === null ? '' : crafting.sponsor_marks_reward,
+          craft_tokens: crafting.craft_tokens === null ? '' : crafting.craft_tokens,
           nb_lower_badge_to_craft: crafting.nb_lower_badge_to_craft === null ? '' : crafting.nb_lower_badge_to_craft,
           craft_time: crafting.craft_time === null ? '' : crafting.craft_time,
           max_level: crafting.max_level === null ? '' : crafting.max_level
