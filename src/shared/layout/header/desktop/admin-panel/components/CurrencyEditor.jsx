@@ -9,7 +9,7 @@ const CurrencyEditor = ({
   onClose 
 }) => {
   return (
-    <div className="absolute top-full left-0 mt-2 z-50 bg-gray-800 p-4 rounded-md border border-gray-700 w-64 shadow-lg">
+    <div className="top-full left-0 mt-2 z-50 bg-gray-800 p-4 rounded-md border border-gray-700 w-64 shadow-lg">
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-primary text-sm font-medium uper">Update Currency Rates</h3>
         <button 

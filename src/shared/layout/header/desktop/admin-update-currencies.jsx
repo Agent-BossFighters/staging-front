@@ -12,8 +12,32 @@ export default function AdminUpdateCurrencies() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
   
-  const currenciesData = useCurrencies(user);
-  const itemsData = useItems(user);
+  const {
+    items,
+    badges,
+    contracts,
+    itemValues,
+    itemCraftings,
+    itemRecharges,
+    craftingValues,
+    rechargeValues,
+    isUpdating,
+    handleItemValueChange,
+    handleCraftingValueChange,
+    handleRechargeValueChange,
+    handleSaveItems,
+    handleSaveBadges,
+    handleSaveContracts,
+    handleSaveCraftings,
+    handleSaveRecharges
+  } = useItems(user);
+
+  const {
+    currencies,
+    currencyValues,
+    handleCurrencyValueChange,
+    handleSaveCurrencies
+  } = useCurrencies(user);
 
   if (!user || user.is_admin !== true) return null;
 
@@ -36,40 +60,55 @@ export default function AdminUpdateCurrencies() {
   return (
     <div className="ml-4 relative">
       <AdminButton 
-        isMenuOpen={isMenuOpen}
-        onMenuToggle={handleMenuToggle}
-        onSectionSelect={handleSectionSelect}
+        items={items}
+        itemValues={itemValues}
+        itemCraftings={itemCraftings}
+        itemRecharges={itemRecharges}
+        craftingValues={craftingValues}
+        rechargeValues={rechargeValues}
+        currencies={currencies}
+        currencyValues={currencyValues}
+        isUpdating={isUpdating}
+        handleItemValueChange={handleItemValueChange}
+        handleCraftingValueChange={handleCraftingValueChange}
+        handleRechargeValueChange={handleRechargeValueChange}
+        handleCurrencyValueChange={handleCurrencyValueChange}
+        handleSaveBadges={handleSaveBadges}
+        handleSaveContracts={handleSaveContracts}
+        handleSaveCraftings={handleSaveCraftings}
+        handleSaveRecharges={handleSaveRecharges}
+        handleSaveCurrencies={handleSaveCurrencies}
       />
       
       {activeSection === 'currencies' && (
         <CurrencyEditor
-          currencies={currenciesData.currencies}
-          currencyValues={currenciesData.currencyValues}
-          handleValueChange={currenciesData.handleValueChange}
-          handleSaveCurrencies={currenciesData.handleSaveCurrencies}
-          isUpdating={currenciesData.isUpdating}
+          currencies={currencies}
+          currencyValues={currencyValues}
+          handleValueChange={handleCurrencyValueChange}
+          handleSaveCurrencies={handleSaveCurrencies}
+          isUpdating={isUpdating}
           onClose={handleCloseSection}
         />
       )}
       
       {activeSection === 'badges' && (
         <BadgeEditor
-          badges={itemsData.badges}
-          itemValues={itemsData.itemValues}
-          handleItemValueChange={itemsData.handleItemValueChange}
-          handleSaveBadges={itemsData.handleSaveBadges}
-          isUpdating={itemsData.isUpdating}
+          badges={badges}
+          itemValues={itemValues}
+          handleItemValueChange={handleItemValueChange}
+          handleSaveBadges={handleSaveBadges}
+          isUpdating={isUpdating}
           onClose={handleCloseSection}
         />
       )}
       
       {activeSection === 'contracts' && (
         <ContractEditor
-          contracts={itemsData.contracts}
-          itemValues={itemsData.itemValues}
-          handleItemValueChange={itemsData.handleItemValueChange}
-          handleSaveContracts={itemsData.handleSaveContracts}
-          isUpdating={itemsData.isUpdating}
+          contracts={contracts}
+          itemValues={itemValues}
+          handleItemValueChange={handleItemValueChange}
+          handleSaveContracts={handleSaveContracts}
+          isUpdating={isUpdating}
           onClose={handleCloseSection}
         />
       )}

@@ -1,4 +1,4 @@
-import { PlayerMapHome, RegistrationForm, GraphComponent} from 'player-map';
+import { PlayerMapHome, RegistrationForm, GraphComponent } from 'player-map';
 
 export default function PlayerMapView() {
   return (
