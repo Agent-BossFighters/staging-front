@@ -4,16 +4,16 @@ import { Button } from "@shared/ui/button";
 import { Input } from "@shared/ui/input";
 import rarities from "@shared/data/rarities.json";
 
-const RechargeEditor = ({ 
-  items, 
-  rechargeValues, 
-  handleRechargeValueChange, 
-  title 
+const RechargeEditor = ({
+  items,
+  rechargeValues,
+  handleRechargeValueChange,
+  title,
 }) => {
   // Grouper les items par rareté
   const itemsByRarity = rarities.rarities.reduce((acc, rarity) => {
-    acc[rarity.rarity] = items.filter(item => 
-      item.item.rarity === rarity.rarity
+    acc[rarity.rarity] = items.filter(
+      (item) => item.item.rarity === rarity.rarity
     );
     return acc;
   }, {});
@@ -23,22 +23,22 @@ const RechargeEditor = ({
       <h3 className="text-primary text-sm font-medium uppercase sticky top-0 bg-gray-800 py-2">
         {title}
       </h3>
-      
-      {rarities.rarities.map(rarity => {
+
+      {rarities.rarities.map((rarity) => {
         const rarityItems = itemsByRarity[rarity.rarity] || [];
         if (rarityItems.length === 0) return null;
 
         return (
-          <div 
-            key={rarity.rarity} 
+          <div
+            key={rarity.rarity}
             className="bg-gray-800/50 p-4 rounded-lg space-y-3"
           >
             <div className="flex items-center gap-2">
-              <span 
-                className="w-3 h-3 rounded-full" 
+              <span
+                className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: rarity.color }}
               />
-              <span 
+              <span
                 className="text-sm font-medium"
                 style={{ color: rarity.color }}
               >
@@ -46,8 +46,11 @@ const RechargeEditor = ({
               </span>
             </div>
 
-            {rarityItems.map(recharge => (
-              <div key={recharge.id} className="bg-gray-900/50 p-4 rounded-lg space-y-3">
+            {rarityItems.map((recharge) => (
+              <div
+                key={recharge.id}
+                className="bg-gray-900/50 p-4 rounded-lg space-y-3"
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-white">
                     {recharge.item.name}
@@ -62,47 +65,79 @@ const RechargeEditor = ({
                     <Input
                       type="number"
                       min="0"
-                      value={rechargeValues[recharge.id]?.max_energy_recharge ?? ''}
-                      onChange={(e) => handleRechargeValueChange(recharge.id, 'max_energy_recharge', e.target.value)}
+                      value={
+                        rechargeValues[recharge.id]?.max_energy_recharge ?? ""
+                      }
+                      onChange={(e) =>
+                        handleRechargeValueChange(
+                          recharge.id,
+                          "max_energy_recharge",
+                          e.target.value
+                        )
+                      }
+                      className="w-full bg-gray-700"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-gray-300 text-xs mb-1"
+                      title="It is not possible to modify it here, but it is linked to the item_farmings table."
+                    >
+                      Badge Craft Time (min)
+                    </label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={rechargeValues[recharge.id]?.time_to_charge ?? ""}
+                      disabled
+                      onChange={(e) =>
+                        handleRechargeValueChange(
+                          recharge.id,
+                          "time_to_charge",
+                          e.target.value
+                        )
+                      }
                       className="w-full bg-gray-700"
                     />
                   </div>
 
                   <div>
                     <label className="block text-gray-300 text-xs mb-1">
-                      Time to Charge (s)
+                      Flex Charge
                     </label>
                     <Input
                       type="number"
                       min="0"
-                      value={rechargeValues[recharge.id]?.time_to_charge ?? ''}
-                      onChange={(e) => handleRechargeValueChange(recharge.id, 'time_to_charge', e.target.value)}
+                      value={rechargeValues[recharge.id]?.flex_charge ?? ""}
+                      onChange={(e) =>
+                        handleRechargeValueChange(
+                          recharge.id,
+                          "flex_charge",
+                          e.target.value
+                        )
+                      }
                       className="w-full bg-gray-700"
                     />
                   </div>
 
                   <div>
                     <label className="block text-gray-300 text-xs mb-1">
-                      Flex Cost
+                      SP.MARKS Charge
                     </label>
                     <Input
                       type="number"
                       min="0"
-                      value={rechargeValues[recharge.id]?.flex_charge ?? ''}
-                      onChange={(e) => handleRechargeValueChange(recharge.id, 'flex_charge', e.target.value)}
-                      className="w-full bg-gray-700"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 text-xs mb-1">
-                      SP.MARKS Cost
-                    </label>
-                    <Input
-                      type="number"
-                      min="0"
-                      value={rechargeValues[recharge.id]?.sponsor_mark_charge ?? ''}
-                      onChange={(e) => handleRechargeValueChange(recharge.id, 'sponsor_mark_charge', e.target.value)}
+                      value={
+                        rechargeValues[recharge.id]?.sponsor_mark_charge ?? ""
+                      }
+                      onChange={(e) =>
+                        handleRechargeValueChange(
+                          recharge.id,
+                          "sponsor_mark_charge",
+                          e.target.value
+                        )
+                      }
                       className="w-full bg-gray-700"
                     />
                   </div>
@@ -122,11 +157,13 @@ const ItemRechargeEditor = ({
   handleRechargeValueChange,
   onSave,
   isUpdating,
-  onClose
+  onClose,
 }) => {
   // Filtrer les items par type
-  const badges = itemRecharges?.filter(item => item.item.type === 'Badge') || [];
-  const contracts = itemRecharges?.filter(item => item.item.type === 'Contract') || [];
+  const badges =
+    itemRecharges?.filter((item) => item.item.type === "Badge") || [];
+  const contracts =
+    itemRecharges?.filter((item) => item.item.type === "Contract") || [];
 
   return (
     <div className="top-full left-0 mt-2 z-50 bg-gray-800 p-4 rounded-md border border-gray-700 w-[800px] shadow-lg">
@@ -138,7 +175,7 @@ const ItemRechargeEditor = ({
             disabled={isUpdating}
             className="bg-green-600 hover:bg-green-700 text-white"
           >
-            {isUpdating ? 'Saving...' : 'Save Changes'}
+            {isUpdating ? "Saving..." : "Save Changes"}
           </Button>
           <Button
             onClick={onClose}
@@ -150,14 +187,14 @@ const ItemRechargeEditor = ({
         </div>
       </div>
 
-      <Tabs.Root defaultValue="badges" className="w-full">
+      <Tabs.Root defaultValue="contracts" className="w-full">
         <Tabs.List className="flex gap-4 mb-4 border-b border-gray-700">
-          <Tabs.Trigger
+          {/* <Tabs.Trigger
             value="badges"
             className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
           >
             Badge Recharge
-          </Tabs.Trigger>
+          </Tabs.Trigger> */}
           <Tabs.Trigger
             value="contracts"
             className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
@@ -166,16 +203,16 @@ const ItemRechargeEditor = ({
           </Tabs.Trigger>
         </Tabs.List>
 
-        <Tabs.Content value="badges">
+        {/* <Tabs.Content value="badges">
           <RechargeEditor 
             items={badges}
             rechargeValues={rechargeValues}
             handleRechargeValueChange={handleRechargeValueChange}
             title="Badge Recharge Settings"
           />
-        </Tabs.Content>
+        </Tabs.Content> */}
         <Tabs.Content value="contracts">
-          <RechargeEditor 
+          <RechargeEditor
             items={contracts}
             rechargeValues={rechargeValues}
             handleRechargeValueChange={handleRechargeValueChange}
@@ -187,4 +224,4 @@ const ItemRechargeEditor = ({
   );
 };
 
-export default ItemRechargeEditor; 
+export default ItemRechargeEditor;

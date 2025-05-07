@@ -66,25 +66,25 @@ export const AdminModal = ({
               </button>
             </div>
 
-            <Tabs.Root defaultValue="badges" className="w-full">
+            <Tabs.Root defaultValue="currencies" className="w-full">
               <Tabs.List className="grid grid-cols-5 gap-4 mb-4">
+              <Tabs.Trigger
+                  value="currencies"
+                  className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
+                >
+                  Currencies
+                </Tabs.Trigger>
                 <Tabs.Trigger
                   value="badges"
                   className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
                 >
-                  Badges
+                  Badges Floor price
                 </Tabs.Trigger>
                 <Tabs.Trigger
                   value="contracts"
                   className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
                 >
-                  Contracts
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="currencies"
-                  className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
-                >
-                  Currencies
+                  Contracts Floor price
                 </Tabs.Trigger>
                 <Tabs.Trigger
                   value="crafting"
