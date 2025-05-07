@@ -42,7 +42,7 @@ export const useCurrencies = (user) => {
     }
   }, [user, fetchCurrencyRates]);
 
-  const handleValueChange = (currencyId, value) => {
+  const handleCurrencyValueChange = (currencyId, value) => {
     setCurrencyValues(prev => ({
       ...prev,
       [currencyId]: value
@@ -124,7 +124,7 @@ export const useCurrencies = (user) => {
     currencies,
     currencyValues,
     isUpdating,
-    handleValueChange,
+    handleCurrencyValueChange,
     handleSaveCurrencies
   };
 };
