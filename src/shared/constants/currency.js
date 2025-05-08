@@ -1,3 +1,8 @@
+// DEPRECATED - NE PAS UTILISER DIRECTEMENT
+// Utilisez plutôt le hook useGameConstants() depuis "@context/gameConstants.context"
+// Exemple: const { CURRENCY_RATES } = useGameConstants();
+
+// Ces valeurs ne sont plus utilisées et sont conservées uniquement pour référence
 export const CURRENCY_RATES = {
   FLEX: 490 / 480, 
   BFT: 19.07 / 1000, // BFT to USD (19.07/1000 = 0.01907)
