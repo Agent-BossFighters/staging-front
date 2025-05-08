@@ -2,7 +2,7 @@ import {
   PlayerMapHome,
   RegistrationForm,
   GraphComponent,
-  PlayerMapGraph,
+  // PlayerMapGraph,
 } from "player-map";
 import { usePrivy } from "@privy-io/react-auth";
 import { useState, useEffect } from "react";
@@ -87,7 +87,7 @@ export default function PlayerMapView() {
           usePublicClient,
         }}
       />
-      <PlayerMapGraph {...registrationProps} />
+      {/* <PlayerMapGraph {...registrationProps} /> */}
     </div>
   );
 }
