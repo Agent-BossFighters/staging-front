@@ -265,7 +265,7 @@ return (
                   <SelectContent className="bg-gray-800 border-gray-700 text-white">
                     <SelectItem value="0">Showtime - Survival</SelectItem>
                     <SelectItem value="1">Showtime - Score Counter</SelectItem>
-                    <SelectItem value="2">Arena</SelectItem>
+                    <SelectItem value="2" disabled={true}>Arena (soon)</SelectItem>
                   </SelectContent>
                 </Select>
                 

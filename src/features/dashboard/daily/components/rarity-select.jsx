@@ -8,6 +8,7 @@ import {
 import { useBadges } from "@features/dashboard/locker/hook/useBadges";
 import { useEffect, useCallback, memo } from "react";
 import rarities from "@shared/data/rarities.json";
+import { formatId } from "@utils/formatters";
 
 const RaritySelect = memo(
   ({ value, onChange, disabled = false, selectedBadges = [] }) => {
@@ -144,7 +145,7 @@ const RaritySelect = memo(
                     {rarity}
                   </span>
                   <span>{badge.name}</span>
-                  <span className="text-muted-foreground">#{badge.issueId}</span>
+                  <span className="text-muted-foreground">{formatId(badge.issueId)}</span>
                 </div>
               </SelectItem>
             );
