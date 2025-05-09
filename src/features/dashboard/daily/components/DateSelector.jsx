@@ -38,7 +38,7 @@ export default function DateSelector({
       date.getUTCDate()
     ));
     
-    return utcDate.toLocaleDateString("fr-FR", {
+    return utcDate.toLocaleDateString("en-US", {
       day: "numeric",
       month: "long",
       year: "numeric",
