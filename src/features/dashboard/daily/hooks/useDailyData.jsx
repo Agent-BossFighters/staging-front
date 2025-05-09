@@ -27,10 +27,6 @@ export const useDailyData = () => {
           getData("v1/user_builds"),
         ]);
 
-      console.log("Summary Response:", summaryResponse);
-      console.log("Matches Response:", matchesResponse);
-      console.log("Builds Response:", buildsResponse);
-
       setState((prev) => ({
         ...prev,
         summary: summaryResponse,
@@ -58,7 +54,6 @@ export const useDailyData = () => {
       try {
         setState((prev) => ({ ...prev, loading: true }));
         const response = await postData("v1/matches", matchData);
-        console.log("Add match response:", response);
 
         if (response?.match) {
           // Après avoir ajouté un match, on rafraîchit toutes les données

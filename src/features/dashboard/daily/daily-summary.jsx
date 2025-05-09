@@ -54,9 +54,9 @@ export default function DailySummary({ date, summary }) {
         <div className="flex flex-col items-center gap-1">
           <img src={Spark} alt="Energy" className="w-6 h-10" />
           <p className="text-2xl font-bold">ENERGY USED</p>
-          <p className="text-red-500 text-2xl">{summary.energyUsed.amount}</p>
+          <p className="text-red-500 text-2xl">{formatNumber(summary.energyUsed.amount)}</p>
           {!streamerMode && (
-            <p className="text-red-500 text-2sm">{summary.energyUsed.cost}</p>
+            <p className="text-red-500 text-2sm">{formatPrice(summary.energyUsed.cost)}</p>
           )}
         </div>
 
