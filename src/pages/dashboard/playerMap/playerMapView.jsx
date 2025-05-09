@@ -2,6 +2,8 @@ import {
   PlayerMapHome,
   RegistrationForm,
   GraphComponent,
+  auth as playerMapAuth,
+  PlayerMapConfig,
   // PlayerMapGraph,
 } from "player-map";
 import { usePrivy } from "@privy-io/react-auth";
@@ -12,6 +14,7 @@ import {
   usePublicClient,
   useWalletClient,
 } from "wagmi";
+import { AuthUtils } from "@utils/api/auth.utils";
 
 export default function PlayerMapView() {
   const { user, ready } = usePrivy();
@@ -19,6 +22,30 @@ export default function PlayerMapView() {
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const account = useAccount();
+
+  // Initialiser la configuration de Player-map
+  useEffect(() => {
+    // Initialiser la configuration avec l'URL de l'API
+    PlayerMapConfig.init({
+      apiUrl: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
+    });
+
+    console.log(
+      "Player-map configuration initialized with:",
+      PlayerMapConfig.get()
+    );
+  }, []);
+
+  // Initialiser l'authentification Player-map avec le token d'authentification
+  useEffect(() => {
+    const token = AuthUtils.getAuthToken();
+    if (token) {
+      console.log("Initializing Player-map authentication");
+      playerMapAuth.initialize(token);
+    } else {
+      console.warn("No authentication token available for Player-map");
+    }
+  }, []);
 
   useEffect(() => {
     console.log("Privy State:", {
@@ -74,6 +101,12 @@ export default function PlayerMapView() {
         <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">
           PLAYER MAP
         </h1>
+        {!playerMapAuth.isAuthenticated() && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+            <p className="font-bold">Attention</p>
+            <p>Vous n'êtes pas authentifié pour utiliser Player Map.</p>
+          </div>
+        )}
       </div>
 
       <PlayerMapHome {...registrationProps} />
