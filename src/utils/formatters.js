@@ -89,4 +89,25 @@ export const formatPercent = (value, decimals = 1) => {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals
   })}%`;
+};
+
+/**
+ * Formate un identifiant avec préfixe #
+ * @param {number|string} id - L'identifiant à formater
+ * @param {number} padLength - Longueur totale souhaitée (avec padding de zéros) (défaut: 8)
+ * @returns {string} L'identifiant formaté avec préfixe # et padding de zéros si nécessaire
+ */
+export const formatId = (id) => {
+  if (id === undefined || id === null) return '';
+  
+  // Si l'identifiant est déjà formaté avec #, l'extraire
+  if (typeof id === 'string' && id.startsWith('#')) {
+    id = id.substring(1);
+  }
+  
+  // Convertir en string et supprimer tout caractère non numérique
+  const numericId = String(id).replace(/\D/g, '');
+  
+  // Retourner l'identifiant formaté
+  return `#${numericId}`;
 }; 

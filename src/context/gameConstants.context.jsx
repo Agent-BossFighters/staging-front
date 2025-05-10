@@ -6,10 +6,11 @@ import { useAuth } from "@context/auth.context";
 export const GAME_MAPS = ["Toxic river", "Award", "Radiation rift"];
 export const GAME_RESULTS = ["win", "loss", "draw"];
 
-export let CURRENCY_RATES = {
-  BFT: 0.0230, // Prix du BFT en USD ($0.01)
+// Valeurs par défaut des taux de devises (non exportées)
+const DEFAULT_CURRENCY_RATES = {
+  BFT: 0.023, // Prix du BFT en USD ($0.01)
   FLEX: 0.0104, // Prix du FLEX en USD ($0.00744)
-  SPONSOR_MARKS: 0.0280, // Prix du FLEX en USD ($0.00744)
+  SPONSOR_MARKS: 0.028, // Prix du FLEX en USD ($0.00744)
   ENERGY: 1.49, // Prix de l'énergie en USD ($1.49)
 };
 
@@ -54,7 +55,7 @@ export function useGameConstants() {
 }
 
 export function GameConstantsProvider({ children }) {
-  const [currencyRates, setCurrencyRates] = useState(CURRENCY_RATES);
+  const [currencyRates, setCurrencyRates] = useState(DEFAULT_CURRENCY_RATES);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
@@ -78,19 +79,13 @@ export function GameConstantsProvider({ children }) {
       if (bftCurrency && flexCurrency && sponsorMarksCurrency) {
         // Mettre à jour les taux
         const newRates = {
+          ...DEFAULT_CURRENCY_RATES,
           BFT: bftCurrency.price,
           FLEX: flexCurrency.price,
           SPONSOR_MARKS: sponsorMarksCurrency.price,
-          // Autres taux si nécessaire
         };
 
         setCurrencyRates(newRates);
-
-        // Important: mettre à jour également la variable exportée
-        CURRENCY_RATES.BFT = bftCurrency.price;
-        CURRENCY_RATES.FLEX = flexCurrency.price;
-        CURRENCY_RATES.SPONSOR_MARKS = sponsorMarksCurrency.price;
-
         return newRates;
       }
 

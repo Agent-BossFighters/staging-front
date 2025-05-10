@@ -2,12 +2,13 @@ import { Flex, Token3, Token4 } from "@img/index";
 import { useUserPreference } from "@context/userPreference.context";
 import { useCurrencyPacks } from "@features/dashboard/locker/hook/useCurrencyPacks";
 import { useAuth } from "@context/auth.context";
-import { CURRENCY_RATES } from "@context/gameConstants.context";
+import { useGameConstants } from "@context/gameConstants.context";
 
 export default function CurrencyDisplay() {
   const { user } = useAuth();
   const { selectedFlexPack } = useUserPreference();
   const { currencyPacks, loading, error } = useCurrencyPacks();
+  const { CURRENCY_RATES } = useGameConstants();
 
   // Si l'utilisateur n'est pas connecté ou s'il y a une erreur, ne rien afficher
   if (!user) return null;
