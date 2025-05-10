@@ -9,7 +9,8 @@ import {
 import MatchEntry from "./match-entry";
 import { useGameConstants } from "@context/gameConstants.context";
 import { useUserPreference } from "@context/userPreference.context";
-import { useState, useEffect, useRef } from "react";
+import { useTableScroll } from "@shared/hook/useTableScroll";
+import ScrollControls from "@ui/scroll-controls";
 
 export default function MatchesList({
   matches,
@@ -24,53 +25,26 @@ export default function MatchesList({
   onEditField,
   onCancel,
   selectedDate,
-  initialMatchData
+  initialMatchData,
 }) {
   const { streamerMode } = useUserPreference();
-  const [showScrollMessage, setShowScrollMessage] = useState(false);
-  const [startIndex, setStartIndex] = useState(0);
-  const [isMouseOverTable, setIsMouseOverTable] = useState(false);
-  const tableRef = useRef(null);
-  
-  // Nombre de lignes à afficher
-  const visibleRowsCount = 8;
-  
-  useEffect(() => {
-    setShowScrollMessage(matches.length > visibleRowsCount);
-  }, [matches.length]);
-  
-  useEffect(() => {
-    const wheelHandler = (e) => {
-      if (!isMouseOverTable) return;
-      
-      // Si la souris est sur le tableau, empêcher le défilement de la page
-      e.preventDefault();
-      
-      if (matches.length <= visibleRowsCount) return;
-      
-      if (e.deltaY > 0) {
-        // Défilement vers le bas
-        setStartIndex(prev => Math.min(prev + 1, matches.length - visibleRowsCount));
-      } else if (e.deltaY < 0) {
-        // Défilement vers le haut
-        setStartIndex(prev => Math.max(prev - 1, 0));
-      }
-    };
 
-    window.addEventListener('wheel', wheelHandler, { passive: false });
-    
-    return () => {
-      window.removeEventListener('wheel', wheelHandler);
-    };
-  }, [isMouseOverTable, matches.length, visibleRowsCount]);
-  
-  const handleMouseEnter = () => {
-    setIsMouseOverTable(true);
-  };
-  
-  const handleMouseLeave = () => {
-    setIsMouseOverTable(false);
-  };
+  const {
+    tableRef,
+    visibleItems: visibleMatches,
+    showScrollMessage,
+    isAtStart,
+    isAtEnd,
+    handleMouseEnter,
+    handleMouseLeave,
+    startScrollingUp,
+    stopScrollingUp,
+    startScrollingDown,
+    stopScrollingDown,
+  } = useTableScroll({
+    items: matches,
+    visibleRowsCount: 8,
+  });
 
   const renderSlotHeaders = () => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -80,13 +54,10 @@ export default function MatchesList({
     ));
   };
 
-  // Sélectionner les lignes visibles en fonction de l'indice de départ
-  const visibleMatches = matches.slice(startIndex, startIndex + visibleRowsCount);
-
   return (
     <div className="flex-grow overflow-x-auto">
-      <div 
-        className="w-full min-w-0" 
+      <div
+        className="w-full min-w-0"
         ref={tableRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -116,7 +87,7 @@ export default function MatchesList({
                 <br />
                 USED
               </TableHead>
-              
+
               {/* Masquer les colonnes financières en mode streamer */}
               {!streamerMode && (
                 <TableHead className="w-[4%] text-destructive">
@@ -125,18 +96,16 @@ export default function MatchesList({
                   COST
                 </TableHead>
               )}
-              
+
               <TableHead className="w-[4%]">MAP</TableHead>
               <TableHead className="w-[4%]">RESULT</TableHead>
               <TableHead className="w-[4%]">$BFT</TableHead>
-              
+
               {/* Masquer les colonnes financières en mode streamer */}
               {!streamerMode && (
-                <TableHead className="w-[4%] text-accent">
-                  $BFT ($)
-                </TableHead>
+                <TableHead className="w-[4%] text-accent">$BFT ($)</TableHead>
               )}
-              
+
               <TableHead className="w-[4%]">
                 BFT /
                 <br />
@@ -152,7 +121,7 @@ export default function MatchesList({
                 </TableHead>
               )}
               <TableHead className="w-[3%]">FLEX</TableHead>
-              
+
               {/* Masquer les colonnes financières en mode streamer */}
               {!streamerMode && (
                 <>
@@ -161,12 +130,10 @@ export default function MatchesList({
                     <br />
                     ($)
                   </TableHead>
-                  <TableHead className="w-[5%] text-accent">
-                    PROFIT
-                  </TableHead>
+                  <TableHead className="w-[5%] text-accent">PROFIT</TableHead>
                 </>
               )}
-              
+
               <TableHead className="w-[6%]">ACTIONS</TableHead>
             </TableRow>
           </TableHeader>
@@ -197,33 +164,17 @@ export default function MatchesList({
             ))}
           </TableBody>
         </Table>
-        
-        {showScrollMessage && (
-          <div className="text-primary text-center text-3xl py-1">
-            ⩔⩔ <span className="text-xl">Scroll down for more</span> ⩔⩔
-          </div>
-        )}
+
+        <ScrollControls
+          showScrollMessage={showScrollMessage}
+          isAtStart={isAtStart}
+          isAtEnd={isAtEnd}
+          startScrollingUp={startScrollingUp}
+          stopScrollingUp={stopScrollingUp}
+          startScrollingDown={startScrollingDown}
+          stopScrollingDown={stopScrollingDown}
+        />
       </div>
-      
-      {/* Ajouter des contrôles tactiles pour les appareils mobiles si nécessaire */}
-      {/* {showScrollMessage && (
-        <div className="flex justify-center mt-2 gap-4 md:hidden">
-          <button 
-            onClick={() => setStartIndex(prev => Math.max(prev - 1, 0))}
-            disabled={startIndex === 0}
-            className="px-4 py-1 bg-primary/20 rounded-md disabled:opacity-50"
-          >
-            ↑
-          </button>
-          <button 
-            onClick={() => setStartIndex(prev => Math.min(prev + 1, matches.length - visibleRowsCount))}
-            disabled={startIndex >= matches.length - visibleRowsCount}
-            className="px-4 py-1 bg-primary/20 rounded-md disabled:opacity-50"
-          >
-            ↓
-          </button>
-        </div>
-      )} */}
       <div className="text-center text-sm text-muted-foreground py-2">
         Daily matches history and statistics
       </div>
