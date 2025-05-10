@@ -144,7 +144,7 @@ export default function MonthlyMatches({
                     {formatNumber(calculateDailyIGTime(metrics))}
                   </TableCell>
                   <TableCell className="text-left">
-                    {formatNumber(metrics.total_energy, 1)}
+                    {formatNumber(metrics.total_energy, 3)}
                   </TableCell>
 
                   {/* Masquer les colonnes financières en mode streamer */}
@@ -154,7 +154,7 @@ export default function MonthlyMatches({
                     </TableCell>
                   )}
                   <TableCell className="text-left">
-                    {formatNumber(metrics.total_bft)}
+                    {formatNumber(metrics.total_bft, 2)}
                   </TableCell>
 
                   {/* Masquer les colonnes financières en mode streamer */}
