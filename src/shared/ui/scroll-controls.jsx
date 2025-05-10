@@ -18,7 +18,7 @@ export default function ScrollControls({
         <div className="flex gap-2">
           <Button
             variant="outline"
-            className="p-2 rounded-md transition-colors"
+            className="p-2 rounded-md transition-colors border-primary"
             onMouseDown={startScrollingDown}
             onMouseUp={stopScrollingDown}
             onMouseLeave={stopScrollingDown}
@@ -28,11 +28,11 @@ export default function ScrollControls({
             disabled={isAtEnd}
             tabIndex={-1}
           >
-            <div className="text-2xl">⩔</div>
+            <div className="text-2xl text-primary hover:text-black">⩔</div>
           </Button>
           <Button
             variant="outline"
-            className={`p-2 rounded-md transition-colors`}
+            className={`p-2 rounded-md transition-colors border-primary`}
             onMouseDown={startScrollingUp}
             onMouseUp={stopScrollingUp}
             onMouseLeave={stopScrollingUp}
@@ -42,7 +42,7 @@ export default function ScrollControls({
             disabled={isAtStart}
             tabIndex={-1}
           >
-            <div className="text-2xl transform rotate-180">⩔</div>
+            <div className="text-2xl text-primary transform rotate-180 hover:text-black">⩔</div>
           </Button>
         </div>
       </div>

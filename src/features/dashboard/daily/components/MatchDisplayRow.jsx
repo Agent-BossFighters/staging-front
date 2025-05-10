@@ -64,7 +64,7 @@ export default function MatchDisplayRow({
       <td className="px-6 text-left min-w-[4%] capitalize" title={match.result}>
         <ResultIcon result={match.result} />
       </td>
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.totalToken)}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.totalToken, 2)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
