@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { getData } from "@utils/api/data";
+import { getData, getMonthlyData } from "@utils/api/data";
 
 export const useMonthlyData = () => {
   const [state, setState] = useState({
@@ -19,10 +19,10 @@ export const useMonthlyData = () => {
       const year = date.getFullYear();
       const formattedDate = `${year}-${month}`;
 
-      // Appels parallèles pour récupérer le résumé mensuel et les données journalières
+      // Utilisation de la fonction spécialisée pour les données mensuelles
       const [summaryResponse, matchesResponse] = await Promise.all([
-        getData(`v1/matches/monthly_summary/${formattedDate}`),
-        getData(`v1/matches/monthly/${formattedDate}`)
+        getMonthlyData(`v1/matches/monthly_summary/${formattedDate}`),
+        getMonthlyData(`v1/matches/monthly/${formattedDate}`)
       ]);
 
       // Traiter les données journalières
@@ -72,9 +72,16 @@ export const useMonthlyData = () => {
       }));
     } catch (error) {
       console.error("❌ Error fetching monthly data:", error);
+      
+      // Message d'erreur spécifique pour les timeouts
+      let errorMessage = error.message;
+      if (error.name === 'TimeoutError' || error.message.includes('timeout')) {
+        errorMessage = `Le chargement des données mensuelles a pris trop de temps. Veuillez réessayer ou sélectionner une période plus courte.`;
+      }
+      
       setState((prev) => ({
         ...prev,
-        error: error.message,
+        error: errorMessage,
         loading: false,
       }));
     }

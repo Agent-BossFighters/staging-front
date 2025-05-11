@@ -1,5 +1,8 @@
 import { kyInstance } from "./ky-config";
 import toast from "react-hot-toast";
+import ky from "ky";
+import { BACKEND_URL } from "./ky-config";
+import Cookies from "js-cookie";
 
 const handleError = async (error) => {
   try {
@@ -77,6 +80,36 @@ export async function deleteData(object) {
   try {
     const response = await kyInstance.delete(object);
     return await response.json();
+  } catch (error) {
+    if (error.responseData?.error) {
+      toast.error(error.responseData.error);
+    }
+    throw error;
+  }
+}
+
+// Fonction spécifique pour récupérer les données mensuelles avec un timeout plus long
+export async function getMonthlyData(endpoint) {
+  try {
+    // Instance spécifique avec timeout plus long pour les requêtes mensuelles
+    const monthlyKyInstance = ky.create({
+      prefixUrl: `${BACKEND_URL}/api/`,
+      credentials: "include",
+      timeout: 60000, // 60 secondes pour les données mensuelles
+      hooks: {
+        beforeRequest: [
+          (request) => {
+            const token = Cookies.get("agent-auth");
+            if (token) {
+              request.headers.set("Authorization", `Bearer ${token}`);
+            }
+          },
+        ],
+      },
+    });
+
+    const response = await monthlyKyInstance.get(endpoint).json();
+    return response;
   } catch (error) {
     if (error.responseData?.error) {
       toast.error(error.responseData.error);

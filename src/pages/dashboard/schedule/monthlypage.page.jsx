@@ -3,6 +3,7 @@ import MonthlyMatches from "@features/dashboard/monthly/monthly-matches";
 import MonthlySummary from "@features/dashboard/monthly/monthly-summary";
 import MonthSelector from "@features/dashboard/monthly/MonthSelector";
 import { useMonthlyData } from "@features/dashboard/monthly/hooks/useMonthlyData";
+import MonthlyErrorFallback from "@features/dashboard/monthly/components/MonthlyErrorFallback";
 import { useEffect } from "react";
 
 export default function MonthlyPage() {
@@ -30,6 +31,32 @@ export default function MonthlyPage() {
     newDate.setMonth(newDate.getMonth() + 1);
     setSelectedDate(newDate);
   };
+
+  // Fonction pour réessayer le chargement
+  const handleRetry = () => {
+    fetchMonthlyData(selectedDate);
+  };
+
+  // Afficher le composant d'erreur si une erreur est survenue
+  if (error) {
+    return (
+      <div className="w-5/6 mx-auto h-full">
+        <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">MONTHLY</h1>
+        <div className="flex items-center justify-end mb-4">
+          <MonthSelector
+            selectedDate={selectedDate}
+            onPreviousMonth={handlePreviousMonth}
+            onNextMonth={handleNextMonth}
+          />
+        </div>
+        <MonthlyErrorFallback 
+          error={error} 
+          onRetry={handleRetry} 
+          selectedDate={selectedDate}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-5/6 mx-auto h-full">

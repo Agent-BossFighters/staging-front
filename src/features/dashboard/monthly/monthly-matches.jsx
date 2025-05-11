@@ -174,9 +174,15 @@ export default function MonthlyMatches({
                         {formatPrice(metrics.total_flex_value)}
                       </TableCell>
 
-                      <TableCell className="text-left text-green-500">
-                        {formatPrice(metrics.total_profit)}
-                      </TableCell>
+                      {metrics.total_profit > 0 ? (
+                        <TableCell className="text-left text-green-500">
+                          {formatPrice(metrics.total_profit)}
+                        </TableCell>
+                      ) : (
+                        <TableCell className="text-left text-red-500">
+                          {formatPrice(metrics.total_profit)}
+                        </TableCell>
+                      )}
                     </>
                   )}
                   <TableCell className="text-left">
