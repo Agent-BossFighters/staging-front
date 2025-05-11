@@ -95,7 +95,11 @@ export default function MonthlySummary({ date, metrics }) {
           <div className="pb-4 flex flex-col items-center gap-2">
             <img src={Purse} alt="Profit" className="w-8 h-10" />
             <p className="text-2xl font-bold">PROFIT</p>
-            <p className="text-green-500 text-3xl">{formatPrice(metrics.profit || "0.00")}</p>
+            {metrics.profit > 0 ? (
+              <p className="text-green-500 text-3xl">{formatPrice(metrics.profit || "0.00")}</p>
+            ) : (
+              <p className="text-red-500 text-3xl">{formatPrice(metrics.profit || "0.00")}</p>
+            )}
           </div>
         )}
       </div>
