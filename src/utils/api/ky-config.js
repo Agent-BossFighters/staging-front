@@ -17,6 +17,7 @@ export const BACKEND_URL = isTestMode
 export const kyInstance = ky.create({
   prefixUrl: `${BACKEND_URL}/api/`,
   credentials: "include",
+  timeout: 30000,
   hooks: {
     beforeRequest: [
       (request) => {
