@@ -1,6 +1,6 @@
 import {
   PlayerMapHome,
-  PlayerCreationForm,
+  // PlayerCreationForm,
   // RegistrationForm,
   GraphComponent,
   auth as playerMapAuth,
