@@ -70,7 +70,7 @@ export default function MonthlySummary({ date, metrics }) {
         <div className="flex flex-col items-center gap-1">
           <img src={Token4} alt="bft" className="w-10 h-10" />
           <p className="text-2xl font-bold">$BFT</p>
-          <p className="text-green-500 text-2xl">{formatNumber(metrics.total_bft, 2)}</p>
+          <p className="text-green-500 text-2xl">{formatNumber(metrics.total_bft, 3)}</p>
           {!streamerMode && (
             <p className="text-green-500 text-2sm">
               {formatPrice(metrics.total_bft_value || "0.00")}
