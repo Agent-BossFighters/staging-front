@@ -1,7 +1,7 @@
 import {
   PlayerMapHome,
-  PlayerCreationForm,
-  RegistrationForm,
+  // PlayerCreationForm,
+  // RegistrationForm,
   GraphComponent,
   auth as playerMapAuth,
   PlayerMapConfig,
@@ -151,11 +151,11 @@ export default function PlayerMapView() {
           onCreatePlayer={handleOpenPlayerCreation}
       />
       
-      <PlayerCreationForm 
+      {/* <PlayerCreationForm 
         {...commonProps}
         isOpen={isPlayerCreationOpen}
         onClose={handleClosePlayerCreation}
-      />
+      /> */}
       
       <PlayerMapGraph {...commonProps} />
     </div>
