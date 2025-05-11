@@ -28,20 +28,17 @@ export default function MatchEntry({
   onCancel,
   unlockedSlots,
   selectedDate,
-  initialMatchData
+  initialMatchData,
 }) {
-  console.log("MatchEntry - Initial match data:", initialMatchData);
-  console.log("MatchEntry - Is creating:", isCreating);
-
   const [formData, setFormData] = useState(() => {
     const initialData = {
       ...INITIAL_FORM_STATE,
       ...(isCreating && initialMatchData ? initialMatchData : {}),
-      rarities: isCreating && initialMatchData?.rarities 
-        ? initialMatchData.rarities 
-        : Array(MAX_SLOTS).fill("none"),
+      rarities:
+        isCreating && initialMatchData?.rarities
+          ? initialMatchData.rarities
+          : Array(MAX_SLOTS).fill("none"),
     };
-    console.log("MatchEntry - Form data initialized with:", initialData);
     return initialData;
   });
   const [showMissingFieldsDialog, setShowMissingFieldsDialog] = useState(false);
@@ -104,7 +101,7 @@ export default function MatchEntry({
     }
 
     const time = parseInt(data.time);
-    const totalToken = parseInt(data.bft);
+    const totalToken = parseFloat(parseFloat(data.bft).toFixed(3));
     const totalPremiumCurrency = parseInt(data.flex || 0);
 
     if (isNaN(time) || time < 0) {
@@ -140,6 +137,10 @@ export default function MatchEntry({
       );
     }
 
+    const badge_used = data.rarities.filter(
+      (rarity) => rarity && rarity !== "none"
+    );
+
     return {
       match: {
         id: existingMatch?.id,
@@ -151,53 +152,51 @@ export default function MatchEntry({
         totalPremiumCurrency: totalPremiumCurrency,
         bonusMultiplier: parseFloat(selectedBuild.bonusMultiplier),
         perksMultiplier: parseFloat(selectedBuild.perksMultiplier),
-        energyUsed: parseFloat((time / 10.0).toFixed(2)),
+        energyUsed: parseFloat(((time / 60.0) * badge_used.length).toFixed(3)),
         badge_used_attributes: data.rarities
           .map((rarity, index) => {
             const slot = index + 1;
-            
+
             if (existingMatch?.badge_used) {
               const existingBadge = existingMatch.badge_used.find(
                 (b) => b.slot === slot
               );
-              
+
               if (existingBadge) {
-                const newRarity = rarity === "none" ? null : String(rarity).split("#")[0].toLowerCase();
-                
+                const newRarity =
+                  rarity === "none"
+                    ? null
+                    : String(rarity).split("#")[0].toLowerCase();
+
                 if (rarity === "none") {
-                  console.log(`Marquage du badge slot ${slot} pour suppression`);
                   return {
                     id: existingBadge.id,
                     slot: slot,
-                    _destroy: true
+                    _destroy: true,
                   };
-                }
-                else if (newRarity !== existingBadge.rarity) {
-                  console.log(`Mise à jour du badge slot ${slot} de ${existingBadge.rarity} à ${newRarity}`);
+                } else if (newRarity !== existingBadge.rarity) {
                   return {
                     id: existingBadge.id,
                     slot: slot,
                     rarity: newRarity,
-                    _destroy: false
+                    _destroy: false,
                   };
-                }
-                else {
-                  console.log(`Pas de changement pour le badge slot ${slot}`);
+                } else {
                   return {
                     id: existingBadge.id,
                     slot: slot,
                     rarity: existingBadge.rarity,
-                    _destroy: false
+                    _destroy: false,
                   };
                 }
               }
             }
-            
+
             if (rarity && rarity !== "none") {
               return {
                 slot: slot,
                 rarity: String(rarity).split("#")[0].toLowerCase(),
-                _destroy: false
+                _destroy: false,
               };
             }
             return null;
@@ -256,8 +255,9 @@ export default function MatchEntry({
     if (isEditing && match) {
       const creationTime = new Date(match.created_at || match.date);
       const currentTime = new Date();
-      const timeDifferenceInMinutes = (currentTime - creationTime) / (1000 * 60);
-      
+      const timeDifferenceInMinutes =
+        (currentTime - creationTime) / (1000 * 60);
+
       if (timeDifferenceInMinutes > 15) {
         setShowEditTimeoutDialog(true);
         return;
