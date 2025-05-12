@@ -1,11 +1,7 @@
 import {
-  PlayerMapHome,
-  // PlayerCreationForm,
-  // RegistrationForm,
   GraphComponent,
   auth as playerMapAuth,
   PlayerMapConfig,
-  PlayerMapGraph,
 } from "player-map";
 import { usePrivy } from "@privy-io/react-auth";
 import { useState, useEffect } from "react";
@@ -18,7 +14,7 @@ import {
 import { AuthUtils } from "@utils/api/auth.utils";
 
 export default function PlayerMapView() {
-  const { user, ready } = usePrivy();
+  const { user, ready, login } = usePrivy();
   // États séparés pour chaque modal
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [isPlayerCreationOpen, setIsPlayerCreationOpen] = useState(false);
@@ -123,12 +119,18 @@ export default function PlayerMapView() {
     },
   };
 
+  // Gestion de la connexion wallet via Privy
+  const handleConnectWallet = () => {
+    console.log("Handling wallet connection in main app via Privy");
+    login();
+  };
+
   if (!ready) {
     return <div>Loading wallet state...</div>;
   }
 
   return (
-    <div className="w-5/6 mx-auto h-full">
+    <div className="w-full h-full">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">
           PLAYER MAP
@@ -141,23 +143,11 @@ export default function PlayerMapView() {
         )}
       </div>
 
-      <PlayerMapHome 
-        {...commonProps} 
-        onCreatePlayer={handleOpenPlayerCreation}
-      />
-      
       <GraphComponent
           {...commonProps} 
           onCreatePlayer={handleOpenPlayerCreation}
+          onConnectWallet={handleConnectWallet}
       />
-      
-      {/* <PlayerCreationForm 
-        {...commonProps}
-        isOpen={isPlayerCreationOpen}
-        onClose={handleClosePlayerCreation}
-      /> */}
-      
-      <PlayerMapGraph {...commonProps} />
     </div>
   );
 } 
