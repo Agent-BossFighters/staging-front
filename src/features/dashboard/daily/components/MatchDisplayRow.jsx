@@ -64,7 +64,7 @@ export default function MatchDisplayRow({
       <td className="px-6 text-left min-w-[4%] capitalize" title={match.result}>
         <ResultIcon result={match.result} />
       </td>
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.totalToken)}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.totalToken, 3)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
@@ -93,9 +93,15 @@ export default function MatchDisplayRow({
           <td className="px-4 text-left min-w-[4%] text-accent">
             {formatPrice(match.calculated.premiumValue)}
           </td>
-          <td className="px-4 text-left min-w-[5%] text-accent">
-            {formatPrice(match.calculated.profit)}
-          </td>
+          {match.calculated.profit > 0 ? (
+            <td className="px-4 text-left min-w-[5%] text-accent">
+              {formatPrice(match.calculated.profit)}
+            </td>
+          ) : (
+            <td className="px-4 text-left min-w-[5%] text-red-500">
+              {formatPrice(match.calculated.profit)}
+            </td>
+          )}
         </>
       )}
       

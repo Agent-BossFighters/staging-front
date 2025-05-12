@@ -1,6 +1,7 @@
 import {
   PlayerMapHome,
-  RegistrationForm,
+  // PlayerCreationForm,
+  // RegistrationForm,
   GraphComponent,
   auth as playerMapAuth,
   PlayerMapConfig,
@@ -18,7 +19,10 @@ import { AuthUtils } from "@utils/api/auth.utils";
 
 export default function PlayerMapView() {
   const { user, ready } = usePrivy();
-  const [isOpen, setIsOpen] = useState(false);
+  // États séparés pour chaque modal
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+  const [isPlayerCreationOpen, setIsPlayerCreationOpen] = useState(false);
+  
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const account = useAccount();
@@ -58,13 +62,25 @@ export default function PlayerMapView() {
     });
   }, [user, ready, walletClient, publicClient, account]);
 
-  const handleClose = () => {
-    console.log("Main app closing modal");
-    setIsOpen(false);
+  // Gestionnaires pour le formulaire d'enregistrement
+  const handleOpenRegistration = () => {
+    setIsRegistrationOpen(true);
   };
 
-  const handleOpenModal = () => {
-    setIsOpen(true);
+  const handleCloseRegistration = () => {
+    console.log("Main app closing registration modal");
+    setIsRegistrationOpen(false);
+  };
+
+  // Gestionnaires pour le formulaire de création de joueur
+  const handleOpenPlayerCreation = () => {
+    console.log("Opening player creation form");
+    setIsPlayerCreationOpen(true);
+  };
+
+  const handleClosePlayerCreation = () => {
+    console.log("Main app closing player creation modal");
+    setIsPlayerCreationOpen(false);
   };
 
   // Si walletClient est null/undefined, utiliser un objet factice basé sur les infos Privy
@@ -77,17 +93,33 @@ export default function PlayerMapView() {
       // Ici, vous pourriez implémenter une méthode fallback qui utilise user?.wallet
       throw new Error("No wallet client available for transactions");
     },
+    readContract: async (params) => {
+      console.error("walletClient.readContract not available, using fallback");
+      throw new Error("No wallet client available for reading contracts");
+    },
+    waitForTransactionReceipt: async (params) => {
+      console.error(
+        "walletClient.waitForTransactionReceipt not available, using fallback"
+      );
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      return {};
+    },
   };
 
-  // Passer l'objet wallet complet et les clients nécessaires
-  const registrationProps = {
+  // Propriétés communes pour tous les composants
+  const commonProps = {
     walletConnected: effectiveWalletClient,
     walletAddress: user?.wallet?.address,
-    isOpen: Boolean(isOpen),
-    onClose: handleClose,
+    publicClient: publicClient,
     wagmiConfig: {
       publicClient,
       walletClient: effectiveWalletClient,
+    },
+    walletHooks: {
+      useAccount,
+      useConnect,
+      useWalletClient,
+      usePublicClient,
     },
   };
 
@@ -109,18 +141,23 @@ export default function PlayerMapView() {
         )}
       </div>
 
-      <PlayerMapHome {...registrationProps} />
-      <GraphComponent {...registrationProps} />
-      <RegistrationForm
-        {...registrationProps}
-        walletHooks={{
-          useAccount,
-          useConnect,
-          useWalletClient,
-          usePublicClient,
-        }}
+      <PlayerMapHome 
+        {...commonProps} 
+        onCreatePlayer={handleOpenPlayerCreation}
       />
-      <PlayerMapGraph {...registrationProps} />
+      
+      <GraphComponent
+          {...commonProps} 
+          onCreatePlayer={handleOpenPlayerCreation}
+      />
+      
+      {/* <PlayerCreationForm 
+        {...commonProps}
+        isOpen={isPlayerCreationOpen}
+        onClose={handleClosePlayerCreation}
+      /> */}
+      
+      <PlayerMapGraph {...commonProps} />
     </div>
   );
-}
+} 

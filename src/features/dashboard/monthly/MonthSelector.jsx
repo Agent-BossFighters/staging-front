@@ -15,7 +15,7 @@ export default function MonthSelector({
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <span className="text-xl font-semibold min-w-[200px] text-center">
-          {selectedDate.toLocaleDateString("fr-FR", {
+          {selectedDate.toLocaleDateString("en-US", {
             month: "long",
             year: "numeric",
           })}

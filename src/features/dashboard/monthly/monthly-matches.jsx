@@ -6,9 +6,12 @@ import {
   TableHeader,
   TableRow,
 } from "@ui/table";
+import { Button } from "@ui/button";
 import { useUserPreference } from "@context/userPreference.context";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { formatPrice, formatNumber, formatPercent } from "@utils/formatters";
+import { useTableScroll } from "@shared/hook/useTableScroll";
+import ScrollControls from "@ui/scroll-controls";
 
 export default function MonthlyMatches({
   dailyMetrics,
@@ -16,53 +19,34 @@ export default function MonthlyMatches({
   loading,
 }) {
   const { streamerMode } = useUserPreference();
-  const [startIndex, setStartIndex] = useState(0);
-  const [isMouseOverTable, setIsMouseOverTable] = useState(false);
-  const [showScrollMessage, setShowScrollMessage] = useState(false);
-  const tableRef = useRef(null);
-  
-  // Nombre de lignes à afficher  
-  const visibleRowsCount = 8;
-  
+  const [sortedEntries, setSortedEntries] = useState([]);
+
   useEffect(() => {
     if (dailyMetrics) {
-      setShowScrollMessage(Object.keys(dailyMetrics).length > visibleRowsCount);
+      // Convertir l'objet en tableau d'entrées et trier par date
+      const entries = Object.entries(dailyMetrics).sort(
+        (a, b) => new Date(b[0]) - new Date(a[0])
+      );
+      setSortedEntries(entries);
     }
   }, [dailyMetrics]);
-  
-  useEffect(() => {
-    const wheelHandler = (e) => {
-      if (!isMouseOverTable || !dailyMetrics) return;
-      
-      // Si la souris est sur le tableau, empêcher le défilement de la page
-      e.preventDefault();
-      
-      const totalEntries = Object.keys(dailyMetrics).length;
-      if (totalEntries <= visibleRowsCount) return;
-      
-      if (e.deltaY > 0) {
-        // Défilement vers le bas
-        setStartIndex(prev => Math.min(prev + 1, totalEntries - visibleRowsCount));
-      } else if (e.deltaY < 0) {
-        // Défilement vers le haut
-        setStartIndex(prev => Math.max(prev - 1, 0));
-      }
-    };
-    
-    window.addEventListener('wheel', wheelHandler, { passive: false });
-    
-    return () => {
-      window.removeEventListener('wheel', wheelHandler);
-    };
-  }, [isMouseOverTable, dailyMetrics, visibleRowsCount]);
 
-  const handleMouseEnter = () => {
-    setIsMouseOverTable(true);
-  };
-  
-  const handleMouseLeave = () => {
-    setIsMouseOverTable(false);
-  };
+  const {
+    tableRef,
+    visibleItems: visibleEntries,
+    showScrollMessage,
+    isAtStart,
+    isAtEnd,
+    handleMouseEnter,
+    handleMouseLeave,
+    startScrollingUp,
+    stopScrollingUp,
+    startScrollingDown,
+    stopScrollingDown,
+  } = useTableScroll({
+    items: sortedEntries,
+    visibleRowsCount: 8,
+  });
 
   if (loading) {
     return (
@@ -80,26 +64,19 @@ export default function MonthlyMatches({
     if (!dayData || !Array.isArray(dayData.matches)) {
       return 0;
     }
-    
+
     const totalTime = dayData.matches.reduce((total, match) => {
-      if (!match || typeof match.time !== 'number') {
+      if (!match || typeof match.time !== "number") {
         return total;
       }
       return total + match.time;
     }, 0);
     return totalTime;
   };
-  
-  // Sélectionner les entrées visibles en fonction de l'indice de départ
-  const visibleEntries = dailyMetrics 
-    ? Object.entries(dailyMetrics)
-        .sort((a, b) => new Date(b[0]) - new Date(a[0])) // Tri par date, plus récent en premier
-        .slice(startIndex, startIndex + visibleRowsCount)
-    : [];
 
   return (
     <div className="flex flex-col gap-8 h-full">
-      <div 
+      <div
         className="flex-grow overflow-x-auto"
         ref={tableRef}
         onMouseEnter={handleMouseEnter}
@@ -167,9 +144,9 @@ export default function MonthlyMatches({
                     {formatNumber(calculateDailyIGTime(metrics))}
                   </TableCell>
                   <TableCell className="text-left">
-                    {formatNumber(metrics.total_energy, 1)}
+                    {formatNumber(metrics.total_energy, 3)}
                   </TableCell>
-                  
+
                   {/* Masquer les colonnes financières en mode streamer */}
                   {!streamerMode && (
                     <TableCell className="text-left text-destructive">
@@ -177,7 +154,7 @@ export default function MonthlyMatches({
                     </TableCell>
                   )}
                   <TableCell className="text-left">
-                    {formatNumber(metrics.total_bft)}
+                    {formatNumber(metrics.total_bft, 3)}
                   </TableCell>
 
                   {/* Masquer les colonnes financières en mode streamer */}
@@ -197,9 +174,15 @@ export default function MonthlyMatches({
                         {formatPrice(metrics.total_flex_value)}
                       </TableCell>
 
-                      <TableCell className="text-left text-green-500">
-                        {formatPrice(metrics.total_profit)}
-                      </TableCell>
+                      {metrics.total_profit > 0 ? (
+                        <TableCell className="text-left text-green-500">
+                          {formatPrice(metrics.total_profit)}
+                        </TableCell>
+                      ) : (
+                        <TableCell className="text-left text-red-500">
+                          {formatPrice(metrics.total_profit)}
+                        </TableCell>
+                      )}
                     </>
                   )}
                   <TableCell className="text-left">
@@ -210,36 +193,20 @@ export default function MonthlyMatches({
             })}
           </TableBody>
         </Table>
-        
-        {showScrollMessage && (
-          <div className="text-primary text-center text-3xl py-1">
-            ⩔⩔ <span className="text-xl">Scroll down for more</span> ⩔⩔
-          </div>
-        )}
+
+        <ScrollControls
+          showScrollMessage={showScrollMessage}
+          isAtStart={isAtStart}
+          isAtEnd={isAtEnd}
+          startScrollingUp={startScrollingUp}
+          stopScrollingUp={stopScrollingUp}
+          startScrollingDown={startScrollingDown}
+          stopScrollingDown={stopScrollingDown}
+        />
         <div className="text-center text-sm text-muted-foreground py-2">
           Monthly statistics summary
         </div>
       </div>
-      
-      {/* Ajouter des contrôles tactiles pour les appareils mobiles si nécessaire */}
-      {/* {showScrollMessage && (
-        <div className="flex justify-center mt-2 gap-4 md:hidden">
-          <button 
-            onClick={() => setStartIndex(prev => Math.max(prev - 1, 0))}
-            disabled={startIndex === 0}
-            className="px-4 py-1 bg-primary/20 rounded-md disabled:opacity-50"
-          >
-            ↑
-          </button>
-          <button 
-            onClick={() => setStartIndex(prev => Math.min(prev + 1, Object.keys(dailyMetrics || {}).length - visibleRowsCount))}
-            disabled={!dailyMetrics || startIndex >= Object.keys(dailyMetrics).length - visibleRowsCount}
-            className="px-4 py-1 bg-primary/20 rounded-md disabled:opacity-50"
-          >
-            ↓
-          </button>
-        </div>
-      )} */}
     </div>
   );
 }

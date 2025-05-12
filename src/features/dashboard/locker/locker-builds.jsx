@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -20,6 +20,8 @@ import { useBuilds } from "./hook/useBuilds";
 import { useEditBuild } from "./hook/useEditBuild";
 import BuildSkeleton from "./skeletons/BuildSkeleton";
 import { formatPercent } from "@utils/formatters";
+import { useTableScroll } from "@shared/hook/useTableScroll";
+import ScrollControls from "@ui/scroll-controls";
 
 export default function Lockerbuilds() {
   const { builds, setBuilds, loading, setLoading, fetchMyBuilds } = useBuilds();
@@ -38,57 +40,27 @@ export default function Lockerbuilds() {
   const [buildName, setBuildName] = useState("");
   const [bonus, setBonus] = useState("");
   const [perks, setPerks] = useState("");
-  const [startIndex, setStartIndex] = useState(0);
-  const [isMouseOverTable, setIsMouseOverTable] = useState(false);
-  const [showScrollMessage, setShowScrollMessage] = useState(false);
-  const tableRef = useRef(null);
-  
-  // Nombre de lignes à afficher
-  const visibleRowsCount = 8;
 
   useEffect(() => {
     fetchMyBuilds();
   }, []);
 
-  useEffect(() => {
-    setShowScrollMessage(builds.length > visibleRowsCount);
-  }, [builds.length]);
-  
-  useEffect(() => {
-    const wheelHandler = (e) => {
-      if (!isMouseOverTable) return;
-      
-      // Si la souris est sur le tableau, empêcher le défilement de la page
-      e.preventDefault();
-      
-      if (builds.length <= visibleRowsCount) return;
-      
-      if (e.deltaY > 0) {
-        // Défilement vers le bas
-        setStartIndex(prev => Math.min(prev + 1, builds.length - visibleRowsCount));
-      } else if (e.deltaY < 0) {
-        // Défilement vers le haut
-        setStartIndex(prev => Math.max(prev - 1, 0));
-      }
-    };
-
-    window.addEventListener('wheel', wheelHandler, { passive: false });
-    
-    return () => {
-      window.removeEventListener('wheel', wheelHandler);
-    };
-  }, [isMouseOverTable, builds.length, visibleRowsCount]);
-  
-  const handleMouseEnter = () => {
-    setIsMouseOverTable(true);
-  };
-  
-  const handleMouseLeave = () => {
-    setIsMouseOverTable(false);
-  };
-
-  // Sélectionner les lignes visibles en fonction de l'indice de départ
-  const visibleBuilds = builds.slice(startIndex, startIndex + visibleRowsCount);
+  const {
+    tableRef,
+    visibleItems: visibleBuilds,
+    showScrollMessage,
+    isAtStart,
+    isAtEnd,
+    handleMouseEnter,
+    handleMouseLeave,
+    startScrollingUp,
+    stopScrollingUp,
+    startScrollingDown,
+    stopScrollingDown,
+  } = useTableScroll({
+    items: builds,
+    visibleRowsCount: 8,
+  });
 
   const handleSubmit = async () => {
     const missingFields = [];
@@ -154,7 +126,7 @@ export default function Lockerbuilds() {
   return (
     <div className="flex flex-col w-[60%] px-5 gap-5">
       <div className="pt-2">
-        <div 
+        <div
           ref={tableRef}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -248,7 +220,7 @@ export default function Lockerbuilds() {
                   <Button
                     variant="transparent"
                     onClick={handleSubmit}
-                    className="p-0 hover:text-primary hover:scale-150"
+                    className="p-0 hover:text-primary"
                   >
                     <Plus />
                   </Button>
@@ -256,11 +228,15 @@ export default function Lockerbuilds() {
               </TableRow>
             </TableFooter>
           </Table>
-          {showScrollMessage && (
-            <div className="text-primary text-center text-3xl py-1">
-              ⩔⩔ <span className="text-xl">Scroll down for more</span> ⩔⩔
-            </div>
-          )}
+          <ScrollControls
+            showScrollMessage={showScrollMessage}
+            isAtStart={isAtStart}
+            isAtEnd={isAtEnd}
+            startScrollingUp={startScrollingUp}
+            stopScrollingUp={stopScrollingUp}
+            startScrollingDown={startScrollingDown}
+            stopScrollingDown={stopScrollingDown}
+          />
         </div>
       </div>
       <div className="text-center text-sm text-muted-foreground py-2">

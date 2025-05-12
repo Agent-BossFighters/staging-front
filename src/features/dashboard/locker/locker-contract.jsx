@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -26,6 +26,9 @@ import { useEditContract } from "@features/dashboard/locker/hook/useEditContract
 import { useUserPreference } from "@context/userPreference.context";
 import ShowrunnerContractSkeleton from "./skeletons/ShowrunnerContractSkeleton";
 import { formatPrice, formatId } from "@utils/formatters";
+import { useTableScroll } from "@shared/hook/useTableScroll";
+import ScrollControls from "@ui/scroll-controls";
+
 export default function LockerContract() {
   const { contracts, setContracts, loading, setLoading, fetchMyContracts } =
     useContracts();
@@ -47,13 +50,6 @@ export default function LockerContract() {
   const [issueId, setIssueId] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
   const { maxRarity } = useUserPreference();
-  const [startIndex, setStartIndex] = useState(0);
-  const [isMouseOverTable, setIsMouseOverTable] = useState(false);
-  const [showScrollMessage, setShowScrollMessage] = useState(false);
-  const tableRef = useRef(null);
-  
-  // Nombre de lignes à afficher
-  const visibleRowsCount = 8;
 
   useEffect(() => {
     fetchMyContracts();
@@ -64,45 +60,22 @@ export default function LockerContract() {
       getRarityOrder(contract.rarity.name) <= getRarityOrder(maxRarity)
   );
 
-  useEffect(() => {
-    setShowScrollMessage(filteredContracts.length > visibleRowsCount);
-  }, [filteredContracts.length]);
-
-  useEffect(() => {
-    const wheelHandler = (e) => {
-      if (!isMouseOverTable) return;
-      
-      // Si la souris est sur le tableau, empêcher le défilement de la page
-      e.preventDefault();
-      
-      if (filteredContracts.length <= visibleRowsCount) return;
-      
-      if (e.deltaY > 0) {
-        // Défilement vers le bas
-        setStartIndex(prev => Math.min(prev + 1, filteredContracts.length - visibleRowsCount));
-      } else if (e.deltaY < 0) {
-        // Défilement vers le haut
-        setStartIndex(prev => Math.max(prev - 1, 0));
-      }
-    };
-
-    window.addEventListener('wheel', wheelHandler, { passive: false });
-    
-    return () => {
-      window.removeEventListener('wheel', wheelHandler);
-    };
-  }, [isMouseOverTable, filteredContracts.length, visibleRowsCount]);
-  
-  const handleMouseEnter = () => {
-    setIsMouseOverTable(true);
-  };
-  
-  const handleMouseLeave = () => {
-    setIsMouseOverTable(false);
-  };
-
-  // Sélectionner les lignes visibles en fonction de l'indice de départ
-  const visibleContracts = filteredContracts.slice(startIndex, startIndex + visibleRowsCount);
+  const {
+    tableRef,
+    visibleItems: visibleContracts,
+    showScrollMessage,
+    isAtStart,
+    isAtEnd,
+    handleMouseEnter,
+    handleMouseLeave,
+    startScrollingUp,
+    stopScrollingUp,
+    startScrollingDown,
+    stopScrollingDown,
+  } = useTableScroll({
+    items: filteredContracts,
+    visibleRowsCount: 8,
+  });
 
   const handleSubmit = async () => {
     const missingFields = [];
@@ -167,148 +140,152 @@ export default function LockerContract() {
   return (
     <div className="flex flex-col w-[60%] px-5 gap-5">
       <div className="pt-2">
-      <div 
-        ref={tableRef}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-      <Table className="">
-        <TableHeader>
-          <TableRow className="h-8">
-            <TableHead className="py-0 px-2">RARITY</TableHead>
-            <TableHead className="py-0 px-2">ITEM</TableHead>
-            <TableHead className="py-0 px-2">ID</TableHead>
-            <TableHead className="py-0 px-2">PURCHASE PRICE</TableHead>
-            <TableHead className="py-0 px-2">ACTION(S)</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="overflow-y-auto">
-          {visibleContracts.length > 0 ? (
-            visibleContracts.map((contract, index) => {
-              const isEditing = contract.id === editingContractId;
+        <div
+          ref={tableRef}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <Table className="">
+            <TableHeader>
+              <TableRow className="h-8">
+                <TableHead className="py-0 px-2">RARITY</TableHead>
+                <TableHead className="py-0 px-2">ITEM</TableHead>
+                <TableHead className="py-0 px-2">ID</TableHead>
+                <TableHead className="py-0 px-2">PURCHASE PRICE</TableHead>
+                <TableHead className="py-0 px-2">ACTION(S)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="overflow-y-auto">
+              {visibleContracts.length > 0 ? (
+                visibleContracts.map((contract, index) => {
+                  const isEditing = contract.id === editingContractId;
 
-              return (
-                <TableRow key={index} className="h-8">
-                  <TableCell className="py-1 pl-2 pr-16 text-center">
-                    {isEditing ? (
-                      <SelectSlot
-                        onSelectRarity={(rarity) => {
-                          setEditedRarity(rarity);
-                          handleSelectRarityContractForEdit(
-                            setEditedName,
-                            rarity
-                          );
-                        }}
-                        selectedRarity={editedRarity}
-                        rounded={true}
-                      />
-                    ) : (
-                      <p
-                        className="border-2 rounded-2xl p-1 text-sm"
-                        style={{ borderColor: contract.rarity.color }}
-                      >
-                        {contract.rarity.name}
-                      </p>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-0 px-2">
-                    {isEditing ? <p>{editedName.name}</p> : contract.name}
-                  </TableCell>
-                  <TableCell className="py-0 px-2">
-                    {isEditing ? (
-                      <NumericInput
-                        placeholder="Issue ID"
-                        value={editedIssueId}
-                        onChange={setEditedIssueId}
-                        className="w-1/2"
-                      />
-                    ) : (
-                      formatId(contract.issueId)
-                    )}
-                  </TableCell>
-                  <TableCell className="py-0 px-2">
-                    {isEditing ? (
-                      <NumericInput
-                        placeholder="Purchase Price"
-                        value={editedPurchasePrice}
-                        onChange={setEditedPurchasePrice}
-                        className="w-1/2"
-                      />
-                    ) : (
-                      formatPrice(contract.purchasePrice)
-                    )}
-                  </TableCell>
-                  <TableCell className="py-0 px-2 flex gap-2 items-center">
-                    <ActionsTable
-                      data={contract}
-                      onEdit={handleEdit}
-                      onDelete={() => handleDelete(contract.id)}
-                      onSave={handleSave}
-                      onCancel={handleCancel}
-                      isEditing={isEditing}
-                    />
+                  return (
+                    <TableRow key={index} className="h-8">
+                      <TableCell className="py-1 pl-2 pr-16 text-center">
+                        {isEditing ? (
+                          <SelectSlot
+                            onSelectRarity={(rarity) => {
+                              setEditedRarity(rarity);
+                              handleSelectRarityContractForEdit(
+                                setEditedName,
+                                rarity
+                              );
+                            }}
+                            selectedRarity={editedRarity}
+                            rounded={true}
+                          />
+                        ) : (
+                          <p
+                            className="border-2 rounded-2xl p-1 text-sm"
+                            style={{ borderColor: contract.rarity.color }}
+                          >
+                            {contract.rarity.name}
+                          </p>
+                        )}
+                      </TableCell>
+                      <TableCell className="py-0 px-2">
+                        {isEditing ? <p>{editedName.name}</p> : contract.name}
+                      </TableCell>
+                      <TableCell className="py-0 px-2">
+                        {isEditing ? (
+                          <NumericInput
+                            placeholder="Issue ID"
+                            value={editedIssueId}
+                            onChange={setEditedIssueId}
+                            className="w-1/2"
+                          />
+                        ) : (
+                          formatId(contract.issueId)
+                        )}
+                      </TableCell>
+                      <TableCell className="py-0 px-2">
+                        {isEditing ? (
+                          <NumericInput
+                            placeholder="Purchase Price"
+                            value={editedPurchasePrice}
+                            onChange={setEditedPurchasePrice}
+                            className="w-1/2"
+                          />
+                        ) : (
+                          formatPrice(contract.purchasePrice)
+                        )}
+                      </TableCell>
+                      <TableCell className="py-0 px-2 flex gap-2 items-center">
+                        <ActionsTable
+                          data={contract}
+                          onEdit={handleEdit}
+                          onDelete={() => handleDelete(contract.id)}
+                          onSave={handleSave}
+                          onCancel={handleCancel}
+                          isEditing={isEditing}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-1 px-2">
+                    No contract found
                   </TableCell>
                 </TableRow>
-              );
-            })
-          ) : (
-            <TableRow>
-              <TableCell colSpan={5} className="text-center py-1 px-2">
-                No contract found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-        <TableFooter className="bg-transparent">
-          <TableRow className="h-10">
-            <TableCell className="py-1 px-2">
-              <SelectSlot
-                onSelectRarity={(rarity) =>
-                  handleSelectRarityContract(setSelectedContract, rarity)
-                }
-                rounded={true}
-              />
-            </TableCell>
-            <TableCell className="py-1 px-2">
-              {selectedContract ? selectedContract.name : ""}
-            </TableCell>
-            <TableCell className="py-1 px-2">
-              <NumericInput
-                placeholder="ID"
-                value={issueId}
-                onChange={setIssueId}
-                className="w-1/2"
-              />
-            </TableCell>
-            <TableCell className="py-1 px-2">
-              <NumericInput
-                placeholder="Purchase Price"
-                value={purchasePrice}
-                onChange={setPurchasePrice}
-                className="w-1/2"
-              />
-            </TableCell>
-            <TableCell className="py-1 px-2 flex items-center">
-              <Button
-                variant="transparent"
-                onClick={handleSubmit}
-                className="p-0 hover:text-primary hover:scale-150"
-              >
-                <Plus />
-              </Button>
-            </TableCell>
-          </TableRow>
-          </TableFooter>
-        </Table>
-        {showScrollMessage && (
-          <div className="text-primary text-center text-3xl py-1">
-            ⩔⩔ <span className="text-xl">Scroll down for more</span> ⩔⩔
-          </div>
-        )}
+              )}
+            </TableBody>
+            <TableFooter className="bg-transparent">
+              <TableRow className="h-10">
+                <TableCell className="py-1 px-2">
+                  <SelectSlot
+                    onSelectRarity={(rarity) =>
+                      handleSelectRarityContract(setSelectedContract, rarity)
+                    }
+                    rounded={true}
+                  />
+                </TableCell>
+                <TableCell className="py-1 px-2">
+                  {selectedContract ? selectedContract.name : ""}
+                </TableCell>
+                <TableCell className="py-1 px-2">
+                  <NumericInput
+                    placeholder="ID"
+                    value={issueId}
+                    onChange={setIssueId}
+                    className="w-1/2"
+                  />
+                </TableCell>
+                <TableCell className="py-1 px-2">
+                  <NumericInput
+                    placeholder="Purchase Price"
+                    value={purchasePrice}
+                    onChange={setPurchasePrice}
+                    className="w-1/2"
+                  />
+                </TableCell>
+                <TableCell className="py-1 px-2 flex items-center">
+                  <Button
+                    variant="transparent"
+                    onClick={handleSubmit}
+                    className="p-0 hover:text-primary"
+                  >
+                    <Plus />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+          <ScrollControls
+            showScrollMessage={showScrollMessage}
+            isAtStart={isAtStart}
+            isAtEnd={isAtEnd}
+            startScrollingUp={startScrollingUp}
+            stopScrollingUp={stopScrollingUp}
+            startScrollingDown={startScrollingDown}
+            stopScrollingDown={stopScrollingDown}
+          />
         </div>
       </div>
       <div className="text-center text-sm text-muted-foreground py-2">
-          List of your showrunner contracts
+        List of your showrunner contracts
       </div>
     </div>
   );
