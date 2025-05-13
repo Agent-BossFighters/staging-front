@@ -3,6 +3,9 @@ export async function trackEvent(eventName, url, props = {}) {
   const websiteId = import.meta.env.VITE_UMAMI_API_CLIENT_USER_ID;
   const apiKey = import.meta.env.VITE_UMAMI_CLIENT_SECRET;
 
+  const response = await fetch("https://api.ipify.org?format=json")
+  const apifyResponse = await response.json()
+
   if (!origin || !websiteId) {
     console.error("Umami origin or website ID missing");
     return;
@@ -14,6 +17,7 @@ export async function trackEvent(eventName, url, props = {}) {
       name: eventName,
       website: websiteId,
       url,
+      ip: apifyResponse.ip,
       props,
     },
   };

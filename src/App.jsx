@@ -11,10 +11,12 @@ import { AuthProvider } from "@context/auth.context";
 import { GameConstantsProvider } from "@context/gameConstants.context";
 import { UserPreferenceProvider } from "@context/userPreference.context";
 import { PrivyWalletProvider } from "@context/wallet.context";
+import PageViewTracker from "@utils/umamiPageViewTracker";
 
 export default function App() {
   return (
     <Router>
+      <PageViewTracker />
       <AuthProvider>
         <UserPreferenceProvider>
           <GameConstantsProvider>
