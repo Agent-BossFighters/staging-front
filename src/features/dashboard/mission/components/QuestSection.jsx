@@ -129,7 +129,7 @@ const QuestSection = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
       {/* Colonne gauche - XP et niveau */}
-      <div className="col-span-1 md:col-span-3 mb-6 md:mb-0">
+      <div className="col-span-1 md:col-span-4 mb-6 md:mb-0">
         <XPDisplay />
       </div>
 

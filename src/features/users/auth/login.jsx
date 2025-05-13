@@ -20,7 +20,7 @@ export default function Login() {
   const handleLogin = async (data) => {
     const payload = {
       user: {
-        email: data.email,
+        email: data.email.toLowerCase(),
         password: data.password,
       },
     };
