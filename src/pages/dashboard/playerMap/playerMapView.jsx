@@ -130,7 +130,7 @@ export default function PlayerMapView() {
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">
           PLAYER MAP
@@ -143,11 +143,13 @@ export default function PlayerMapView() {
         )}
       </div>
 
-      <GraphComponent
-          {...commonProps} 
-          onCreatePlayer={handleOpenPlayerCreation}
-          onConnectWallet={handleConnectWallet}
-      />
+      <div className="relative flex-1 w-full" style={{ height: "calc(100vh - 200px)" }}>
+        <GraphComponent
+            {...commonProps} 
+            onCreatePlayer={handleOpenPlayerCreation}
+            onConnectWallet={handleConnectWallet}
+        />
+      </div>
     </div>
   );
 } 
