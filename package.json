@@ -33,7 +33,7 @@
     "js-cookie": "^3.0.5",
     "ky": "^1.7.4",
     "lucide-react": "^0.473.0",
-    "player-map": "^1.0.7",
+    "player-map": "^1.0.8",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-cookie-consent": "^9.0.0",
