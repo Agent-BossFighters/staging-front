@@ -32,17 +32,12 @@ export default function PlayerMapView() {
       apiUrl: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
     });
 
-    console.log(
-      "Player-map configuration initialized with:",
-      PlayerMapConfig.get()
-    );
   }, []);
 
   // Initialiser l'authentification Player-map avec le token d'authentification
   useEffect(() => {
     const token = AuthUtils.getAuthToken();
     if (token) {
-      console.log("Initializing Player-map authentication");
       playerMapAuth.initialize(token);
     } else {
       console.warn("No authentication token available for Player-map");
