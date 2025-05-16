@@ -28,6 +28,7 @@ export default defineConfig({
       "@ui": path.resolve(_dirname, "./src/shared/ui"),
       "@utils": path.resolve(_dirname, "./src/utils"),
       "@shared": path.resolve(_dirname, "./src/shared/"),
+      "@hooks": path.resolve(_dirname, "./src/shared/hook/"),
     },
   },
 });
