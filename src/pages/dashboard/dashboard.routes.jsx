@@ -8,7 +8,7 @@ import MissionPage from "./mission.page";
 import ScheduleRoutes from "./schedule/schedule.routes";
 import PlayingRoutes from "./playing/playing.routes";
 import TournamentRoutes from "./tournaments/tournament.routes";
-import PlayerMapRoutes from "./playerMap/playerMap.routes"
+import PlayerMapRoutes from "./playerMap/playerMap.routes";
 
 export default function DashboardRoutes() {
   return (

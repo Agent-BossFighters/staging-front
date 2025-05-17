@@ -12,13 +12,15 @@ import {
   useWalletClient,
 } from "wagmi";
 import { AuthUtils } from "@utils/api/auth.utils";
-
+import VotingModal from "./VotingModal";
+import { Button } from "@shared/ui/button";
 export default function PlayerMapView() {
   const { user, ready, login } = usePrivy();
   // États séparés pour chaque modal
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [isPlayerCreationOpen, setIsPlayerCreationOpen] = useState(false);
-  
+  const [isVotingOpen, setIsVotingOpen] = useState(false);
+
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const account = useAccount();
@@ -29,18 +31,12 @@ export default function PlayerMapView() {
     PlayerMapConfig.init({
       apiUrl: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
     });
-
-    console.log(
-      "Player-map configuration initialized with:",
-      PlayerMapConfig.get()
-    );
   }, []);
 
   // Initialiser l'authentification Player-map avec le token d'authentification
   useEffect(() => {
     const token = AuthUtils.getAuthToken();
     if (token) {
-      console.log("Initializing Player-map authentication");
       playerMapAuth.initialize(token);
     } else {
       console.warn("No authentication token available for Player-map");
@@ -77,6 +73,17 @@ export default function PlayerMapView() {
   const handleClosePlayerCreation = () => {
     console.log("Main app closing player creation modal");
     setIsPlayerCreationOpen(false);
+  };
+
+  // Gestionnaires pour la modale de vote
+  const handleOpenVoting = () => {
+    console.log("Opening voting modal");
+    setIsVotingOpen(true);
+  };
+
+  const handleCloseVoting = () => {
+    console.log("Main app closing voting modal");
+    setIsVotingOpen(false);
   };
 
   // Si walletClient est null/undefined, utiliser un objet factice basé sur les infos Privy
@@ -131,25 +138,37 @@ export default function PlayerMapView() {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">
+      <div className="flex justify-between items-center ">
+        <h1 className="text-5xl font-extrabold pb-2 text-primary pl-4">
           PLAYER MAP
         </h1>
-        {!playerMapAuth.isAuthenticated() && (
-          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
-            <p className="font-bold">Attention</p>
-            <p>Vous n'êtes pas authentifié pour utiliser Player Map.</p>
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          <Button variant="default" onClick={handleOpenVoting} className="mx-2">
+            give a feedback
+          </Button>
+          {!playerMapAuth.isAuthenticated() && (
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
+              <p className="font-bold">Attention</p>
+              <p>Vous n'êtes pas authentifié pour utiliser Player Map.</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="relative flex-1 w-full" style={{ height: "calc(100vh - 200px)" }}>
+      <div
+        className="relative flex-1 w-full"
+        style={{ height: "calc(100vh - 200px)" }}
+      >
         <GraphComponent
-            {...commonProps} 
-            onCreatePlayer={handleOpenPlayerCreation}
-            onConnectWallet={handleConnectWallet}
+          {...commonProps}
+          onCreatePlayer={handleOpenPlayerCreation}
+          onConnectWallet={handleConnectWallet}
         />
       </div>
+
+      {isVotingOpen && (
+        <VotingModal {...commonProps} onClose={handleCloseVoting} />
+      )}
     </div>
   );
-} 
+}
