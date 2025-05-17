@@ -69,8 +69,8 @@ importers:
         specifier: ^0.473.0
         version: 0.473.0(react@18.3.1)
       player-map:
-        specifier: ^1.0.3
-        version: 1.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:../Player-map
+        version: file:../Player-map(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -3200,8 +3200,8 @@ packages:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
 
-  player-map@1.0.3:
-    resolution: {integrity: sha512-+gYe49sCzFvZA2boezXOY+2FmVjhXkgmlOjV7QZ/hVsYyDpoHnkAEbLIsyZHXv4ofc5bUUTkTXnojFvkJWx3lg==}
+  player-map@file:../Player-map:
+    resolution: {directory: ../Player-map, type: directory}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -8478,7 +8478,7 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  player-map@1.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  player-map@file:../Player-map(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)

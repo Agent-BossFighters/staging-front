@@ -20,7 +20,7 @@ export default function PlayerMapView() {
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [isPlayerCreationOpen, setIsPlayerCreationOpen] = useState(false);
   const [isVotingOpen, setIsVotingOpen] = useState(false);
-  
+
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const account = useAccount();
@@ -31,7 +31,6 @@ export default function PlayerMapView() {
     PlayerMapConfig.init({
       apiUrl: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
     });
-
   }, []);
 
   // Initialiser l'authentification Player-map avec le token d'authentification
@@ -144,11 +143,7 @@ export default function PlayerMapView() {
           PLAYER MAP
         </h1>
         <div className="flex items-center gap-4">
-          <Button
-            variant="default"
-            onClick={handleOpenVoting}
-            className="mx-2"
-          >
+          <Button variant="default" onClick={handleOpenVoting} className="mx-2">
             give a feedback
           </Button>
           {!playerMapAuth.isAuthenticated() && (
@@ -160,20 +155,20 @@ export default function PlayerMapView() {
         </div>
       </div>
 
-      <div className="relative flex-1 w-full" style={{ height: "calc(100vh - 200px)" }}>
+      <div
+        className="relative flex-1 w-full"
+        style={{ height: "calc(100vh - 200px)" }}
+      >
         <GraphComponent
-            {...commonProps} 
-            onCreatePlayer={handleOpenPlayerCreation}
-            onConnectWallet={handleConnectWallet}
+          {...commonProps}
+          onCreatePlayer={handleOpenPlayerCreation}
+          onConnectWallet={handleConnectWallet}
         />
       </div>
 
       {isVotingOpen && (
-        <VotingModal
-          {...commonProps}
-          onClose={handleCloseVoting}
-        />
+        <VotingModal {...commonProps} onClose={handleCloseVoting} />
       )}
     </div>
   );
-} 
+}
