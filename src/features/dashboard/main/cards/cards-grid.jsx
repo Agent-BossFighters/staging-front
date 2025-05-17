@@ -37,7 +37,7 @@ const premiumCards = {
 // TODO: Add admin only, remove after testing (4 lignes)
 const adminOnlyCards = {
   fighting: true,
-  playermap: true,
+  // playermap: true, TODO: free access during Base Hackathon
 };
 
 const disabledStyle =
