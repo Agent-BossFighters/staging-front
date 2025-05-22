@@ -16,7 +16,7 @@ export const useTournamentActions = () => {
     try {
       // Trouver une équipe aléatoire disponible
       const randomTeam = findRandomAvailableTeam(teams, tournament);
-      
+
       if (!randomTeam) {
         toast.error("No available teams found");
         return;
@@ -37,12 +37,15 @@ export const useTournamentActions = () => {
       await kyInstance.post(`v1/tournaments/${tournament.id}/teams/${randomTeam.id}/join`, {
         json: entryCode ? { entry_code: entryCode } : undefined
       }).json();
-      
+
       toast.success(`Successfully joined team ${randomTeam.name}!`);
       return randomTeam;
     } catch (error) {
       console.error('Error joining random team:', error);
-      toast.error(error.message || "Failed to join team");
+      const errorMessage = error.response?.data?.error ||
+        (error.response?.status === 422 ? `Failed to join team. Please check your agent level, minimum required is ${tournament.agent_level_required}. Or check tournament/team entry code.` :
+          error.message || "Failed to join team");
+      toast.error(errorMessage);
       return null;
     } finally {
       setIsJoining(false);
