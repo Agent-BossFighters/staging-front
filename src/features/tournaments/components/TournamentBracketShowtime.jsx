@@ -221,10 +221,19 @@ const TournamentBracketShowtime = ({
   };
 
   const handleJoinRandomTeam = async () => {
-    const result = await joinRandomTeam(tournament, teams, user);
-    if (result) {
-      // Rafraîchir les données du tournoi après avoir rejoint une équipe
-      onMatchUpdated?.();
+    try {
+      const result = await joinRandomTeam(tournament, teams, user);
+      if (result) {
+        // Rafraîchir les données du tournoi après avoir rejoint une équipe
+        onMatchUpdated?.();
+        // Recharger la page après un court délai pour s'assurer que les données sont à jour
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error in handleJoinRandomTeam:', error);
+      toast.error(error.message || "Une erreur est survenue lors de la tentative de rejoindre une équipe aléatoire");
     }
   };
 

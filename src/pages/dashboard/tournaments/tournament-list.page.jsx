@@ -227,13 +227,17 @@ export default function TournamentListPage() {
                   />
                 </div>
                 
-                <Button 
-                  variant="default" 
-                  className="bg-primary hover:bg-primary/90 text-black"
-                  onClick={() => setIsCreateModalOpen(true)}
+                {user.isPremium ? (
+                  <Button 
+                    variant="default" 
+                    className="bg-primary hover:bg-primary/90 text-black"
+                    onClick={() => setIsCreateModalOpen(true)}
                 >
                   CREATE
-                </Button>
+                  </Button>
+                ) : (''
+
+                )}
               </div>
             </div>
           </div>
