@@ -12,7 +12,7 @@ export default function FightingCard({ onClick }) {
       patternClassName="opacity-40"
       icon={Fighting}
       onClick={onClick}
-      soon={true}
+      soon={false}
     />
   );
 }

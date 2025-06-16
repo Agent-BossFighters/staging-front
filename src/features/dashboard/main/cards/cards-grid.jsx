@@ -29,15 +29,15 @@ const premiumCards = {
   schedule: false,
   monthly: true,
   tvtools: true,
-  fighting: false, // TODO: Add admin only, remove after testing revert to true
+  fighting: false,
   playermap: false, // TODO: Add admin only, remove after testing revert to true
   xp: true,
 };
 
 // TODO: Add admin only, remove after testing (4 lignes)
 const adminOnlyCards = {
-  fighting: true,
-  // playermap: true, TODO: free access during Base Hackathon
+  //fighting: true,
+  playermap: true,
 };
 
 const disabledStyle =
