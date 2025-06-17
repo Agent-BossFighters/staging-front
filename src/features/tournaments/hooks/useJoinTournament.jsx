@@ -181,7 +181,7 @@ export function useJoinTournament(tournament, teams, onClose) {
         window.location.reload();
       }, 3000); // Passer à 3 secondes pour donner plus de temps au backend
     } catch (err) {
-      const errorMessage = err.response?.data?.error || "Failed to join team. Please check the codes.";
+      const errorMessage = err.response?.data?.error || `Failed to join team. Please check the codes. Or check your Agent level, minimum required is ${tournament.agent_level_required}.`;
       toast.error(errorMessage);
       setError(errorMessage);
     } finally {
