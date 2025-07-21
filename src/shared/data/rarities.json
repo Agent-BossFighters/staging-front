@@ -3,27 +3,34 @@
     {
       "rarity": "Common",
       "color": "#858F9B",
-      "order": 1
+      "order": 1,
+      "price": 0.000985
     },
     {
       "rarity": "Uncommon",
       "color": "#1CBF6A",
-      "order": 2
+      "order": 2,
+      "price": 0.000974
     },
     {
       "rarity": "Rare",
       "color": "#159CFD",
-      "order": 3
+      "order": 3,
+      "price": 0.000935
+
     },
     {
       "rarity": "Epic",
       "color": "#A369FF",
-      "order": 4
+      "order": 4,
+      "price": 0.000885
     },
     {
       "rarity": "Legendary",
       "color": "#E67E22",
-      "order": 5
+      "order": 5,
+      "price": 0.000858
+
     },
     {
       "rarity": "Mythic",

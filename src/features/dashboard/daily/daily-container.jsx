@@ -6,11 +6,6 @@ import DateSelector from "./components/DateSelector";
 import Calculator from "./components/Calculator";
 
 export default function DailyContainer() {
-  const badges = [
-  { id: 'b1', name: 'Badge Alpha', rarity: 'Common' },
-  { id: 'b2', name: 'Badge Beta', rarity: 'Rare' },
-  { id: 'b3', name: 'Badge Gamma', rarity: 'Legendary' }
-]
   const {
     summary,
     matches,
@@ -58,7 +53,7 @@ export default function DailyContainer() {
         </div>
       ) : (
         <>
-          <Calculator userBadges={badges} />
+          <Calculator />
           <DailyMatches
             matches={matches}
             builds={builds}

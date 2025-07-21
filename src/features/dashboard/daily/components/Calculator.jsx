@@ -1,12 +1,5 @@
 import React, { useState } from 'react'
-
-const rarityPrices = {
-  Common: 0.01,
-  Uncommon: 0.02,
-  Rare: 0.05,
-  Epic: 0.1,
-  Legendary: 0.2
-}
+import { useRarityManagement } from "../hooks/useRarityManagement";
 
 const defaultSlot = {
   badgeId: '',
@@ -15,7 +8,15 @@ const defaultSlot = {
   energyEnd: ''
 }
 
-export default function Calculator({ userBadges }) {
+export default function Calculator() {
+  const { badges: userBadges, rarities } = useRarityManagement();
+
+  // Génère un objet { [rarity]: price }
+  const rarityPrices = rarities.reduce((acc, r) => {
+    if (r.price) acc[r.rarity.toLowerCase()] = r.price;
+    return acc;
+  }, {});
+
   const [slots, setSlots] = useState(Array(5).fill({ ...defaultSlot }))
   const [autoComplete, setAutoComplete] = useState(false)
 
@@ -42,7 +43,9 @@ export default function Calculator({ userBadges }) {
     const start = parseInt(slot.energyStart || '0')
     const end = parseInt(slot.energyEnd || '0')
     if (!slot.rarity || isNaN(start) || isNaN(end)) return sum
-    const price = rarityPrices[slot.rarity] || rarityPrices['legendary']
+    const rarityKey = slot.rarity?.toLowerCase()
+    const price = rarityPrices[slot.rarity?.toLowerCase()] || 0
+    console.log(`Slot ${slot.badgeId} | rarity: ${slot.rarity} | key: ${rarityKey} | price: ${price}`)
     return sum + (start - end) * price
   }, 0)
 
@@ -87,14 +90,14 @@ export default function Calculator({ userBadges }) {
               <h3 className="bg-yellow-400 text-black rounded-lg font-medium text-center">SLOT {i + 1}</h3>
 
               <select
-                className="border rounded px-2 py-1 text-sm"
-                onChange={e => handleBadgeSelect(i, e.target.value)}
-                value={slot.badgeId}
+                className="border rounded px-2 py-1 text-black text-sm"
+                onChange={e => handleChange(i, 'rarity', e.target.value)}
+                value={slot.rarity}
               >
                 <option value="">SELECT</option>
-                {userBadges.map(b => (
-                  <option key={b.id} value={b.id}>
-                    {b.name} ({b.rarity})
+                {rarities.map(r => (
+                  <option key={r.rarity} value={r.rarity}>
+                    {r.rarity}
                   </option>
                 ))}
               </select>
@@ -104,7 +107,7 @@ export default function Calculator({ userBadges }) {
                 placeholder="Energy Start"
                 value={slot.energyStart}
                 onChange={e => handleChange(i, 'energyStart', e.target.value)}
-                className="border rounded px-2 py-1 text-sm"
+                className="border text-black rounded px-2 py-1 text-sm"
               />
 
               <input
@@ -112,15 +115,17 @@ export default function Calculator({ userBadges }) {
                 placeholder="Energy End"
                 value={slot.energyEnd}
                 onChange={e => handleChange(i, 'energyEnd', e.target.value)}
-                className="border rounded px-2 py-1 text-sm"
+                className="border text-black rounded px-2 py-1 text-sm"
               />
             </div>
           ))}
         </div>
-        <div className="flex flew-column justify-between items-center mb-4">
+        <div className="ml-5">
           <div>
-            <p className="text-md font-semibold">Total Energy Used: <span className="text-indigo-600">{totalRawEnergyUsed}</span> ⚡</p>
-            <p className="text-md font-semibold">Energy Cost: <span className="text-green-600">{totalEnergyUsed.toFixed(2)} $</span></p>
+            ⚡
+            <p className="text-md font-semibold">ENERGY USED</p>
+            <p><span className="text-indigo-600">{totalRawEnergyUsed}</span></p>
+            <p className="text-md font-semibold"><span className="text-green-600">{totalEnergyUsed.toFixed(2)} $</span></p>
           </div>
           <button
             onClick={handleNextMatch}
