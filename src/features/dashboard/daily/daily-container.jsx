@@ -3,8 +3,14 @@ import DailySummary from "./daily-summary";
 import DailyMatches from "./daily-matches";
 import { useDailyData } from "./hooks/useDailyData.jsx";
 import DateSelector from "./components/DateSelector";
+import Calculator from "./components/Calculator";
 
 export default function DailyContainer() {
+  const badges = [
+  { id: 'b1', name: 'Badge Alpha', rarity: 'Common' },
+  { id: 'b2', name: 'Badge Beta', rarity: 'Rare' },
+  { id: 'b3', name: 'Badge Gamma', rarity: 'Legendary' }
+]
   const {
     summary,
     matches,
@@ -51,15 +57,18 @@ export default function DailyContainer() {
           No builds available. Please create a build in the Locker section first.
         </div>
       ) : (
-        <DailyMatches
-          matches={matches}
-          builds={builds}
-          loading={loading}
-          onAdd={addMatch}
-          onUpdate={updateMatch}
-          onDelete={deleteMatch}
-          selectedDate={selectedDate}
-        />
+        <>
+          <Calculator userBadges={badges} />
+          <DailyMatches
+            matches={matches}
+            builds={builds}
+            loading={loading}
+            onAdd={addMatch}
+            onUpdate={updateMatch}
+            onDelete={deleteMatch}
+            selectedDate={selectedDate}
+          />
+        </>
       )}
     </div>
   );
