@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { useRarityManagement } from "../hooks/useRarityManagement";
 import RaritySelect from "./rarity-select";
 import { Spark } from "@img/index";
+import { Switch } from "@shared/ui/switch";
+import { Input } from '@shared/ui/input';
+import { Button } from "@shared/ui/button";
 
 const defaultSlot = {
   rarity: '',
@@ -12,7 +15,6 @@ const defaultSlot = {
 export default function Calculator() {
   const { rarities } = useRarityManagement();
 
-  // Génère un objet { [rarity]: price }
   const rarityPrices = rarities.reduce((acc, r) => {
     if (r.price) acc[r.rarity.toLowerCase()] = r.price;
     return acc;
@@ -30,7 +32,6 @@ export default function Calculator() {
   const totalPriceEnergyUsed = slots.reduce((sum, slot) => {
     const start = parseInt(slot.energyStart || '0')
     const end = parseInt(slot.energyEnd || '0')
-    // Extraire la rareté si format "rare#123"
     const rarity = slot.rarity?.split('#')[0]?.toLowerCase() || ''
     if (!rarity || isNaN(start) || isNaN(end)) return sum
     const price = rarityPrices[rarity] || 0
@@ -57,13 +58,12 @@ export default function Calculator() {
   return (
     <div className="border-4 border-yellow-400 rounded-lg mb-10 w-[auto] p-4">
       <div className="flex flex-nowrap mb-3 max-w-full gap-2">
-        <h2 className="text-xl font-bold">CALCULATOR</h2>
-        <label className="mt-auto">
-          <span className="text-s text-gray-400 font-semibold">Autocomplete rarity</span>
-          <input
-            type="checkbox"
+        <h2 className="text-2xl font-bold">CALCULATOR</h2>
+        <label className="mt-auto flex items-center gap-2">
+          <span className="text-s ml-2 text-white font-bold">AUTOCOMPLETE RARITY</span>
+          <Switch
             checked={autoComplete}
-            onChange={() => setAutoComplete(!autoComplete)}
+            onCheckedChange={setAutoComplete}
           />
         </label>
       </div>
@@ -72,9 +72,8 @@ export default function Calculator() {
           {slots.map((slot, i) => (
             <div key={i} className="flex flex-col gap-2">
               <h3 className="bg-yellow-400 text-black rounded-lg font-bold text-center">SLOT {i + 1}</h3>
-              <span className="text-s text-gray-300 font-semibold">BADGE USED</span>
+              <span className="text-s text-white font-bold">BADGE USED</span>
               <div className="items-center gap-2">
-                {console.log({slot})}
                 <RaritySelect
                   value={slot.rarity}
                   onChange={val => handleChange(i, 'rarity', val)}
@@ -85,23 +84,31 @@ export default function Calculator() {
 
               <div className="flex flex-col md:flex-row gap-2">
                 <div className="flex flex-col w-full md:w-1/2">
-                  <span className="text-s text-gray-400 mb-1">ENERGY START</span>
-                  <input
-                    type="number"
-                    placeholder="Start"
+                  <span className={`text-s mb-1 font-bold ${slot.rarity && slot.rarity !== "none" ? "text-white" : "text-gray-400"}`}>
+                    ENERGY START
+                  </span>
+                  <Input
+                    name={`energyStart-${i}`}
                     value={slot.energyStart}
                     onChange={e => handleChange(i, 'energyStart', e.target.value)}
-                    className="bg-[#23272f] border border-gray-400 rounded-lg mt-auto px-1 py-2 text-white focus:outline-none focus:border-yellow-400"
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="Start"
+                    maxLength={40}
+                    disabled={!slot.rarity || slot.rarity === "none"}
                   />
                 </div>
-                  <div className="flex flex-col w-full md:w-1/2">
-                  <span className="text-s text-gray-400 mb-1 max-w-[88%]">ENERGY END</span>
-                  <input
-                    type="number"
-                    placeholder="End"
+                <div className="flex flex-col w-full md:w-1/2">
+                  <span className={`text-s mb-1 max-w-[88%] font-bold ${slot.rarity && slot.rarity !== "none" ? "text-white" : "text-gray-400"}`}>
+                    ENERGY END
+                  </span>
+                  <Input
+                    name={`energyEnd-${i}`}
                     value={slot.energyEnd}
                     onChange={e => handleChange(i, 'energyEnd', e.target.value)}
-                    className="bg-[#23272f] border border-gray-400 rounded-lg mt-auto px-1 py-2 text-white focus:outline-none focus:border-yellow-400"
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="End"
+                    maxLength={40}
+                    disabled={!slot.rarity || slot.rarity === "none"}
                   />
                 </div>
               </div>
@@ -109,17 +116,17 @@ export default function Calculator() {
           ))}
         </div>
         <div className="flex flex-col text-center min-w-[160px] ml-5">
-        <div>
+          <div>
             <img src={Spark} alt="Energy" className="inline-block w-9 h-13 mb-1" />
-          <p className="text-xl font-bold">ENERGY USED</p>
-          <p>
-            <span className="text-3xl font-bold text-red-500">{totalEnergyUsed}</span>
-          </p>
-          <p className="text-md font-semibold">
-            <span className="text-red-500">{totalPriceEnergyUsed.toFixed(2)} $</span>
-          </p>
-        </div>
-          <button
+            <p className="text-xl font-bold">ENERGY USED</p>
+            <p>
+              <span className="text-3xl font-bold text-red-500">{totalEnergyUsed}</span>
+            </p>
+            <p className="text-md font-semibold">
+              <span className="text-red-500">{totalPriceEnergyUsed.toFixed(2)} $</span>
+            </p>
+          </div>
+          <Button
             onClick={() => {
               if (autoComplete) {
                 handleNextMatch();
@@ -127,10 +134,10 @@ export default function Calculator() {
                 setSlots(Array(5).fill({ ...defaultSlot }));
               }
             }}
-            className="bg-yellow-400 mt-auto text-black rounded-sm hover:bg-yellow-500 transition"
+            className="bg-yellow-400 hover:bg-yellow-500 text-black mt-auto"
           >
             NEXT MATCH
-          </button>
+          </Button>
         </div>
       </div>
     </div>

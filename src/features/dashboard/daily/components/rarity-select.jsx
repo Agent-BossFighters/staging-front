@@ -113,7 +113,7 @@ const RaritySelect = memo(
     if (loading && !badges.length) return null;
 
     return (
-      <div className="flex justify-between items-center min-w-[150px]">
+      <div className="flex gap-3 items-center min-w-[150px]">
         <Select
           value={value || "none"}
           onValueChange={handleValueChange}
@@ -176,7 +176,7 @@ const RaritySelect = memo(
         </Select>
         {/* Affichage à droite du select */}
         {showIssueId && selectedBadge && (
-          <span className="mr-2 text-sm text-gray-100">
+          <span className="mr-2 text-s font-bold text-gray-100">
             {formatId(selectedBadge.issueId)}
           </span>
         )}
