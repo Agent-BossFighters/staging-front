@@ -69,7 +69,7 @@ export default function MatchesList({
               <TableHead className="w-[4%]">
                 $BFT %
                 <br />
-                BONUS
+                BOOST
               </TableHead>
               {renderSlotHeaders()}
               <TableHead className="w-[4%]">
@@ -77,11 +77,7 @@ export default function MatchesList({
                 <br />
                 RATE
               </TableHead>
-              <TableHead className="w-[4%]">
-                IG TIME
-                <br />
-                (MIN)
-              </TableHead>
+
               <TableHead className="w-[4%]">
                 ENERGY
                 <br />

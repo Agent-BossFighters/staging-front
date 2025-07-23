@@ -46,7 +46,6 @@ export default function MatchDisplayRow({
         </td>
       ))}
       <td className="px-4 text-left min-w-[4%]">{formatNumber(match.luckrate)}</td>
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.time)}</td>
       <td className="px-4 text-left min-w-[4%]">{formatNumber(match.energyUsed, 3)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}

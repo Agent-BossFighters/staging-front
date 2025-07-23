@@ -100,15 +100,7 @@ export default function MatchFormRow({
           </td>
         ))}
       <td className="px-4 text-left min-w-[4%]">-</td>
-      <td className="min-w-[4%]">
-        <Input
-          type="number"
-          className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
-          placeholder="0"
-          value={currentData.time}
-          onChange={(e) => onChange("time", e.target.value)}
-        />
-      </td>
+
       <td className="px-4 text-left min-w-[4%]">-</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
