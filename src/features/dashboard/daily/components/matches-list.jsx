@@ -105,7 +105,7 @@ export default function MatchesList({
               <TableHead className="w-[4%]">
                 BFT /
                 <br />
-                MINUTE
+                ENERGY
               </TableHead>
 
               {/* Masquer les colonnes financières en mode streamer */}
@@ -113,7 +113,7 @@ export default function MatchesList({
                 <TableHead className="w-[4%]">
                   $ /
                   <br />
-                  MINUTE
+                  ENERGY
                 </TableHead>
               )}
               <TableHead className="w-[3%]">FLEX</TableHead>

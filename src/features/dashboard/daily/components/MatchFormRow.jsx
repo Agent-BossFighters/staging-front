@@ -101,11 +101,27 @@ export default function MatchFormRow({
         ))}
       <td className="px-4 text-left min-w-[4%]">-</td>
 
-      <td className="px-4 text-left min-w-[4%]">-</td>
+      <td className="min-w-[4%]">
+        <Input
+          type="number"
+          className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+          value={currentData.energyUsed}
+          placeholder="0"
+          onChange={(e) => onChange("energyUsed", e.target.value)}
+        />
+      </td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
-        <td className="px-4 text-left min-w-[4%] text-destructive">-</td>
+        <td className="min-w-[4%]">
+          <Input
+            type="number"
+            className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+            value={currentData.energyCost}
+            placeholder="0"
+            onChange={(e) => onChange("energyCost", e.target.value)}
+          />
+        </td>
       )}
       
       <td className="min-w-[4%]" title={currentData.map}>

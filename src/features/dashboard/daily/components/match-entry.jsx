@@ -7,7 +7,8 @@ const MAX_SLOTS = 5;
 const INITIAL_FORM_STATE = {
   buildId: "",
   map: "",
-  time: "",
+  energyUsed: "",
+  energyCost: "",
   result: "",
   bft: "",
   flex: "",
@@ -69,8 +70,9 @@ export default function MatchEntry({
     if (!data.buildId) missingFields.push("Build Name");
     if (!data.map) missingFields.push("Map");
     if (!data.result) missingFields.push("Result");
-    if (!data.time) missingFields.push("Time");
     if (!data.bft) missingFields.push("BFT");
+    if (!data.energyUsed) missingFields.push("Energy Used");
+    if (!data.energyCost) missingFields.push("Energy Cost");
 
     if (missingFields.length > 0) {
       setMissingFieldsList(missingFields);
@@ -96,17 +98,13 @@ export default function MatchEntry({
     const selectedBuild = builds.find((b) => b.id === data.buildId);
     if (!selectedBuild) return null;
 
-    if (!data.map || !data.result || !data.time || !data.bft) {
+    if (!data.map || !data.result || !data.bft || !data.energyUsed || !data.energyCost) {
       throw new Error("Tous les champs obligatoires doivent être remplis");
     }
 
-    const time = parseInt(data.time);
     const totalToken = parseFloat(parseFloat(data.bft).toFixed(3));
     const totalPremiumCurrency = parseInt(data.flex || 0);
 
-    if (isNaN(time) || time < 0) {
-      throw new Error("Le temps doit être un nombre positif");
-    }
 
     if (isNaN(totalToken) || totalToken < 0) {
       throw new Error("Le total de tokens doit être un nombre positif");
@@ -146,13 +144,13 @@ export default function MatchEntry({
         id: existingMatch?.id,
         build: selectedBuild.buildName,
         map: map,
-        time: time,
         result: result,
         totalToken: totalToken,
         totalPremiumCurrency: totalPremiumCurrency,
         bonusMultiplier: parseFloat(selectedBuild.bonusMultiplier),
         perksMultiplier: parseFloat(selectedBuild.perksMultiplier),
-        energyUsed: parseFloat(((time / 60.0) * badge_used.length).toFixed(3)),
+        energyUsed: parseFloat(data.energyUsed),
+        energyCost: parseFloat(data.energyCost),
         badge_used_attributes: data.rarities
           .map((rarity, index) => {
             const slot = index + 1;

@@ -46,13 +46,13 @@ export default function MatchDisplayRow({
         </td>
       ))}
       <td className="px-4 text-left min-w-[4%]">{formatNumber(match.luckrate)}</td>
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.energyUsed, 3)}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.energyUsed)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
           <td className="px-4 text-left min-w-[4%] text-destructive">
-            {formatPrice(match.calculated.energyCost)}
+            {formatPrice(match.energyCost)}
           </td>
         </>
       )}
@@ -74,13 +74,13 @@ export default function MatchDisplayRow({
         </>
       )}
       
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(Math.round(match.totalToken / match.time))}</td>
+      <td className="px-4 text-left min-w-[4%]">{formatNumber(Math.round(match.totalToken / match.energyUsed))}</td>
 
 
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[4%]">{formatPrice(match.calculated.tokenValue / match.time)}</td>
+          <td className="px-4 text-left min-w-[4%]">{formatPrice(match.calculated.tokenValue / match.energyUsed)}</td>
         </>
       )}
 
