@@ -8,6 +8,13 @@ export const useRarityManagement = () => {
   const [badges, setBadges] = useState([]);
   const rarities = useMemo(() => data.rarities, []);
 
+  const rarityPrices = useMemo(() => {
+    return rarities.reduce((acc, r) => {
+      if (r.price) acc[r.rarity.toLowerCase()] = r.price;
+      return acc;
+    }, {});
+  }, [rarities]);
+
   const processBadges = useCallback((rawBadges) => {
     return rawBadges
       .filter((badge) => badge && typeof badge === "object")
@@ -82,6 +89,7 @@ export const useRarityManagement = () => {
     unlockedSlots,
     rarities,
     badges,
+    rarityPrices,
     getRarityColor,
     getRarityDisplay,
     formatRarityName,

@@ -59,20 +59,6 @@ export default function MonthlyMatches({
     );
   }
 
-  // Calculer le temps total pour un jour
-  const calculateDailyIGTime = (dayData) => {
-    if (!dayData || !Array.isArray(dayData.matches)) {
-      return 0;
-    }
-
-    const totalTime = dayData.matches.reduce((total, match) => {
-      if (!match || typeof match.time !== "number") {
-        return total;
-      }
-      return total + match.time;
-    }, 0);
-    return totalTime;
-  };
 
   return (
     <div className="flex flex-col gap-8 h-full">
@@ -89,10 +75,6 @@ export default function MonthlyMatches({
               <TableHead className="text-left">
                 MATCHES
                 <br /> PLAYED
-              </TableHead>
-              <TableHead className="text-left">
-                IG TIME
-                <br /> (Min)
               </TableHead>
               <TableHead className="text-left">
                 ENERGY
@@ -123,7 +105,7 @@ export default function MonthlyMatches({
                   <TableHead className="text-left text-accent">
                     FLEX ($)
                   </TableHead>
-                  <TableHead className="text-left text-green-500">
+                  <TableHead className="text-left text-white">
                     PROFIT
                   </TableHead>
                 </>
@@ -139,9 +121,6 @@ export default function MonthlyMatches({
                   <TableCell>{new Date(date).toLocaleDateString()}</TableCell>
                   <TableCell className="text-left">
                     {formatNumber(metrics.total_matches)}
-                  </TableCell>
-                  <TableCell className="text-left">
-                    {formatNumber(calculateDailyIGTime(metrics))}
                   </TableCell>
                   <TableCell className="text-left">
                     {formatNumber(metrics.total_energy, 3)}
