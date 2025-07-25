@@ -6,9 +6,6 @@ import { useGameConstants } from "@context/gameConstants.context";
 export default function MonthlyDownload({ dailyMetrics }) {
   const { CURRENCY_RATES } = useGameConstants();
 
-  const calculateEnergyCost = (energy) => {
-    return (energy * CURRENCY_RATES.ENERGY).toFixed(2);
-  };
 
   const calculateBftValue = (bft) => {
     return (bft * CURRENCY_RATES.BFT).toFixed(2);
@@ -28,7 +25,7 @@ export default function MonthlyDownload({ dailyMetrics }) {
 
   const handleDownload = () => {
     const data = Object.entries(dailyMetrics || {}).map(([date, metrics]) => {
-      const energyCost = calculateEnergyCost(metrics.total_energy);
+      const energyCost = metrics.total_energy_cost;
       const bftValue = calculateBftValue(metrics.total_bft);
       const flexValue = calculateFlexValue(metrics.total_flex);
       const profit = calculateProfit(bftValue, flexValue, energyCost);
@@ -36,9 +33,8 @@ export default function MonthlyDownload({ dailyMetrics }) {
       return {
         Date: new Date(date).toLocaleDateString(),
         "Matches Played": metrics.total_matches,
-        "IG Time (Min)": metrics.total_matches * 60,
         "Energy Used": metrics.total_energy,
-        "Energy Cost ($)": energyCost,
+        "Energy Cost ($)": metrics.total_energy_cost,
         "Total $BFT": metrics.total_bft,
         "BFT Value ($)": bftValue,
         FLEX: metrics.total_flex,

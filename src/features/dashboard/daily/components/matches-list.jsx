@@ -126,7 +126,7 @@ export default function MatchesList({
                     <br />
                     ($)
                   </TableHead>
-                  <TableHead className="w-[5%] text-accent">PROFIT</TableHead>
+                  <TableHead className="w-[5%]">PROFIT</TableHead>
                 </>
               )}
 

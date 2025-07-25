@@ -32,12 +32,12 @@ export const useMonthlyData = () => {
           dailyMetrics[date] = {
             matches: dayData.matches,
             total_matches: dayData.total_matches,
-            total_energy: dayData.total_energy,
             total_bft: dayData.total_bft.amount,
             total_flex: dayData.total_flex.amount,
             wins: dayData.results.win,
             losses: dayData.results.loss,
             draws: dayData.results.draw,
+            total_energy: dayData.total_energy,
             total_energy_cost: dayData.total_energy_cost,
             total_bft_value: dayData.total_bft.value,
             total_flex_value: dayData.total_flex.value,
