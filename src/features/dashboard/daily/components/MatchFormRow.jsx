@@ -103,14 +103,14 @@ export default function MatchFormRow({
         ))}
       <td className="px-4 text-left min-w-[4%]">-</td>
 
-      <td className="min-w-[4%] text-center font-bold text-white">
+      <td className="min-w-[4%] px-4 text-left text-white">
         {totalEnergyUsed}
       </td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
-        <td className="min-w-[4%] text-center font-bold text-white">
-          {typeof totalPriceEnergyUsed === "number" ? totalPriceEnergyUsed.toFixed(2) : "0.00"} $
+        <td className="min-w-[4%] px-4 text-left text-red-500">
+          ${typeof totalPriceEnergyUsed === "number" ? totalPriceEnergyUsed.toFixed(2) : "0.00"}
         </td>
       )}
       
