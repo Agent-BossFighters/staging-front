@@ -51,7 +51,7 @@ export default function MatchFormRow({
 
   // Si c'est aujourd'hui, on rend le formulaire
   return (
-    <tr>
+    <tr className="select-none">
       <td className="min-w-[6%] pl-4">
         <Select
           value={currentData.buildId}

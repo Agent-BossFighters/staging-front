@@ -57,7 +57,7 @@ export default function MatchesList({
   };
 
   return (
-    <div className="flex-grow overflow-x-auto">
+    <div className="flex-grow overflow-x-auto select-none">
       <div
         className="w-full min-w-0"
         ref={tableRef}

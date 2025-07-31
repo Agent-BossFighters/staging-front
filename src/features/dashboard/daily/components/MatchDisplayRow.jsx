@@ -27,7 +27,7 @@ export default function MatchDisplayRow({
     });
 
   return (
-    <tr>
+    <tr className="select-none">
       <td className="min-w-[6%] pl-4 select-none" title={match.build}>
         <span className="font-medium">{match.build.length < 10 ? match.build : match.build.slice(0, 10) + "..."}</span>
       </td>
