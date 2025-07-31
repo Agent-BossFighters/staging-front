@@ -3,6 +3,8 @@ import MatchesList from "./components/matches-list";
 import { useUserPreference } from "@context/userPreference.context";
 import { MatchDialogs } from "./components/MatchDialogs";
 import { useLastMatchData } from "@shared/hook/useLastMatchData";
+import Calculator from "./components/Calculator";
+
 
 export default function DailyMatches({
   matches,
@@ -19,6 +21,10 @@ export default function DailyMatches({
   const [showEditTimeoutDialog, setShowEditTimeoutDialog] = useState(false);
   const [currentMatch, setCurrentMatch] = useState(null);
   const { lastMatchData, saveLastMatchData } = useLastMatchData();
+  const [totalEnergyUsed, setTotalEnergyUsed] = useState(0)
+  const [totalPriceEnergyUsed, setTotalPriceEnergyUsed] = useState(0)
+
+
 
   const availableSlots = unlockedSlots;
 
@@ -110,6 +116,12 @@ export default function DailyMatches({
 
   return (
     <div className="flex flex-col gap-8">
+
+      <Calculator
+        onEnergyUsedChange={setTotalEnergyUsed}
+        onPriceChange={setTotalPriceEnergyUsed}
+      />
+
       <MatchesList
         matches={matches}
         builds={builds}
@@ -124,6 +136,8 @@ export default function DailyMatches({
         onCancel={handleCancel}
         selectedDate={selectedDate}
         initialMatchData={getInitialMatchData()}
+  totalEnergyUsed={totalEnergyUsed}
+  totalPriceEnergyUsed={totalPriceEnergyUsed}
       />
       
       {/* Dialog for edit timeout */}

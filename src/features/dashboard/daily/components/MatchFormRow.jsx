@@ -27,7 +27,9 @@ export default function MatchFormRow({
   onChange,
   onRarityChange,
   selectedDate,
-  initialMatchData
+  initialMatchData,
+  totalEnergyUsed,
+  totalPriceEnergyUsed
 }) {
   const { streamerMode } = useUserPreference();
   
@@ -49,7 +51,7 @@ export default function MatchFormRow({
 
   // Si c'est aujourd'hui, on rend le formulaire
   return (
-    <tr>
+    <tr className="select-none">
       <td className="min-w-[6%] pl-4">
         <Select
           value={currentData.buildId}
@@ -101,26 +103,14 @@ export default function MatchFormRow({
         ))}
       <td className="px-4 text-left min-w-[4%]">-</td>
 
-      <td className="min-w-[4%]">
-        <Input
-          type="number"
-          className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
-          value={currentData.energyUsed}
-          placeholder="0"
-          onChange={(e) => onChange("energyUsed", e.target.value)}
-        />
+      <td className="min-w-[4%] px-4 text-left text-white">
+        {totalEnergyUsed}
       </td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
-        <td className="min-w-[4%]">
-          <Input
-            type="number"
-            className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
-            value={currentData.energyCost}
-            placeholder="0"
-            onChange={(e) => onChange("energyCost", e.target.value)}
-          />
+        <td className="min-w-[4%] px-4 text-left text-red-500">
+          ${typeof totalPriceEnergyUsed === "number" ? totalPriceEnergyUsed.toFixed(2) : "0.00"}
         </td>
       )}
       

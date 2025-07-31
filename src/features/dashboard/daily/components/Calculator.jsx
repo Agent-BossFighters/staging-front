@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRarityManagement } from "../hooks/useRarityManagement";
 import RaritySelect from "./rarity-select";
 import { Spark } from "@img/index";
 import { Switch } from "@shared/ui/switch";
 import { Input } from '@shared/ui/input';
 import { Button } from "@shared/ui/button";
+import { useUserPreference } from "@context/userPreference.context";
 
 const defaultSlot = {
   rarity: '',
@@ -12,16 +13,28 @@ const defaultSlot = {
   energyEnd: ''
 }
 
-export default function Calculator() {
+export default function Calculator({ onEnergyUsedChange, onPriceChange }) {
+  const { streamerMode } = useUserPreference();
   const { rarities } = useRarityManagement();
-
   const rarityPrices = rarities.reduce((acc, r) => {
     if (r.price) acc[r.rarity.toLowerCase()] = r.price;
     return acc;
   }, {});
 
-  const [slots, setSlots] = useState(Array(5).fill({ ...defaultSlot }))
-  const [autoComplete, setAutoComplete] = useState(false)
+  // Initialiser les slots et l'état d'autocomplétion à partir du localStorage
+  const [slots, setSlots] = useState(() => {
+    const saved = localStorage.getItem("calculator_slots");
+    return saved ? JSON.parse(saved) : Array(5).fill({ ...defaultSlot });
+  });
+  const [autoComplete, setAutoComplete] = useState(() => {
+    const saved = localStorage.getItem("calculator_autocomplete");
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("calculator_slots", JSON.stringify(slots));
+    localStorage.setItem("calculator_autocomplete", JSON.stringify(autoComplete));
+  }, [slots, autoComplete]);
 
   const handleChange = (index, field, value) => {
     const updated = [...slots]
@@ -54,6 +67,14 @@ export default function Calculator() {
       }))
     );
   };
+  
+  useEffect(() => {
+    if (onEnergyUsedChange) onEnergyUsedChange(totalEnergyUsed)
+  }, [totalEnergyUsed])
+
+  useEffect(() => {
+    if (onPriceChange) onPriceChange(totalPriceEnergyUsed)
+  }, [totalPriceEnergyUsed])
 
   return (
     <div className="border-4 border-yellow-400 rounded-lg mb-10 w-[auto] p-4">
@@ -79,6 +100,9 @@ export default function Calculator() {
                   onChange={val => handleChange(i, 'rarity', val)}
                   disabled={false}
                   showIssueId={true}
+                  selectedBadges={slots
+                    .filter((_, idx) => idx !== i && _.rarity !== "none")
+                    .map(r => r.rarity)}
                 />
               </div>
 
@@ -98,7 +122,7 @@ export default function Calculator() {
                   />
                 </div>
                 <div className="flex flex-col w-full md:w-1/2">
-                  <span className={`text-s mb-1 max-w-[88%] font-bold ${slot.rarity && slot.rarity !== "none" ? "text-white" : "text-gray-400"}`}>
+                  <span className={`text-s mb-1 max-w-[87%] font-bold ${slot.rarity && slot.rarity !== "none" ? "text-white" : "text-gray-400"}`}>
                     ENERGY END
                   </span>
                   <Input
@@ -122,9 +146,11 @@ export default function Calculator() {
             <p>
               <span className="text-3xl font-bold text-red-500">{totalEnergyUsed}</span>
             </p>
-            <p className="text-md font-semibold">
-              <span className="text-red-500">{totalPriceEnergyUsed.toFixed(2)} $</span>
-            </p>
+            {!streamerMode && (
+              <p className="text-md font-semibold">
+                <span className="text-red-500">{totalPriceEnergyUsed.toFixed(2)} $</span>
+              </p>
+            )}
           </div>
           <Button
             onClick={() => {
