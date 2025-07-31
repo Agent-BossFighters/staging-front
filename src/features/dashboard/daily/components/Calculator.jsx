@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRarityManagement } from "../hooks/useRarityManagement";
 import RaritySelect from "./rarity-select";
 import { Spark } from "@img/index";
@@ -12,7 +12,7 @@ const defaultSlot = {
   energyEnd: ''
 }
 
-export default function Calculator() {
+export default function Calculator({ onEnergyUsedChange, onPriceChange }) {
   const { rarities } = useRarityManagement();
 
   const rarityPrices = rarities.reduce((acc, r) => {
@@ -54,6 +54,14 @@ export default function Calculator() {
       }))
     );
   };
+  
+  useEffect(() => {
+    if (onEnergyUsedChange) onEnergyUsedChange(totalEnergyUsed)
+  }, [totalEnergyUsed])
+
+  useEffect(() => {
+    if (onPriceChange) onPriceChange(totalPriceEnergyUsed)
+  }, [totalPriceEnergyUsed])
 
   return (
     <div className="border-4 border-yellow-400 rounded-lg mb-10 w-[auto] p-4">

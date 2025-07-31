@@ -26,6 +26,8 @@ export default function MatchesList({
   onCancel,
   selectedDate,
   initialMatchData,
+  totalEnergyUsed,
+  totalPriceEnergyUsed
 }) {
   const { streamerMode } = useUserPreference();
 
@@ -141,6 +143,8 @@ export default function MatchesList({
               onSubmit={onAdd}
               selectedDate={selectedDate}
               initialMatchData={initialMatchData}
+              totalEnergyUsed={totalEnergyUsed}
+              totalPriceEnergyUsed={totalPriceEnergyUsed}
             />
             {visibleMatches.map((match) => (
               <MatchEntry
@@ -156,6 +160,8 @@ export default function MatchesList({
                 onCancel={onCancel}
                 unlockedSlots={unlockedSlots}
                 selectedDate={selectedDate}
+                totalEnergyUsed={totalEnergyUsed}
+                totalPriceEnergyUsed={totalPriceEnergyUsed}
               />
             ))}
           </TableBody>

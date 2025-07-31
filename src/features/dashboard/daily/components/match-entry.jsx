@@ -30,6 +30,8 @@ export default function MatchEntry({
   unlockedSlots,
   selectedDate,
   initialMatchData,
+  totalEnergyUsed,
+  totalPriceEnergyUsed
 }) {
   const [formData, setFormData] = useState(() => {
     const initialData = {
@@ -98,7 +100,9 @@ export default function MatchEntry({
     const selectedBuild = builds.find((b) => b.id === data.buildId);
     if (!selectedBuild) return null;
 
-    if (!data.map || !data.result || !data.bft || !data.energyUsed || !data.energyCost) {
+    if (!data.map || !data.result || !data.bft ||   data.energyUsed === null || data.energyUsed === undefined ||
+      data.energyCost === null || data.energyCost === undefined
+    ) {
       throw new Error("Tous les champs obligatoires doivent être remplis");
     }
 
@@ -149,8 +153,8 @@ export default function MatchEntry({
         totalPremiumCurrency: totalPremiumCurrency,
         bonusMultiplier: parseFloat(selectedBuild.bonusMultiplier),
         perksMultiplier: parseFloat(selectedBuild.perksMultiplier),
-        energyUsed: parseFloat(data.energyUsed),
-        energyCost: parseFloat(data.energyCost),
+        energyUsed: parseFloat(totalEnergyUsed),
+        energyCost: parseFloat(totalPriceEnergyUsed),
         badge_used_attributes: data.rarities
           .map((rarity, index) => {
             const slot = index + 1;
@@ -242,7 +246,11 @@ export default function MatchEntry({
   };
 
   const handleSubmit = () => {
-    const data = isCreating ? formData : editedData;
+    const data = {
+        ...(isCreating ? formData : editedData),
+        energyUsed: totalEnergyUsed,
+        energyCost: totalPriceEnergyUsed
+      };
     if (!validateForm(data)) return;
 
     if (isCreating) {
@@ -293,6 +301,8 @@ export default function MatchEntry({
         onChange={handleChange}
         onRarityChange={handleRarityChange}
         selectedDate={selectedDate}
+        totalEnergyUsed={totalEnergyUsed}
+        totalPriceEnergyUsed={totalPriceEnergyUsed}
       />
       <MatchDialogs
         showMissingFieldsDialog={showMissingFieldsDialog}

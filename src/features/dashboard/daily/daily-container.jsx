@@ -3,7 +3,6 @@ import DailySummary from "./daily-summary";
 import DailyMatches from "./daily-matches";
 import { useDailyData } from "./hooks/useDailyData.jsx";
 import DateSelector from "./components/DateSelector";
-import Calculator from "./components/Calculator";
 
 export default function DailyContainer() {
   const {
@@ -53,7 +52,6 @@ export default function DailyContainer() {
         </div>
       ) : (
         <>
-          <Calculator />
           <DailyMatches
             matches={matches}
             builds={builds}
