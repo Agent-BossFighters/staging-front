@@ -113,6 +113,7 @@ export default function MatchDisplayRow({
           onSubmit={onSubmit}
           onCancel={onCancel}
           editDisabled={isMatchEditDisabled(match)}
+          itemName={`match "${match.build}"`}
         />
       </td>
     </tr>

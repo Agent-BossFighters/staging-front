@@ -153,8 +153,8 @@ export default function MatchEntry({
         totalPremiumCurrency: totalPremiumCurrency,
         bonusMultiplier: parseFloat(selectedBuild.bonusMultiplier),
         perksMultiplier: parseFloat(selectedBuild.perksMultiplier),
-        energyUsed: parseFloat(totalEnergyUsed),
-        energyCost: parseFloat(totalPriceEnergyUsed),
+        energyUsed: parseFloat(data.energyUsed),
+        energyCost: parseFloat(data.energyCost),
         badge_used_attributes: data.rarities
           .map((rarity, index) => {
             const slot = index + 1;
@@ -210,6 +210,12 @@ export default function MatchEntry({
 
   const prepareAndSubmit = () => {
     const data = isCreating ? formData : editedData;
+    
+
+    data.energyUsed = totalEnergyUsed;
+    data.energyCost = totalPriceEnergyUsed;
+
+    
     const matchData = createMatchData(data, isEditing ? match : null);
     console.log("Payload envoyé :", JSON.stringify(matchData, null, 2));
 
@@ -246,11 +252,11 @@ export default function MatchEntry({
   };
 
   const handleSubmit = () => {
-    const data = {
-        ...(isCreating ? formData : editedData),
-        energyUsed: totalEnergyUsed,
-        energyCost: totalPriceEnergyUsed
-      };
+    const data = isCreating ? formData : editedData;
+    
+    data.energyUsed = totalEnergyUsed;
+    data.energyCost = totalPriceEnergyUsed;
+    
     if (!validateForm(data)) return;
 
     if (isCreating) {
@@ -282,7 +288,7 @@ export default function MatchEntry({
         isEditing={isEditing}
         onEdit={onEdit}
         onDelete={onDelete}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         onCancel={onCancel}
       />
     );

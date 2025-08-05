@@ -60,6 +60,8 @@ export default function DailyMatches({
       result: match.result || "",
       bft: match.totalToken || "",
       flex: match.totalPremiumCurrency || "",
+      energyUsed: match.energyUsed || "",
+      energyCost: match.energyCost || "",
       rarities: Array(5)
         .fill("none")
         .map((_, index) => {
@@ -136,8 +138,8 @@ export default function DailyMatches({
         onCancel={handleCancel}
         selectedDate={selectedDate}
         initialMatchData={getInitialMatchData()}
-  totalEnergyUsed={totalEnergyUsed}
-  totalPriceEnergyUsed={totalPriceEnergyUsed}
+        totalEnergyUsed={totalEnergyUsed}
+        totalPriceEnergyUsed={totalPriceEnergyUsed}
       />
       
       {/* Dialog for edit timeout */}
