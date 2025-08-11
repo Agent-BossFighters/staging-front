@@ -54,7 +54,7 @@ export default function MobileMenu({ menuItems, isOpen, onClose }) {
         {/* Boutons du header */}
         {user && (
           <div className="px-4 py-4 border-b border-foreground/50">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col items-right gap-4">
               <AdminUpdateCurrencies />
               <PremiumButton />
             </div>

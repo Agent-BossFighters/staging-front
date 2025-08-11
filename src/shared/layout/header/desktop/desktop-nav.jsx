@@ -16,8 +16,8 @@ export default function DesktopNav() {
         {user ? (
           <div className="flex flex-col h-full">
             <Link to="/dashboard" className="flex items-center h-full">
-              <img src={A} alt="A logo" className="lg:block xl:hidden w-10 h-10 object-contain" />
-              <img src={AgentLogo} alt="Agent logo" className="hidden xl:block h-full min-w-[175px]" />
+              <img src={A} alt="A logo" className="lg:block xll:hidden w-10 h-10 object-contain" />
+              <img src={AgentLogo} alt="Agent logo" className="hidden xll:block h-full min-w-[175px]" />
             </Link>
               {user.isPremium ? (
                 <p className="text-sm font-bold italic text-primary flex justify-end -translate-y-1/2">PREMIUM</p>

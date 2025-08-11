@@ -300,7 +300,7 @@ export default function Tactics() {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-col justify-end">
+        <div className="flex flex-col justify-end duration-200 hover:scale-105">
           <Button
             onClick={handleSave}
           >

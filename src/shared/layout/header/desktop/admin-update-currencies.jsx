@@ -58,7 +58,7 @@ export default function AdminUpdateCurrencies() {
   };
 
   return (
-    <div className="ml-4 relative">
+    <div className="relative">
       <AdminButton 
         items={items}
         itemValues={itemValues}

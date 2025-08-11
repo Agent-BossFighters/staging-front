@@ -39,33 +39,41 @@ const Quest = ({ icon, status, progress, xp, title, description }) => {
     <div
       className={`bg-[#737578] py-3 lg:py-5 px-3 lg:px-6 flex flex-col lg:flex-row items-center mb-3 rounded-2xl ${statusStyles.container}`}
     >
-      <div className="w-full flex flex-col lg:flex-row lg:items-center justify-between">
-        <div className="flex items-center gap-2 lg:gap-4 mb-2 lg:mb-0">
-          <div
-            className={`${statusStyles.icon} rounded-full p-1 lg:p-2 flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12`}
+      <div className="w-full h-12 flex flex-col lg:flex-row lg:items-center justify-between">
+        <div className="flex w-[60%] items-center gap-2 lg:gap-4 mb-2 lg:mb-0 min-w-0">
+          <div className={`${statusStyles.icon} rounded-full p-1 lg:p-2 flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 shrink-0`}
           >
             <div className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
               {icon}
             </div>
           </div>
-          <div className="flex flex-col">
-            <span className="text-white text-base lg:text-xl font-semibold">{title}</span>
+          <div className="flex flex-col min-w-0">
+            <span
+              className="text-white text-base lg:text-xl font-semibold truncate block max-w-full"
+              style={{ maxWidth: "100%" }}
+              title={title} // Infobulle au survol
+            >
+              {title}
+            </span>
             {description && (
-              <span className="text-white/70 text-xs lg:text-sm mt-1">{description}</span>
+              <span className="text-white/70 text-xs lg:text-sm mt-1 truncate block max-w-full" style={{ maxWidth: "100%" }} title={description}>{description}</span>
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 w-full lg:w-auto justify-between lg:justify-end">
+        <div className="flex items-center ml-8 gap-2 w-full lg:w-auto justify-between lg:justify-end">
           <span
-            className={`${statusStyles.badge} py-1 lg:py-2 text-base lg:text-xl min-w-[80px] lg:min-w-[120px] text-center font-semibold px-2 lg:px-4 rounded-2xl mr-2 lg:mr-4`}
+            className={`${statusStyles.badge} py-1 lg:py-2 text-base lg:text-xl min-w-[120px] text-center font-semibold px-2 lg:px-4 rounded-2xl mr-2 lg:mr-4 ${
+              !isFinished ? "hover:scale-105 duration-200" : ""
+            }`}
           >
             {isFinished ? "CLAIMED" : progress ? progress : "CLAIM"}
           </span>
-          <span className="text-primary text-base lg:text-xl min-w-[60px] lg:min-w-[85px] font-medium">
+          <span className="text-primary text-base text-xl min-w-[60px] lg:min-w-[85px] font-medium">
             +{xp} XP
           </span>
         </div>
       </div>
+      
     </div>
   );
 };
