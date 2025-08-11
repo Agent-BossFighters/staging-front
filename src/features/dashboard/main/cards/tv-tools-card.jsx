@@ -8,12 +8,12 @@ export default function TvToolsCard({ onClick }) {
     <Card
       title="TV TOOLS"
       description="BE OVERLAY & COMMANDS"
-      path="/dashboard/tv-tools"
+      path="/dashboard/tvtools"
       pattern={RewardsPattern1}
-      patternClassName="opacity-40"
+      patternClassName="w-[95%] h-[95%] object-contain mx-auto"
       icon={TvTools}
       onClick={onClick}
-      soon={true}
+      soon={false}
     />
   );
 }

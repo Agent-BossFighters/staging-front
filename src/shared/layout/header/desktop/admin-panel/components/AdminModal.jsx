@@ -43,7 +43,7 @@ export const AdminModal = ({
     <>
       <Button
         variant="default"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
         onClick={() => setIsOpen(true)}
       >
         Admin Panel

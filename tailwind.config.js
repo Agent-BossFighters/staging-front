@@ -73,6 +73,9 @@ export default {
         "6/8": "75%",
         "7/8": "87.5%",
       },
+      screens: {
+        'xll': '1480px', // entre lg et xl
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

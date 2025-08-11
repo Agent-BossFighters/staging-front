@@ -24,7 +24,7 @@ export default function PremiumButton({ isMobile = false }) {
       {!user.isPremium ? (
       <Link to="/payments/pricing">
         <Button
-          className={`${isMobile ? "text-xs py-1 px-2" : ""}`}
+          className={`${isMobile ? "text-xs py-1 px-2" : "transition-transform duration-200 hover:scale-105"}`}
           size={isMobile ? "sm" : "default"}
           onClick={handlePremiumClick}
         >
@@ -34,7 +34,7 @@ export default function PremiumButton({ isMobile = false }) {
       ) : ( '' )}
         <Link to="/payments/donation">
           <Button
-          className={`${isMobile ? "text-xs py-1 px-2" : ""}`}
+          className={`${isMobile ? "text-xs py-1 px-2" : "transition-transform duration-200 hover:scale-105"}`}
           size={isMobile ? "sm" : "default"}
           onClick={handleSupportUsClick}
         >

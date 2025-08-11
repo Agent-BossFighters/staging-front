@@ -1,3 +1,4 @@
+import { BossFighters, Map } from "@img/index";
 import { Link } from "react-router-dom";
 import { useAuth } from "@context/auth.context";
 import {
@@ -15,7 +16,7 @@ const menuItems = [
     label: "MENU",
     requiresAuth: true,
     children: [
-      { path: "/economy", label: "Economy map" },
+      { path: "/opensource", label: "Open Source" },
       { path: "/dashboard", label: "Dashboard" },
       { path: "/dashboard/locker", label: "Locker" },
       { path: "/dashboard/datalab", label: "Datalab" },
@@ -26,7 +27,7 @@ const menuItems = [
       //   { path: "/dashboard/playing", label: "Playing" },
     ],
   },
-  // { path: "/economy", label: "Economy map" },
+  { path: "/economy", label: "Economy map" },
 ];
 
 export default function DesktopLink() {
@@ -46,17 +47,18 @@ export default function DesktopLink() {
           <NavigationMenuItem key={item.label || index} className="">
             {item.children ? (
               <>
-                <NavigationMenuTrigger className="gap-10">
+                <NavigationMenuTrigger className="gap-18 h-16">
                   <Link to={item.path} onClick={() => handleLinkClick(item.label, item.path)}>
                     {item.label}
                   </Link>
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="p-4 bg-background text-foreground border border-border rounded-md shadow-md">
+
+                <NavigationMenuContent className="p-4 bg-[#212121] text-foreground">
                   {item.children.map((child) => (
                     <NavigationMenuLink
                       asChild
                       key={child.path}
-                      className="w-36 text-center py-1"
+                      className="w-36 text-center py-4 font-bold"
                     >
                       <Link
                         to={child.path}
@@ -70,11 +72,21 @@ export default function DesktopLink() {
                 </NavigationMenuContent>
               </>
             ) : (
-              <NavigationMenuLink asChild className="">
-                <Link to={item.path} className="px-4 py-2 hover:text-primary" onClick={() => handleLinkClick(item.label, item.path)}>
-                  {item.label}
+              <NavigationMenuLink asChild className="transition-transform duration-200 hover:scale-105">
+                <Link to={item.path} className="flex flex-col px-4 hover:text-primary items-center gap-2" onClick={() => handleLinkClick(item.label, item.path)}>
+                {item.label === "Economy map" && (
+                  <>
+                    <img src={BossFighters} alt="BossFightersLogo" className="h-8 hidden xll:block" />
+                    <span className="-mt-4 font-bold hidden xll:block">{item.label}</span>
+
+                    <img src={Map} alt="BossFightersEconomyMapLogo" className="h-12 block xll:hidden" /> 
+                  </>
+                )}
                 </Link>
+
+
               </NavigationMenuLink>
+              
             )}
           </NavigationMenuItem>
         ))}
