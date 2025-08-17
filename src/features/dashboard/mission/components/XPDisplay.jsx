@@ -107,11 +107,8 @@ const XPDisplay = () => {
     <div className="flex flex-col items-center gap-4 md:gap-8 p-2 md:p-4">
       {/* Badge de niveau avec fond - à gauche */}
       <div className="relative w-32 h-32 md:w-40 md:h-40 flex-shrink-0 flex items-center justify-center">
-        <div
-          className="absolute inset-0 bg-contain bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${BackgroundUser})` }}
-        />
-        <span className="text-white font-bold text-5xl md:text-7xl relative z-10 pb-2">
+        <img src={BackgroundUser} alt="test" className="absolute inset-0 bg-contain bg-center bg-no-repeat" />
+        <span className="text-white font-bold text-5xl md:text-7xl relative z-10 pt-2">
           {xpData.isLoading ? "..." : displayLevel}
         </span>
       </div>
@@ -125,15 +122,15 @@ const XPDisplay = () => {
         
         {/* Barre de progression XP */}
         <div className="w-full">
-          <div className="flex justify-between items-center gap-3 mb-2">
+          <div className="flex justify-between items-center gap-3 mb-2 mx-4 xl:mx-10">
             {xpData.isLoading ? (
-              <div className="w-full bg-gray-700 rounded-full h-4 md:h-5">
-                <div className="bg-gray-600 h-4 md:h-5 rounded-full animate-pulse" style={{ width: '50%' }} />
+              <div class="relative w-full h-full overflow-hidden rounded-full bg-gray-800 border border-primary">
+                <div className="bg-gray-600 rounded-full animate-pulse" style={{ width: '50%' }} />
               </div>
             ) : (
               <Progress 
                 value={percentage} 
-                className="h-4 md:h-5" 
+                className="h-8" 
               /> 
             )}
           </div>

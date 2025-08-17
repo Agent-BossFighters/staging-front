@@ -31,14 +31,12 @@ export default function Showrunner() {
     return <ShowrunnerSkeleton />;
   }
   return (
-    <div className="overflow-x-auto max-w-[1200px]">
-      <Table className="w-full text-sm">
-        <TableCaption>
-          Showrunner contract information according to the rarity
-        </TableCaption>
+    <>
+      <div className="overflow-x-auto mr-auto">
+        <Table className="w-full text-sm">
         <TableHeader>
           <TableRow>
-            <TableHead className="p-2 text-left">RARITY</TableHead>
+            <TableHead className="p-2 text-left sticky">RARITY</TableHead>
             <TableHead className="p-2 text-left">ITEM</TableHead>
             <TableHead className="p-2 text-left">
               MAX
@@ -108,7 +106,7 @@ export default function Showrunner() {
               <TableRow key={rarityItem.rarity}>
                 <TableCell className="p-2 text-center">
                   <p
-                    className="border-2 rounded-2xl p-1 text-sm"
+                    className="border-2 rounded-2xl px-3 py-1 text-sm whitespace-nowrap"
                     style={{ borderColor: rarityItem.color }}
                   >
                     {rarityItem.rarity}
@@ -158,6 +156,14 @@ export default function Showrunner() {
           })}
         </TableBody>
       </Table>
-    </div>
+      </div>
+      
+      {/* Texte explicatif déplacé en bas du tableau */}
+      <div className="max-w-[1200px] mr-auto">
+        <p className="mt-4 text-base text-muted-foreground text-center max-w-[800px] mx-auto">
+          Showrunner contract information according to the rarity
+        </p>
+      </div>
+    </>
   );
 }

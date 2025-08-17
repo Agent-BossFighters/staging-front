@@ -36,7 +36,7 @@ export default function Badges() {
       <h2 className="text-3xl font-extrabold py-2">CRAFT</h2>
       <Table className="w-1/2">
         <TableCaption>
-          Craft requirements and SP.MARKS rewards according to rarity level
+          Merge NFT requirements and SP.MARKS rewards according to rarity.
         </TableCaption>
         <TableHeader>
           <TableRow>
@@ -93,6 +93,8 @@ export default function Badges() {
                 <TableCell className="text-accent">
                   {formatPrice(getValue(craft, "7. sp_marks_value"), 2)}
                 </TableCell>
+
+                
               </TableRow>
             );
           })}

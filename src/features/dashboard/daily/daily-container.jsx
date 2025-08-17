@@ -33,8 +33,8 @@ export default function DailyContainer() {
   }
 
   return (
-    <div className="flex flex-col w-[100%]">
-      <div className="flex items-center justify-end mb-4">
+    <div className="flex flex-col w-[100%] mt-6">
+      <div className="flex items-center justify-start mb-4">
         <DateSelector
           selectedDate={selectedDate}
           onPreviousDay={handlePreviousDay}

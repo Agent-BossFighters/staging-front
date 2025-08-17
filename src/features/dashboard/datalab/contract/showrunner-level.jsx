@@ -26,11 +26,11 @@ export default function ShowrunnerLevel() {
 
   return (
     <>
-      <div className="w-full max-w-[1200px] overflow-x-auto">
+      <div className="w-[80vw] mr-auto overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>LEVEL</TableHead>
+              <TableHead className="sticky left-0 bg-black w-[120px] text-left z-10">LEVEL</TableHead>
               {levels.map((level) => (
                 <TableHead
                   key={level}
@@ -45,7 +45,7 @@ export default function ShowrunnerLevel() {
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableHead>
+              <TableHead className="sticky left-0 bg-black w-[120px] text-left z-10">
                 NB
                 <br />
                 SP. MARKS
@@ -59,7 +59,7 @@ export default function ShowrunnerLevel() {
               ))}
             </TableRow>
             <TableRow>
-              <TableHead>
+              <TableHead className="sticky left-0 bg-black w-[120px] text-left z-10">
                 SP. MARKS
                 <br />
                 COST
@@ -73,7 +73,7 @@ export default function ShowrunnerLevel() {
               ))}
             </TableRow>
             <TableRow>
-              <TableHead>TOTAL SP. MARKS</TableHead>
+              <TableHead className="sticky left-0 bg-black w-[120px] text-left z-10">TOTAL SP. MARKS</TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level}>
                   {levelData?.total_sp_marks?.[index] !== undefined
@@ -83,7 +83,7 @@ export default function ShowrunnerLevel() {
               ))}
             </TableRow>
             <TableRow>
-              <TableHead className="text-destructive">TOTAL COST</TableHead>
+              <TableHead className="sticky left-0 bg-black w-[120px] text-left z-10 text-destructive">TOTAL COST</TableHead>
               {levels.map((level, index) => (
                 <TableCell key={level} className="text-destructive">
                   {levelData?.total_cost?.[index] !== undefined
@@ -95,7 +95,7 @@ export default function ShowrunnerLevel() {
           </TableBody>
         </Table>
       </div>
-      <p className="mt-4 text-base text-muted-foreground text-center max-w-[800px]">
+      <p className="mt-4 text-base text-muted-foreground text-center mx-auto">
         Showrunner contract level up costs
       </p>
     </>

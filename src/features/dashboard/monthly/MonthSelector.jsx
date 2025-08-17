@@ -9,12 +9,12 @@ export default function MonthSelector({
   dailyMetrics,
 }) {
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-start flex-col items-center gap-2">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" onClick={onPreviousMonth}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="text-xl font-semibold min-w-[200px] text-center">
+        <span className="flex-wrap text-xl font-semibold text-center">
           {selectedDate.toLocaleDateString("en-US", {
             month: "long",
             year: "numeric",

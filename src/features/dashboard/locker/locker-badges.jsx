@@ -137,14 +137,14 @@ export default function LockerBadges() {
   }
 
   return (
-    <div className="flex flex-col w-[60%] px-5 gap-5">
+    <div className="flex flex-col w-full xl:w-[60%] gap-5">
       <div className="pt-2">
         <div
           ref={tableRef}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Table className="">
+          <Table className="w-full">
             <TableHeader>
               <TableRow className="h-8">
                 <TableHead className="py-0 px-2">RARITY</TableHead>

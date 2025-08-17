@@ -114,8 +114,8 @@ const Round = ({
 
   return (
     <div key={round} className="flex mb-3">
-      <div className="bg-primary text-black font-bold p-3 w-[120px] flex-shrink-0 flex justify-center items-center gap-2">
-        <span>ROUND {round}</span>
+      <div className="bg-primary text-black font-bold flex items-center justify-center min-w-[60px] w-1/6 py-4 mr-4">
+        <span className="text-md lg:text-xl text-center">ROUND {round}</span>
       </div>
       
       <div className="flex-1 overflow-hidden">
@@ -249,7 +249,7 @@ const Round = ({
 
         <div 
           ref={scrollbarRef}
-          className="relative h-4 mt-2 ml-4 cursor-pointer"
+          className="relative h-8 lg:h-6 mt-2 cursor-pointer"
           onMouseDown={handleScrollbarMouseDown}
           onTouchStart={handleScrollbarTouchStart}
         >
@@ -289,7 +289,7 @@ const RoundsList = ({
   const actualRounds = Math.max(configuredRounds, numberOfRounds);
 
   return (
-    <div className="rounds-list">
+    <div className="rounds-list text-md lg:text-xl">
       {Array.from({ length: actualRounds }).map((_, roundIndex) => {
         const round = roundIndex + 1;
         const roundMatches = groupedMatches[round] || [];

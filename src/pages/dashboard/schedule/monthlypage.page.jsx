@@ -40,9 +40,9 @@ export default function MonthlyPage() {
   // Afficher le composant d'erreur si une erreur est survenue
   if (error) {
     return (
-      <div className="w-5/6 mx-auto h-full">
+      <div className="w-[80vw] mx-auto h-full">
         <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">MONTHLY</h1>
-        <div className="flex items-center justify-end mb-4">
+        <div className="flex items-center justify-start mb-4">
           <MonthSelector
             selectedDate={selectedDate}
             onPreviousMonth={handlePreviousMonth}
@@ -59,9 +59,9 @@ export default function MonthlyPage() {
   }
 
   return (
-    <div className="w-5/6 mx-auto h-full">
-      <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">MONTHLY</h1>
-      <div className="flex items-center justify-end mb-4">
+    <div className="w-[80vw] mx-auto h-full">
+      <h1 className="text-5xl font-extrabold pt-8 pb-6 text-primary">MONTHLY</h1>
+      <div className="flex items-center justify-start mb-4">
         <MonthSelector
           selectedDate={selectedDate}
           onPreviousMonth={handlePreviousMonth}

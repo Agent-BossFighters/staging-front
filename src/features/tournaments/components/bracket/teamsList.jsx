@@ -267,11 +267,11 @@ const TeamsList = ({ teams, user, tournament }) => {
   };
   
   return (
-    <div className="mb-8">
-      <div className="flex mt-4">
+    <div className="w-full">
+      <div className="flex">
         {/* TEAMS label à gauche */}
-        <div className="bg-primary text-black font-bold flex items-center justify-center w-[120px] py-4 mr-4">
-          <span className="text-xl">TEAMS</span>
+        <div className="bg-primary text-black font-bold flex items-center justify-center min-w-[60px] w-1/6 py-4 mr-4">
+          <span className="text-md lg:text-xl">TEAMS</span>
         </div>
         
         {/* Teams container with horizontal scroll */}
@@ -369,7 +369,7 @@ const TeamsList = ({ teams, user, tournament }) => {
           {/* Scrollbar indicator */}
           <div 
             ref={scrollbarRef}
-            className="relative h-4 mt-2 cursor-pointer"
+            className="relative h-8 lg:h-6 mt-2 cursor-pointer"
             onMouseDown={handleScrollbarMouseDown}
             onTouchStart={handleScrollbarTouchStart}
           >

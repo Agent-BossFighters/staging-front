@@ -31,7 +31,7 @@ export default function MatchDisplayRow({
       <td className="min-w-[6%] pl-4 select-none" title={match.build}>
         <span className="font-medium">{match.build.length < 10 ? match.build : match.build.slice(0, 10) + "..."}</span>
       </td>
-      <td className="px-4 text-left min-w-[4%]">
+      <td className="text-left min-w-[4%] pl-4">
         {currentBuild?.bftBonus ? (
           <div className="flex flex-col">
             <span>{formatPercent(currentBuild.bftBonus, 2)}</span>
@@ -41,63 +41,63 @@ export default function MatchDisplayRow({
         )}
       </td>
       {matchRarities.map((rarity, index) => (
-        <td key={index} className="px-6 text-left min-w-[4%]" title={rarity}>
+        <td key={index} className="text-left min-w-[4%] pl-4" title={rarity}>
           <RarityBadge rarity={rarity} />
         </td>
       ))}
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.luckrate)}</td>
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.energyUsed)}</td>
+      <td className="text-left min-w-[4%] pl-4">{formatNumber(match.luckrate)}</td>
+      <td className="text-left min-w-[4%] pl-4">{formatNumber(match.energyUsed)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[4%] text-destructive">
+          <td className="text-left min-w-[4%] text-destructive pl-4">
             {formatPrice(match.energyCost)}
           </td>
         </>
       )}
       
-      <td className="px-6 text-left min-w-[4%] capitalize" title={match.map}>
+      <td className="text-left min-w-[4%] capitalize pl-4" title={match.map}>
         <MapIcon map={match.map} />
       </td>
-      <td className="px-6 text-left min-w-[4%] capitalize" title={match.result}>
+      <td className="text-left min-w-[4%] capitalize pl-4" title={match.result}>
         <ResultIcon result={match.result} />
       </td>
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(match.totalToken, 3)}</td>
+      <td className="text-left min-w-[4%] pl-4">{formatNumber(match.totalToken, 2)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[4%] text-accent">
+          <td className="text-left min-w-[4%] text-accent pl-4">
             {formatPrice(match.calculated.tokenValue)}
           </td>
         </>
       )}
       
-      <td className="px-4 text-left min-w-[4%]">{formatNumber(Math.round(match.totalToken / match.energyUsed))}</td>
+      <td className="text-left min-w-[4%] pl-4">{formatNumber(Math.round(match.totalToken / match.energyUsed))}</td>
 
 
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[4%]">{formatPrice(match.calculated.tokenValue / match.energyUsed)}</td>
+          <td className="text-left min-w-[4%] pl-4">{formatPrice(match.calculated.tokenValue / match.energyUsed)}</td>
         </>
       )}
 
-      <td className="px-4 text-left min-w-[3%]">{formatNumber(match.totalPremiumCurrency)}</td>
+      <td className="text-left min-w-[3%] pl-4">{formatNumber(match.totalPremiumCurrency)}</td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[4%] text-accent">
+          <td className="text-left min-w-[4%] text-accent pl-4">
             {formatPrice(match.calculated.premiumValue)}
           </td>
           {match.calculated.profit > 0 ? (
-            <td className="px-4 text-left min-w-[5%] text-accent">
+            <td className="text-left min-w-[5%] text-accent pl-4">
               {formatPrice(match.calculated.profit)}
             </td>
           ) : (
-            <td className="px-4 text-left min-w-[5%] text-red-500">
+            <td className="text-left min-w-[5%] text-red-500 pl-4">
               {formatPrice(match.calculated.profit)}
             </td>
           )}

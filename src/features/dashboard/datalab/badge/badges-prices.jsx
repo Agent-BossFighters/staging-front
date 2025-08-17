@@ -57,11 +57,8 @@ export default function BadgesPrices({ badges, loading }) {
   ];
 
   return (
-    <div>
-      <Table className="w-1/2">
-        <TableCaption>
-          Badge charges ROI according to $BFT bonus multiplier and slot(s) used
-        </TableCaption>
+    <div className="overflow-x-auto w-[80vw] mr-auto">
+      <Table className="">
         <TableHeader>
           <TableRow>
             <TableHead>RARITY</TableHead>
@@ -103,6 +100,9 @@ export default function BadgesPrices({ badges, loading }) {
           ))}
         </TableBody>
       </Table>
+      <p className="mt-4 text-base text-muted-foreground text-center w-full mx-auto">
+        Badge charges ROI according to $BFT bonus multiplier and slot(s) used
+      </p>
     </div>
   );
 }

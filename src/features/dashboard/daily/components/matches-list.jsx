@@ -64,7 +64,7 @@ export default function MatchesList({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <Table className="w-full table-fixed min-w-[1350px]">
+        <Table className="w-full table-fixed min-w-[1400px]">
           <TableHeader>
             <TableRow className="text-xs md:text-sm">
               <TableHead className="w-[6%]">BUILD</TableHead>
@@ -97,7 +97,7 @@ export default function MatchesList({
 
               <TableHead className="w-[4%]">MAP</TableHead>
               <TableHead className="w-[4%]">RESULT</TableHead>
-              <TableHead className="w-[4%]">$BFT</TableHead>
+              <TableHead className="w-[5%]">$BFT</TableHead>
 
               {/* Masquer les colonnes financières en mode streamer */}
               {!streamerMode && (
@@ -118,7 +118,7 @@ export default function MatchesList({
                   ENERGY
                 </TableHead>
               )}
-              <TableHead className="w-[3%]">FLEX</TableHead>
+              <TableHead className="w-[4%]">FLEX</TableHead>
 
               {/* Masquer les colonnes financières en mode streamer */}
               {!streamerMode && (

@@ -16,7 +16,7 @@ export default function TournamentCreateModal({ isOpen, onClose, onSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [entryCodeCopied, setEntryCodeCopied] = useState(false);
-  const [hoveredTooltip, setHoveredTooltip] = useState(null)
+
   
   // Générer un code aléatoire de 6 caractères
   const generateRandomCode = () => {
@@ -217,42 +217,38 @@ One rule survive and kill the Boss!`;
 
 return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80">
-      <Card className="bg-gray-900 border-gray-700 text-white w-[1000px] min-w-[1000px] max-w-[1000px] relative">
-        <CardHeader>
-          <CardTitle className="text-3xl text-primary text-center font-bold">
-            CREATE A TOURNAMENT
-          </CardTitle>
-          <button 
-            className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            onClick={onClose}
-          >
-            <X size={24} />
-          </button>
-        </CardHeader>
-        
-        <CardContent>
+      <Card className="bg-gray-900 border-gray-700 text-white w-[90vw] md:w-[80vw] relative overflow-hidden">
+        <div className="md:max-h-none max-h-[80vh] md:overflow-y-visible overflow-y-auto relative z-10">
+          <CardHeader>
+            <CardTitle className="text-xl xl:text-3xl text-primary text-center font-bold">
+              CREATE A TOURNAMENT
+            </CardTitle>
+            <button 
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              onClick={onClose}
+            >
+              <X size={40} />
+            </button>
+          </CardHeader>
+          
+          <CardContent>
           <form onSubmit={handleCreateTournament} className="space-y-8 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="text-white font-medium">Tournament format</label>
-                  <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('tournamentFormat')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'tournamentFormat' && (
-                      <span className="tooltip pointer-events-none absolute top-full left-1/2 -translate-x-1/4 mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                        'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more 
-                        <br/>matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
-                        <br />
-                        'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more
-                        <br/> matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
-                        <br />
+                <div className="flex items-center gap-2">
+                  <label className="text-white font-bold">Tournament format</label>
+                  <div className="relative group/format">
+                    <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/format:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-64">
+                      <p className="break-words">
+                        'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
+                        <br /><br />
+                        'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
+                        <br /><br />
                         'Arena' is a knockout tournament team versus team where you will have to win round(s) with Home/Away match(es).
-                      </span>
-                    )}
+                      </p>
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-black"></div>
+                    </div>
                   </div>
                 </div>
                 <Select 
@@ -269,19 +265,16 @@ return (
                   </SelectContent>
                 </Select>
                 
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Team slots</label>
-                  <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('teamSlots')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'teamSlots' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                <div className="flex items-center gap-2 mt-6">
+                  <label className="text-white font-bold">Team slots</label>
+                  <div className="relative group/slots">
+                    <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/slots:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                      <p className="break-words">
                         Total number of teams in the tournament.
-                      </span>
-                    )}
+                      </p>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                    </div>
                   </div>
                 </div>
                 <Select 
@@ -303,19 +296,16 @@ return (
                   </SelectContent>
                 </Select>
                 
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Player(s) per team</label>
-                  <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('playersPerTeam')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'playersPerTeam' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                <div className="flex items-center gap-2 mt-6">
+                  <label className="text-white font-bold">Player(s) per team</label>
+                  <div className="relative group/players">
+                    <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/players:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                      <p className="break-words">
                         Total number of player(s) per team in the tournament.
-                      </span>
-                    )}
+                      </p>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                    </div>
                   </div>
                 </div>
                 <Select 
@@ -333,19 +323,16 @@ return (
                 </Select>
                 {(parseInt(formData.tournament_type) === 0 || parseInt(formData.tournament_type) === 1) && (
                   <>
-                    <div className="flex items-center justify-between mt-6">
-                      <label className="text-white font-medium">Number of rounds</label>
-                      <div 
-                        className="relative inline-block" 
-                        onMouseEnter={() => setHoveredTooltip('numberOfRounds')} 
-                        onMouseLeave={() => setHoveredTooltip(null)}
-                      >
-                        <Info className="h-5 w-5 text-gray-400" />
-                        {hoveredTooltip === 'numberOfRounds' && (
-                          <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                    <div className="flex items-center gap-2 mt-6">
+                      <label className="text-white font-bold">Number of rounds</label>
+                      <div className="relative group/rounds">
+                        <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/rounds:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                          <p className="break-words">
                             Total number of round(s) in the tournament.
-                          </span>
-                        )}
+                          </p>
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                        </div>
                       </div>
                     </div>
                     <Select 
@@ -365,19 +352,16 @@ return (
               </div>
               
               <div className="space-y-4 md:col-span-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-white font-medium">Tournament name</label>
-                  <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('tournamentName')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'tournamentName' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                <div className="flex items-center gap-2">
+                  <label className="text-white font-bold">Tournament name</label>
+                  <div className="relative group/name">
+                    <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/name:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                      <p className="break-words">
                         Tournament name is limited by 40 characters.
-                      </span>
-                    )}
+                      </p>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                    </div>
                   </div>
                 </div>
                 <Input
@@ -389,19 +373,16 @@ return (
                   maxLength={40}
                 />
                 
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Tournament rules</label>
-                  <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('tournamentRules')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'tournamentRules' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                <div className="flex items-center gap-2 mt-6">
+                  <label className="text-white font-bold">Tournament rules</label>
+                  <div className="relative group/rules">
+                    <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/rules:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                      <p className="break-words">
                         Rules of the tournament.
-                      </span>
-                    )}
+                      </p>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                    </div>
                   </div>
                 </div>
                 <Textarea
@@ -412,19 +393,16 @@ return (
                   placeholder="Enter tournament details/rules"
                 />
                 
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Agent Level required</label>
-                  <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('agentLevelRequired')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'agentLevelRequired' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                <div className="flex items-center gap-2 mt-6">
+                  <label className="text-white font-bold">Agent Level required</label>
+                  <div className="relative group/level">
+                    <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/level:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                      <p className="break-words">
                         User level required to join the tournament.
-                      </span>
-                    )}
+                      </p>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                    </div>
                   </div>
                 </div>
                 <Input
@@ -444,19 +422,16 @@ return (
                   placeholder="Enter agent level"
                 />
                 
-                <div className="flex items-center justify-between mt-6">
-                  <label className="text-white font-medium">Tournament entry code</label>
-                  <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('tournamentEntryCode')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'tournamentEntryCode' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
+                <div className="flex items-center gap-2 mt-6">
+                  <label className="text-white font-bold">Tournament entry code</label>
+                  <div className="relative group/code">
+                    <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/code:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                      <p className="break-words">
                         Code required to join the tournament.
-                      </span>
-                    )}
+                      </p>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                    </div>
                   </div>
                 </div>
                 <Select 
@@ -488,28 +463,33 @@ return (
                 )}
               </div>
             </div>
-            
-            <div className="py-4 border-t border-gray-700">
-              <h3 className="text-lg text-white">Estimated tournament matches time :</h3>
-              <div className="grid grid-cols-1 gap-2 mt-4">
-                <div className="text-2xl font-bold text-white">{estimatedMatches} Matches</div>
-                <div className="text-2xl font-bold text-primary">
-                  {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""})
+            <div className="flex flex-row lg:h-12">
+
+              <div className="flex flex-col lg:flex-row py-2 w-3/4 lg:w-5/6 items-center justify-start">
+                <h3 className="text-sm sm:text-lg font-bold text-white xs:w-full">Tournament matches time estimation :</h3>
+                <div className="flex flex-row justify-center items-center px-4 gap-6">
+                  <div className="text-sm sm:text-lg text-white">{estimatedMatches} Matches</div>
+                  <div className="text-sm sm:text-lg text-primary">
+                    {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""})
+                  </div>
                 </div>
               </div>
+              
+              <div className="flex flex-col lg:flex-row item-end lg:items-center justify-center lg:justify-end w-1/4 lg:w-1/6">
+                <Button 
+                  type="submit" 
+                  className="justify-center whitespace-nowrap rounded-md text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-background shadow hover:bg-primary/90 font-bold uppercase h-12 px-8 py-2 flex items-center gap-2 transition-transform duration-200 hover:scale-105"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating..." : "VALIDATE"}
+                </Button>
+              </div>
+
             </div>
             
-            <div className="flex justify-center mt-6">
-              <Button 
-                type="submit" 
-                className="bg-primary hover:bg-primary/90 text-black px-8 py-2 text-lg"
-                disabled={isLoading}
-              >
-                {isLoading ? "Creating..." : "VALIDATE"}
-              </Button>
-            </div>
           </form>
-        </CardContent>
+          </CardContent>
+        </div>
       </Card>
     </div>
   );

@@ -12,7 +12,7 @@ export default function DashboardPage() {
   }, [track]);
 
   return (
-    <div className="w-5/6 mx-auto h-full">
+    <div className="w-full lg:w-6/6 xl:w-5/6 mx-auto h-full">
       <CardsGrid />
       <DashboardMobile />
     </div>

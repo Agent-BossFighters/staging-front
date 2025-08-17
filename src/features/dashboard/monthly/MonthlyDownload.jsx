@@ -56,7 +56,7 @@ export default function MonthlyDownload({ dailyMetrics }) {
   return (
     <Button
       onClick={handleDownload}
-      className="bg-yellow-400 text-black hover:bg-yellow-500 flex items-center justify-center gap-6 w-full font-bold  py-5 relative"
+      className="justify-center whitespace-nowrap rounded-md text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-background shadow hover:bg-primary/90 font-bold uppercase h-12 w-full py-2 flex items-center gap-2 transition-transform duration-200 hover:scale-105"
     >
       <Download className="w-5 h-5 stroke-[3]" />
       DOWNLOAD

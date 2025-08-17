@@ -8,9 +8,10 @@ import { getDisplayTeams } from "../utils";
  * @param {Object} tournament - Le tournoi à rejoindre
  * @param {Array} teams - Équipes du tournoi
  * @param {Function} onClose - Fonction pour fermer la modale
+ * @param {Function} onSuccess - Callback après succès pour rafraîchir les données
  * @returns {Object} - États et fonctions pour gérer la jointure
  */
-export function useJoinTournament(tournament, teams, onClose) {
+export function useJoinTournament(tournament, teams, onClose, onSuccess) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -176,10 +177,14 @@ export function useJoinTournament(tournament, teams, onClose) {
       toast.success("Joined team successfully!");
       setSuccess(true);
       
-      // Utiliser un délai plus long pour le reload pour s'assurer que le backend a eu le temps de mettre à jour
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000); // Passer à 3 secondes pour donner plus de temps au backend
+      // Fermer la modal immédiatement
+      onClose();
+      
+      // Appeler le callback de succès pour rafraîchir les données React
+      if (onSuccess) {
+        console.log("Player joined team, triggering React refresh...");
+        onSuccess();
+      }
     } catch (err) {
       const errorMessage = err.response?.data?.error || `Failed to join team. Please check the codes. Or check your Agent level, minimum required is ${tournament.agent_level_required}.`;
       toast.error(errorMessage);

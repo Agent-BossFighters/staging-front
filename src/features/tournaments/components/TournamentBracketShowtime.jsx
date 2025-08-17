@@ -49,6 +49,12 @@ const TournamentBracketShowtime = ({
   teams,
   matches,
   onMatchUpdated,
+  refetchTournament,
+  refetchTeams,
+  refetchMatches,
+  refetchTournamentsList,
+  refetchMyTournaments,
+  refetchRegisteredTournaments,
   onTournamentDeleted,
   onBackToList
 }) => {
@@ -111,14 +117,15 @@ const TournamentBracketShowtime = ({
     tournament,
     teams,
     matches,
-    () => {
-      onMatchUpdated();
-      toast.success("Tournament updated successfully!");
-    },
-    () => {},
-    onMatchUpdated,
+    refetchTournament,
+    refetchTeams,
+    refetchMatches,
     isCreator,
-    onTournamentDeleted
+    onTournamentDeleted,
+    // Fonctions pour rafraîchir les listes
+    refetchTournamentsList,
+    refetchMyTournaments,
+    refetchRegisteredTournaments
   );
 
   const groupedMatches = groupMatchesByRound(matches);
@@ -216,20 +223,36 @@ const TournamentBracketShowtime = ({
     setIsEditModalOpen(true);
   };
 
-  const handleTournamentUpdated = (updatedTournament) => {
-    onMatchUpdated();
+  const handleTournamentUpdated = async (updatedTournament) => {
+    console.log("Tournament updated, refetching all data...");
+    // Rafraîchir toutes les données du tournoi
+    await refetchTournament();
+    await refetchTeams();
+    await refetchMatches();
+    
+    // Rafraîchir aussi les listes de tournois dans les onglets
+    console.log("Refetching tournament lists...");
+    await refetchTournamentsList();
+    await refetchMyTournaments();
+    await refetchRegisteredTournaments();
+    console.log("All data refetched after tournament update!");
   };
 
   const handleJoinRandomTeam = async () => {
     try {
       const result = await joinRandomTeam(tournament, teams, user);
       if (result) {
-        // Rafraîchir les données du tournoi après avoir rejoint une équipe
-        onMatchUpdated?.();
-        // Recharger la page après un court délai pour s'assurer que les données sont à jour
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
+        console.log("Player joined random team, refetching all data...");
+        // Rafraîchir toutes les données
+        await refetchTournament();
+        await refetchTeams();
+        await refetchMatches();
+        
+        // Rafraîchir aussi les listes de tournois
+        await refetchTournamentsList();
+        await refetchMyTournaments();
+        await refetchRegisteredTournaments();
+        console.log("All data refetched after joining random team!");
       }
     } catch (error) {
       console.error('Error in handleJoinRandomTeam:', error);
@@ -258,22 +281,23 @@ const TournamentBracketShowtime = ({
         cancelingTournament={cancelingTournament}
         cancelTournament={cancelTournament}
         teams={teams}
+        teamScores={teamScores}
         onBackToList={onBackToList}
       />
 
       {/* Ancien header (à supprimer manuellement plus tard) */}
 
 
-      <div className="grid grid-cols-12 gap-4">
+      <div className="flex flex-wrap w-full">
         {/* Teams and Rounds in the same column */}
-        <div className="col-span-8">
+        <div className="w-full xl:w-4/6">
           {/* Teams list first */}
-          <div className="mb-4">
+          <div className="w-full pr-0 xl:pr-4">
             <TeamsList teams={teams} user={user} tournament={tournament} />
           </div>
 
           {/* Rounds list below */}
-          <div>
+          <div className="w-full mt-4">
             {matches?.length > 0 ? (
               <RoundsList
                 tournament={tournament}
@@ -305,7 +329,7 @@ const TournamentBracketShowtime = ({
         </div>
 
         {/* Ranking */}
-        <div className="col-span-4 mt-4 ml-4">
+        <div className="w-full xl:w-2/6 mt-4 xl:mt-0">
           <TeamRanking
             tournament={tournament}
             teamScores={teamScores}
@@ -320,27 +344,27 @@ const TournamentBracketShowtime = ({
           <div className="flex gap-3">
             <Button
               onClick={handleCancelAllScoresEdit}
-              className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3"
+              className="bg-gray-800 hover:bg-gray-700 text-white py-3 transition-transform duration-200 hover:scale-105"
               disabled={saving}
             >
-              <X size={16} className="mr-2" />
+              <X size={16} className="" />
               CANCEL
             </Button>
             <Button
               onClick={handleSaveAllScores}
-              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3"
+              className="justify-center whitespace-nowrap rounded-md text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-background shadow hover:bg-primary/90 font-bold uppercase h-9 px-4 py-2 flex items-center gap-2 transition-transform duration-200 hover:scale-105"
               disabled={saving}
             >
               <Save size={16} className="mr-2" />
-              {saving ? "SAVING..." : "SAVE ALL SCORES"}
+              {saving ? "SAVING..." : "UPDATE"}
             </Button>
           </div>
         ) : isCreator && isTournamentActive ? (
           <Button
             onClick={handleUpdateResult}
-            className="bg-primary hover:bg-primary/90 text-black px-6 py-3"
+            className="justify-center whitespace-nowrap rounded-md text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-background shadow hover:bg-primary/90 font-bold uppercase h-9 px-4 py-2 flex items-center gap-2 transition-transform duration-200 hover:scale-105"
           >
-            <img src={updateArrow} alt="updateArrow" className="w-8 h-8 mr-2" />
+            <img src={updateArrow} alt="updateArrow" className="w-8 h-8" />
             UPDATE RESULT
           </Button>
         ) : isCreator && !isTournamentActive ? (
@@ -356,10 +380,10 @@ const TournamentBracketShowtime = ({
         <div className="flex gap-3">
           <Button
             onClick={handleShare}
-            className="bg-primary hover:bg-primary/90 text-black px-6 py-3"
+            className="bg-primary hover:bg-primary/90 text-black py-3 transition-transform duration-200 hover:scale-105"
             disabled={isEditingAllScores}
           >
-            <Share size={16} className="mr-2" />
+            <Share size={16} className="" />
             SHARE
           </Button>
         </div>
@@ -371,6 +395,19 @@ const TournamentBracketShowtime = ({
           tournament={tournament}
           isOpen={joinModalOpen}
           onClose={() => setJoinModalOpen(false)}
+          onSuccess={async () => {
+            console.log("Player joined team via modal, refetching all data...");
+            // Rafraîchir toutes les données
+            await refetchTournament();
+            await refetchTeams();
+            await refetchMatches();
+            
+            // Rafraîchir aussi les listes de tournois
+            await refetchTournamentsList();
+            await refetchMyTournaments();
+            await refetchRegisteredTournaments();
+            console.log("All data refetched after joining team via modal!");
+          }}
         />
       )}
 

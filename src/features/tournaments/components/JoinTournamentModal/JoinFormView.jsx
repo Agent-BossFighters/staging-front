@@ -58,7 +58,7 @@ export function JoinFormView({
       
       {/* Section principale en 3 colonnes */}
       <form onSubmit={handleJoinTeam}>
-        <div className="grid grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
           {/* Colonne 1: Sélection d'équipe */}
           <TeamSelectionSection
             tournament={tournament}
@@ -97,11 +97,11 @@ export function JoinFormView({
           </div>
         )}
         
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full">
           <Button
             type="submit"
             disabled={isLoading || !selectedTeam || !selectedSlot}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-2 font-bold uppercase"
+            className="inline-flex items-center justify-center gap-4 whitespace-nowrap rounded-md text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-background shadow hover:bg-primary/90 font-bold uppercase h-9 px-4 py-2 transition-transform duration-200 hover:scale-105"
           >
             {isLoading ? "JOINING..." : "VALIDATE"}
           </Button>

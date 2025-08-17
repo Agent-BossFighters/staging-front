@@ -13,17 +13,25 @@ export const AdminModal = ({
   itemCraftings,
   itemRecharges,
   craftingValues,
+  forgeSettings,
+  forgeValues,
+  perksSettings,
+  perksValues,
   rechargeValues,
   currencies,
   currencyValues,
   isUpdating,
   handleItemValueChange,
   handleCraftingValueChange,
+  handleForgeValueChange,
+  handlePerksValueChange,
   handleRechargeValueChange,
   handleCurrencyValueChange,
   handleSaveBadges,
   handleSaveContracts,
   handleSaveCraftings,
+  handleSaveForge,
+  handleSavePerks,
   handleSaveRecharges,
   handleSaveCurrencies,
   onClose
@@ -33,6 +41,28 @@ export const AdminModal = ({
   const handleClose = () => {
     setIsOpen(false);
     if (onClose) onClose();
+  };
+
+  const handleClearAppCache = async () => {
+    try {
+      // Clear storages
+      localStorage.clear();
+      sessionStorage.clear();
+      // Clear CacheStorage
+      if (typeof caches !== 'undefined') {
+        const names = await caches.keys();
+        await Promise.all(names.map((n) => caches.delete(n)));
+      }
+      // Unregister service workers
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister()));
+      }
+    } catch (e) {
+      // ignore
+    } finally {
+      window.location.reload();
+    }
   };
 
   // Filtrer les badges et les contrats
@@ -135,6 +165,14 @@ export const AdminModal = ({
                   itemCraftings={itemCraftings}
                   craftingValues={craftingValues}
                   handleCraftingValueChange={handleCraftingValueChange}
+                  forgeSettings={forgeSettings}
+                  forgeValues={forgeValues}
+                  handleForgeValueChange={handleForgeValueChange}
+                  handleSaveForge={handleSaveForge}
+                  perksSettings={perksSettings}
+                  perksValues={perksValues}
+                  handlePerksValueChange={handlePerksValueChange}
+                  handleSavePerks={handleSavePerks}
                   onSave={handleSaveCraftings}
                   isUpdating={isUpdating}
                   onClose={handleClose}

@@ -23,10 +23,10 @@ export function UserPreferenceProvider({ children }) {
       const savedPreferences = localStorage.getItem(STORAGE_KEY);
       return savedPreferences && JSON.parse(savedPreferences).maxRarity
         ? JSON.parse(savedPreferences).maxRarity
-        : "legendary";
+        : "Unique";
     } catch (error) {
       console.error("Error loading maxRarity:", error);
-      return "legendary";
+      return "Unique";
     }
   });
 
@@ -316,7 +316,7 @@ export function UserPreferenceProvider({ children }) {
     try {
       const savedPreferences = localStorage.getItem(STORAGE_KEY);
       return savedPreferences ? JSON.parse(savedPreferences) : {
-        maxRarity: "legendary",
+        maxRarity: "Unique",
         unlockedSlots: 1,
         selectedFlexPack: "",
         streamerMode: false,
@@ -327,7 +327,7 @@ export function UserPreferenceProvider({ children }) {
     } catch (error) {
       console.error("Error loading preferences:", error);
       return {
-        maxRarity: "legendary",
+        maxRarity: "Unique",
         unlockedSlots: 1,
         selectedFlexPack: "",
         streamerMode: false,
