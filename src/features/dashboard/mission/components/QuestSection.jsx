@@ -127,14 +127,13 @@ const QuestSection = () => {
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mx-auto p-10">
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mx-auto p-0 lg:p-6">
       {/* Colonne gauche - XP et niveau */}
-      <div className="col-span-1 md:col-span-5 mb-6 md:mb-0">
+      <div className="col-span-1 md:col-span-4 mb-6 md:mb-0">
         <XPDisplay />
       </div>
-
       {/* Colonne centrale - contenu principal */}
-      <div className="col-span-1 md:col-span-7">
+      <div className="col-span-1 md:col-span-8">
         {/* Quêtes quotidiennes */}
         <div className="mb-8">
           <h2 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-5 uppercase text-center md:text-left">

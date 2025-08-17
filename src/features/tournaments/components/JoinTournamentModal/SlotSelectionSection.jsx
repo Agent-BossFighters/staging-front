@@ -48,6 +48,7 @@ export function SlotSelectionSection({
               
               return (
                 <button
+                  type="button"
                   key={`slot-${teamLetter}${slotNum}`}
                   className={`rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold 
                     ${isOccupied ? 'opacity-50 cursor-not-allowed' : ''} 

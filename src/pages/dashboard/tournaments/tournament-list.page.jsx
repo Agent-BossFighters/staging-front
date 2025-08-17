@@ -44,6 +44,13 @@ export default function TournamentListPage() {
   // États pour la gestion des onglets
   const [activeTab, setActiveTab] = useState("all");
 
+  // Fonction pour gérer le changement d'onglet et fermer les détails du tournoi
+  const handleTabChange = (value) => {
+    setActiveTab(value);
+    setShowTournamentDetails(false);
+    setSelectedTournamentId(null);
+  };
+
   // Vérifier si un tournoi est spécifié dans l'URL et s'il existe
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -137,8 +144,8 @@ export default function TournamentListPage() {
 
   // Composant pour afficher le contenu d'un tournoi
   const TournamentContent = ({ tournamentId }) => {
-    const { tournament, isLoading, error } = useTournament(tournamentId);
-    const { teams } = useTournamentTeams(tournamentId);
+    const { tournament, isLoading, error, refetch: refetchTournament } = useTournament(tournamentId);
+    const { teams, refetch: refetchTeams } = useTournamentTeams(tournamentId);
     const { matches, refetch: refetchMatches } = useTournamentMatches(tournamentId);
     
     // Callback pour gérer la suppression du tournoi
@@ -180,6 +187,12 @@ export default function TournamentListPage() {
           teams={teams || []} 
           matches={matches || []}
           onMatchUpdated={refetchMatches}
+          refetchTournament={refetchTournament}
+          refetchTeams={refetchTeams}
+          refetchMatches={refetchMatches}
+          refetchTournamentsList={refetch}
+          refetchMyTournaments={refetchMyTournaments}
+          refetchRegisteredTournaments={refetchRegisteredTournaments}
           onTournamentDeleted={handleTournamentDeleted}
           onBackToList={handleBackToList}
         />
@@ -188,20 +201,20 @@ export default function TournamentListPage() {
   };
 
   return (
-    <div className="w-5/6 mx-auto h-full">
+    <div className="w-[80vw] mx-auto h-full">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary">FIGHTING</h1>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col">
-        <div className="w-fit">
-          <TabsList className="bg-transparent text-2xl pb-0 justify-start gap-1 flex flex-col">
-            <div className="flex gap-1">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full flex flex-col">
+        <div className="w-[80vw] mx-auto overflow-x-auto overflow-y-hidden">
+          <TabsList className="bg-transparent text-2xl p-0 h-auto flex flex-col items-start justify-start">
+            <div className="flex gap-1 w-max whitespace-nowrap">
               <TabsTrigger value="all">TOURNAMENT(S)</TabsTrigger>
               <TabsTrigger value="registered">REGISTERED TOURNAMENT(S)</TabsTrigger>
               <TabsTrigger value="my">MY TOURNAMENT(S)</TabsTrigger>
             </div>
-            <div className="border-primary border-b-2 w-full gap-4"></div>
+            <div className="border-primary border-b-2 w-full"></div>
           </TabsList>
         </div>
         

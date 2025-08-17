@@ -4,7 +4,7 @@ import { useJoinTournament, useTournamentTeamsData, useTeamSelection } from "../
 import { CreatorView, SuccessView, JoinFormView } from "./JoinTournamentModal/index";
 import toast from "react-hot-toast";
 
-export default function JoinTournamentModal({ tournament, isOpen, onClose }) {
+export default function JoinTournamentModal({ tournament, isOpen, onClose, onSuccess }) {
   // State pour les erreurs
   const [error, setError] = useState(null);
   
@@ -35,16 +35,9 @@ export default function JoinTournamentModal({ tournament, isOpen, onClose }) {
     isLoading, 
     success, 
     joinTournament 
-  } = useJoinTournament(tournament, teams, onClose);
+  } = useJoinTournament(tournament, teams, onClose, onSuccess);
   
-  // Fermer la modale quand le tournoi a été rejoint avec succès
-  useEffect(() => {
-    if (success) {
-      setTimeout(() => {
-        onClose();
-      }, 3000);
-    }
-  }, [success, onClose]);
+  // La modal se ferme maintenant immédiatement après le succès dans useJoinTournament
   
   // Fermer la modale si l'utilisateur est le créateur
   useEffect(() => {
@@ -102,7 +95,7 @@ export default function JoinTournamentModal({ tournament, isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="w-full max-w-[800px] bg-[#111827] border border-gray-700 text-white rounded-md">
+      <div className="w-full max-w-[800px] max-h-[90vh] bg-[#111827] border border-gray-700 text-white rounded-md overflow-hidden flex flex-col">
         {/* Header avec titre et bouton de fermeture */}
         <div className="bg-black p-4 flex justify-between items-center rounded-t-md">
           <h2 className="text-yellow-400 text-lg font-bold">
@@ -117,7 +110,7 @@ export default function JoinTournamentModal({ tournament, isOpen, onClose }) {
         </div>
         
         {/* Contenu principal */}
-        <div className="p-6">
+        <div className="p-6 overflow-y-auto flex-1">
           {success ? (
             <SuccessView onClose={onClose} />
           ) : (

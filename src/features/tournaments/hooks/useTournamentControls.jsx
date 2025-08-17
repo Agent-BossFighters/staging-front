@@ -29,7 +29,10 @@ const useTournamentControls = (
   refetchTeams,
   refetchMatches,
   isCreator,
-  onTournamentDeleted
+  onTournamentDeleted,
+  refetchTournamentsList,
+  refetchMyTournaments,
+  refetchRegisteredTournaments
 ) => {
   const navigate = useNavigate();
   const [startingTournament, setStartingTournament] = useState(false);
@@ -44,6 +47,8 @@ const useTournamentControls = (
     setStartingTournament(true);
     
     try {
+      console.log("Starting tournament:", tournament.id);
+      
       // Envoyer une requête pour mettre à jour le statut du tournoi
       await kyInstance.put(`v1/tournaments/${tournament.id}`, {
         json: {
@@ -58,10 +63,18 @@ const useTournamentControls = (
       
       toast.success("Tournament started successfully!");
       
+      console.log("Refetching tournament data...");
       // Rafraîchir les données
       await refetchTournament();
       await refetchTeams();
       await refetchMatches();
+      
+      // Rafraîchir aussi les listes de tournois
+      console.log("Refetching tournament lists...");
+      await refetchTournamentsList();
+      await refetchMyTournaments();
+      await refetchRegisteredTournaments();
+      console.log("Refetch completed!");
       
     } catch (error) {
       console.error("Error starting tournament:", error);
@@ -103,6 +116,8 @@ const useTournamentControls = (
     }
     
     try {
+      console.log("Completing tournament:", tournament.id);
+      
       // Mettre à jour le statut du tournoi à "completed" (3)
       await kyInstance.put(`v1/tournaments/${tournament.id}`, {
         json: {
@@ -114,10 +129,18 @@ const useTournamentControls = (
       
       toast.success("Tournament completed successfully!");
       
+      console.log("Refetching tournament data after completion...");
       // Rafraîchir les données
       await refetchTournament();
       await refetchTeams();
       await refetchMatches();
+      
+      // Rafraîchir aussi les listes de tournois
+      console.log("Refetching tournament lists after completion...");
+      await refetchTournamentsList();
+      await refetchMyTournaments();
+      await refetchRegisteredTournaments();
+      console.log("Refetch after completion completed!");
       
     } catch (error) {
       console.error("Error completing tournament:", error);
@@ -147,10 +170,18 @@ const useTournamentControls = (
       
       toast.success("Tournament cancelled successfully!");
       
+      console.log("Refetching tournament data after cancellation...");
       // Rafraîchir les données
       await refetchTournament();
       await refetchTeams();
       await refetchMatches();
+      
+      // Rafraîchir aussi les listes de tournois
+      console.log("Refetching tournament lists after cancellation...");
+      await refetchTournamentsList();
+      await refetchMyTournaments();
+      await refetchRegisteredTournaments();
+      console.log("Refetch after cancellation completed!");
       
     } catch (error) {
       console.error("Error cancelling tournament:", error);
@@ -181,6 +212,13 @@ const useTournamentControls = (
       await kyInstance.delete(`v1/tournaments/${tournament.id}`).json();
       
       toast.success("Tournament deleted successfully!");
+      
+      // Rafraîchir les listes de tournois
+      console.log("Refetching tournament lists after deletion...");
+      await refetchTournamentsList();
+      await refetchMyTournaments();
+      await refetchRegisteredTournaments();
+      console.log("Refetch after deletion completed!");
       
       // Appeler le callback pour réinitialiser l'UI si fourni
       if (typeof onTournamentDeleted === 'function') {

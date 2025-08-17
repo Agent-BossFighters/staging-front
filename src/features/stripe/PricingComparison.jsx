@@ -12,15 +12,15 @@ const PRICING_PLANS = {
   freemium: {
     name: "FREEMIUM",
     price: 0,
-    features: ["Locker", "Data Lab (Basic Filters)", "Daily", "Fighting (Participate)"],
-    comingSoonFeatures: ["Schedule", "TV Tools", "Player Map"],
+    features: ["Locker", "Data Lab (Basic Filters)", "Daily", "Fighting (Participate)","TV Tools (Boss Wheel)", "Player Map v1"],
+    comingSoonFeatures: ["Schedule", "TV Tools (new tools)"],
   },
   pro: {
     name: "PREMIUM",
     price: 11.99,
     priceId: STRIPE_PRICE_ID,
-    features: ["Locker", "Data Lab", "Daily", "Monthly", "Fighting (Organize)", "Missions"],
-    comingSoonFeatures: ["Schedule", "TV Tools", "Player Map"],
+    features: ["Locker", "Data Lab (Full filters)", "Daily", "Monthly", "Fighting (Create/Participate)", "Missions","TV Tools (Boss Wheel)", "Player Map v1"],
+    comingSoonFeatures: ["Schedule", "TV Tools", "Data Lab (Player Cycle)"],
   },
 };
 

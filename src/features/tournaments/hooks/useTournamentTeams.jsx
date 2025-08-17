@@ -10,27 +10,32 @@ export function useTournamentTeams(tournamentId) {
   const [teams, setTeams] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshCounter, setRefreshCounter] = useState(0);
+
+  const fetchTeams = async () => {
+    if (!tournamentId) return;
+    
+    setIsLoading(true);
+    
+    try {
+      const response = await kyInstance.get(`v1/tournaments/${tournamentId}/teams`).json();
+      setTeams(response.teams);
+      setError(null);
+    } catch (err) {
+      setError(err);
+      setTeams([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const refetch = () => {
+    setRefreshCounter(prev => prev + 1);
+  };
 
   useEffect(() => {
-    if (!tournamentId) return;
-
-    const fetchTeams = async () => {
-      setIsLoading(true);
-      
-      try {
-        const response = await kyInstance.get(`v1/tournaments/${tournamentId}/teams`).json();
-        setTeams(response.teams);
-        setError(null);
-      } catch (err) {
-        setError(err);
-        setTeams([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchTeams();
-  }, [tournamentId]);
+  }, [tournamentId, refreshCounter]);
 
-  return { teams, isLoading, error };
+  return { teams, isLoading, error, refetch };
 } 

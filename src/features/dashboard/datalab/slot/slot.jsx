@@ -18,10 +18,7 @@ export default function Slot({ slots, loading }) {
   return (
     <div>
       <h2 className="text-3xl font-extrabold py-2">{/* Icon */}SLOTS COST</h2>
-      <Table className="w-1/2">
-        <TableCaption>
-          Normal and bonus part $BFT displayed for a basic common badge
-        </TableCaption>
+      <Table className="">
         <TableHeader>
           <TableRow>
             <TableHead>SLOT</TableHead>
@@ -69,6 +66,9 @@ export default function Slot({ slots, loading }) {
           ))}
         </TableBody>
       </Table>
+      <p className="mt-4 text-base text-muted-foreground text-center w-full mx-auto">
+          Normal and bonus part $BFT displayed for a basic common badge
+      </p>
     </div>
   );
 }

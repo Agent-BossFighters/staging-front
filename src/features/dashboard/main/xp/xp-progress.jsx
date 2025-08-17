@@ -186,6 +186,8 @@ export function XPProgress({ onClick }) {
               <span className="text-white font-bold text-3xl relative z-10 pb-1">
                 {isLoading ? "..." : currentLevel}
               </span>
+
+
             </div>
           </div>
 
@@ -208,7 +210,7 @@ export function XPProgress({ onClick }) {
               </span>
             </div>
 
-            <p className="text-[#FFD32A] text-[14px]">
+            <p className="text-[#FFD32A] text-[14px] line-clamp-2">
               Level up to take part in the Boss Fighters NFT raffle !
             </p>
           </div>

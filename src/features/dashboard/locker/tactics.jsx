@@ -44,10 +44,10 @@ export default function Tactics() {
       const savedPreferences = localStorage.getItem(STORAGE_KEY);
       return savedPreferences && JSON.parse(savedPreferences).maxRarity
         ? JSON.parse(savedPreferences).maxRarity
-        : maxRarity || "legendary";
+        : maxRarity || "Unique";
     } catch (error) {
       console.error("Error loading maxRarity:", error);
-      return maxRarity || "legendary";
+      return maxRarity || "Unique";
     }
   });
   

@@ -61,9 +61,9 @@ export default function MonthlyMatches({
 
 
   return (
-    <div className="flex flex-col gap-8 h-full">
+    <div className="flex flex-col gap-8">
       <div
-        className="flex-grow overflow-x-auto"
+        className="flex-grow overflow-x-auto select-none"
         ref={tableRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

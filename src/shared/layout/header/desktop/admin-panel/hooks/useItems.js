@@ -10,6 +10,10 @@ export const useItems = (user) => {
   const [craftingValues, setCraftingValues] = useState({});
   const [rechargeValues, setRechargeValues] = useState({});
   const [isUpdating, setIsUpdating] = useState(false);
+  const [forgeSettings, setForgeSettings] = useState([]);
+  const [forgeValues, setForgeValues] = useState({});
+  const [perksSettings, setPerksSettings] = useState([]);
+  const [perksValues, setPerksValues] = useState({});
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -48,6 +52,25 @@ export const useItems = (user) => {
         });
         setCraftingValues(initialCraftingValues);
 
+        // Fetch forge settings
+        const forgeResponse = await kyInstance.get('v1/admin/forge_settings').json();
+        setForgeSettings(forgeResponse);
+        const initialForgeValues = {};
+        forgeResponse.forEach((s) => {
+          initialForgeValues[s.id] = {
+            rarity_id: s.rarity_id,
+            operation_type: s.operation_type,
+            supply: s.supply ?? '',
+            nb_previous_required: s.nb_previous_required ?? '',
+            nb_digital_required: s.nb_digital_required ?? '',
+            cash: s.cash ?? '',
+            fusion_core: s.fusion_core ?? '',
+            bft_tokens: s.bft_tokens ?? '',
+            sponsor_marks_reward: s.sponsor_marks_reward ?? ''
+          };
+        });
+        setForgeValues(initialForgeValues);
+
         // Fetch item recharges
         const rechargesResponse = await kyInstance.get('v1/admin/item_recharge').json();
         setItemRecharges(rechargesResponse);
@@ -65,6 +88,21 @@ export const useItems = (user) => {
           };
         });
         setRechargeValues(initialRechargeValues);
+
+        // Fetch perks lock settings
+        const perksResp = await kyInstance.get('v1/admin/perks_lock_settings').json();
+        setPerksSettings(perksResp);
+        const initialPerksValues = {};
+        perksResp.forEach((p) => {
+          initialPerksValues[p.id] = {
+            rarity_id: p.rarity_id,
+            star_0: p.star_0 ?? '',
+            star_1: p.star_1 ?? '',
+            star_2: p.star_2 ?? '',
+            star_3: p.star_3 ?? ''
+          };
+        });
+        setPerksValues(initialPerksValues);
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -91,6 +129,26 @@ export const useItems = (user) => {
       ...prev,
       [craftingId]: {
         ...prev[craftingId],
+        [field]: value === '' ? '' : isNaN(value) ? 0 : Number(value)
+      }
+    }));
+  };
+
+  const handleForgeValueChange = (settingId, field, value) => {
+    setForgeValues(prev => ({
+      ...prev,
+      [settingId]: {
+        ...prev[settingId],
+        [field]: value === '' ? '' : isNaN(value) || ['operation_type'].includes(field) ? value : Number(value)
+      }
+    }));
+  };
+
+  const handlePerksValueChange = (settingId, field, value) => {
+    setPerksValues(prev => ({
+      ...prev,
+      [settingId]: {
+        ...prev[settingId],
         [field]: value === '' ? '' : isNaN(value) ? 0 : Number(value)
       }
     }));
@@ -208,6 +266,112 @@ export const useItems = (user) => {
       return true;
     } catch (error) {
       const errorMessage = error.message || error.responseData?.error || 'Failed to update crafting settings. Please try again.';
+      toast.error(errorMessage);
+      return false;
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleSaveForge = async (onSuccess) => {
+    try {
+      setIsUpdating(true);
+
+      for (const setting of forgeSettings) {
+        const values = forgeValues[setting.id];
+        const updateValues = {};
+        for (const key of [
+          'supply','nb_previous_required','nb_digital_required','cash','fusion_core','bft_tokens','sponsor_marks_reward'
+        ]) {
+          // Autoriser la mise à jour à null si l'admin vide le champ
+          if (values[key] === '' && setting[key] !== null) {
+            updateValues[key] = null;
+          } else if (values[key] !== '' && values[key] !== setting[key]) {
+            updateValues[key] = Number(values[key]);
+          }
+        }
+        if (Object.keys(updateValues).length > 0) {
+          await kyInstance.patch(`v1/admin/forge_settings/${setting.id}`, { json: { forge_setting: updateValues } });
+        }
+      }
+
+      const updated = await kyInstance.get('v1/admin/forge_settings').json();
+      setForgeSettings(updated);
+      const refreshed = {};
+      updated.forEach((s) => {
+        refreshed[s.id] = {
+          rarity_id: s.rarity_id,
+          operation_type: s.operation_type,
+          supply: s.supply ?? '',
+          nb_previous_required: s.nb_previous_required ?? '',
+          nb_digital_required: s.nb_digital_required ?? '',
+          cash: s.cash ?? '',
+          fusion_core: s.fusion_core ?? '',
+          bft_tokens: s.bft_tokens ?? '',
+          sponsor_marks_reward: s.sponsor_marks_reward ?? ''
+        };
+      });
+      setForgeValues(refreshed);
+
+      toast.success('Forge settings updated successfully!');
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('forge-settings-updated'));
+        }
+      } catch (e) {
+        // noop
+      }
+      if (onSuccess) onSuccess();
+      return true;
+    } catch (error) {
+      const errorMessage = error.message || error.responseData?.error || 'Failed to update forge settings. Please try again.';
+      toast.error(errorMessage);
+      return false;
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleSavePerks = async (onSuccess) => {
+    try {
+      setIsUpdating(true);
+      for (const setting of perksSettings) {
+        const values = perksValues[setting.id];
+        const updateValues = {};
+        for (const key of ['star_0','star_1','star_2','star_3']) {
+          if (values[key] !== '' && values[key] !== setting[key]) {
+            updateValues[key] = values[key] === '' ? null : Number(values[key]);
+          }
+        }
+        if (Object.keys(updateValues).length > 0) {
+          await kyInstance.patch(`v1/admin/perks_lock_settings/${setting.id}`, { json: { perks_lock_setting: updateValues } });
+        }
+      }
+      const updated = await kyInstance.get('v1/admin/perks_lock_settings').json();
+      setPerksSettings(updated);
+      const refreshed = {};
+      updated.forEach((p) => {
+        refreshed[p.id] = {
+          rarity_id: p.rarity_id,
+          star_0: p.star_0 ?? '',
+          star_1: p.star_1 ?? '',
+          star_2: p.star_2 ?? '',
+          star_3: p.star_3 ?? ''
+        };
+      });
+      setPerksValues(refreshed);
+      toast.success('Perks lock settings updated successfully!');
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('perks-lock-updated'));
+        }
+      } catch (e) {
+        // noop
+      }
+      if (onSuccess) onSuccess();
+      return true;
+    } catch (error) {
+      const errorMessage = error.message || error.responseData?.error || 'Failed to update perks lock settings. Please try again.';
       toast.error(errorMessage);
       return false;
     } finally {
@@ -418,6 +582,14 @@ export const useItems = (user) => {
     handleSaveContracts,
     handleSaveCraftings,
     handleSaveRecharges
+    ,forgeSettings
+    ,forgeValues
+    ,handleForgeValueChange
+    ,handleSaveForge
+    ,perksSettings
+    ,perksValues
+    ,handlePerksValueChange
+    ,handleSavePerks
   };
 };
 

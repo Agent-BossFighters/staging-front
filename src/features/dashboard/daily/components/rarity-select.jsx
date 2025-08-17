@@ -113,7 +113,7 @@ const RaritySelect = memo(
     if (loading && !badges.length) return null;
 
     return (
-      <div className="flex gap-3 items-center min-w-[150px]">
+      <div className="flex gap-3 items-center min-w-[150px] pl-4">
         <Select
           value={value || "none"}
           onValueChange={handleValueChange}

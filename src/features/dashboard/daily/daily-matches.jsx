@@ -117,7 +117,7 @@ export default function DailyMatches({
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-2">
 
       <Calculator
         onEnergyUsedChange={setTotalEnergyUsed}

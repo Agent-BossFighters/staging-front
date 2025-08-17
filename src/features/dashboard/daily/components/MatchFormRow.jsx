@@ -71,9 +71,9 @@ export default function MatchFormRow({
           </SelectContent>
         </Select>
       </td>
-      <td className="px-4 text-left min-w-[4%]">
+      <td className="text-left min-w-[4%] pl-4 ">
         {currentData.buildId ? (
-          <div className="flex flex-col">
+          <div className="flex flex-col ">
             <span>{`${builds.find((b) => b.id === currentData.buildId)?.bftBonus || 0}%`}</span>
           </div>
         ) : (
@@ -83,7 +83,7 @@ export default function MatchFormRow({
       {Array(MAX_SLOTS)
         .fill(null)
         .map((_, index) => (
-          <td key={index} className="px-6 min-w-[4%] pl-4 first:pl-4" title={currentData.rarities[index]?.split("#")[0] || ''}>
+          <td key={index} className="min-w-[4%] first:pl-4" title={currentData.rarities[index]?.split("#")[0] || ''}>
             {!isEditing && index >= unlockedSlots ? (
               <RarityBadge rarity="none"/>
             ) : (
@@ -101,25 +101,25 @@ export default function MatchFormRow({
             )}
           </td>
         ))}
-      <td className="px-4 text-left min-w-[4%]">-</td>
+      <td className="text-left min-w-[4%] pl-4">-</td>
 
-      <td className="min-w-[4%] px-4 text-left text-white">
+      <td className="min-w-[4%] text-left text-white pl-4">
         {totalEnergyUsed}
       </td>
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
-        <td className="min-w-[4%] px-4 text-left text-red-500">
+        <td className="min-w-[4%] text-left text-red-500 pl-4">
           ${typeof totalPriceEnergyUsed === "number" ? totalPriceEnergyUsed.toFixed(2) : "0.00"}
         </td>
       )}
       
-      <td className="min-w-[4%]" title={currentData.map}>
+      <td className="min-w-[4%] pl-4 " title={currentData.map}>
         <Select
           value={currentData.map}
           onValueChange={(value) => onChange("map", value)}
         >
-          <SelectTrigger className="ml-3 w-14 h-8 px-2 rounded-full bg-[#212121] ">
+          <SelectTrigger className="w-14 h-8 rounded-full bg-[#212121] ">
             <SelectValue placeholder="">
               {currentData.map ? (
                 <div className="flex items-center gap-1">
@@ -140,12 +140,12 @@ export default function MatchFormRow({
           </SelectContent>
         </Select>
       </td>
-      <td className="min-w-[4%]" title={currentData.result}>
+      <td className="min-w-[4%] pl-4 " title={currentData.result}>
         <Select
           value={currentData.result}
           onValueChange={(value) => onChange("result", value)}
         >
-          <SelectTrigger className="ml-3 w-14 h-8 px-2 rounded-full bg-[#212121] ">
+          <SelectTrigger className="w-14 h-8 rounded-full bg-[#212121] ">
             <SelectValue placeholder="">
               {currentData.result ? (
                 <div className="flex items-center gap-1">
@@ -166,10 +166,10 @@ export default function MatchFormRow({
           </SelectContent>
         </Select>
       </td>
-      <td className="min-w-[4%]">
+      <td className="min-w-[4%] pl-4">
         <Input
           type="number"
-          className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-full text-left [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           placeholder="0"
           value={currentData.bft}
           onChange={(e) => onChange("bft", e.target.value)}
@@ -178,20 +178,20 @@ export default function MatchFormRow({
       
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
-        <td className="px-4 text-left min-w-[4%] text-accent">-</td>
+        <td className="text-left min-w-[4%] text-accent pl-4 ">-</td>
       )}
       
-      <td className="px-4 text-left min-w-[4%]">-</td>
+      <td className="text-left min-w-[4%] pl-4 ">-</td>
 
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
-        <td className="px-4 text-left min-w-[3%]">-</td>
+        <td className="text-left min-w-[3%] pl-4 ">-</td>
       )}
       
-      <td className="min-w-[4%]">
+      <td className="min-w-[4%] pl-4">
         <Input
           type="number"
-          className="w-20 text-left px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-full text-left [appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
           value={currentData.flex || "0"}
           onChange={(e) => onChange("flex", e.target.value)}
         />
@@ -200,12 +200,12 @@ export default function MatchFormRow({
       {/* Masquer les colonnes financières en mode streamer */}
       {!streamerMode && (
         <>
-          <td className="px-4 text-left min-w-[4%] text-accent">-</td>
-          <td className="px-4 text-left min-w-[5%] text-accent">-</td>
+          <td className="text-left min-w-[4%] text-accent pl-4 ">-</td>
+          <td className="text-left min-w-[5%] text-accent pl-4 ">-</td>
         </>
       )}
       
-      <td className="flex gap-2 items-left justify-left min-w-[6%]">
+      <td className="flex gap-2 items-left justify-left min-w-[6%] ">
         <ActionButtons
           isEditing={isEditing}
           isCreating={isCreating}

@@ -28,12 +28,9 @@ export default function Badges({ badges, loading }) {
   }
 
   return (
-    <div>
+    <div className="overflow-x-auto w-[80vw] mr-auto">
       <h2 className="text-3xl font-extrabold py-2">{/* Icon */}BADGES</h2>
-      <Table className="w-1/2">
-        <TableCaption>
-          Badge informations according to slot(s) used
-        </TableCaption>
+      <Table className="">
         <TableHeader>
           <TableRow>
             <TableHead>RARITY</TableHead>
@@ -98,7 +95,7 @@ export default function Badges({ badges, loading }) {
               <TableRow key={rarityItem.rarity}>
                 <TableCell className="p-2 text-center">
                   <p
-                    className="border-2 rounded-2xl p-1 text-sm"
+                    className="border-2 rounded-2xl px-3 py-1 text-sm whitespace-nowrap"
                     style={{ borderColor: rarityItem.color }}
                   >
                     {rarityItem.rarity}
@@ -135,6 +132,9 @@ export default function Badges({ badges, loading }) {
           })}
         </TableBody>
       </Table>
+      <p className="mt-4 text-base text-muted-foreground text-center w-full mx-auto">
+        Badge informations according to slot(s) used
+      </p>
     </div>
   );
 }

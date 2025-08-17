@@ -22,7 +22,7 @@ export function TeamSelectionSection({
   const displayTeams = getDisplayTeams(teams, tournament);
   
   return (
-    <div>
+    <div className="w-full">
       <h3 className="text-yellow-400 font-bold mb-4 text-center uppercase">Select Team</h3>
       <div className="grid grid-cols-2 gap-2">
         {displayTeams.map((team, index) => {
@@ -36,6 +36,7 @@ export function TeamSelectionSection({
           
           return (
             <button
+              type="button"
               key={`team-btn-${teamIndex}`}
               className={`p-2 text-white transition-all rounded ${isSelected ? 'ring-2 ring-white' : ''}`}
               style={{

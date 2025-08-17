@@ -34,6 +34,7 @@ const TournamentHeader = ({
   cancelingTournament,
   cancelTournament,
   teams,
+  teamScores = [],
   onBackToList
 }) => {
   const navigate = useNavigate();
@@ -125,18 +126,18 @@ const TournamentHeader = ({
         <Button
           onClick={onBackToList}
           variant="default"
-          className="mb-1"
+          className="inline-flex items-center justify-center gap-4 whitespace-nowrap rounded-md text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-transparent text-primary shadow hover:bg-transparent font-bold uppercase px-4 py-2 transition-transform duration-200 hover:scale-105"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          BACK TO LIST
+          <ArrowLeft className="!h-8 !w-8" />
+          <span className="hidden md:inline">BACK TO LIST</span>
         </Button>
       </div>
 
       {/* Tournament Info Banner */}
       <div className="bg-gray-800 px-6 py-4 rounded">
-        <div className="grid grid-cols-12 gap-4">
+        <div className="flex flex-wrap">
           {/* Left section - Tournament Info */}
-          <div className="col-span-4">
+          <div className="w-full md:w-3/6 xl:w-2/6">
             {/* First row */}
             <div className="grid grid-cols-4 mb-4">
               <div>
@@ -197,10 +198,10 @@ const TournamentHeader = ({
 
 
           {/* Center section - Rules */}
-          <div className="col-span-5">
+          <div className="w-full md:w-3/6 xl:w-3/6 pr-6 my-4 md:my-0">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0">
-                <img src={rulesBubble} alt="rules" className="w-12 h-12" />
+                <img src={rulesBubble} alt="rules" className="w-8 h-8" />
               </div>
               <div className="flex-grow">
                 <span className="text-gray-400 block mb-1 uppercase text-sm">Rules</span>
@@ -211,27 +212,25 @@ const TournamentHeader = ({
             </div>
           </div>
 
-          <div className="col-span-1"></div>
-
           {/* Right section - Actions */}
-          <div className="col-span-2">
-            <div className="flex flex-col gap-3">
+          <div className="flex w-full xl:w-1/6">
+            <div className="flex flex-wrap xl:flex-col w-full justify-center items-center gap-4 mt-4 xl:mt-0">
               {/* Join buttons for regular users */}
               {user && canJoinThisTournament && !remainingSlots.startsWith('0') && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-row xl:flex-col gap-4 w-full sm:w-full">
                   <Button
                     onClick={onJoinClick}
                     className="bg-primary hover:bg-primary/90 text-black w-full"
                   >
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    JOIN TOURNAMENT
+                    <UserPlus className="h-4 w-4" />
+                    JOIN
                   </Button>
                   <Button
                     onClick={onJoinRandomTeam}
                     className="bg-blue-600 hover:bg-blue-700 text-white w-full"
                   >
-                    <Shuffle className="mr-2 h-4 w-4" />
-                    JOIN RANDOM TEAM
+                    <Shuffle className="h-4 w-4" />
+                    JOIN RANDOM
                   </Button>
                 </div>
               )}
@@ -239,46 +238,46 @@ const TournamentHeader = ({
               {/* Admin buttons for creator */}
               {isCreator && tournament.status !== "completed" && tournament.status !== "cancelled" && (
                 <>
-                  <div className="flex gap-2">
+                  <div className="flex flex-row xl:flex-col gap-4 w-full md:w-2/6 xl:w-full">
                     {canStartTournament && (tournament.status === "draft" || tournament.status === "open") && (
                       <Button
                         onClick={startTournament}
-                        className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                        className="flex bg-green-600 hover:bg-green-700 text-white flex-1 transition-transform duration-200 hover:scale-105"
                         disabled={startingTournament}
                       >
-                        <Play className="mr-2 h-4 w-4" />
-                        {startingTournament ? "STARTING..." : "START TOURNAMENT"}
+                        <Play className="h-4 w-4" />
+                        {startingTournament ? "STARTING..." : "START"}
                       </Button>
                     )}
 
                     {canCompleteTournament && tournament.status === "in_progress" && (
                       <Button
                         onClick={completeTournament}
-                        className="bg-blue-600 hover:bg-blue-700 text-white flex-1"
+                        className="bg-blue-600 hover:bg-blue-700 text-white flex-1 transition-transform duration-200 hover:scale-105"
                       >
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        END TOURNAMENT
+                        <CheckCircle className="h-4 w-4" />
+                        END
                       </Button>
                     )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-row xl:flex-col gap-4 w-full md:w-3/6 xl:w-full">
                     {(tournament.status === "draft" || tournament.status === "open") && (
                       <>
                         <Button
                           onClick={handleEditTournament}
-                          className="bg-amber-600 hover:bg-amber-700 text-white flex-1"
+                          className="items-center justify-center bg-blue-600 hover:bg-blue-700 text-white flex-1 h-9 px-4 py-2 transition-transform duration-200 hover:scale-105"
                         >
-                          <Edit className="mr-2 h-4 w-4" />
+                          <Edit className="h-6 w-6" />
                           EDIT
                         </Button>
 
                         <Button
                           onClick={deleteTournament}
-                          className="bg-red-600 hover:bg-red-700 text-white flex-1"
+                          className="bg-red-600 hover:bg-red-700 text-white flex-1 transition-transform duration-200 hover:scale-105"
                           disabled={deletingTournament}
                         >
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                           {deletingTournament ? "DELETING..." : "DELETE"}
                         </Button>
                       </>
@@ -287,7 +286,7 @@ const TournamentHeader = ({
                     {tournament.status === "in_progress" && (
                       <Button
                         onClick={cancelTournament}
-                        className="bg-red-600 hover:bg-red-700 text-white flex-1"
+                        className="bg-red-600 hover:bg-red-700 text-white flex-1 transition-transform duration-200 hover:scale-105"
                         disabled={cancelingTournament}
                       >
                         {cancelingTournament ? "CANCELING..." : "CANCEL"}
@@ -299,23 +298,23 @@ const TournamentHeader = ({
 
               {/* Affichage du statut CANCELLED */}
               {tournament.status === "cancelled" && (
-                <div className="flex items-center justify-center bg-red-600/20 text-red-500 font-bold py-3 rounded">
+                <div className="flex items-center justify-center bg-red-600/20 text-red-500 font-bold py-3 px-4 rounded">
                   CANCELLED
                 </div>
               )}
 
               {/* Affichage de l'équipe gagnante */}
-              {tournament.status === "completed" && teams?.length > 0 && (
-                <div className="flex items-center justify-center bg-yellow-600/20 text-yellow-500 font-bold py-3 rounded gap-2">
-                  <span>{WINNER_ICON}</span>
-                  <span>WINNER: {teams[0].name}</span>
+              {tournament.status === "completed" && teamScores?.length > 0 && (
+                <div className="flex flex-wrap items-center justify-center border-2 border-primary text-primary px-4 font-bold py-3 rounded gap-2">
+                  <span className="flex items-center justify-center w-full">{WINNER_ICON} WINNER :</span>
+                  <span className="flex items-center justify-center w-full">{teamScores[0].team.name}</span>
                 </div>
               )}
 
               {/* Tournament stats */}
-              <div className="flex justify-between text-sm text-gray-400">
-                <div>REMAINING <br /> SLOTS : {remainingSlots}</div>
-                <div>PLAYER(S) <br /> PER TEAM : {tournament.players_per_team}</div>
+              <div className="flex justify-center gap-1 text-sm text-gray-400 xl:w-full">
+                <div>REMAINING SLOTS : {remainingSlots}</div>
+                <div>PLAYER(S) PER TEAM : {tournament.players_per_team}</div>
               </div>
             </div>
           </div>

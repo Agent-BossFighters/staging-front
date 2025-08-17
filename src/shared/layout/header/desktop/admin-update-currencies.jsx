@@ -20,15 +20,23 @@ export default function AdminUpdateCurrencies() {
     itemCraftings,
     itemRecharges,
     craftingValues,
+    forgeSettings,
+    forgeValues,
+    perksSettings,
+    perksValues,
     rechargeValues,
     isUpdating,
     handleItemValueChange,
     handleCraftingValueChange,
+    handleForgeValueChange,
+    handlePerksValueChange,
     handleRechargeValueChange,
     handleSaveItems,
     handleSaveBadges,
     handleSaveContracts,
     handleSaveCraftings,
+    handleSaveForge,
+    handleSavePerks,
     handleSaveRecharges
   } = useItems(user);
 
@@ -65,17 +73,25 @@ export default function AdminUpdateCurrencies() {
         itemCraftings={itemCraftings}
         itemRecharges={itemRecharges}
         craftingValues={craftingValues}
+        forgeSettings={forgeSettings}
+        forgeValues={forgeValues}
+        perksSettings={perksSettings}
+        perksValues={perksValues}
         rechargeValues={rechargeValues}
         currencies={currencies}
         currencyValues={currencyValues}
         isUpdating={isUpdating}
         handleItemValueChange={handleItemValueChange}
         handleCraftingValueChange={handleCraftingValueChange}
+        handleForgeValueChange={handleForgeValueChange}
+        handlePerksValueChange={handlePerksValueChange}
         handleRechargeValueChange={handleRechargeValueChange}
         handleCurrencyValueChange={handleCurrencyValueChange}
         handleSaveBadges={handleSaveBadges}
         handleSaveContracts={handleSaveContracts}
         handleSaveCraftings={handleSaveCraftings}
+        handleSaveForge={handleSaveForge}
+        handleSavePerks={handleSavePerks}
         handleSaveRecharges={handleSaveRecharges}
         handleSaveCurrencies={handleSaveCurrencies}
       />

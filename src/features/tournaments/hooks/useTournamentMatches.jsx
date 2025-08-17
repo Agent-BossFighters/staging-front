@@ -10,8 +10,11 @@ export function useTournamentMatches(tournamentId) {
   const [matches, setMatches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshCounter, setRefreshCounter] = useState(0);
 
   const fetchMatches = async () => {
+    if (!tournamentId) return;
+    
     setIsLoading(true);
     
     try {
@@ -26,10 +29,13 @@ export function useTournamentMatches(tournamentId) {
     }
   };
 
-  useEffect(() => {
-    if (!tournamentId) return;
-    fetchMatches();
-  }, [tournamentId]);
+  const refetch = () => {
+    setRefreshCounter(prev => prev + 1);
+  };
 
-  return { matches, isLoading, error, refetch: fetchMatches };
+  useEffect(() => {
+    fetchMatches();
+  }, [tournamentId, refreshCounter]);
+
+  return { matches, isLoading, error, refetch };
 } 

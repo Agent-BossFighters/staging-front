@@ -226,6 +226,14 @@ const ItemCraftingEditor = ({
   itemCraftings,
   craftingValues,
   handleCraftingValueChange,
+  forgeSettings,
+  forgeValues,
+  handleForgeValueChange,
+  perksSettings,
+  perksValues,
+  handlePerksValueChange,
+  handleSavePerks,
+  handleSaveForge,
   onSave,
   isUpdating,
   onClose,
@@ -258,13 +266,31 @@ const ItemCraftingEditor = ({
         </div>
       </div>
 
-      <Tabs.Root defaultValue="contracts" className="w-full">
+      <Tabs.Root defaultValue="forge_merge_digital" className="w-full">
         <Tabs.List className="flex gap-4 mb-4 border-b border-gray-700">
           <Tabs.Trigger
-            value="craft"
+            value="forge_merge_digital"
             className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
           >
-            Craft
+            Forge: Merge Digital
+          </Tabs.Trigger>
+          <Tabs.Trigger
+            value="forge_merge_nft"
+            className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
+          >
+            Forge: Merge NFT
+          </Tabs.Trigger>
+          <Tabs.Trigger
+            value="forge_craft_nft"
+            className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
+          >
+            Forge: Craft NFT
+          </Tabs.Trigger>
+          <Tabs.Trigger
+            value="perks"
+            className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white"
+          >
+            Perks Lock
           </Tabs.Trigger>
           <Tabs.Trigger
             value="contracts"
@@ -274,14 +300,6 @@ const ItemCraftingEditor = ({
           </Tabs.Trigger>
         </Tabs.List>
 
-        <Tabs.Content value="craft">
-          <CraftingEditor
-            items={badges}
-            craftingValues={craftingValues}
-            handleCraftingValueChange={handleCraftingValueChange}
-            title="Craft Settings"
-          />
-        </Tabs.Content>
         <Tabs.Content value="contracts">
           <CraftingEditor
             items={contracts}
@@ -289,6 +307,134 @@ const ItemCraftingEditor = ({
             handleCraftingValueChange={handleCraftingValueChange}
             title="Contract Crafting Settings"
           />
+        </Tabs.Content>
+
+        <Tabs.Content value="forge_merge_digital">
+          <div className="max-h-[70vh] overflow-y-auto space-y-4">
+            <h3 className="text-primary text-sm font-medium uppercase sticky top-0 bg-gray-800 py-2">Forge: Merge Digital</h3>
+            <div className="flex justify-end mb-2">
+              <Button onClick={() => handleSaveForge && handleSaveForge(onClose)} disabled={isUpdating} className="bg-green-600 hover:bg-green-700 text-white">
+                {isUpdating ? "Saving..." : "Save Forge"}
+              </Button>
+            </div>
+            {forgeSettings.filter((s) => s.operation_type === "merge_digital").map((s) => (
+              <div key={s.id} className="bg-gray-900/50 p-4 rounded-lg grid grid-cols-2 gap-3">
+                <div className="text-sm font-medium">{s.rarity}</div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">Nb previous</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.nb_previous_required ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'nb_previous_required',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">Cash</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.cash ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'cash',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Tabs.Content>
+
+        <Tabs.Content value="forge_merge_nft">
+          <div className="max-h-[70vh] overflow-y-auto space-y-4">
+            <h3 className="text-primary text-sm font-medium uppercase sticky top-0 bg-gray-800 py-2">Forge: Merge NFT</h3>
+            <div className="flex justify-end mb-2">
+              <Button onClick={() => handleSaveForge && handleSaveForge(onClose)} disabled={isUpdating} className="bg-green-600 hover:bg-green-700 text-white">
+                {isUpdating ? "Saving..." : "Save Forge"}
+              </Button>
+            </div>
+            {forgeSettings.filter((s) => s.operation_type === "merge_nft").map((s) => (
+              <div key={s.id} className="bg-gray-900/50 p-4 rounded-lg grid grid-cols-2 gap-3">
+                <div className="text-sm font-medium">{s.rarity}</div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">Supply</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.supply ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'supply',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">Nb previous</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.nb_previous_required ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'nb_previous_required',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">Cash</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.cash ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'cash',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">Fusion Core</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.fusion_core ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'fusion_core',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">$BFT</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.bft_tokens ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'bft_tokens',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">SP.MARKS Reward</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.sponsor_marks_reward ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'sponsor_marks_reward',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Tabs.Content>
+
+        <Tabs.Content value="forge_craft_nft">
+          <div className="max-h-[70vh] overflow-y-auto space-y-4">
+            <h3 className="text-primary text-sm font-medium uppercase sticky top-0 bg-gray-800 py-2">Forge: Craft NFT</h3>
+            <div className="flex justify-end mb-2">
+              <Button onClick={() => handleSaveForge && handleSaveForge(onClose)} disabled={isUpdating} className="bg-green-600 hover:bg-green-700 text-white">
+                {isUpdating ? "Saving..." : "Save Forge"}
+              </Button>
+            </div>
+            {forgeSettings.filter((s) => s.operation_type === "craft_nft").map((s) => (
+              <div key={s.id} className="bg-gray-900/50 p-4 rounded-lg grid grid-cols-2 gap-3">
+                <div className="text-sm font-medium">{s.rarity}</div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">Supply</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.supply ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'supply',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">Nb digital</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.nb_digital_required ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'nb_digital_required',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">$BFT</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.bft_tokens ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'bft_tokens',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">SP.MARKS Reward</label>
+                  <Input type="number" min="0" value={forgeValues[s.id]?.sponsor_marks_reward ?? ''} onChange={(e)=>handleForgeValueChange(s.id,'sponsor_marks_reward',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Tabs.Content>
+
+        <Tabs.Content value="perks">
+          <div className="max-h-[70vh] overflow-y-auto space-y-4">
+            <h3 className="text-primary text-sm font-medium uppercase sticky top-0 bg-gray-800 py-2">Perks Lock</h3>
+            <div className="flex justify-end mb-2">
+              <Button onClick={() => handleSavePerks && handleSavePerks(onClose)} disabled={isUpdating} className="bg-green-600 hover:bg-green-700 text-white">
+                {isUpdating ? "Saving..." : "Save Perks"}
+              </Button>
+            </div>
+            {perksSettings.map((s) => (
+              <div key={s.id} className="bg-gray-900/50 p-4 rounded-lg grid grid-cols-5 gap-3 items-end">
+                <div className="text-sm font-medium">{s.rarity}</div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">No Star</label>
+                  <Input type="number" min="0" value={perksValues[s.id]?.star_0 ?? ''} onChange={(e)=>handlePerksValueChange(s.id,'star_0',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">★</label>
+                  <Input type="number" min="0" value={perksValues[s.id]?.star_1 ?? ''} onChange={(e)=>handlePerksValueChange(s.id,'star_1',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">★★</label>
+                  <Input type="number" min="0" value={perksValues[s.id]?.star_2 ?? ''} onChange={(e)=>handlePerksValueChange(s.id,'star_2',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-xs mb-1">★★★</label>
+                  <Input type="number" min="0" value={perksValues[s.id]?.star_3 ?? ''} onChange={(e)=>handlePerksValueChange(s.id,'star_3',e.target.value)} className="w-full bg-gray-700" />
+                </div>
+              </div>
+            ))}
+          </div>
         </Tabs.Content>
       </Tabs.Root>
     </div>

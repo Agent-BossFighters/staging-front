@@ -20,9 +20,6 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
   return (
     <div className="w-full overflow-x-auto">
       <Table className="w-full">
-        <TableCaption>
-          Nb charges ROI according to the badge rarity
-        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>
@@ -88,6 +85,9 @@ export default function SlotCost({ slots, loading, selectedRarity }) {
           })}
         </TableBody>
       </Table>
+      <p className="mt-4 text-base text-muted-foreground text-center w-full mx-auto">
+          Nb charges ROI according to the badge rarity
+      </p>
     </div>
   );
 }

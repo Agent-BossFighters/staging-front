@@ -17,7 +17,7 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const { user } = useAuth();
-  const [hoveredTooltip, setHoveredTooltip] = useState(null)
+
   
   // Récupérer les données du tournoi
   const { 
@@ -295,18 +295,18 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="relative w-full max-w-6xl">
-        <Card className="bg-gray-900 border-gray-700 text-white w-[1000px] min-w-[1000px] max-w-[1000px] relative">
-            <Button
-              variant="ghost"
-              className="absolute top-0 right-0 text-gray-400 hover:text-white"
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="flex relative w-full max-w-6xl items-center justify-center">
+        <Card className="bg-gray-900 border-gray-700 text-white w-[90vw] md:w-[80vw] relative overflow-hidden">
+          <div className="md:max-h-none max-h-[80vh] md:overflow-y-visible overflow-y-auto relative z-10">
+            <button 
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
               onClick={onClose}
             >
-              <X className="h-6 w-6" />
-            </Button>
+              <X size={40} />
+            </button>
           <CardHeader className="flex justify-between items-center">
-            <CardTitle className="text-3xl primary text-center font-bold">
+            <CardTitle className="text-xl xl:text-3xl text-primary text-center font-bold">
               EDIT TOURNAMENT
             </CardTitle>
           </CardHeader>
@@ -315,27 +315,22 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
             <form onSubmit={handleSubmit} className="space-y-8 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <label className="text-white font-medium">Tournament Format</label>
-                    <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('tournamentFormat')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'tournamentFormat' && (
-                      <span className="tooltip pointer-events-none absolute top-full left-1/2 -translate-x-1/4 mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                        'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more 
-                        <br/>matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
-                        <br />
-                        'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more
-                        <br/> matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
-                        <br />
-                        'Arena' is a knockout tournament team versus team where you will have to win round(s) with Home/Away match(es).
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <label className="text-white font-bold">Tournament Format</label>
+                    <div className="relative group/format">
+                      <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/format:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                        <p className="break-words">
+                          'Showtime - Survival' is a tournament for a single Boss where players have to survive as long as possible during 1 or more matches to earn as many time points as possible for their team to win the tournament. Be careful, the Boss score also counts as a tie-breaker.
+                          <br /><br />
+                          'Showtime - Score counter' is a tournament for a single Boss where players have to do as much as possible score during 1 or more matches to earn as many points as possible for their team to win the tournament. Be careful, the life left also counts as a tie-breaker.
+                          <br /><br />
+                          'Arena' is a knockout tournament team versus team where you will have to win round(s) with Home/Away match(es).
+                        </p>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-black"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
                   <Select 
                     value={formData.tournament_type} 
                     onValueChange={(value) => handleSelectChange("tournament_type", value)}
@@ -352,21 +347,18 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                   </Select>
                   
                   
-                  <div className="flex items-center justify-between mt-6">
-                    <label className="text-white font-medium">Team slots</label>
-                    <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('teamSlots')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'teamSlots' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                        Total number of teams in the tournament.
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2 mt-6">
+                    <label className="text-white font-bold">Team slots</label>
+                    <div className="relative group/slots">
+                      <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/slots:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                        <p className="break-words">
+                          Total number of teams in the tournament.
+                        </p>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
                   <Select 
                     value={formData.max_teams.toString()} 
                     onValueChange={(value) => handleSelectChange("max_teams", value)}
@@ -387,21 +379,18 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                     </SelectContent>
                   </Select>
                   
-                  <div className="flex items-center justify-between mt-6">
-                    <label className="text-white font-medium">Player(s) per team</label>
-                    <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('playersPerTeam')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'playersPerTeam' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                        Total number of player(s) per team in the tournament.
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2 mt-6">
+                    <label className="text-white font-bold">Player(s) per team</label>
+                    <div className="relative group/players">
+                      <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/players:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                        <p className="break-words">
+                          Total number of player(s) per team in the tournament.
+                        </p>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
                   <Select 
                     value={formData.players_per_team.toString()} 
                     onValueChange={(value) => handleSelectChange("players_per_team", value)}
@@ -417,21 +406,18 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                     </SelectContent>
                   </Select>
                   
-                  <div className="flex items-center justify-between mt-6">
-                    <label className="text-white font-medium">Number of rounds</label>
-                    <div 
-                        className="relative inline-block" 
-                        onMouseEnter={() => setHoveredTooltip('numberOfRounds')} 
-                        onMouseLeave={() => setHoveredTooltip(null)}
-                      >
-                        <Info className="h-5 w-5 text-gray-400" />
-                        {hoveredTooltip === 'numberOfRounds' && (
-                          <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                            Total number of round(s) in the tournament.
-                          </span>
-                        )}
+                  <div className="flex items-center gap-2 mt-6">
+                    <label className="text-white font-bold">Number of rounds</label>
+                    <div className="relative group/rounds">
+                      <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/rounds:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                        <p className="break-words">
+                          Total number of round(s) in the tournament.
+                        </p>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
                       </div>
                     </div>
+                  </div>
                   <Select 
                     value={formData.rounds} 
                     onValueChange={(value) => handleSelectChange("rounds", value)}
@@ -452,21 +438,18 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                 </div>
                 
                 <div className="space-y-4 md:col-span-2">
-                  <div className="flex items-center justify-between">
-                    <label className="text-white font-medium">Tournament name</label>
-                    <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('tournamentName')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'tournamentName' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                        Tournament name is limited by 40 characters.
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <label className="text-white font-bold">Tournament name</label>
+                    <div className="relative group/name">
+                      <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/name:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                        <p className="break-words">
+                          Tournament name is limited by 40 characters.
+                        </p>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
                   <Input
                     name="name"
                     value={formData.name}
@@ -476,21 +459,18 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                     maxLength={40}
                   />
                   
-                  <div className="flex items-center justify-between mt-6">
-                    <label className="text-white font-medium">Tournament rules</label>
-                    <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('tournamentRules')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'tournamentRules' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                        Rules of the tournament.
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2 mt-6">
+                    <label className="text-white font-bold">Tournament rules</label>
+                    <div className="relative group/rules">
+                      <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/rules:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                        <p className="break-words">
+                          Rules of the tournament.
+                        </p>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
                   <Textarea
                     name="rules"
                     value={formData.rules}
@@ -499,41 +479,35 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                     placeholder="Enter tournament details/rules"
                   />
                   
-                  <div className="flex items-center justify-between mt-6">
-                    <label className="text-white font-medium">Agent Level required</label>
-                    <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('agentLevelRequired')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'agentLevelRequired' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                        User level required to join the tournament.
-                      </span>
-                    )}
+                  <div className="flex items-center gap-2 mt-6">
+                    <label className="text-white font-bold">Agent Level required</label>
+                    <div className="relative group/level">
+                      <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/level:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                        <p className="break-words">
+                          User level required to join the tournament.
+                        </p>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
                   <Input
                     value={formData.agent_level_required}
                     className="bg-gray-800 border-gray-700 text-white"
                     disabled={true}
                   />
                   
-                  <div className="flex items-center justify-between mt-6">
-                    <label className="text-white font-medium">Tournament entry code</label>
-                    <div 
-                    className="relative inline-block" 
-                    onMouseEnter={() => setHoveredTooltip('tournamentEntryCode')} 
-                    onMouseLeave={() => setHoveredTooltip(null)}
-                  >
-                    <Info className="h-5 w-5 text-gray-400" />
-                    {hoveredTooltip === 'tournamentEntryCode' && (
-                      <span className="pointer-events-none absolute right-full mb-3 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white shadow-md z-10">
-                        Code required to join the tournament.
-                      </span>
-                    )}
-                  </div>
+                  <div className="flex items-center gap-2 mt-6">
+                    <label className="text-white font-bold">Tournament entry code</label>
+                    <div className="relative group/code">
+                      <Info size={20} className="text-gray-400 hover:text-primary cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm rounded-lg opacity-0 group-hover/code:opacity-100 transition-opacity duration-200 pointer-events-none z-[1000] w-48">
+                        <p className="break-words">
+                          Code required to join the tournament.
+                        </p>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                      </div>
+                    </div>
                   </div>
                   <div className="bg-gray-800 border border-gray-700 text-white p-3 rounded-md">
                     {formData.entry_code ? "Yes" : "No"}
@@ -541,44 +515,32 @@ export default function TournamentEditModal({ tournament: initialTournament, isO
                 </div>
               </div>
               
-              <div className="py-4 border-t border-gray-700">
-                <h3 className="text-lg text-white">Estimated tournament matches time :</h3>
-                <div className="grid grid-cols-1 gap-2 mt-4">
-                  <div className="text-2xl font-bold text-white">{estimatedMatches} Matches</div>
-                  <div className="text-2xl font-bold primary">
+              <div className="flex flex-row lg:h-12">
+
+              <div className="flex flex-col lg:flex-row py-2 w-3/4 lg:w-5/6 items-center justify-start">
+                <h3 className="text-sm sm:text-lg font-bold text-white xs:w-full">Tournament matches time estimation :</h3>
+                <div className="flex flex-row justify-center items-center px-4 gap-6">
+                  <div className="text-sm sm:text-lg text-white">{estimatedMatches} Matches</div>
+                  <div className="text-sm sm:text-lg text-primary">
                     {estimatedTime} Minutes ({Math.floor(estimatedTime/60) > 0 ? `${Math.floor(estimatedTime/60)}h` : ""}{estimatedTime % 60 > 0 ? `${estimatedTime % 60}` : ""})
                   </div>
                 </div>
               </div>
               
-              <div className="flex justify-center gap-4 mt-6">
-                <Button 
-                  type="button"
-                  className="bg-gray-700 hover:bg-gray-600 text-white px-8 py-2 text-lg"
-                  onClick={handleCancel}
-                  disabled={isLoading}
-                >
-                  Cancel
-                </Button>
-                
+              <div className="flex flex-col lg:flex-row item-end lg:items-center justify-center lg:justify-end w-1/4 lg:w-1/6">
                 <Button 
                   type="submit" 
-                  className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-2 text-lg"
+                  className="justify-center whitespace-nowrap rounded-md text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-background shadow hover:bg-primary/90 font-bold uppercase h-12 px-8 py-2 flex items-center gap-2 transition-transform duration-200 hover:scale-105"
                   disabled={isLoading}
                 >
-                  {isLoading ? (
-                    <span className="flex items-center">
-                      <span className="animate-spin mr-2">⟳</span> Updating...
-                    </span>
-                  ) : (
-                    <span className="flex items-center">
-                      <CheckCircle size={18} className="mr-2" /> Save Changes
-                    </span>
-                  )}
+                  {isLoading ? "Updating..." : "VALIDATE"}
                 </Button>
               </div>
+
+            </div>
             </form>
           </CardContent>
+          </div>
         </Card>
       </div>
     </div>

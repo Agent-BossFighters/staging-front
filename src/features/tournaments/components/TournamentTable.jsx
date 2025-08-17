@@ -160,7 +160,7 @@ const TournamentTable = ({ tournaments = [], onTournamentClick }) => {
                   </TableCell>
                   <TableCell className="py-3">{mode}</TableCell>
                   <TableCell className="py-3">
-                    <Badge className={status.colorClass}>{status.label}</Badge>
+                    <Badge className={`${status.colorClass} h-9`}>{status.label}</Badge>
                   </TableCell>
                   <TableCell className="py-3">{tournament.max_teams}</TableCell>
                   <TableCell className="py-3">
