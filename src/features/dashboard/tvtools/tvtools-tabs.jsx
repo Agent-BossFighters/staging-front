@@ -2,10 +2,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/tabs";
 
 import {
   BossWheel,
+  PackOpening,
 } from "./index";
 
 const tabs = [
   { name: "BOSS WHEEL", value: "Boss Wheel" },
+  { name: "PACK OPENING", value: "Pack Opening" },
 ];
 
 export default function TvToolsTabs() {
@@ -30,6 +32,9 @@ export default function TvToolsTabs() {
     <div className="mt-6">
       <TabsContent value="Boss Wheel">
         <BossWheel />
+      </TabsContent>
+      <TabsContent value="Pack Opening">
+        <PackOpening />
       </TabsContent>
     </div>
   </Tabs>
