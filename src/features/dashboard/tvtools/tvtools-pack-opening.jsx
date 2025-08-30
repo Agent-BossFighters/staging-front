@@ -1012,8 +1012,8 @@ export default function PackOpening() {
 
   // Générer le pack
   const generatePack = () => {
-    // Catégories
-    const SET_UTILITY = new Set(["Badge", "Contract", "Gameshare"].map(n => ICON_NAMES.indexOf(n)));
+    // Catégories → indices d'icônes
+    const SET_UTILITY = new Set(["Badge","Contract","Gameshare"].map(n => ICON_NAMES.indexOf(n)));
     const SET_FIGHTER = new Set([
       "Antimatter","Dash","Female","Hook","Jetpack","Jump","Lobber","Male","Manipulator","Railgun","Striker"
     ].map(n => ICON_NAMES.indexOf(n)));
@@ -1025,72 +1025,86 @@ export default function PackOpening() {
     const pb = Math.max(0, parseInt(packsBoss, 10) || 0);
     const cpp = Math.max(1, Math.min(7, parseInt(cardsPerPack, 10) || 1));
   
-    // 1) Construire les pools
+    // 1) Construire les pools à partir des giveaways
     const poolFighter = [];
     const poolBoss = [];
   
     giveaways.forEach((g) => {
       const n = Math.max(0, g.number || 0);
       for (let i = 0; i < n; i++) {
-        if (SET_FIGHTER.has(g.iconIndex) || SET_UTILITY.has(g.iconIndex)) {
-          poolFighter.push({ ...g });
-        }
-        if (SET_BOSS.has(g.iconIndex) || SET_UTILITY.has(g.iconIndex)) {
-          poolBoss.push({ ...g });
-        }
+        const item = { ...g }; // éviter de partager la même ref
+        if (SET_FIGHTER.has(g.iconIndex) || SET_UTILITY.has(g.iconIndex)) poolFighter.push({ ...item });
+        if (SET_BOSS.has(g.iconIndex)    || SET_UTILITY.has(g.iconIndex)) poolBoss.push({ ...item });
       }
     });
   
     shuffleInPlace(poolFighter);
     shuffleInPlace(poolBoss);
   
-    // 2) Créer les packs Fighter
+    // 2) Créer TOUS les packs vides (giveaway=null partout)
     const packs = [];
-    let idxFighter = 0;
     for (let p = 0; p < pf; p++) {
-      const slots = [];
-      for (let s = 0; s < cpp; s++) {
-        const giveaway = idxFighter < poolFighter.length ? poolFighter[idxFighter++] : null;
-        slots.push({
-          id: `fighter-pack-${p + 1}-slot-${s + 1}`,
-          giveaway,
-          revealed: false,
-        });
-      }
       packs.push({
         id: `fighter-pack-${p + 1}`,
         number: p + 1,
         type: "fighter",
-        slots,
+        slots: Array.from({ length: cpp }, (_, s) => ({
+          id: `fighter-pack-${p + 1}-slot-${s + 1}`,
+          giveaway: null,
+          revealed: false,
+        })),
       });
     }
-  
-    // 3) Créer les packs Boss
-    let idxBoss = 0;
     for (let p = 0; p < pb; p++) {
-      const slots = [];
-      for (let s = 0; s < cpp; s++) {
-        const giveaway = idxBoss < poolBoss.length ? poolBoss[idxBoss++] : null;
-        slots.push({
-          id: `boss-pack-${p + 1}-slot-${s + 1}`,
-          giveaway,
-          revealed: false,
-        });
-      }
       packs.push({
         id: `boss-pack-${p + 1}`,
         number: p + 1,
         type: "boss",
-        slots,
+        slots: Array.from({ length: cpp }, (_, s) => ({
+          id: `boss-pack-${p + 1}-slot-${s + 1}`,
+          giveaway: null,
+          revealed: false,
+        })),
       });
     }
   
-    shuffleInPlace(packs); // Mélanger l'ordre final des packs
+    // 3) Lister toutes les positions de slots par type, puis les mélanger
+    const fighterPositions = [];
+    const bossPositions = [];
+    packs.forEach((pack, pi) => {
+      pack.slots.forEach((_, si) => {
+        if (pack.type === "fighter") fighterPositions.push([pi, si]);
+        else bossPositions.push([pi, si]);
+      });
+    });
+    shuffleInPlace(fighterPositions);
+    shuffleInPlace(bossPositions);
+  
+    // 4) Répartir aléatoirement les pools dans les positions
+    // (si plus d’items que de slots, l’excédent est ignoré)
+    poolFighter.forEach((g) => {
+      const pos = fighterPositions.pop();
+      if (!pos) return;
+      const [pi, si] = pos;
+      packs[pi].slots[si].giveaway = { ...g };
+    });
+  
+    poolBoss.forEach((g) => {
+      const pos = bossPositions.pop();
+      if (!pos) return;
+      const [pi, si] = pos;
+      packs[pi].slots[si].giveaway = { ...g };
+    });
+  
+    // 5) (optionnel) mélanger l’ordre d’affichage des packs,
+    // mais comme tu les tries par id au rendu, ce n’est pas critique.
+    // shuffleInPlace(packs);
   
     setGeneratedPacks(packs);
     setSelectedPack(null);
     setConfigStep(false);
   };
+  
   
   
   const revealSlot = (packId, slotId) => {
