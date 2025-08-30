@@ -74,6 +74,7 @@ export default {
         "7/8": "87.5%",
       },
       screens: {
+        's': '499px',
         'xll': '1480px', // entre lg et xl
       },
     },
