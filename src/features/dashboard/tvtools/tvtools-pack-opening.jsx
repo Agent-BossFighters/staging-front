@@ -5,12 +5,15 @@ import { Button } from "@ui/button";
 import { Input } from "@ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/table";
-import { Plus, Edit, Trash2, X } from "lucide-react";
+import { Plus, Edit, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const ICONS = [Antimatter, Autorepear, Badge, Boss, Contract, Dash, Female, Gameshare, Gaspod, Gravitygun, Hammer, Hook, Jetpack, Jump, Laser, Lobber, Male, Manipulator, Railgun, Spike, Striker, Toxicgun];
-
 const ICON_NAMES = ["Antimatter", "Autorepear", "Badge", "Boss", "Contract", "Dash", "Female", "Gameshare", "Gaspod", "Gravitygun", "Hammer", "Hook", "Jetpack", "Jump", "Laser", "Lobber", "Male", "Manipulator", "Railgun", "Spike", "Striker", "Toxicgun"];
 
+// --- Catégorisation des icônes ---
+const CAT_UTILITY = new Set(["Badge", "Contract", "Gameshare"]);
+const CAT_FIGHTER = new Set(["Antimatter", "Dash", "Female", "Hook", "Jetpack", "Jump", "Lobber", "Male", "Manipulator", "Railgun", "Striker"]);
+const CAT_BOSS    = new Set(["Autorepear", "Boss", "Gaspod", "Gravitygun", "Hammer", "Laser", "Spike", "Toxicgun"]);
 
 const TIERS = [
   { value: "tier1", label: "Tier 1 ★", color: "text-white" },
@@ -18,97 +21,113 @@ const TIERS = [
   { value: "tier3", label: "Tier 3 ★★★", color: "text-yellow-500" },
 ];
 
+const idNum = (id) => {
+  const m = String(id).match(/(\d+)(?!.*\d)/); // dernier nombre de la chaîne
+  return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
+};
+
+function categoryForIconIndex(iconIndex) {
+  const name = ICON_NAMES[iconIndex] ?? "";
+  if (CAT_UTILITY.has(name)) return "utility";
+  if (CAT_FIGHTER.has(name)) return "fighter";
+  if (CAT_BOSS.has(name)) return "boss";
+  return "unknown";
+}
+
+// helpers aléatoires
+function shuffleInPlace(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function takeRandom(array) {
+  if (!array.length) return null;
+  const i = Math.floor(Math.random() * array.length);
+  const [picked] = array.splice(i, 1);
+  return picked ?? null;
+}
+
 // Composant Card pour afficher une carte
-function Card({ number, isRevealed, giveaway, onReveal, cardSize, onOpen }) {
+function Card({ pack, cardSize, onOpen, tiers, icons }) {
+  const allRevealed = pack.slots.every((s) => s.revealed);
+  const firstWinSlot = pack.slots.find((s) => s.revealed && s.giveaway);
+  const isWin = Boolean(firstWinSlot);
+  const giveaway = firstWinSlot?.giveaway;
+
+  const coverImg = pack.type === "boss" ? BossPack : FightersPack;
 
   return (
     <div
-        className="relative flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300"
-        style={{
-          perspective: "1000px",
-          height: `${cardSize}px`,
-          aspectRatio: "3/4",
-        }}
-        onClick={onOpen} // ← au lieu de (!isRevealed ? onReveal : undefined)
-      >
-      {/* Container avec transformation 3D */}
-      <div
-        className="relative w-full h-full transition-all duration-700 ease-in-out"
-        style={{
-          transformStyle: "preserve-3d",
-          transform: isRevealed ? "rotateY(180deg)" : "rotateY(0deg)",
-        }}
-      >
-        {/* Face avant (non révélée) */}
+      className="relative flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300"
+      style={{ perspective: "1000px", height: `${cardSize}px`, aspectRatio: "3/4" }}
+      onClick={onOpen}
+    >
+      {!allRevealed ? (
         <div
-          className="absolute inset-0 shadow-2xl flex flex-col justify-center items-center transition-colors"
-          style={{ 
-            backfaceVisibility: "hidden", 
-            backgroundImage: `url(${FightersPack})`,
+          className="absolute inset-0 shadow-2xl flex flex-col justify-center items-center"
+          style={{
+            backfaceVisibility: "hidden",
+            backgroundImage: `url(${coverImg})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
-        >
-          
-          {/* # + numéro : taille x2 */}
-          <div
-            className="absolute top-4 text-primary font-bold leading-none bg-black/30 backdrop-blur-sm rounded-full px-4 py-2"
-            style={{ fontSize: `${Math.min(cardSize * 0.30, 22)}px` }}  // 0.15 -> 0.30, cap 36 -> 72
-          >
-            #{number}
-          </div>
-        </div>
-
-        {/* Face arrière (révélée) */}
+        />
+      ) : (
         <div
           className={`absolute inset-0 rounded-xl shadow-2xl flex flex-col items-center justify-center border-2 ${
-            giveaway 
-              ? "bg-gradient-to-br from-green-600 to-green-800 border-green-500" 
+            isWin
+              ? "bg-gradient-to-br from-green-600 to-green-800 border-green-500"
               : "bg-gradient-to-br from-red-600 to-red-800 border-red-500"
           }`}
-          style={{
-            backfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-          }}
         >
           <div className="text-center text-white p-4">
-            {giveaway ? (
+            {isWin ? (
               <>
-                <div 
-                  className="font-bold mb-2 text-primary"
+                <div
+                  className="font-bold mb-2 text-green-300"
                   style={{ fontSize: `${Math.min(cardSize * 0.12, 24)}px` }}
                 >
                   WIN
                 </div>
-                <img
-                  src={ICONS[giveaway.iconIndex]}
-                  alt="Giveaway icon"
-                  className="object-contain mx-auto mb-2"
-                  style={{ 
-                    width: `${Math.min(cardSize * 0.3, 96)}px`,
-                    height: `${Math.min(cardSize * 0.3, 96)}px`
-                  }}
-                />
-                <div 
-                  className={`font-bold ${TIERS.find(t => t.value === giveaway.tier)?.color}`}
+                {typeof giveaway?.iconIndex === "number" && (
+                  <img
+                    src={icons[giveaway.iconIndex]}
+                    alt="Giveaway icon"
+                    className="object-contain mx-auto mb-2"
+                    style={{
+                      width: `${Math.min(cardSize * 0.3, 96)}px`,
+                      height: `${Math.min(cardSize * 0.3, 96)}px`,
+                    }}
+                  />
+                )}
+                <div
+                  className={`font-bold ${tiers.find((t) => t.value === giveaway?.tier)?.color ?? ""}`}
                   style={{ fontSize: `${Math.min(cardSize * 0.08, 18)}px` }}
                 >
-                  {TIERS.find(t => t.value === giveaway.tier)?.label}
+                  {tiers.find((t) => t.value === giveaway?.tier)?.label ?? ""}
                 </div>
               </>
             ) : (
-              <>
-                <div 
-                  className="font-bold text-red-400"
-                  style={{ fontSize: `${Math.min(cardSize * 0.12, 24)}px` }}
-                >
-                  LOOSE
-                </div>
-              </>
+              <div
+                className="font-bold text-red-200"
+                style={{ fontSize: `${Math.min(cardSize * 0.12, 24)}px` }}
+              >
+                LOOSE
+              </div>
             )}
           </div>
         </div>
+      )}
+
+      {/* Badge pack */}
+      <div
+        className="absolute top-2 left-1/2 -translate-x-1/2 text-primary font-bold leading-none backdrop-blur-sm rounded-full px-3 py-1"
+        style={{ fontSize: `${Math.min(cardSize * 0.30, 22)}px` }}
+      >
+        #{pack.number}
       </div>
     </div>
   );
@@ -223,8 +242,6 @@ function StarBurstPersistent({
   );
 }
 
-
-
 // Hook press-and-hold (souris + tactile) avec progress 0→1
 function useHoldToRip({ duration = 3000, onComplete }) {
   const [progress, setProgress] = React.useState(0);
@@ -281,13 +298,15 @@ function TopTearBand({ progress, bgImage }) {
 
   return (
     <motion.div
-      className="flex top-0 left-0 right-0 h-[6.2%]"
+      className="absolute z-[20] -top-7 s:-top-9 md:-top-10 left-0 right-0 h-[6.2%] pointer-events-none"
       style={{              // hauteur du bandeau déchiré (ajuste)
         backgroundImage: `url(${bgImage})`,
         backgroundRepeat: "no-repeat",
         backgroundPosition: "top center",
         backgroundSize: "cover",
         WebkitMaskRepeat: "no-repeat",
+        borderBottom: "2px dashed",
+        borderColor: "hsl(var(--primary))",
       }}
       // on rogne depuis la GAUCHE vers la DROITE
       animate={{ clipPath: `inset(0 0 0 ${progress * 100}%)` }}
@@ -352,30 +371,25 @@ function CardRevealModal({ card, onClose, onReveal, tiers, icons }) {
                 className="absolute left-0 right-0 -bottom-7 s:-bottom-8 z-[10]"
                 style={{
                   height: "99%",
-                  backgroundImage: `url(${FightersPack})`,
+                  backgroundImage: `url(${coverImg})`,
                   backgroundRepeat: "no-repeat",
                   backgroundPosition: "bottom center",
                   backgroundSize: "cover",
                 }}
               />
               {/* bandeau haut */}
-              <TopTearBand progress={progress} bgImage={FightersPack} />
+              <TopTearBand progress={progress} bgImage={coverImg} />
 
               {/* header: help + close */}
-              <div className="absolute -top-14 left-0 right-0 z-[20] flex items-center justify-center pointer-events-none">
+              <div className="absolute -top-12 left-0 right-0 z-[20] flex items-center justify-center pointer-events-none">
                 <div className="h-12 rounded-full text-lg text-primary">Press & hold 3s to open</div>
               </div>
               <button
                 onClick={onClose}
-                className="absolute -top-14 right-0 z-[30] rounded-full px-3 py-1 text-xs bg-white/10 hover:bg-white/20 text-white pointer-events-auto"
+                className="absolute -top-12 right-0 z-[30] rounded-full px-3 py-1 text-xs bg-white/10 hover:bg-white/20 text-white pointer-events-auto"
               >
                 <X size={42} />
               </button>
-
-              {/* # numéro */}
-              <div className="absolute bottom-4 s:bottom-6 s:mb-2 left-6 s:left-8 z-[20] text-primary/50 text-xl font-semibold">
-                #{card.number}
-              </div>
             </>
           )}
 
@@ -454,14 +468,381 @@ function CardRevealModal({ card, onClose, onReveal, tiers, icons }) {
   );
 }
 
+function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
+  const [opened, setOpened] = React.useState(false);
+  const [idx, setIdx] = React.useState(0);
+  const [starsTrigger, setStarsTrigger] = React.useState(0);
+
+  // NEW: zone de survol (tl, t, tr, l, c, r, bl, b, br, null)
+  const [hoverZone, setHoverZone] = React.useState(null);
+
+  // Transformations par zone (on n’applique que quand !opened)
+  const tiltByZone = {
+    tl: { rotateX: -20, rotateY:  20, scale: 1.02 },
+    t:  { rotateX: -20, rotateY:   0, scale: 1.02 },
+    tr: { rotateX: -20, rotateY: -20, scale: 1.02 },
+    l:  { rotateX:   0, rotateY:  20, scale: 1.02 },
+    c:  { rotateX:   0, rotateY:   0, scale: 1.05 },
+    r:  { rotateX:   0, rotateY: -20, scale: 1.02 },
+    bl: { rotateX:  20, rotateY:  20, scale: 1.02 },
+    b:  { rotateX:  20, rotateY:   0, scale: 1.02 },
+    br: { rotateX:  20, rotateY: -20, scale: 1.02 },
+  };
+
+  // Ombres internes (“light-shadow”) par zone
+  const shadowByZone = {
+    tl: 'inset 40px 40px 120px 10px rgba(255, 255, 255, 0.05), inset -40px -40px 120px 10px rgba(255, 0, 200, 0.1)',
+    t:  'inset 0 50px 150px rgba(0, 255, 200, 0.2), inset 0 -40px 100px rgba(255, 0, 150, 0.2)',
+    tr: 'inset -40px 40px 120px 10px rgba(0, 200, 255, 0.1), inset 40px -40px 120px 10px rgba(255, 255, 255, 0.05)',
+    l:  'inset 60px 0 120px rgba(255, 255, 255, 0.05), inset -30px 0 100px rgba(0, 255, 200, 0.15)',
+    c:  'inset 0 0 180px rgba(255, 255, 255, 0.1), inset 0 0 200px rgba(255, 0, 255, 0.2)',
+    r:  'inset -60px 0 120px rgba(255, 255, 255, 0.05), inset 30px 0 100px rgba(0, 150, 255, 0.15)',
+    bl: 'inset -50px -50px 120px 10px rgba(255, 255, 255, 0.1), inset 40px 40px 100px rgba(255, 0, 255, 0.15)',
+    b:  'inset 0 -50px 140px 5px rgba(0, 200, 255, 0.2), inset 0 40px 120px rgba(255, 255, 255, 0.05)',
+    br: 'inset 50px -50px 120px 10px rgba(255, 255, 255, 0.1), inset -40px 40px 100px rgba(0, 255, 200, 0.15)',
+  };
+
+  const tiltTarget = !opened && hoverZone ? tiltByZone[hoverZone] : { rotateX: 0, rotateY: 0, scale: 1 };
+  const shadowTarget = !opened && hoverZone ? shadowByZone[hoverZone] : 'none';  // pour l’anim d’étoiles
+  
+  // Passer les handlers “hold-to-rip” aux zones pour ne pas casser le press&hold
+  const passHoldHandlers = (props = {}) => ({
+    onMouseEnter: props.onMouseEnter,
+    onMouseLeave: props.onMouseLeave,
+    onMouseDown:  (e) => bind.onMouseDown?.(e),
+    onMouseUp:    (e) => bind.onMouseUp?.(e),
+    onMouseLeaveCapture: (e) => bind.onMouseLeave?.(e),
+    onTouchStart: (e) => bind.onTouchStart?.(e),
+    onTouchEnd:   (e) => bind.onTouchEnd?.(e),
+    onTouchCancel:(e) => bind.onTouchCancel?.(e),
+  });
+
+  if (!pack) return null;
+
+  const slots = pack.slots;
+  const current = slots[idx];
+  const isWin = Boolean(current?.giveaway);
+
+  const META = {
+    tier1: { stars: 24, color: "#9CA3AF" },
+    tier2: { stars: 42, color: "#22C55E" },
+    tier3: { stars: 72, color: "#FDE047" },
+  };
+  const tierKey = current?.giveaway?.tier ?? "tier1";
+  const tmeta = META[tierKey] ?? META.tier1;
+
+  // 3s hold → ouverture du pack
+  const { progress, bind } = useHoldToRip({
+    duration: 3000,
+    onComplete: () => {
+      setOpened(true);
+      // si 1 seule carte => reveal direct
+      if (slots.length === 1 && !slots[0].revealed) {
+        if (slots[0].giveaway) setStarsTrigger(Date.now());
+        onRevealSlot(pack.id, slots[0].id);
+      }
+    },
+  });
+
+  const goPrev = () => setIdx((i) => Math.max(0, i - 1));
+  const goNext = () => setIdx((i) => Math.min(slots.length - 1, i + 1));
+
+  const handleReveal = () => {
+    if (current.revealed) return;
+    if (current.giveaway) setStarsTrigger(Date.now());
+    onRevealSlot(pack.id, current.id);
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-[999] flex items-center justify-center"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      >
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
+
+        <motion.div
+          className="relative w-[min(82vw,520px)] aspect-[3/4] rounded-2xl overflow-visible z-50 select-none"
+          initial={{ scale: 0.85, opacity: 0, rotate: -2 }}
+          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          exit={{ scale: 0.92, opacity: 0, rotate: 2 }}
+          transition={{ type: "spring", stiffness: 120, damping: 16 }}
+          {...(!opened ? bind : {})}
+        >
+          {/* COUVERTURE tant que !opened */}
+          {!opened && (
+            <>
+              {/* CONTENEUR PERSPECTIVE + WRAPPER qui tilt */}
+
+              {/* Header aide + close (reste tel quel) */}
+              <div className="absolute -top-16 -mt-10 left-0 right-0 z-[20] flex items-center justify-center pointer-events-none">
+                <div className="flex items-center h-12 justify-center rounded-full text-lg text-primary">Press & hold 3s to open</div>
+              </div>
+              <button
+                onClick={onClose}
+                className="absolute -top-16 -mt-10 right-0 z-[30] rounded-full px-3 py-1 text-xs bg-white/10 hover:bg-white/20 text-white pointer-events-auto"
+              >
+                <X size={42} />
+              </button>
+
+              <div className="absolute inset-0 [perspective:1500px] z-[12]">
+                <motion.div
+                  className="absolute inset-0 will-change-transform rounded-2xl overflow-visible top-2"
+                  style={{ transformStyle: 'preserve-3d' }}
+                  animate={tiltTarget}
+                  transition={{ type: 'spring', stiffness: 12, damping: 28 }}
+                >
+                  
+
+                  {/* Fond pack */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage: `url(${pack.type === "boss" ? BossPack : FightersPack})`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundPosition: "bottom center",
+                      backgroundSize: "cover",
+                    }}
+                  />
+
+                  {/* bandeau haut */}
+                  <TopTearBand progress={progress} bgImage={pack.type === "boss" ? BossPack : FightersPack} />
+
+                  <div
+                    className="absolute inset-0 mx-3 pointer-events-none mix-blend-screen opacity-30 "
+                    style={{
+                      background: `
+                        repeating-linear-gradient(
+                          125deg,
+                          rgba(255,0,200,0.15) 0%,
+                          rgba(0,255,255,0.05) 10%,
+                          rgba(255,255,0,0.1) 20%,
+                          rgba(255,0,200,0.15) 30%
+                        )
+                      `,
+                      backgroundSize: "300% 300%",
+                      animation: "holoShift 6s linear infinite",
+                    }}
+                  />
+
+                  {/* light-shadow (animée) */}
+                  <div
+                    className="light-shadow pointer-events-none absolute inset-0 transition-all duration-500 mx-2 mb-8 s:mb-11 opacity-40"
+                    style={{ boxShadow: shadowTarget }}
+                  />
+
+                  {/* badge numéro (en bas-gauche) */}
+                  <div className="absolute bottom-12 left-6 s:bottom-16 s:left-8 text-primary/80 z-[999] text-3xl font-bold uppercase">
+                    #{pack.number}
+                  </div>
+                </motion.div>
+
+                {/* 9 ZONES — 3x3 — couvrent la carte */}
+                <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-20">
+                  {/* TL */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('tl'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                  {/* T */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('t'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                  {/* TR */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('tr'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                  {/* L */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('l'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                  {/* C */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('c'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                  {/* R */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('r'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                  {/* BL */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('bl'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                  {/* B */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('b'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                  {/* BR */}
+                  <div
+                    className="w-full h-full"
+                    {...passHoldHandlers({
+                      onMouseEnter: () => setHoverZone('br'),
+                      onMouseLeave: () => setHoverZone(null),
+                    })}
+                  />
+                </div>
+              </div>
+
+            </>
+          )}
+
+          {/* ÉTOILES (uniquement après reveal d’un WIN) */}
+          {opened && current?.revealed && current?.giveaway && (
+            <StarBurstPersistent
+              key={starsTrigger}
+              trigger={starsTrigger}
+              color={tmeta.color}
+              count={tmeta.stars}
+              runForMs={20000}
+              waveEvery={10000}
+              particleDuration={10000}
+            />
+          )}
+
+          {/* CONTENU quand pack ouvert */}
+          {opened && (
+            <motion.div
+              className="absolute inset-0 z-[70] flex items-center justify-center"
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 60, damping: 14 }}
+            >
+              <div className="flex flex-col items-center justify-center w-5/6 h-6/6 s:h-5/6 gap-4 border-4 border-primary/50 rounded-2xl bg-gray-900/30 backdrop-blur-sm p-4">
+                {/* Header: Pack + position carte */}
+                <div className="text-primary text-2xl font-bold uppercase">
+                  #{pack.number}
+                </div>
+
+                {/* Zone résultat/reveal */}
+                <div className="flex flex-col items-center gap-3">
+                  {current.revealed ? (
+                    <>
+                      <div className={current.giveaway ? "text-primary text-3xl uppercase font-bold" : "text-red-600 text-3xl uppercase font-bold"}>
+                        {current.giveaway ? "You won" : "No reward"}
+                      </div>
+
+                      {!current.giveaway && (
+                        <motion.div initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                          transition={{ type: "spring", stiffness: 60, damping: 12 }}>
+                          <img src={IconLoose} alt="Loose" className="w-32 h-32 mx-auto my-6 drop-shadow-[0_0_12px_rgba(0,0,0,0.35)]" />
+                        </motion.div>
+                      )}
+
+                      {current.giveaway && (
+                        <>
+                          <div className="text-xl font-semibold" style={{ color: tmeta.color }}>
+                            {tiers.find((t) => t.value === (current.giveaway.tier ?? "tier1"))?.label}
+                          </div>
+                          <motion.div initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: "spring", stiffness: 60, damping: 12 }}>
+                            <img
+                              src={icons[current.giveaway.iconIndex]}
+                              alt="Giveaway"
+                              className="w-24 h-24 mx-auto drop-shadow-[0_0_22px_rgba(0,0,0,0.35)]"
+                            />
+                          </motion.div>
+                          <div className="text-2xl font-bold text-white">{current.giveaway.name}</div>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex flex-col items-center justify-center gap-4 my-14 p-4">
+                        <div className="text-white/80">Reveal this card ?</div>
+                        <Button onClick={handleReveal} className="font-bold uppercase">
+                          Reveal
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Navigation (si > 1 carte) */}
+                {slots.length > 1 && (
+                  <div className="flex gap-3 mt-2 justify-center items-center uppercase text-primary">
+                    <Button
+                      variant="outline"
+                      onClick={goPrev}
+                      disabled={idx === 0}
+                      className="flex items-center gap-2"
+                    >
+                      <ChevronLeft size={20} />
+                    </Button>
+                    <div className="uppercase text-primary text-center font-bold">
+                      {slots.length === 1 ? (
+                        "Single card"
+                      ) : (
+                        <>
+                          Card
+                          <br />
+                          {idx + 1} / {slots.length}
+                        </>
+                      )}
+                    </div>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={goNext}
+                      disabled={idx === slots.length - 1}
+                      className="flex items-center gap-2"
+                    >
+                      <ChevronRight size={20} />
+                    </Button>
+                  </div>
+                )}
+
+                <div className="mt-2">
+                  <Button onClick={onClose} className="font-bold uppercase">CLOSE</Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+
 // Composant principal
 export default function PackOpening() {
   const [configStep, setConfigStep] = useState(true);
 
   // --- états ---
-  const [packsNumber, setPacksNumber] = useState(1);     // sera auto-calculé depuis giveaways
+  const [packsFighter, setPacksFighter] = useState(1);
+  const [packsBoss, setPacksBoss] = useState(0);
   const [cardsPerPack, setCardsPerPack] = useState(1);   // défaut 1, max 7
-  const [packsTouched, setPacksTouched] = useState(false); // savoir si l'utilisateur a overridé le défaut
   const [giveaways, setGiveaways] = useState([]);
   const [editingGiveaway, setEditingGiveaway] = useState(null);
   const [newGiveaway, setNewGiveaway] = useState({
@@ -470,13 +851,15 @@ export default function PackOpening() {
     number: 1,
     iconIndex: 0
   });
+  const totalPacks = (parseInt(packsFighter,10)||0) + (parseInt(packsBoss,10)||0);
 
   // État du pack généré
-  const [generatedCards, setGeneratedCards] = useState([]);
-  const [revealedCards, setRevealedCards] = useState(new Set());
+  const [generatedPacks, setGeneratedPacks] = useState([]);  // packs [{id, number, slots:[{id,giveaway, revealed}]}]
+  const [selectedPack, setSelectedPack] = useState(null);    // pack ouvert dans la modale
+
   const [gridDimensions, setGridDimensions] = useState({ columns: 4, cardSize: 200 });
   const [screenWidth, setScreenWidth] = useState(0); // 0 pour éviter SSR mismatch
-  const MIN_CARD_SIZE = 200; // Taille minimale en pixels
+  const MIN_CARD_SIZE = 200; // Taille minimale en pixels pour les cartes
 
   useEffect(() => {
     const update = () => setScreenWidth(window.innerWidth);
@@ -485,132 +868,109 @@ export default function PackOpening() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // 👉 État pour gérer la popup
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [activeCard, setActiveCard] = useState(null);
-
-  // ouvre/ferme la modale
-  const openCard = (card) => setActiveCard(card);
-  const closeCard = () => setActiveCard(null);
-
   useEffect(() => {
     const handleResize = () => setScreenWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   
-  // Calculer les dimensions optimales de la grille
+  // Calculer les dimensions optimales de la grille (packs)
   useEffect(() => {
-    if (generatedCards.length === 0) return;
+    if (generatedPacks.length === 0) return;
 
     const calculateOptimalGrid = () => {
-      const containerWidth = window.innerWidth - 96; // padding 48px de chaque côté
-      const containerHeight = window.innerHeight - 200; // header + padding
-      
-      const numCards = generatedCards.length;
-      const aspectRatio = 3/4; // ratio largeur/hauteur des cartes
-      const gap = 2; // gap entre les cartes
-      
-      let bestConfig = { columns: 1, cardSize: 100, rows: numCards };
+      const containerWidth = window.innerWidth - 96;
+      const containerHeight = window.innerHeight - 200;
+
+      const numTiles = generatedPacks.length;  // ← nombre de PACKS
+      const aspectRatio = 3 / 4;
+      const gap = 2;
+
+      let bestConfig = { columns: 1, cardSize: 100, rows: numTiles };
       let bestScore = 0;
-      
-      // Tester différentes configurations de colonnes
-      for (let cols = 1; cols <= Math.min(numCards, 12); cols++) {
-        const rows = Math.ceil(numCards / cols);
-        
-        // Calculer la taille maximale possible des cartes
+
+      for (let cols = 1; cols <= Math.min(numTiles, 12); cols++) {
+        const rows = Math.ceil(numTiles / cols);
         const availableWidth = containerWidth - (cols - 1) * gap;
         const availableHeight = containerHeight - (rows - 1) * gap;
-        
         const maxCardWidth = availableWidth / cols;
         const maxCardHeight = availableHeight / rows;
-        
-        // La carte doit respecter le ratio 3:4
         const cardWidth = Math.min(maxCardWidth, maxCardHeight / aspectRatio);
         const cardHeight = Math.max(cardWidth * aspectRatio, MIN_CARD_SIZE);
-        
-        // Vérifier si cette configuration rentre dans l'écran
         const totalWidth = cols * cardWidth + (cols - 1) * gap;
         const totalHeight = rows * cardHeight + (rows - 1) * gap;
-        
+
         if (totalWidth <= containerWidth && totalHeight <= containerHeight) {
-          // Score basé sur la taille des cartes et l'équilibre de la grille
           const utilisation = (totalWidth * totalHeight) / (containerWidth * containerHeight);
           const equilibre = 1 - Math.abs(cols - rows) / Math.max(cols, rows);
           const score = cardHeight * utilisation * equilibre;
-          
           if (score > bestScore) {
             bestScore = score;
             bestConfig = { columns: cols, cardSize: cardHeight, rows };
           }
         }
       }
-      
+
       return bestConfig;
     };
 
     const optimal = calculateOptimalGrid();
     setGridDimensions(optimal);
-  }, [generatedCards.length]);
+  }, [generatedPacks.length]);
 
   // Recalculer lors du redimensionnement de la fenêtre
   useEffect(() => {
     const handleResize = () => {
-      if (generatedCards.length > 0) {
-        // Délai pour éviter trop de recalculs
+      if (generatedPacks.length > 0) {
         const timer = setTimeout(() => {
           const calculateOptimalGrid = () => {
             const containerWidth = window.innerWidth - 96;
             const containerHeight = window.innerHeight - 200;
-            
-            const numCards = generatedCards.length;
-            const aspectRatio = 3/4;
+  
+            const numTiles = generatedPacks.length; // packs
+            const aspectRatio = 3 / 4;
             const gap = 24;
-            
-            let bestConfig = { columns: 1, cardSize: 200, rows: numCards };
+  
+            let bestConfig = { columns: 1, cardSize: 200, rows: numTiles };
             let bestScore = 0;
-            
-            for (let cols = 1; cols <= Math.min(numCards, 12); cols++) {
-              const rows = Math.ceil(numCards / cols);
-              
+  
+            for (let cols = 1; cols <= Math.min(numTiles, 12); cols++) {
+              const rows = Math.ceil(numTiles / cols);
               const availableWidth = containerWidth - (cols - 1) * gap;
               const availableHeight = containerHeight - (rows - 1) * gap;
-              
               const maxCardWidth = availableWidth / cols;
               const maxCardHeight = availableHeight / rows;
-              
               const cardWidth = Math.min(maxCardWidth, maxCardHeight / aspectRatio);
               const cardHeight = cardWidth * aspectRatio;
-              
               const totalWidth = cols * cardWidth + (cols - 1) * gap;
               const totalHeight = rows * cardHeight + (rows - 1) * gap;
-              
+  
               if (totalWidth <= containerWidth && totalHeight <= containerHeight) {
                 const utilisation = (totalWidth * totalHeight) / (containerWidth * containerHeight);
                 const equilibre = 1 - Math.abs(cols - rows) / Math.max(cols, rows);
                 const score = cardHeight * utilisation * equilibre;
-                
+  
                 if (score > bestScore) {
                   bestScore = score;
                   bestConfig = { columns: cols, cardSize: cardHeight, rows };
                 }
               }
             }
-            
+  
             return bestConfig;
           };
-
+  
           const optimal = calculateOptimalGrid();
           setGridDimensions(optimal);
         }, 100);
-
+  
         return () => clearTimeout(timer);
       }
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [generatedCards.length]);
+  
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [generatedPacks.length]);  
 
   // Ajouter ou modifier un giveaway
   const handleSaveGiveaway = () => {
@@ -652,46 +1012,102 @@ export default function PackOpening() {
 
   // Générer le pack
   const generatePack = () => {
-    // 1) Construire toutes les occurrences de giveaways
-    const allGiveaways = [];
+    // Catégories
+    const SET_UTILITY = new Set(["Badge", "Contract", "Gameshare"].map(n => ICON_NAMES.indexOf(n)));
+    const SET_FIGHTER = new Set([
+      "Antimatter","Dash","Female","Hook","Jetpack","Jump","Lobber","Male","Manipulator","Railgun","Striker"
+    ].map(n => ICON_NAMES.indexOf(n)));
+    const SET_BOSS = new Set([
+      "Autorepear","Boss","Gaspod","Gravitygun","Hammer","Laser","Spike","Toxicgun"
+    ].map(n => ICON_NAMES.indexOf(n)));
+  
+    const pf = Math.max(0, parseInt(packsFighter, 10) || 0);
+    const pb = Math.max(0, parseInt(packsBoss, 10) || 0);
+    const cpp = Math.max(1, Math.min(7, parseInt(cardsPerPack, 10) || 1));
+  
+    // 1) Construire les pools
+    const poolFighter = [];
+    const poolBoss = [];
+  
     giveaways.forEach((g) => {
-      const n = Math.max(0, g.number ?? 0);
+      const n = Math.max(0, g.number || 0);
       for (let i = 0; i < n; i++) {
-        allGiveaways.push({ ...g });
+        if (SET_FIGHTER.has(g.iconIndex) || SET_UTILITY.has(g.iconIndex)) {
+          poolFighter.push({ ...g });
+        }
+        if (SET_BOSS.has(g.iconIndex) || SET_UTILITY.has(g.iconIndex)) {
+          poolBoss.push({ ...g });
+        }
       }
     });
   
-    // 2) Nombre total de slots = packs × cartes/pack
-    const totalSlots = Math.max(1, (packsNumber || 1) * (cardsPerPack || 1));
+    shuffleInPlace(poolFighter);
+    shuffleInPlace(poolBoss);
   
-    // 3) Mélanger, compléter avec des "pertes", re-mélanger
-    let pool = shuffleInPlace([...allGiveaways]);
-    if (pool.length > totalSlots) {
-      pool = pool.slice(0, totalSlots); // trop de gains => on tronque
-    } else {
-      while (pool.length < totalSlots) pool.push(null); // slots restants => No reward
-    }
-    shuffleInPlace(pool);
-  
-    // 4) Générer une liste à plat de cartes (pack/slot)
-    const cards = [];
-    let k = 0;
-    for (let p = 0; p < packsNumber; p++) {
-      for (let s = 0; s < cardsPerPack; s++) {
-        const giveaway = pool[k++];
-        cards.push({
-          id: `pack-${p + 1}-slot-${s + 1}`,
-          number: `${p + 1}-${s + 1}`, // affichage '#P-S' (string ok)
+    // 2) Créer les packs Fighter
+    const packs = [];
+    let idxFighter = 0;
+    for (let p = 0; p < pf; p++) {
+      const slots = [];
+      for (let s = 0; s < cpp; s++) {
+        const giveaway = idxFighter < poolFighter.length ? poolFighter[idxFighter++] : null;
+        slots.push({
+          id: `fighter-pack-${p + 1}-slot-${s + 1}`,
           giveaway,
+          revealed: false,
         });
       }
+      packs.push({
+        id: `fighter-pack-${p + 1}`,
+        number: p + 1,
+        type: "fighter",
+        slots,
+      });
     }
   
-    setGeneratedCards(cards);
-    setRevealedCards(new Set());
+    // 3) Créer les packs Boss
+    let idxBoss = 0;
+    for (let p = 0; p < pb; p++) {
+      const slots = [];
+      for (let s = 0; s < cpp; s++) {
+        const giveaway = idxBoss < poolBoss.length ? poolBoss[idxBoss++] : null;
+        slots.push({
+          id: `boss-pack-${p + 1}-slot-${s + 1}`,
+          giveaway,
+          revealed: false,
+        });
+      }
+      packs.push({
+        id: `boss-pack-${p + 1}`,
+        number: p + 1,
+        type: "boss",
+        slots,
+      });
+    }
+  
+    shuffleInPlace(packs); // Mélanger l'ordre final des packs
+  
+    setGeneratedPacks(packs);
+    setSelectedPack(null);
     setConfigStep(false);
   };
   
+  
+  const revealSlot = (packId, slotId) => {
+    setGeneratedPacks((prev) => {
+      const next = prev.map((pack) => {
+        if (pack.id !== packId) return pack;
+        return {
+          ...pack,
+          slots: pack.slots.map((s) => (s.id === slotId ? { ...s, revealed: true } : s)),
+        };
+      });
+      // si la modale est ouverte sur ce pack, on la remet à jour
+      const updated = next.find((p) => p.id === packId);
+      if (selectedPack?.id === packId) setSelectedPack(updated);
+      return next;
+    });
+  };  
 
   // Révéler une carte
   const revealCard = (cardId) => {
@@ -701,8 +1117,8 @@ export default function PackOpening() {
   // Retour à la configuration
   const backToConfig = () => {
     setConfigStep(true);
-    setGeneratedCards([]);
-    setRevealedCards(new Set());
+    setGeneratedPacks([]);
+    setSelectedPack(null);
   };
 
   if (!configStep) {
@@ -719,49 +1135,51 @@ export default function PackOpening() {
             </Button>
           </div>
   
-          {/* Grille de cartes */}
+          {/* Grille de packs */}
           <div
             className="flex flex-wrap gap-4 mx-auto justify-center items-center"
-            style={{
-              gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
-              maxWidth: "fit-content",
-            }}
+            style={{ gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`, maxWidth: "fit-content" }}
           >
-            {generatedCards.map((card) => (
-              <Card
-                key={card.id}
-                number={card.number}
-                isRevealed={revealedCards.has(card.id)}
-                giveaway={card.giveaway}
-                onReveal={() => revealCard(card.id)}
-                // 🚀 Double la taille des cartes si l'écran fait moins de 1024px
-                cardSize={
-                  screenWidth && screenWidth < 1024
-                    ? Math.max(gridDimensions.cardSize * 2, MIN_CARD_SIZE)
-                    : Math.max(gridDimensions.cardSize, MIN_CARD_SIZE)
-                }
-                onOpen={() => setSelectedCard(card)}   // ← ouvre la popup
-              />
-            ))}
+            {[...generatedPacks]
+              .sort((a, b) => idNum(a.id) - idNum(b.id))
+              .map((pack) => (
+                <Card
+                  key={pack.id}
+                  pack={pack}
+                  cardSize={
+                    screenWidth && screenWidth < 1024
+                      ? Math.max(gridDimensions.cardSize * 2, MIN_CARD_SIZE)
+                      : Math.max(gridDimensions.cardSize, MIN_CARD_SIZE)
+                  }
+                  onOpen={() => setSelectedPack(pack)}
+                  tiers={TIERS}
+                  icons={ICONS}
+                />
+              ))}
           </div>
-        </div>
-  
-        {/* Popup d’animation / reveal */}
-        <AnimatePresence>
-          {selectedCard && (
-            <CardRevealModal
-              card={selectedCard}
-              onClose={() => setSelectedCard(null)}
-              onReveal={() => {
-                // marque la carte comme révélée côté parent
-                revealCard(selectedCard.id);
-                // on laisse la modale ouverte pour l’animation, l’utilisateur ferme via "Continue" / "Close"
-              }}
+
+
+          {/* Modale pack */}
+          <AnimatePresence>
+            {selectedPack && (
+              <PackOpenModal
+              pack={selectedPack}
+              onClose={() => setSelectedPack(null)}
+              onRevealSlot={revealSlot}
               tiers={TIERS}
               icons={ICONS}
-            />
-          )}
-        </AnimatePresence>
+              cardSize={
+                screenWidth && screenWidth < 1024
+                  ? Math.max(gridDimensions.cardSize * 2, MIN_CARD_SIZE)
+                  : Math.max(gridDimensions.cardSize, MIN_CARD_SIZE)
+              }
+            />            
+            )}
+          </AnimatePresence>
+
+        </div>
+  
+        
       </>
     );
   }
@@ -773,7 +1191,7 @@ export default function PackOpening() {
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold text-primary mb-4">Pack Opening</h2>
           <p className="text-lg text-gray-300">
-            Configure pack before opening
+            Configure on-chain pack generation
           </p>
         </div>
 
@@ -891,23 +1309,33 @@ export default function PackOpening() {
         {/* Configuration du nombre de packs */}
         <div className="bg-gray-800 p-6 rounded-lg mb-6">
           <h3 className="text-xl font-bold text-white mb-4">Packs</h3>
-          <div className="flex flex-row items-center gap-8">
-            <div className="flex flex-col items-left gap-4">
-              <label className="text-white">Packs number</label>
+
+          <div className="flex flex-row items-center gap-8 flex-wrap">
+            <div className="flex flex-col gap-2">
+              <label className="text-white">Packs Fighter number</label>
               <Input
                 type="number"
-                min="1"
+                min="0"
                 max="200"
-                value={packsNumber}
-                onChange={(e) => {
-                  setPacksTouched(true);
-                  const val = Math.max(1, Math.min(200, parseInt(e.target.value) || 1));
-                  setPacksNumber(val);
-                }}
-                className="w-32"
+                value={packsFighter}
+                onChange={(e) => setPacksFighter(Math.max(0, Math.min(200, parseInt(e.target.value) || 0)))}
+                className="w-40"
               />
             </div>
-            <div className="flex flex-col items-left gap-4">
+
+            <div className="flex flex-col gap-2">
+              <label className="text-white">Packs Boss number</label>
+              <Input
+                type="number"
+                min="0"
+                max="200"
+                value={packsBoss}
+                onChange={(e) => setPacksBoss(Math.max(0, Math.min(200, parseInt(e.target.value) || 0)))}
+                className="w-40"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
               <label className="text-white">Card(s) / pack</label>
               <Input
                 type="number"
@@ -915,41 +1343,151 @@ export default function PackOpening() {
                 max="7"
                 value={cardsPerPack}
                 onChange={(e) => setCardsPerPack(Math.max(1, Math.min(7, parseInt(e.target.value) || 1)))}
-                className="w-32"
+                className="w-40"
               />
             </div>
           </div>
 
-          
+          {/* Indicateurs % par catégorie (par carte) */}
+          {(() => {
+            // Catégories d'icônes -> indices via ICON_NAMES
+            const SET_UTILITY = new Set(["Badge", "Contract", "Gameshare"].map(n => ICON_NAMES.indexOf(n)));
+            const SET_FIGHTER = new Set([
+              "Antimatter","Dash","Female","Hook","Jetpack","Jump","Lobber","Male","Manipulator","Railgun","Striker"
+            ].map(n => ICON_NAMES.indexOf(n)));
+            const SET_BOSS = new Set([
+              "Autorepear","Boss","Gaspod","Gravitygun","Hammer","Laser","Spike","Toxicgun"
+            ].map(n => ICON_NAMES.indexOf(n)));
+
+            // Dénominateurs = nb de cartes concernées
+            const pf = parseInt(packsFighter, 10) || 0;
+            const pb = parseInt(packsBoss, 10) || 0;
+            const cpp = parseInt(cardsPerPack, 10) || 0;
+
+            const totalCardsUtility = (pf + pb) * cpp;  // Utility peut tomber dans les 2 types de packs
+            const totalCardsFighter = pf * cpp;
+            const totalCardsBoss    = pb * cpp;
+
+            // Compteurs par tier et catégorie
+            const countTierCat = (tier, set) =>
+              giveaways.reduce((acc, g) => {
+                const n = parseInt(g.number, 10) || 0;
+                return acc + (g.tier === tier && set.has(g.iconIndex) ? n : 0);
+              }, 0);
+
+            const U1 = countTierCat("tier1", SET_UTILITY);
+            const U2 = countTierCat("tier2", SET_UTILITY);
+            const U3 = countTierCat("tier3", SET_UTILITY);
+
+            const F1 = countTierCat("tier1", SET_FIGHTER);
+            const F2 = countTierCat("tier2", SET_FIGHTER);
+            const F3 = countTierCat("tier3", SET_FIGHTER);
+
+            const B1 = countTierCat("tier1", SET_BOSS);
+            const B2 = countTierCat("tier2", SET_BOSS);
+            const B3 = countTierCat("tier3", SET_BOSS);
+
+            const totalFighterRewards = giveaways.reduce(
+              (acc, g) => acc + (SET_FIGHTER.has(g.iconIndex) ? (parseInt(g.number, 10) || 0) : 0),
+              0
+            );
+            const totalBossRewards = giveaways.reduce(
+              (acc, g) => acc + (SET_BOSS.has(g.iconIndex) ? (parseInt(g.number, 10) || 0) : 0),
+              0
+            );
+            const totalUtilityRewards = giveaways.reduce(
+              (acc, g) => acc + (SET_UTILITY.has(g.iconIndex) ? (parseInt(g.number, 10) || 0) : 0),
+              0
+            );
+
+            const pct = (num, den) =>
+              den > 0 ? Math.min(100, (num / den) * 100).toFixed(1) : "0.0";
+
+            return (
+              <div className="mt-4 space-y-4">
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="rounded-md border border-white/10 p-3 text-center">
+                  <div className="text-white/70 text-sm">Total Fighter reward(s)</div>
+                  <div className="text-2xl font-bold text-white">{totalFighterRewards}</div>
+                </div>
+                <div className="rounded-md border border-white/10 p-3 text-center">
+                  <div className="text-white/70 text-sm">Total Boss reward(s)</div>
+                  <div className="text-2xl font-bold text-white">{totalBossRewards}</div>
+                </div>
+                <div className="rounded-md border border-white/10 p-3 text-center">
+                  <div className="text-white/70 text-sm">Total Utility reward(s)</div>
+                  <div className="text-2xl font-bold text-white">{totalUtilityRewards}</div>
+                </div>
+              </div>
+
+                {/* Utility */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Utility Tier 1 luck rate</div>
+                    <div className="text-xl font-bold text-white">{pct(U1, totalCardsUtility)}%</div>
+                  </div>
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Utility Tier 2 luck rate</div>
+                    <div className="text-xl font-bold text-green-300">{pct(U2, totalCardsUtility)}%</div>
+                  </div>
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Utility Tier 3 luck rate</div>
+                    <div className="text-xl font-bold text-yellow-500">{pct(U3, totalCardsUtility)}%</div>
+                  </div>
+                </div>
+
+                {/* Fighter */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Fighter Tier 1 luck rate</div>
+                    <div className="text-xl font-bold text-white">{pct(F1, totalCardsFighter)}%</div>
+                  </div>
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Fighter Tier 2 luck rate</div>
+                    <div className="text-xl font-bold text-green-300">{pct(F2, totalCardsFighter)}%</div>
+                  </div>
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Fighter Tier 3 luck rate</div>
+                    <div className="text-xl font-bold text-yellow-500">{pct(F3, totalCardsFighter)}%</div>
+                  </div>
+                </div>
+
+                {/* Boss */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Boss Tier 1 luck rate</div>
+                    <div className="text-xl font-bold text-white">{pct(B1, totalCardsBoss)}%</div>
+                  </div>
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Boss Tier 2 luck rate</div>
+                    <div className="text-xl font-bold text-green-300">{pct(B2, totalCardsBoss)}%</div>
+                  </div>
+                  <div className="rounded-md border border-white/10 p-3 text-center">
+                    <div className="text-white/70 text-sm">Boss Tier 3 luck rate</div>
+                    <div className="text-xl font-bold text-yellow-500">{pct(B3, totalCardsBoss)}%</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+
         </div>
 
         {/* Bouton de génération */}
         <div className="text-center">
+          
           <Button
             onClick={generatePack}
             size="lg"
             className="text-lg px-8 py-3"
-            disabled={packsNumber < 1 || cardsPerPack < 1}
+            disabled={totalPacks < 1 || cardsPerPack < 1}
           >
-            Generate ({packsNumber} packs)
+            Generate ({totalPacks} packs)
           </Button>
         </div>
       </div>
-
-      <AnimatePresence>
-        {activeCard && (
-            <CardModal
-            card={activeCard}
-            onClose={closeCard}
-            onConfirmReveal={() => {
-                // marque la carte comme révélée et laisse la modale gérer l’animation
-                revealCard(activeCard.id);
-            }}
-            tiers={TIERS}
-            icons={ICONS}
-            />
-        )}
-      </AnimatePresence>
 
     </div>
   );
