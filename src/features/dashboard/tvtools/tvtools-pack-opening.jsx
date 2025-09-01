@@ -243,7 +243,7 @@ function StarBurstPersistent({
 }
 
 // Hook press-and-hold (souris + tactile) avec progress 0→1
-function useHoldToRip({ duration = 3000, onComplete }) {
+function useHoldToRip({ duration = 2000, onComplete }) {
   const [progress, setProgress] = React.useState(0);
   const [holding, setHolding] = React.useState(false);
   const rafRef = React.useRef(null);
@@ -331,9 +331,9 @@ function CardRevealModal({ card, onClose, onReveal, tiers, icons }) {
   const tierKey = card?.giveaway?.tier ?? "tier1";
   const tmeta = META[tierKey] ?? META.tier1;
 
-  // 3s hold → ouverture
+  // 2s hold → ouverture
   const { progress, holding, bind } = useHoldToRip({
-    duration: 3000,
+    duration: 2000,
     onComplete: () => {
       if (isWin) {
         setStarsTrigger(Date.now()); // étoiles uniquement si GAIN
@@ -356,7 +356,7 @@ function CardRevealModal({ card, onClose, onReveal, tiers, icons }) {
 
         {/* Carte / conteneur */}
         <motion.div
-          className="relative w-[min(82vw,520px)] aspect-[3/4] rounded-2xl overflow-visible z-50 select-none"
+          className="relative w-[68vw] max-w-[440px] aspect-[3/4] rounded-2xl overflow-visible z-50 select-none"
           initial={{ scale: 0.85, opacity: 0, rotate: -2 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           exit={{ scale: 0.92, opacity: 0, rotate: 2 }}
@@ -478,28 +478,28 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
 
   // Transformations par zone (on n’applique que quand !opened)
   const tiltByZone = {
-    tl: { rotateX: -20, rotateY:  20, scale: 1.02 },
-    t:  { rotateX: -20, rotateY:   0, scale: 1.02 },
-    tr: { rotateX: -20, rotateY: -20, scale: 1.02 },
-    l:  { rotateX:   0, rotateY:  20, scale: 1.02 },
+    tl: { rotateX: -10, rotateY:  10, scale: 1.02 },
+    t:  { rotateX: -10, rotateY:   0, scale: 1.02 },
+    tr: { rotateX: -10, rotateY: -10, scale: 1.02 },
+    l:  { rotateX:   0, rotateY:  10, scale: 1.02 },
     c:  { rotateX:   0, rotateY:   0, scale: 1.05 },
-    r:  { rotateX:   0, rotateY: -20, scale: 1.02 },
-    bl: { rotateX:  20, rotateY:  20, scale: 1.02 },
-    b:  { rotateX:  20, rotateY:   0, scale: 1.02 },
-    br: { rotateX:  20, rotateY: -20, scale: 1.02 },
+    r:  { rotateX:   0, rotateY: -10, scale: 1.02 },
+    bl: { rotateX:  10, rotateY:  10, scale: 1.02 },
+    b:  { rotateX:  10, rotateY:   0, scale: 1.02 },
+    br: { rotateX:  10, rotateY: -10, scale: 1.02 },
   };
 
   // Ombres internes (“light-shadow”) par zone
   const shadowByZone = {
-    tl: 'inset 40px 40px 120px 10px rgba(255, 255, 255, 0.05), inset -40px -40px 120px 10px rgba(255, 0, 200, 0.1)',
-    t:  'inset 0 50px 150px rgba(0, 255, 200, 0.2), inset 0 -40px 100px rgba(255, 0, 150, 0.2)',
-    tr: 'inset -40px 40px 120px 10px rgba(0, 200, 255, 0.1), inset 40px -40px 120px 10px rgba(255, 255, 255, 0.05)',
-    l:  'inset 60px 0 120px rgba(255, 255, 255, 0.05), inset -30px 0 100px rgba(0, 255, 200, 0.15)',
-    c:  'inset 0 0 180px rgba(255, 255, 255, 0.1), inset 0 0 200px rgba(255, 0, 255, 0.2)',
-    r:  'inset -60px 0 120px rgba(255, 255, 255, 0.05), inset 30px 0 100px rgba(0, 150, 255, 0.15)',
-    bl: 'inset -50px -50px 120px 10px rgba(255, 255, 255, 0.1), inset 40px 40px 100px rgba(255, 0, 255, 0.15)',
-    b:  'inset 0 -50px 140px 5px rgba(0, 200, 255, 0.2), inset 0 40px 120px rgba(255, 255, 255, 0.05)',
-    br: 'inset 50px -50px 120px 10px rgba(255, 255, 255, 0.1), inset -40px 40px 100px rgba(0, 255, 200, 0.15)',
+    tl: 'inset 40px 40px 120px 10px rgba(255, 255, 255, 0.15), inset -40px -40px 120px 10px rgba(255, 0, 200, 0.1)',
+    t:  'inset 0 50px 150px rgba(0, 255, 200, 0.3), inset 0 -40px 100px rgba(255, 0, 150, 0.2)',
+    tr: 'inset -40px 40px 120px 10px rgba(0, 200, 255, 0.2), inset 40px -40px 120px 10px rgba(255, 255, 255, 0.05)',
+    l:  'inset 60px 0 120px rgba(255, 255, 255, 0.15), inset -30px 0 100px rgba(0, 255, 200, 0.15)',
+    c:  'inset 0 0 180px rgba(255, 255, 255, 0.2), inset 0 0 200px rgba(255, 0, 255, 0.2)',
+    r:  'inset -60px 0 120px rgba(255, 255, 255, 0.15), inset 30px 0 100px rgba(0, 150, 255, 0.15)',
+    bl: 'inset -50px -50px 120px 10px rgba(255, 255, 255, 0.2), inset 40px 40px 100px rgba(255, 0, 255, 0.15)',
+    b:  'inset 0 -50px 140px 5px rgba(0, 200, 255, 0.3), inset 0 40px 120px rgba(255, 255, 255, 0.05)',
+    br: 'inset 50px -50px 120px 10px rgba(255, 255, 255, 0.2), inset -40px 40px 100px rgba(0, 255, 200, 0.15)',
   };
 
   const tiltTarget = !opened && hoverZone ? tiltByZone[hoverZone] : { rotateX: 0, rotateY: 0, scale: 1 };
@@ -531,9 +531,9 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
   const tierKey = current?.giveaway?.tier ?? "tier1";
   const tmeta = META[tierKey] ?? META.tier1;
 
-  // 3s hold → ouverture du pack
+  // 2s hold → ouverture du pack
   const { progress, bind } = useHoldToRip({
-    duration: 3000,
+    duration: 2000,
     onComplete: () => {
       setOpened(true);
       // si 1 seule carte => reveal direct
@@ -562,7 +562,7 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
 
         <motion.div
-          className="relative w-[min(82vw,520px)] aspect-[3/4] rounded-2xl overflow-visible z-50 select-none"
+          className="relative w-[68vw] max-w-[440px] aspect-[3/4] rounded-2xl overflow-visible z-50 select-none"
           initial={{ scale: 0.85, opacity: 0, rotate: -2 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           exit={{ scale: 0.92, opacity: 0, rotate: 2 }}
@@ -576,7 +576,7 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
 
               {/* Header aide + close (reste tel quel) */}
               <div className="absolute -top-16 -mt-10 left-0 right-0 z-[20] flex items-center justify-center pointer-events-none">
-                <div className="flex items-center h-12 justify-center rounded-full text-lg text-primary">Press & hold 3s to open</div>
+                <div className="flex items-center h-12 justify-center rounded-full text-lg text-primary">Press & hold 2s to open</div>
               </div>
               <button
                 onClick={onClose}

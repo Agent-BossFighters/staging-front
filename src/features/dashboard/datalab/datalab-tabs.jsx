@@ -15,9 +15,13 @@ const tabs = [
   { name: "PLAYER CYCLE", value: "Player Cycle", disabled: true },
 ];
 
-export default function DatalabTabs() {
+export default function DatalabTabs({ defaultTab = "Slot" }) {
+  // sécurité : si on passe un onglet inconnu, retombe sur "Slot"
+  const allowed = new Set(tabs.filter(t => !t.disabled).map(t => t.value));
+  const initial = allowed.has(defaultTab) ? defaultTab : "Slot";
+  
   return (
-    <Tabs defaultValue="Slot" className="w-full flex flex-col">
+    <Tabs defaultValue={initial} className="w-full flex flex-col bg-transparent">
       <div className="w-[80vw] mx-auto overflow-x-auto overflow-y-hidden">
         <TabsList className="bg-transparent text-2xl p-0 h-auto flex flex-col items-start justify-start">
           <div className="flex gap-1 w-max whitespace-nowrap">

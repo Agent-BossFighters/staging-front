@@ -1,9 +1,11 @@
 import {
   HashRouter as Router,
+  BrowserRouter,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+import EmbedDatalab from "./features/embed/EmbedDatalab";
 import Layout from "@layout/main.layout";
 import HomePage from "@pages/static/home.page";
 import { IndexRoutes } from "@pages/index.routes";
@@ -22,6 +24,7 @@ export default function App() {
           <GameConstantsProvider>
             <PrivyWalletProvider>
               <Routes>
+                {/* Routes avec layout principal */}
                 <Route path="/" element={<Layout />}>
                   <Route index element={<HomePage />} />
                   {IndexRoutes.map((route, index) => (
@@ -29,6 +32,9 @@ export default function App() {
                   ))}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Route>
+
+                {/* Route d'embed SANS layout (iframe) */}
+                <Route path="/embed/datalab" element={<EmbedDatalab />} />
               </Routes>
             </PrivyWalletProvider>
           </GameConstantsProvider>
