@@ -2,45 +2,45 @@ import { createConfig, WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { createContext, useContext, useState } from "react";
-import { mainnet, sepolia, base, baseSepolia } from "viem/chains";
+import { mainnet, sepolia, base } from "viem/chains";
 import { http } from "viem";
 
 const queryClient = new QueryClient();
 
-// Si baseSepolia n'est pas importable directement de viem/chains, on peut le définir manuellement
-const baseSepoliaChain = baseSepolia || {
-  id: 84532,
-  name: "Base Sepolia",
-  network: "base-sepolia",
+// Configuration pour Intuition Testnet
+const intuitionTestnetChain = {
+  id: 13579,
+  name: "Intuition Testnet",
+  network: "intuition-testnet",
   nativeCurrency: {
     decimals: 18,
-    name: "Base Sepolia Ether",
-    symbol: "ETH",
+    name: "tTRUST",
+    symbol: "tTRUST",
   },
   rpcUrls: {
     default: {
-      http: ["https://sepolia.base.org"],
+      http: ["https://testnet.rpc.intuition.systems"],
     },
     public: {
-      http: ["https://sepolia.base.org"],
+      http: ["https://testnet.rpc.intuition.systems"],
     },
   },
   blockExplorers: {
     default: {
-      name: "Basescan",
-      url: "https://sepolia.basescan.org",
+      name: "Intuition Testnet Explorer",
+      url: "https://intuition-testnet.explorer.caldera.xyz",
     },
   },
   testnet: true,
 };
 
 const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia, base, baseSepoliaChain],
+  chains: [mainnet, sepolia, base, intuitionTestnetChain],
   transports: {
     [mainnet.id]: http(),
     [sepolia.id]: http(),
     [base.id]: http(),
-    [baseSepoliaChain.id]: http(),
+    [intuitionTestnetChain.id]: http(),
   },
 });
 
