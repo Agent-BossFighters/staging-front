@@ -6,6 +6,7 @@ import { Input } from "@ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/table";
 import { Plus, Edit, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
+"use client";
 
 const ICONS = [Antimatter, Autorepear, Badge, Boss, Contract, Dash, Female, Gameshare, Gaspod, Gravitygun, Hammer, Hook, Jetpack, Jump, Laser, Lobber, Male, Manipulator, Railgun, Spike, Striker, Toxicgun];
 const ICON_NAMES = ["Antimatter", "Autorepear", "Badge", "Boss", "Contract", "Dash", "Female", "Gameshare", "Gaspod", "Gravitygun", "Hammer", "Hook", "Jetpack", "Jump", "Laser", "Lobber", "Male", "Manipulator", "Railgun", "Spike", "Striker", "Toxicgun"];
@@ -246,52 +247,61 @@ function StarBurstPersistent({
 function useHoldToRip({ duration = 2000, onComplete }) {
   const [progress, setProgress] = React.useState(0);
   const [holding, setHolding] = React.useState(false);
+  const [done, setDone] = React.useState(false);       // ✅ lock après succès
   const rafRef = React.useRef(null);
   const startRef = React.useRef(null);
 
   const stop = React.useCallback((completed = false) => {
-    setHolding(false);
     cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
     startRef.current = null;
-    if (!completed) setProgress(0);
-  }, []);
+    setHolding(false);
+    if (completed) {
+      setDone(true);               // ✅ lock
+    } else if (!done) {
+      setProgress(0);              // reset uniquement si pas encore done
+    }
+  }, [done]);
 
-  const step = React.useCallback(
-    (t) => {
-      if (!startRef.current) startRef.current = t;
-      const elapsed = t - startRef.current;
-      const p = Math.min(1, elapsed / duration);
-      setProgress(p);
-      if (p >= 1) {
-        stop(true);
-        onComplete?.();
-      } else {
-        rafRef.current = requestAnimationFrame(step);
-      }
-    },
-    [duration, onComplete, stop]
-  );
+  const step = React.useCallback((t) => {
+    if (!startRef.current) startRef.current = t;
+    const elapsed = t - startRef.current;
+    const p = Math.min(1, elapsed / duration);
+    setProgress(p);
+    if (p >= 1) {
+      stop(true);                  // ✅ ne pourra plus être “dé-reset”
+      onComplete?.();
+    } else {
+      rafRef.current = requestAnimationFrame(step);
+    }
+  }, [duration, onComplete, stop]);
 
   const start = React.useCallback(() => {
-    if (holding) return;
+    if (holding || done) return;   // ✅ pas de relance si déjà done
     setHolding(true);
     setProgress(0);
     rafRef.current = requestAnimationFrame(step);
-  }, [holding, step]);
+  }, [holding, done, step]);
 
-  // Handlers pointer/touch souris + mobile
+  // Handlers pointer/touch
   const bind = {
     onMouseDown: start,
-    onMouseUp: () => stop(false),
-    onMouseLeave: () => stop(false),
-    onTouchStart: start,
-    onTouchEnd: () => stop(false),
-    onTouchCancel: () => stop(false),
+    onMouseUp:   () => !done && stop(false),
+    onMouseLeave:() => !done && stop(false),
+    onTouchStart:start,
+    onTouchEnd:  () => !done && stop(false),
+    onTouchCancel:() => !done && stop(false),
   };
 
-  return { progress, holding, bind };
+  // (optionnel) pour réutilisation ultérieure
+  const reset = React.useCallback(() => {
+    setDone(false);
+    setProgress(0);
+  }, []);
+
+  return { progress, holding, done, bind, reset };
 }
+
 
 // Composant pour "déchirer" le haut du pack via clip-path dentelé
 function TopTearBand({ progress, bgImage }) {
@@ -315,157 +325,42 @@ function TopTearBand({ progress, bgImage }) {
   );
 }
 
-function CardRevealModal({ card, onClose, onReveal, tiers, icons }) {
-  const [revealed, setRevealed] = React.useState(false);
-  const [burst, setBurst] = React.useState(false);
-  const [starsTrigger, setStarsTrigger] = React.useState(0);
-  const isWin = Boolean(card?.giveaway);
+// Hook pour tirer des confettis en toute sécurité (client only)
+function useTier3Confetti() {
+  const confettiRef = React.useRef(null);
 
-  if (!card) return null;
+  React.useEffect(() => {
+    let mounted = true;
+    if (typeof window !== "undefined") {
+      import("canvas-confetti").then((m) => {
+        if (mounted) confettiRef.current = m.default;
+      });
+    }
+    return () => { mounted = false; };
+  }, []);
 
-  const META = {
-    tier1: { stars: 24, color: "#9CA3AF" },
-    tier2: { stars: 42, color: "#22C55E" },
-    tier3: { stars: 72, color: "#FDE047" },
-  };
-  const tierKey = card?.giveaway?.tier ?? "tier1";
-  const tmeta = META[tierKey] ?? META.tier1;
+  return React.useCallback(() => {
+    const c = confettiRef.current;
+    if (!c) return; // pas encore chargé
 
-  // 2s hold → ouverture
-  const { progress, holding, bind } = useHoldToRip({
-    duration: 2000,
-    onComplete: () => {
-      if (isWin) {
-        setStarsTrigger(Date.now()); // étoiles uniquement si GAIN
-      }
-      setTimeout(() => setRevealed(true), 1200);
-      onReveal?.();
-    },
-  });
+    const base = {
+      zIndex: 2147483647,       // au-dessus de tout
+      ticks: 450,
+      spread: 120,
+      startVelocity: 70,
+      scalar: 0.9,
+      disableForReducedMotion: false,
+    };
 
-  return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 z-[999] flex items-center justify-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
+    // deux cônes latéraux
+    c({ ...base, particleCount: 90, origin: { x: 0.15, y: 0.1 } });
+    c({ ...base, particleCount: 90, origin: { x: 0.85, y: 0.1 } });
 
-        {/* Carte / conteneur */}
-        <motion.div
-          className="relative w-[68vw] max-w-[440px] aspect-[3/4] rounded-2xl overflow-visible z-50 select-none"
-          initial={{ scale: 0.85, opacity: 0, rotate: -2 }}
-          animate={{ scale: 1, opacity: 1, rotate: 0 }}
-          exit={{ scale: 0.92, opacity: 0, rotate: 2 }}
-          transition={{ type: "spring", stiffness: 120, damping: 16 }}
-          {...bind}
-        >
-          {/* === COUVERTURE visible tant que !revealed === */}
-          {!revealed && (
-            <>
-              {/* bas du pack */}
-              <div
-                className="absolute left-0 right-0 -bottom-7 s:-bottom-8 z-[10]"
-                style={{
-                  height: "99%",
-                  backgroundImage: `url(${coverImg})`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "bottom center",
-                  backgroundSize: "cover",
-                }}
-              />
-              {/* bandeau haut */}
-              <TopTearBand progress={progress} bgImage={coverImg} />
-
-              {/* header: help + close */}
-              <div className="absolute -top-12 left-0 right-0 z-[20] flex items-center justify-center pointer-events-none">
-                <div className="h-12 rounded-full text-lg text-primary">Press & hold 3s to open</div>
-              </div>
-              <button
-                onClick={onClose}
-                className="absolute -top-12 right-0 z-[30] rounded-full px-3 py-1 text-xs bg-white/10 hover:bg-white/20 text-white pointer-events-auto"
-              >
-                <X size={42} />
-              </button>
-            </>
-          )}
-
-          {/* ⭐ étoiles au-dessus de tout */}
-          {isWin && (
-            <StarBurstPersistent
-              key={starsTrigger}          // force un remount propre à chaque trigger
-              trigger={starsTrigger}
-              color={tmeta.color}
-              count={tmeta.stars}
-              runForMs={20000}
-              waveEvery={10000}
-              particleDuration={10000}
-            />
-          )}
-
-          {/* === PANNEAU RÉSULTAT : rendu quand revealed === */}
-          {revealed && (
-            <motion.div
-              className="absolute inset-0 z-[70] flex items-center justify-center"
-              initial={{ opacity: 0, y: 18, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: "spring", stiffness: 120, damping: 14 }}
-            >
-              <div className="flex flex-col items-center justify-center w-5/6 s:w-4/6 h-5/6 s:h-4/6 gap-5 border-4 border-primary/50 rounded-2xl bg-gray-900/30 backdrop-blur-sm">
-                <div className={isWin ? "text-primary text-3xl uppercase font-bold"
-                        : "text-red-600 text-3xl uppercase font-bold"}>
-                  {isWin ? "You won" : "No reward"}
-                </div>
-                {!isWin && (
-                  <motion.div
-                    initial={{ scale: 0.7, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: "spring", stiffness: 240, damping: 12 }}
-                  >
-                    <img
-                      src={IconLoose}
-                      alt="Loose"
-                      className="w-35 h-35 mx-auto mt-2 drop-shadow-[0_0_12px_rgba(0,0,0,0.35)]"
-                    />
-                  </motion.div>
-                )}
-
-
-                {isWin && (
-                  <div className="text-xl font-semibold" style={{ color: tmeta.color }}>
-                    {tiers.find((t) => t.value === (card?.giveaway?.tier ?? "tier1"))?.label}
-                  </div>
-                )}
-
-                {card?.giveaway && (
-                  <>
-                    <motion.div initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 240, damping: 12 }}>
-                      <img
-                        src={icons[card.giveaway.iconIndex]}
-                        alt="Giveaway"
-                        className="w-24 h-24 mx-auto drop-shadow-[0_0_22px_rgba(0,0,0,0.35)]"
-                      />
-                    </motion.div>
-                    <div className="text-2xl font-bold text-white">{card.giveaway.name}</div>
-                  </>
-                )}
-
-                <button
-                  onClick={onClose}
-                  className="justify-center whitespace-nowrap rounded-md text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-background shadow hover:bg-primary/90 font-bold uppercase h-9 px-4 py-2 flex items-center gap-2 transition-transform duration-200 hover:scale-105"
-                >
-                  Continue
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
+    // burst central
+    setTimeout(() => {
+      c({ ...base, particleCount: 240, spread: 110, origin: { x: 0.5, y: 0.45 } });
+    }, 10);
+  }, []);
 }
 
 function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
@@ -473,8 +368,14 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
   const [idx, setIdx] = React.useState(0);
   const [starsTrigger, setStarsTrigger] = React.useState(0);
 
+  const [phase, setPhase] = React.useState("idle"); // idle / shaking / flash
+  const SHAKE_MS = 3000; // << 3 secondes de tremblement
+  const FLASH_MS = 1000;   // durée de l’explosion de lumière
+
   // NEW: zone de survol (tl, t, tr, l, c, r, bl, b, br, null)
   const [hoverZone, setHoverZone] = React.useState(null);
+
+  const fireTier3Confetti = useTier3Confetti();
 
   // Transformations par zone (on n’applique que quand !opened)
   const tiltByZone = {
@@ -511,7 +412,7 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
     onMouseLeave: props.onMouseLeave,
     onMouseDown:  (e) => bind.onMouseDown?.(e),
     onMouseUp:    (e) => bind.onMouseUp?.(e),
-    onMouseLeaveCapture: (e) => bind.onMouseLeave?.(e),
+    onMouseLeaveCapture: (e) => !done && bind.onMouseLeave?.(e),
     onTouchStart: (e) => bind.onTouchStart?.(e),
     onTouchEnd:   (e) => bind.onTouchEnd?.(e),
     onTouchCancel:(e) => bind.onTouchCancel?.(e),
@@ -521,6 +422,8 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
 
   const slots = pack.slots;
   const current = slots[idx];
+  const isMulti = slots.length > 1;
+  const showRevealCTA = isMulti && opened && !current?.revealed && phase !== "flash";
   const isWin = Boolean(current?.giveaway);
 
   const META = {
@@ -531,16 +434,35 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
   const tierKey = current?.giveaway?.tier ?? "tier1";
   const tmeta = META[tierKey] ?? META.tier1;
 
-  // 2s hold → ouverture du pack
-  const { progress, bind } = useHoldToRip({
+  // 2s hold → lancement du tremblement, puis ouverture
+  const { progress, holding, done, bind } = useHoldToRip({
     duration: 2000,
     onComplete: () => {
-      setOpened(true);
-      // si 1 seule carte => reveal direct
-      if (slots.length === 1 && !slots[0].revealed) {
-        if (slots[0].giveaway) setStarsTrigger(Date.now());
-        onRevealSlot(pack.id, slots[0].id);
-      }
+      // 1) le PACK fermé tremble 3s
+      setPhase("packShaking");
+  
+      setTimeout(() => {
+        // 2) on ouvre: le pack disparaît
+        setOpened(true);
+  
+        const isSingle = pack.slots.length === 1 && !pack.slots[0].revealed;
+  
+        if (isSingle) {
+          setPhase("flash");
+          setTimeout(() => {
+            onRevealSlot(pack.id, pack.slots[0].id);
+            if (pack.slots[0].giveaway) setStarsTrigger(Date.now());
+        
+            if (pack.slots[0].giveaway?.tier === "tier3") {
+              fireTier3Confetti();
+            }
+
+            setPhase("idle");
+          }, FLASH_MS);
+        } else {
+          setPhase("idle");
+        }
+      }, SHAKE_MS);
     },
   });
 
@@ -549,10 +471,21 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
 
   const handleReveal = () => {
     if (current.revealed) return;
-    if (current.giveaway) setStarsTrigger(Date.now());
-    onRevealSlot(pack.id, current.id);
+    setPhase("cardShaking");
+    setTimeout(() => {
+      setPhase("flash");
+      setTimeout(() => {
+        onRevealSlot(pack.id, current.id);
+        if (current.giveaway) setStarsTrigger(Date.now());
+  
+        if (current.giveaway?.tier === "tier3") {
+          fireTier3Confetti();
+        }
+        setPhase("idle");
+      }, FLASH_MS);
+    }, SHAKE_MS);
   };
-
+  
   return (
     <AnimatePresence>
       <motion.div
@@ -575,9 +508,14 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
               {/* CONTENEUR PERSPECTIVE + WRAPPER qui tilt */}
 
               {/* Header aide + close (reste tel quel) */}
-              <div className="absolute -top-16 -mt-10 left-0 right-0 z-[20] flex items-center justify-center pointer-events-none">
-                <div className="flex items-center h-12 justify-center rounded-full text-lg text-primary">Press & hold 2s to open</div>
-              </div>
+              {!done && (
+                <div className="absolute -top-16 -mt-10 left-0 right-0 z-[20] flex items-center justify-center pointer-events-none">
+                  <div className="flex items-center h-12 justify-center rounded-full text-lg text-primary">
+                    Press & hold 2s to open
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={onClose}
                 className="absolute -top-16 -mt-10 right-0 z-[30] rounded-full px-3 py-1 text-xs bg-white/10 hover:bg-white/20 text-white pointer-events-auto"
@@ -585,7 +523,23 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
                 <X size={42} />
               </button>
 
-              <div className="absolute inset-0 [perspective:1500px] z-[12]">
+              <motion.div
+                className="absolute inset-0 [perspective:1500px] z-[12]"
+                animate={
+                  !opened && phase === "packShaking"
+                    ? { x: [0,-1,3,-2,2,0], y: [0,-2,1,2,-1,0], rotateZ: [0,-0.6,0.6,-0.4,0.4,0] }
+                    : { x: 0, y: 0, rotateZ: 0 }
+                }
+                transition={
+                  !opened && phase === "packShaking"
+                    ? {
+                        x: { duration: 0.35, repeat: Math.ceil(SHAKE_MS / 350) },
+                        y: { duration: 0.35, repeat: Math.ceil(SHAKE_MS / 350) },
+                        rotateZ: { duration: 0.35, repeat: Math.ceil(SHAKE_MS / 350) },
+                      }
+                    : {}
+                }
+              >
                 <motion.div
                   className="absolute inset-0 will-change-transform rounded-2xl overflow-visible top-2"
                   style={{ transformStyle: 'preserve-3d' }}
@@ -593,7 +547,6 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
                   transition={{ type: 'spring', stiffness: 12, damping: 28 }}
                 >
                   
-
                   {/* Fond pack */}
                   <div
                     className="absolute inset-0"
@@ -606,7 +559,12 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
                   />
 
                   {/* bandeau haut */}
-                  <TopTearBand progress={progress} bgImage={pack.type === "boss" ? BossPack : FightersPack} />
+                  {!done && (
+                    <TopTearBand
+                      progress={progress}
+                      bgImage={pack.type === "boss" ? BossPack : FightersPack}
+                    />
+                  )}
 
                   <div
                     className="absolute inset-0 mx-3 pointer-events-none mix-blend-screen opacity-30 "
@@ -712,9 +670,24 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
                     })}
                   />
                 </div>
-              </div>
+              </motion.div>
 
             </>
+          )}
+
+          {phase === "flash" && (
+            <motion.div
+              className="absolute inset-0 z-[80] pointer-events-none"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: [0, 1, 0], scale: [0.2, 1.5, 1] }}
+              transition={{ duration: FLASH_MS / 1000, times: [0, 0.9, 1], ease: "easeOut" }}
+              style={{
+                background: "radial-gradient(circle at center, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.0) 60%)",
+                mixBlendMode: "screen",
+                filter: "blur(5px)",
+                borderRadius: "1rem",
+              }}
+            />
           )}
 
           {/* ÉTOILES (uniquement après reveal d’un WIN) */}
@@ -738,7 +711,23 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ type: "spring", stiffness: 60, damping: 14 }}
             >
-              <div className="flex flex-col items-center justify-center w-5/6 h-6/6 s:h-5/6 gap-4 border-4 border-primary/50 rounded-2xl bg-gray-900/30 backdrop-blur-sm p-4">
+              <motion.div
+                className="flex flex-col items-center justify-center w-5/6 h-6/6 s:h-5/6 gap-4 border-4 border-primary/50 rounded-2xl bg-gray-900/30 backdrop-blur-sm p-4"
+                animate={
+                  phase === "cardShaking"
+                    ? { x: [0,-4,4,-3,3,0], y: [0,-2,2,1,-1,0], rotateZ: [0,-0.7,0.7,-0.4,0.4,0] }
+                    : { x: 0, y: 0, rotateZ: 0 }
+                }
+                transition={
+                  phase === "cardShaking"
+                    ? {
+                        x: { duration: 0.35, repeat: Math.ceil(SHAKE_MS / 350) },
+                        y: { duration: 0.35, repeat: Math.ceil(SHAKE_MS / 350) },
+                        rotateZ: { duration: 0.35, repeat: Math.ceil(SHAKE_MS / 350) },
+                      }
+                    : {}
+                }
+              >
                 {/* Header: Pack + position carte */}
                 <div className="text-primary text-2xl font-bold uppercase">
                   #{pack.number}
@@ -777,16 +766,17 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
                       )}
                     </>
                   ) : (
-                    <>
+                    showRevealCTA && (
                       <div className="flex flex-col items-center justify-center gap-4 my-14 p-4">
                         <div className="text-white/80">Reveal this card ?</div>
                         <Button onClick={handleReveal} className="font-bold uppercase">
                           Reveal
                         </Button>
                       </div>
-                    </>
+                    )
                   )}
                 </div>
+
 
                 {/* Navigation (si > 1 carte) */}
                 {slots.length > 1 && (
@@ -825,7 +815,7 @@ function PackOpenModal({ pack, onClose, onRevealSlot, tiers, icons }) {
                 <div className="mt-2">
                   <Button onClick={onClose} className="font-bold uppercase">CLOSE</Button>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </motion.div>
