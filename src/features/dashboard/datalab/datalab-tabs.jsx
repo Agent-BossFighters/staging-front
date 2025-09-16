@@ -38,7 +38,7 @@ export default function DatalabTabs({ defaultTab = "Slot" }) {
           <div className="border-primary border-b-2 w-full"></div>
         </TabsList>
       </div>
-      <div className="mt-6">
+      <div className="mt-6 w-[80vw] mx-auto">
         <TabsContent value="Slot">
           <SlotContainer />
         </TabsContent>
