@@ -12,14 +12,13 @@ import {
   useWalletClient,
 } from "wagmi";
 import { AuthUtils } from "@utils/api/auth.utils";
-import VotingModal from "./VotingModal";
 import { Button } from "@shared/ui/button";
+import { CUSTOM_PLAYER_MAP_CONSTANTS } from "../../../constants/playerMapConstants";
 export default function PlayerMapView() {
   const { user, ready, login } = usePrivy();
   // États séparés pour chaque modal
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [isPlayerCreationOpen, setIsPlayerCreationOpen] = useState(false);
-  const [isVotingOpen, setIsVotingOpen] = useState(false);
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -75,16 +74,6 @@ export default function PlayerMapView() {
     setIsPlayerCreationOpen(false);
   };
 
-  // Gestionnaires pour la modale de vote
-  const handleOpenVoting = () => {
-    console.log("Opening voting modal");
-    setIsVotingOpen(true);
-  };
-
-  const handleCloseVoting = () => {
-    console.log("Main app closing voting modal");
-    setIsVotingOpen(false);
-  };
 
   // Si walletClient est null/undefined, utiliser un objet factice basé sur les infos Privy
   const effectiveWalletClient = walletClient || {
@@ -143,9 +132,6 @@ export default function PlayerMapView() {
           PLAYER MAP
         </h1>
         <div className="flex items-center gap-4">
-          <Button variant="default" onClick={handleOpenVoting} className="mx-2">
-            give a feedback
-          </Button>
           {!playerMapAuth.isAuthenticated() && (
             <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
               <p className="font-bold">Attention</p>
@@ -163,12 +149,12 @@ export default function PlayerMapView() {
           {...commonProps}
           onCreatePlayer={handleOpenPlayerCreation}
           onConnectWallet={handleConnectWallet}
+          config={{
+            constants: CUSTOM_PLAYER_MAP_CONSTANTS
+          }}
         />
       </div>
 
-      {isVotingOpen && (
-        <VotingModal {...commonProps} onClose={handleCloseVoting} />
-      )}
     </div>
   );
 }
