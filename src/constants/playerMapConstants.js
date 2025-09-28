@@ -52,10 +52,17 @@ export const PREDEFINED_CLAIM_IDS = [
   "0x9df847b39391899840d7973d9718d8caef5c5467dde9374a96d1f71727bae7c4" // toxic - is - balanced
 ];
 
+// Variables d'environnement Pinata (SÉCURISÉES)
+export const PINATA_CONFIG = {
+  JWT_KEY: import.meta.env.VITE_PINATA_JWT_KEY,
+  IPFS_GATEWAY: import.meta.env.VITE_IPFS_GATEWAY || 'gateway.pinata.cloud'
+};
+
 // Export des constantes personnalisées pour PlayerMap
 export const CUSTOM_PLAYER_MAP_CONSTANTS = {
   COMMON_IDS,
   PLAYER_TRIPLE_TYPES,
   OFFICIAL_GUILDS,
-  PREDEFINED_CLAIM_IDS
+  PREDEFINED_CLAIM_IDS,
+  PINATA_CONFIG // ← IMPORTANT : Ajouter PINATA_CONFIG (sécurisé)
 };
