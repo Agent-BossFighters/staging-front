@@ -41,6 +41,8 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
+      - name: Force update player-map
+        run: pnpm update player-map@latest
       - name: Build
         run: pnpm run build
         env:
