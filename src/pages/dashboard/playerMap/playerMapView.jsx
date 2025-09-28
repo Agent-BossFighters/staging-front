@@ -1,7 +1,7 @@
 import {
   GraphComponent,
-  auth as playerMapAuth,
   PlayerMapConfig,
+  setPinataConstants,
 } from "player-map";
 import { usePrivy } from "@privy-io/react-auth";
 import { useState, useEffect } from "react";
@@ -12,7 +12,6 @@ import {
   useWalletClient,
 } from "wagmi";
 import { AuthUtils } from "@utils/api/auth.utils";
-import { Button } from "@shared/ui/button";
 import { CUSTOM_PLAYER_MAP_CONSTANTS } from "../../../constants/playerMapConstants";
 export default function PlayerMapView() {
   const { user, ready, login } = usePrivy();
@@ -32,14 +31,11 @@ export default function PlayerMapView() {
     });
   }, []);
 
-  // Initialiser l'authentification Player-map avec le token d'authentification
+  // Initialiser les constantes Pinata pour Player-map
   useEffect(() => {
-    const token = AuthUtils.getAuthToken();
-    if (token) {
-      playerMapAuth.initialize(token);
-    } else {
-      console.warn("No authentication token available for Player-map");
-    }
+    // Définir les constantes Pinata globalement
+    setPinataConstants(CUSTOM_PLAYER_MAP_CONSTANTS);
+    console.log("Player-map Pinata constants initialized");
   }, []);
 
   useEffect(() => {
@@ -59,18 +55,15 @@ export default function PlayerMapView() {
   };
 
   const handleCloseRegistration = () => {
-    console.log("Main app closing registration modal");
     setIsRegistrationOpen(false);
   };
 
   // Gestionnaires pour le formulaire de création de joueur
   const handleOpenPlayerCreation = () => {
-    console.log("Opening player creation form");
     setIsPlayerCreationOpen(true);
   };
 
   const handleClosePlayerCreation = () => {
-    console.log("Main app closing player creation modal");
     setIsPlayerCreationOpen(false);
   };
 
@@ -132,12 +125,6 @@ export default function PlayerMapView() {
           PLAYER MAP
         </h1>
         <div className="flex items-center gap-4">
-          {!playerMapAuth.isAuthenticated() && (
-            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
-              <p className="font-bold">Attention</p>
-              <p>Vous n'êtes pas authentifié pour utiliser Player Map.</p>
-            </div>
-          )}
         </div>
       </div>
 

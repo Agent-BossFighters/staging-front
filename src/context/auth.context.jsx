@@ -3,7 +3,6 @@ import { AuthUtils, cleanUserData } from "@utils/api/auth.utils";
 import { useNavigate } from "react-router-dom";
 import { kyInstance } from "@utils/api/ky-config";
 import { toast } from "react-hot-toast";
-import { auth as playerMapAuth } from "player-map";
 
 const AuthContext = createContext(null);
 export let isPremiumContext = createContext(null);
@@ -29,7 +28,6 @@ export const AuthProvider = ({ children }) => {
           setUser(cleanedData);
           setIsPremium(cleanedData.isPremium || false);
 
-          playerMapAuth.initialize(token);
         } catch (error) {
           if (
             error.responseData?.error === "Invalid session. Please reconnect."
@@ -73,7 +71,6 @@ export const AuthProvider = ({ children }) => {
     setUser(cleanedUserData);
     setIsPremium(cleanedUserData.isPremium || false);
 
-    playerMapAuth.initialize(token);
   };
 
   const login = (userData, token) => {
@@ -90,7 +87,6 @@ export const AuthProvider = ({ children }) => {
       AuthUtils.setUserData(cleanedUserData);
       setUser(cleanedUserData);
 
-      playerMapAuth.initialize(token);
     } catch (error) {
       toast.error("Failed to complete login process");
     }
@@ -99,7 +95,6 @@ export const AuthProvider = ({ children }) => {
   const updateToken = (newToken) => {
     AuthUtils.setAuthToken(newToken);
 
-    playerMapAuth.initialize(newToken);
   };
 
   const logout = async () => {
@@ -108,7 +103,6 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsPremium(false);
 
-      playerMapAuth.clearAuthToken();
 
       navigate("/users/login");
     } catch (error) {
@@ -116,7 +110,6 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsPremium(false);
 
-      playerMapAuth.clearAuthToken();
 
       navigate("/users/login");
     }
