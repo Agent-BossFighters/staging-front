@@ -119,19 +119,12 @@ export default function PlayerMapView() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="flex justify-between items-center ">
-        <h1 className="text-5xl font-extrabold pb-2 text-primary pl-4">
-          PLAYER MAP
-        </h1>
-        <div className="flex items-center gap-4">
-        </div>
-      </div>
+    <div className="w-[80vw] mx-auto flex flex-col h-full">
+      <h1 className="text-5xl font-extrabold pt-8 pb-2 text-primary mb-4">
+        PLAYER MAP
+      </h1>
 
-      <div
-        className="relative flex-1 w-full"
-        style={{ height: "calc(100vh - 200px)" }}
-      >
+      <div className="relative flex-1 w-full">
         <GraphComponent
           {...commonProps}
           onCreatePlayer={handleOpenPlayerCreation}
