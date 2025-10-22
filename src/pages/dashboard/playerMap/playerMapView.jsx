@@ -35,18 +35,10 @@ export default function PlayerMapView() {
   useEffect(() => {
     // Définir les constantes Pinata globalement
     setPinataConstants(CUSTOM_PLAYER_MAP_CONSTANTS);
-    console.log("Player-map Pinata constants initialized");
   }, []);
 
   useEffect(() => {
-    console.log("Privy State:", {
-      user,
-      ready,
-      wallet: user?.wallet,
-      walletClient,
-      publicClient: !!publicClient,
-      account,
-    });
+    // Monitor Privy state changes
   }, [user, ready, walletClient, publicClient, account]);
 
   // Gestionnaires pour le formulaire d'enregistrement
@@ -110,7 +102,6 @@ export default function PlayerMapView() {
 
   // Gestion de la connexion wallet via Privy
   const handleConnectWallet = () => {
-    console.log("Handling wallet connection in main app via Privy");
     login();
   };
 
