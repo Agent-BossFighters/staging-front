@@ -56,6 +56,8 @@ jobs:
           VITE_STRIPE_PRICE_ID: ${{ vars.VITE_STRIPE_PRICE_ID }}
           VITE_STRIPE_DONATION_PRODUCT_ID: ${{ vars.VITE_STRIPE_DONATION_PRODUCT_ID }}
           VITE_UMAMI_API_ORIGIN: ${{ vars.VITE_UMAMI_API_ORIGIN }}
+          VITE_IPFS_GATEWAY: ${{ secrets.VITE_IPFS_GATEWAY }}
+          VITE_PINATA_JWT_KEY : ${{ secrets.VITE_PINATA_JWT_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
